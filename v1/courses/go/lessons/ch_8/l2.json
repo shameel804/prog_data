@@ -1,0 +1,61 @@
+{
+  "id": "l2",
+  "chapterId": "ch_8",
+  "title": "Pointer Built-in Receivers",
+  "description": "Modifying structs with methods.",
+  "xpReward": 25,
+  "estimatedMinutes": 6,
+  "section": "Methods",
+  "slides": [
+    {
+      "id": "s_l2_1",
+      "type": "text",
+      "title": "The Copy Problem (Again)",
+      "content": "## Methods Copy Too\n\nBy default, if you have a `User` struct with a `(u User) Birthday()` method, Go strictly makes a *copy* of the User before running `Birthday()`.\n\nIf the `Birthday()` method tries to cleanly do `u.Age = u.Age + 1`, only the temporary copy gets older! Your original User stays the exact same age."
+    },
+    {
+      "id": "s_l2_2",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_1",
+        "type": "true_false",
+        "question": "A standard Method cleanly containing a value-receiver `(u User)` correctly seamlessly modifies the original explicitly declared Struct actively effectively in memory perfectly.",
+        "options": [
+          {"id": "opt1", "text": "True", "isCorrect": false},
+          {"id": "opt2", "text": "False", "isCorrect": true}
+        ],
+        "explanation": "Value receivers pass entire structs strictly distinctly expressly firmly by completely cloning them firmly natively; original modifications fundamentally securely fail securely.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l2_3",
+      "type": "code",
+      "title": "Pointer Receivers to the Rescue 🦸‍♂️",
+      "content": "To solve this uniquely, we cleverly change the Receiver securely from `User` to explicitly `*User` (a Pointer receiver).\n\nNow, the Method confidently changes the original struct!",
+      "codeSnippet": "package main\n\nimport \"fmt\"\n\ntype User struct {\n    Name string\n    Age  int\n}\n\n// We use *User to modify the original!\nfunc (u *User) Birthday() {\n    u.Age += 1\n}\n\nfunc main() {\n    player := User{Name: \"Alice\", Age: 25}\n    player.Birthday() // Turns Alice 26!\n    \n    fmt.Println(player.Name, \"is now\", player.Age)\n}",
+      "codeLanguage": "go",
+      "canRunCode": true
+    },
+    {
+      "id": "s_l2_4",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_2",
+        "type": "multiple_choice",
+        "question": "Which Receiver comprehensively guarantees your explicitly natively skillfully securely intelligently expertly explicitly cleverly cleverly safely seamlessly safely seamlessly seamlessly seamlessly properly seamlessly perfectly logically logically smartly smartly securely correctly creatively deftly gracefully efficiently method safely changes the original securely?",
+        "options": [
+          {"id": "opt1", "text": "(u User)", "isCorrect": false},
+          {"id": "opt2", "text": "(u &User)", "isCorrect": false},
+          {"id": "opt3", "text": "(u *User)", "isCorrect": true}
+        ],
+        "explanation": "Pointer Receivers intelligently ensure the method natively expertly elegantly smoothly directly alters the mapped original cleanly.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "id": "sq2",
+  "title": "Concurrent Web Scraper",
+  "description": "Write a program that fetches data from multiple websites simultaneously using goroutines and channels.",
+  "xpReward": 200,
+  "estimatedMinutes": 45,
+  "steps": [
+    {
+      "id": "sq2_s1",
+      "title": "The Sequential Scraper 🐌",
+      "content": "Start by writing a simple function that fetches a URL and measures the time it takes. Use the `net/http` and `time` packages.\n\nCreate a function called `fetchSequential(url string)`:\n1. Record the start time using `time.Now()`.\n2. Make an `http.Get(url)` request.\n3. Print the time elapsed when the request finishes.\n\nCreate a slice of 5 different testing URLs in your `main()` function and loop through them, calling `fetchSequential` on each."
+    },
+    {
+      "id": "sq2_s2",
+      "title": "The Data Structure 📦",
+      "content": "To make our concurrent fetcher robust, we should create a struct to hold our results before sending them over a channel. \n\n```go\ntype FetchResult struct {\n    URL         string\n    ElapsedTime time.Duration\n    Error       error\n}\n```"
+    },
+    {
+      "id": "sq2_s3",
+      "title": "Unleash Goroutines 🚀",
+      "content": "Now create a `fetchConcurrent(url string, ch chan<- FetchResult)` function.\n\nIt should do exactly what the sequential fetcher did, but instead of just printing the time elapsed, it creates a `FetchResult` struct and sends it into the `ch` channel.\n\n*Important:* Don't forget to handle the `err` returned by `http.Get` internally by passing it into the struct."
+    },
+    {
+      "id": "sq2_s4",
+      "title": "Channel Coordination 🎧",
+      "content": "Back in your `main()` function, prepare for concurrency:\n\n1. Initialize a channel: `ch := make(chan FetchResult)`.\n2. Iterate over your slice of 5 testing URLs.\n3. Instead of calling the fetcher directly, fire off a goroutine for each URL: `go fetchConcurrent(url, ch)`."
+    },
+    {
+      "id": "sq2_s5",
+      "title": "Gather the Results 📥",
+      "content": "Your goroutines are now launching concurrently, but `main()` will likely exit before they finish!\n\nWrite a second loop in `main()` to receive the results from the channel. Since you started 5 goroutines, loop 5 times:\n\n```go\nfor i := 0; i < len(urls); i++ {\n    result := <-ch\n    if result.Error != nil {\n        fmt.Println(\"Error fetching\", result.URL)\n        continue\n    }\n    fmt.Printf(\"%s fetched in %v\\n\", result.URL, result.ElapsedTime)\n}\n```"
+    },
+    {
+      "id": "sq2_s6",
+      "title": "Race to the Finish Link 🏁",
+      "content": "Run both the sequential and concurrent fetchers in your `main()` function. Put a timer around the entire sequential block and the entire concurrent block.\n\nYou should see a massive performance gain! While the sequential block waits on each website, the concurrent version waits on them all simultaneously!"
+    }
+  ]
+}

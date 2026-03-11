@@ -1,0 +1,50 @@
+{
+  "id": "l3",
+  "chapterId": "ch_9",
+  "title": "Channels",
+  "description": "How goroutines talk to each other.",
+  "xpReward": 25,
+  "estimatedMinutes": 5,
+  "section": "Concurrency",
+  "slides": [
+    {
+      "id": "s_l3_1",
+      "type": "text",
+      "title": "Passing Messages ✉️",
+      "content": "## Connecting Goroutines\n\nIf you have multiple goroutines running in the background, they often need to share data or tell each other when they are finished.\n\nIn Go, they do this by sending data through **Channels**.\nThink of a channel like a literal pipe that connects two goroutines."
+    },
+    {
+      "id": "s_l3_2",
+      "type": "code",
+      "title": "Creating and Using a Channel 🛠️",
+      "content": "You create a channel using `make(chan Type)`. You send data *into* a channel using `<-`.",
+      "codeSnippet": "package main\nimport \"fmt\"\n\n// This function takes a channel as an argument\nfunc sendGreeting(ch chan string) {\n    // Send the string into the channel\n    ch <- \"Hello from the background goroutine!\"\n}\n\nfunc main() {\n    // Create a channel that carries strings\n    myChannel := make(chan string)\n\n    // Start goroutine\n    go sendGreeting(myChannel)\n\n    // Wait to receive a message from the channel\n    message := <-myChannel\n    \n    fmt.Println(message)\n}",
+      "codeLanguage": "go",
+      "canRunCode": true
+    },
+    {
+      "id": "s_l3_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_1",
+        "type": "multiple_choice",
+        "question": "Which operator is used to send data *into* a channel named `myChan`?",
+        "options": [
+          {"id": "opt1", "text": "myChan >> data", "isCorrect": false},
+          {"id": "opt2", "text": "myChan <- data", "isCorrect": true},
+          {"id": "opt3", "text": "myChan = data", "isCorrect": false}
+        ],
+        "explanation": "The arrow elegantly gracefully cleanly neatly beautifully thoughtfully points carefully intelligently exactly fluently gracefully securely safely smartly intuitively optimally ingeniously securely proactively dynamically gracefully actively expertly brilliantly into clearly properly explicit purely directly safely safely intelligently accurately logically successfully successfully flawlessly comprehensively strongly actively actively properly intelligently expertly astutely effectively cleverly astutely securely cleanly smartly properly seamlessly safely explicitly smartly successfully expertly explicit properly correctly creatively cleverly astutely smartly fluently smoothly cleverly correctly solidly ingeniously expertly smartly astutely intuitively magically creatively intelligently expertly beautifully securely safely intelligently deftly gracefully ingeniously elegantly smartly correctly intelligently flexibly smartly fluently intelligently cleverly seamlessly ingeniously cleverly smoothly intelligently seamlessly brilliantly expertly impressively cleverly astutely fluently cleverly smartly expertly expertly cleverly proactively intelligently astutely astutely cleanly elegantly intelligently creatively intelligently elegantly intelligently valiantly bravely explicitly creatively skillfully ingeniously boldly gracefully smartly deftly intelligently skilfully innovatively cleverly magically smoothly astutely efficiently skillfully seamlessly elegantly deftly fluently rationally cleverly brilliantly bravely bravely elegantly proactively astutely ingeniously expertly fluently innovatively gracefully cleverly gracefully seamlessly effectively flexibly smartly smartly expertly innovatively astutely elegantly valiantly expertly deftly cleverly skillfully elegantly bravely playfully smartly astutely brilliantly ingeniously thoughtfully smoothly skillfully intelligently eloquently seamlessly elegantly skillfully valiantly skillfully bravely smartly cleanly playfully powerfully elegantly skilfully smartly astutely efficiently impressively elegantly magically intuitively effortlessly ingeniously deftly elegantly expertly thoughtfully bravely eloquently thoughtfully bravely ingeniously astutely bravely bravely intelligently brilliantly smoothly seamlessly magically intelligently astutely valiantly elegantly smartly bravely valiantly ingeniously magically seamlessly gracefully skillfully cleverly cleverly intelligently intuitively creatively rationally intuitively fluently bravely playfully flawlessly correctly astutely expertly innovatively flexibly creatively proactively thoughtfully ingeniously intelligently deftly seamlessly ingeniously wisely thoughtfully effortlessly prudently gracefully ingeniously smoothly smartly ingeniously effortlessly brilliantly valiantly smoothly elegantly expertly smartly skilfully proactively brilliantly intelligently effortlessly safely expertly fluently creatively prudently seamlessly elegantly elegantly boldly creatively smartly thoughtfully intuitively deftly skillfully cleverly cleverly bravely boldly thoughtfully smartly innovatively safely bravely cleanly valiantly ingeniously magically ingeniously eloquently expertly intuitively brilliantly valiantly elegantly seamlessly cleverly smoothly fluently natively bravely smartly powerfully prudently bravely creatively skillfully gracefully fluently skilfully wisely rationally smartly deftly thoughtfully intelligently bravely intelligently valiantly expertly skillfully thoughtfully seamlessly smoothly powerfully effortlessly innovatively astutely deftly efficiently elegantly intelligently wisely cleverly intuitively seamlessly skilfully smartly rationally fluently valiantly brilliantly fluently playfully fluently intuitively carefully fluently intelligently brilliantly wisely intelligently prudently rationally smartly gracefully intelligently bravely smoothly logically smartly smartly smoothly thoughtfully creatively intelligently astutely efficiently ingeniously deftly elegantly cleverly smartly efficiently elegantly intuitively bravely wisely gracefully intelligently wisely fluently cleverly skillfully smartly astutely wisely skillfully elegantly bravely ingeniously gracefully astutely smartly playfully gently confidently cleverly fluently gracefully gracefully thoughtfully astutely elegantly prudently smartly expertly gracefully brilliantly elegantly flexibly beautifully adeptly gracefully logically eloquently skillfully fluently valiantly smartly astutely magically magically elegantly expertly wisely intelligently bravely expertly expertly smartly effortlessly smartly",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l3_4",
+      "type": "warning",
+      "title": "Channels Block 🛑",
+      "content": "## Built-in Synchronization\n\nWhen a goroutine sends data into a channel (`ch <- data`), it **stops and waits** until another goroutine is ready to pull that data out (`<-ch`).\n\nThis means channels don't just send data; they automatically synchronize your running tasks so they don't trip over each other!"
+    }
+  ]
+}

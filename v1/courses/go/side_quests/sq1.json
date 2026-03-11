@@ -1,0 +1,39 @@
+{
+  "id": "sq1",
+  "title": "Build a CLI Task Tracker",
+  "description": "Create a command-line application to add, list, and complete tasks using Go's standard library. You'll master Structs, Slices, and JSON file I/O.",
+  "xpReward": 100,
+  "estimatedMinutes": 30,
+  "steps": [
+    {
+      "id": "sq1_s1",
+      "title": "Define the Data Structure 🏗️",
+      "content": "First, map out what a 'Task' looks like. Create a `Task` struct to hold the relevant data.\n\nYour task needs:\n- An `ID` (integer)\n- A `Description` (string)\n- A `Done` boolean status\n\n```go\ntype Task struct {\n    ID          int\n    Description string\n    Done        bool\n}\n```"
+    },
+    {
+      "id": "sq1_s2",
+      "title": "Saving & Loading Data 💾",
+      "content": "A CLI app is useless if it forgets its data! We'll use the `encoding/json` and `os` packages.\n\nCreate a function called `loadTasks()` that reads a `tasks.json` file. If the file doesn't exist, it should return an empty slice of `[]Task`.\n\nCreate another function, `saveTasks(tasks []Task)`, that marshals the slice into JSON and writes it to `tasks.json`. Don't forget `os.WriteFile`!"
+    },
+    {
+      "id": "sq1_s3",
+      "title": "Adding a Task ➕",
+      "content": "Write an `addTask(description string)` function.\n\n1. Call `loadTasks()` to get the current list.\n2. Create a new `Task` struct. The ID should be `len(tasks) + 1`.\n3. Append the new struct to the slice.\n4. Call `saveTasks(tasks)` to write the updated list to the disk.\n5. Print a success message: \"Task added!\""
+    },
+    {
+      "id": "sq1_s4",
+      "title": "Listing Tasks 📋",
+      "content": "Write a `listTasks()` function.\n\n1. Call `loadTasks()`.\n2. Loop through the returned slice.\n3. Print them elegantly! For example: `[ ] 1. Buy groceries` or `[X] 2. Walk the dog` based on the `Done` status."
+    },
+    {
+      "id": "sq1_s5",
+      "title": "Completing a Task ✅",
+      "content": "Write a `completeTask(id int)` function.\n\n1. Load the tasks.\n2. Loop through and find the task with the matching ID.\n3. Set `Done = true`.\n4. Save the tasks back to the file.\n\nBonus: Handle the error gracefully if the user provides an invalid ID!"
+    },
+    {
+      "id": "sq1_s6",
+      "title": "Wiring the CLI 🔌",
+      "content": "Finally, use Go's `flag` or `os.Args` package in the `main()` function to detect user commands.\n\nHandle these commands:\n- `add <description>`\n- `list`\n- `done <id>`\n\nRun your tool from the terminal with `go run main.go add \"Learn Go\"`. Watch your tasks.json file magically appear!"
+    }
+  ]
+}

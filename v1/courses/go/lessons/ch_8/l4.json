@@ -1,0 +1,44 @@
+{
+  "id": "l4",
+  "chapterId": "ch_8",
+  "title": "Implementing Interfaces",
+  "description": "Go's implicit interface system.",
+  "xpReward": 25,
+  "estimatedMinutes": 5,
+  "section": "Interfaces",
+  "slides": [
+    {
+      "id": "s_l4_1",
+      "type": "text",
+      "title": "Implicit Fulfillment 🥷",
+      "content": "## No 'Implements' Keyword\n\nIn Java or C#, if a `Dog` wants to fulfill an `Animal` interface, you actively have to type `class Dog implements Animal`.\n\nGo is different. In Go, interfaces are fulfilled **implicitly**. If your struct simply has all the methods listed in the interface, Go automatically considers it a match! You don't have to announce it."
+    },
+    {
+      "id": "s_l4_2",
+      "type": "code",
+      "title": "Putting it Together 🧩",
+      "content": "Let's see the `Speaker` interface in action perfectly linking two entirely different structs!",
+      "codeSnippet": "package main\nimport \"fmt\"\n\n// The Interface (The Requirement)\ntype Speaker interface { Speak() string }\n\n// Struct 1\ntype Dog struct{}\nfunc (d Dog) Speak() string { return \"Woof!\" }\n\n// Struct 2\ntype Cat struct{}\nfunc (c Cat) Speak() string { return \"Meow!\" }\n\n// This function accepts ANY type that fulfills 'Speaker'!\nfunc MakeSound(s Speaker) {\n    fmt.Println(s.Speak())\n}\n\nfunc main() {\n    MakeSound(Dog{}) // Works!\n    MakeSound(Cat{}) // Works!\n}",
+      "codeLanguage": "go",
+      "canRunCode": true
+    },
+    {
+      "id": "s_l4_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_1",
+        "type": "multiple_choice",
+        "question": "How do you explicitly tell Go that a `Car` struct implements a `Vehicle` interface?",
+        "options": [
+          {"id": "opt1", "text": "type Car implements Vehicle", "isCorrect": false},
+          {"id": "opt2", "text": "You don't. You simply give the Car struct the methods required by Vehicle.", "isCorrect": true},
+          {"id": "opt3", "text": "Car := Vehicle{}", "isCorrect": false}
+        ],
+        "explanation": "Implicit interfaces are a hallmark of Go. If it walks like a duck and quacks like a duck, Go proudly considers it a duck natively.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

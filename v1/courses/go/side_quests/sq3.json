@@ -1,0 +1,44 @@
+{
+  "id": "sq3",
+  "title": "API Server with Gin",
+  "description": "Build a REST API using the popular Gin framework. Handle GET and POST requests gracefully.",
+  "xpReward": 300,
+  "estimatedMinutes": 60,
+  "steps": [
+    {
+      "id": "sq3_s1",
+      "title": "Setup the Project 🚀",
+      "content": "To build an API, we'll use a popular third-party framework called **Gin**.\n\nFirst, initialize a new Go module in an empty directory:\n`go mod init my-api`\n\nNext, install the Gin package:\n`go get -u github.com/gin-gonic/gin`"
+    },
+    {
+      "id": "sq3_s2",
+      "title": "The Data Model 📚",
+      "content": "Let's build a simple inventory API for a bookstore.\n\nCreate a `main.go` file. Define a `Book` struct with JSON tags.\n\n```go\ntype Book struct {\n    ID     string  `json:\"id\"`\n    Title  string  `json:\"title\"`\n    Author string  `json:\"author\"`\n    Price  float64 `json:\"price\"`\n}\n```\n\nThe `` `json:\"id\"` `` tags tell Go how to serialize this struct into a JSON string when we send it to a client."
+    },
+    {
+      "id": "sq3_s3",
+      "title": "Mock Database 🗄️",
+      "content": "Create a slice of `Book` structs to act as our in-memory \"database\" for this exercise.\n\n```go\nvar books = []Book{\n    {ID: \"1\", Title: \"Go in Action\", Author: \"William Kennedy\", Price: 34.99},\n    {ID: \"2\", Title: \"The Go Programming Language\", Author: \"Alan Donovan\", Price: 39.99},\n}\n```"
+    },
+    {
+      "id": "sq3_s4",
+      "title": "Handling a GET Request 🌐",
+      "content": "Create a function named `getBooks(c *gin.Context)` to handle the `/books` route.\n\nGin makes sending JSON incredibly easy. Use `c.IndentedJSON(http.StatusOK, books)` to respond with a 200 OK status code and the `books` slice formatted nicely as JSON."
+    },
+    {
+      "id": "sq3_s5",
+      "title": "Handling a POST Request 📩",
+      "content": "Create a function named `addBook(c *gin.Context)` to handle new books.\n\n1. Declare a new `Book` variable: `var newBook Book`.\n2. Bind the incoming JSON request body to `newBook`: \n   `if err := c.BindJSON(&newBook); err != nil { return }`\n3. Append the new book to the `books` slice.\n4. Respond with `c.IndentedJSON(http.StatusCreated, newBook)`."
+    },
+    {
+      "id": "sq3_s6",
+      "title": "Routing and Serving 🚦",
+      "content": "Finally, inside your `main()` function, wire it all together!\n\n1. Create a Gin router: `router := gin.Default()`.\n2. Link the `/books` endpoint to the `getBooks` function: \n   `router.GET(\"/books\", getBooks)`\n3. Link a POST to the `/books` endpoint to the `addBook` function: \n   `router.POST(\"/books\", addBook)`\n4. Start the server on port 8080: `router.Run(\"localhost:8080\")`."
+    },
+    {
+      "id": "sq3_s7",
+      "title": "Testing your API 🛠️",
+      "content": "Run your server using `go run main.go`.\n\nOpen a new terminal window to test it!\n\nTo GET books, use curl: \n`curl http://localhost:8080/books`\n\nTo POST a new book, send a payload:\n`curl http://localhost:8080/books --include \\`\n`--header \"Content-Type: application/json\" \\`\n`--request \"POST\" \\`\n`--data '{\"id\": \"3\",\"title\": \"Learning Go\",\"author\": \"Jon Bodner\",\"price\": 45.99}'`"
+    }
+  ]
+}

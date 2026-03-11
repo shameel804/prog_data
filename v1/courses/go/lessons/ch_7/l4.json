@@ -1,0 +1,78 @@
+{
+  "id": "l4",
+  "chapterId": "ch_7",
+  "title": "Structs and Pointers",
+  "description": "Combining memory efficiency with custom types.",
+  "xpReward": 25,
+  "estimatedMinutes": 5,
+  "section": "Custom Types",
+  "slides": [
+    {
+      "id": "s_l4_1",
+      "type": "text",
+      "title": "A Heavy Struct 🏋️",
+      "content": "## Passing Heavy Data\n\nImagine you have a `User` struct with a Name, Age, 500 friends, and a huge profile picture.\n\nIf you pass this `User` into a function directly, Go will physically try to copy EVERYTHING. This creates a massive slowdown and wastes huge amounts of computer memory."
+    },
+    {
+      "id": "s_l4_2",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_1",
+        "type": "true_false",
+        "question": "Because structs can hold massive amounts of data, passing them exactly directly into functions can actively slow down your Go application over time.",
+        "correctAnswer": true,
+        "explanation": "Structs directly clone all contained data explicitly, creating vast, heavy memory issues silently.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l4_3",
+      "type": "code",
+      "title": "Sharing the Address 📍",
+      "content": "Instead of passing a gigantic copy of the `User`, we efficiently pass a *Pointer* to the User! \n\nThe pointer is just a tiny, lightweight memory address.",
+      "codeSnippet": "package main\n\nimport \"fmt\"\n\ntype User struct {\n    Name string\n    Age  int\n}\n\n// We accept a POINTER to a User (*User)\nfunc updateAge(u *User, newAge int) {\n    // We change the ORIGINAL user's age directly!\n    u.Age = newAge\n}\n\nfunc main() {\n    player := User{Name: \"Bob\", Age: 20}\n    \n    // We pass the ADDRESS (&) of player, not a heavy copy \n    updateAge(&player, 55)\n    \n    fmt.Println(player.Name, \"is now\", player.Age)\n}",
+      "codeLanguage": "go",
+      "canRunCode": true
+    },
+    {
+      "id": "s_l4_4",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_2",
+        "type": "multiple_choice",
+        "question": "When defining the `updateAge` function, what specifically proves it expects a pointer to a User rather than a copy of a User?",
+        "options": [
+          {"id": "opt1", "text": "func updateAge(u User)", "isCorrect": false},
+          {"id": "opt2", "text": "func updateAge(&u User)", "isCorrect": false},
+          {"id": "opt3", "text": "func updateAge(u *User)", "isCorrect": true}
+        ],
+        "explanation": "Placing an asterisk `*` explicitly directly before the struct-name `User` accurately establishes a strictly typed Pointer exactly.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l4_5",
+      "type": "text",
+      "title": "Go is Smart 🧠",
+      "content": "## Automatic Dereferencing\n\nDid you notice something weird in the code above?\n\nIf `u` is a pointer (an address), shouldn't we have to dereference it using `(*u).Age` first before we can access its fields?\n\nYes! But Go designers knew this was annoying to type. So, in Go, **you can just directly use `u.Age` and Go will automatically dereference the pointer for you behind the scenes!**"
+    },
+    {
+      "id": "s_l4_6",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_3",
+        "type": "true_false",
+        "question": "If you have a pointer to a Struct called `userPtr`, you MUST strictly type `(*userPtr).Name` to access the name.",
+        "correctAnswer": false,
+        "explanation": "Go conveniently actively allows shorthand strictly natively: `userPtr.Name` securely accurately dereferences it seamlessly.",
+        "xpReward": 10
+      }
+    }
+  ]
+}
