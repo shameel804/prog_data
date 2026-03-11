@@ -1,84 +1,74 @@
 {
     "id": "l4",
     "chapterId": "ch_9",
-    "title": "Async / Await ⏳",
-    "description": "The modern way.",
-    "xpReward": 25,
-    "estimatedMinutes": 5,
-    "section": "Modern JS",
+    "title": "Event Listeners 👂",
+    "description": "Wait for button clicks and trigger JavaScript functions instantly.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Manipulation",
     "slides": [
         {
             "id": "s_l4_1",
             "type": "text",
-            "title": "Too Much Then? 😵",
-            "content": "Even Promises can get messy with lots of `.then()`.\n\nES2017 gave us **async / await**.\n\nIt makes async code look SYNCHRONOUS!"
+            "title": "Websites Are Interactive 🖱️",
+            "content": "# Waiting for the User\n\nModifying the DOM is cool, but having it happen instantly when the page loads is boring.\n\nWe want our JavaScript to only activate *when the user does something*, like clicking a \"Buy Now\" button or typing in a password field.\n\nWe do this by attaching an **Event Listener** to an HTML element."
         },
         {
             "id": "s_l4_2",
+            "type": "text",
+            "title": "addEventListener() 👂",
+            "content": "## The Listening Device\n\nThe most important method in UI development is **`.addEventListener()`**.\n\nYou attach this method to an element, tell it exactly what 'Event' to listen for, and provide the function you want to run when that event happens.\n\n```javascript\nlet myBtn = document.querySelector(\"#submit-btn\");\n\n// We are waiting for a 'click' event!\nmyBtn.addEventListener(\"click\", function() {\n  console.log(\"The button was finally clicked!\");\n});\n```\n\nThe code block stays completely dormant until a click occurs!"
+        },
+        {
+            "id": "s_l4_3",
             "type": "code",
-            "title": "Clean Code ✨",
-            "content": "Just add `async` before a function and `await` before a promise.",
-            "codeSnippet": "async function getData() {\n  let result = await apiCall();\n  console.log(result);\n}",
+            "title": "Putting It Together 🧩",
+            "content": "We can combine Selectors, Event Listeners, and Modifiers to build a full Interactive App!",
+            "codeSnippet": "let counterDisplay = document.querySelector(\"#counter\");\nlet clickBtn = document.querySelector(\"#click-here\");\nlet count = 0;\n\n// Every time a click happens, update the data AND update the DOM!\nclickBtn.addEventListener(\"click\", function() {\n  count++;\n  counterDisplay.textContent = \"Score: \" + count;\n});",
             "codeLanguage": "javascript",
             "canRunCode": false
         },
         {
-            "id": "s_l4_3",
+            "id": "s_l4_4",
             "type": "quiz",
             "title": "Quick Check 🧠",
             "content": "",
             "quizData": {
                 "id": "q_l4_1",
                 "type": "multiple_choice",
-                "question": "Can you use `await` outside an async function?",
+                "question": "What is the very first argument provided to `.addEventListener(?, ?)`?",
                 "options": [
-                    {
-                        "id": "opt1",
-                        "text": "Yes",
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "opt2",
-                        "text": "No (mostly)",
-                        "isCorrect": true
-                    }
+                    {"id": "opt1", "text": "The function code block", "isCorrect": false},
+                    {"id": "opt2", "text": "The CSS Selector", "isCorrect": false},
+                    {"id": "opt3", "text": "A string labelling the specific Event (like 'click' or 'scroll')", "isCorrect": true},
+                    {"id": "opt4", "text": "The ID of the button", "isCorrect": false}
                 ],
-                "explanation": "You must mark the function as `async` first."
+                "explanation": "You must first tell the listening device exactly what it is trying to hear. ('click', 'mouseenter', 'keydown'). The second argument is the function that executes when the sound is heard.",
+                "xpReward": 10
             }
         },
         {
-            "id": "s_l4_4",
+            "id": "s_l4_5",
             "type": "text",
-            "title": "Pausing ⏸️",
-            "content": "`await` literally **pauses** the function execution until the promise settles.\n\nIt feels like magic.\n\n(It's mostly syntactic sugar over Promises!)"
+            "title": "The Event Object 🎁",
+            "content": "## Hidden Data\n\nWhen a user triggers an event (like clicking), the browser magically generates a massive data object containing details about the action (e.g., exact screen coordinates of the mouse click, which key was pressed).\n\nJavaScript automatically passes this 'Event Object' into your function's parameter. Usually, developers just name it `e`.\n\n```javascript\ndocument.addEventListener(\"keydown\", function(e) {\n  // What specific keyboard key did they press?\n  console.log(\"User pressed: \" + e.key);\n});\n```"
         },
         {
-            "id": "s_l4_5",
+            "id": "s_l4_6",
             "type": "quiz",
-            "title": "Quick Check 🧠",
+            "title": "Final Check 🧠",
             "content": "",
             "quizData": {
                 "id": "q_l4_2",
                 "type": "multiple_choice",
-                "question": "What does async/await use under the hood?",
+                "question": "If you want to track a user typing their password into an `<input>` field, what Event Object would you need to inspect to see what letters they pressed?",
                 "options": [
-                    {
-                        "id": "opt1",
-                        "text": "Magic",
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "opt2",
-                        "text": "Promises",
-                        "isCorrect": true
-                    },
-                    {
-                        "id": "opt3",
-                        "text": "Threads",
-                        "isCorrect": false
-                    }
+                    {"id": "opt1", "text": "The 'target' object", "isCorrect": false},
+                    {"id": "opt2", "text": "The 'document' object", "isCorrect": false},
+                    {"id": "opt3", "text": "The parameter (usually named 'e' or 'event') passed secretly into the callback function", "isCorrect": true}
                 ],
-                "explanation": "It's a cleaner way to write Promises."
+                "explanation": "The 'e' (Event) object acts like a flight data recorder, containing every single piece of data about that exact millisecond interaction in time.",
+                "xpReward": 10
             }
         }
     ]

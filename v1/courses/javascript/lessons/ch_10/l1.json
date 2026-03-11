@@ -1,57 +1,36 @@
 {
     "id": "l1",
     "chapterId": "ch_10",
-    "title": "Destructuring 📦",
-    "description": "Unpacking values easily.",
+    "title": "Let & Const vs Var 🔒",
+    "description": "Why modern developers abandoned the 'var' keyword forever.",
     "xpReward": 25,
-    "estimatedMinutes": 5,
-    "section": "Syntax",
+    "estimatedMinutes": 8,
+    "section": "Modern JS",
     "slides": [
         {
             "id": "s_l1_1",
             "type": "text",
-            "title": "Unpacking 📦",
-            "content": "**Destructuring** is a fancy word for unpacking values from Arrays or properties from Objects into distinct variables."
+            "title": "The Old Days 🦕",
+            "content": "# The Var Problem\n\nFor 20 years, JavaScript developers used `var` to create variables.\n\nThe problem? `var` is incredibly sloppy. It completely ignores Local/Block Scope!\n\n```javascript\nif (true) {\n  var secretPass = \"1234\";\n}\n\n// A massive security flaw!\nconsole.log(secretPass); // Output: \"1234\"\n```\n\nBecause `var` ignores the `{}` bounds of `if` statements and loops, it essentially leaks Global variables everywhere, causing terrible bugs."
         },
         {
             "id": "s_l1_2",
-            "type": "code",
-            "title": "Array Destructuring 🍫",
-            "content": "Skip the indexes!",
-            "codeSnippet": "// OLD way\nlet rgb = [255, 200, 0];\nlet red = rgb[0];\nlet green = rgb[1];\n\n// NEW way\nlet [r, g, b] = rgb;\nconsole.log(r); // 255",
-            "codeLanguage": "javascript",
-            "canRunCode": true
+            "type": "text",
+            "title": "ES6 To The Rescue 🦸‍♀️",
+            "content": "## Enter: Let and Const\n\nIn 2015, the ES6 update introduced `let` and `const`. \n\nThey are **Block-Scoped**, meaning they perfectly respect `{}` boundaries.\n\n```javascript\nif (true) {\n  let securePass = \"1234\";\n}\n\n// Safe! securePass doesn't leak out of the block!\nconsole.log(securePass); // Error: securePass is not defined\n```\n\nBecause they behave correctly, modern developers have entirely abandoned `var`. You should almost never use it!"
         },
         {
             "id": "s_l1_3",
-            "type": "quiz",
-            "title": "Quick Check 🧠",
-            "content": "",
-            "quizData": {
-                "id": "q_l1_1",
-                "type": "multiple_choice",
-                "question": "Does destructuring change the original array?",
-                "options": [
-                    {
-                        "id": "opt1",
-                        "text": "Yes, it empties it",
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "opt2",
-                        "text": "No, it just copies values",
-                        "isCorrect": true
-                    }
-                ],
-                "explanation": "The original array stays exactly the same."
-            }
+            "type": "text",
+            "title": "The Iron Lock 🔒",
+            "content": "## The Const Keyword\n\nWhile `let` can be updated later on (e.g. `let count=0; count=1;`), **`const`** is short for Constant. It locks a variable forever.\n\n```javascript\nconst birthYear = 1990;\n\n// If you try to change it... BOOM!\nbirthYear = 1991; // Fatal TypeError!\n```\n\nUsing `const` makes your code significantly safer. \n\nIf you know a variable's value should absolutely *never* change in your app, use `const` so that another developer can't accidentally overwrite it later!"
         },
         {
             "id": "s_l1_4",
             "type": "code",
-            "title": "Object Destructuring 🏷️",
-            "content": "Use curly braces `{ }` matching the property names.",
-            "codeSnippet": "let user = { name: 'Alex', age: 24 };\n\n// Variables must match keys!\nlet { name, age } = user;\n\nconsole.log(name); // 'Alex'",
+            "title": "Try It Out 💻",
+            "content": "Notice how the system crashes instantly because we tried to overwrite a const variable. Protection is active!",
+            "codeSnippet": "// We know this URL must never change to prevent hacking\nconst API_URL = \"https://google.com\";\n\nconsole.log(\"Connecting to: \" + API_URL);\n\n// Oh no, a bug is trying to overwrite it!\nAPI_URL = \"http://evil-hacker.com\";\n\nconsole.log(\"This line will never print because it errored out.\");\n",
             "codeLanguage": "javascript",
             "canRunCode": true
         },
@@ -61,22 +40,42 @@
             "title": "Quick Check 🧠",
             "content": "",
             "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Why is `let` heavily preferred over `var` in modern JavaScript?",
+                "options": [
+                    {"id": "opt1", "text": "let is faster", "isCorrect": false},
+                    {"id": "opt2", "text": "let runs on old browsers", "isCorrect": false},
+                    {"id": "opt3", "text": "let respects Block `{}` Scoping, while var leaks variables globally", "isCorrect": true},
+                    {"id": "opt4", "text": "They are identical", "isCorrect": false}
+                ],
+                "explanation": "var ruins the concept of Local Scope. It leaks out of generic blocks and pollutes the global application environment. 'let' perfectly honors the {} brackets it lives in.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_6",
+            "type": "warning",
+            "title": "The Const Exception 🧐",
+            "content": "## Mutating Objects\n\nThere is one huge catch with `const`. It locks the *reference*, but not the *contents*.\n\n```javascript\nconst myUser = { name: \"Alice\" };\n\nmyUser = { name: \"Bob\" }; // ERROR! Reassigning blocked.\n\n// HOWEVER... this perfectly works!!\nmyUser.name = \"Bob\"; // Success!\n```\n\nYou cannot completely reassign a `const` Object or Array to a new =. But you *can* dynamically `.push()` into it or alter its inner properties via dot notation!"
+        },
+        {
+            "id": "s_l1_7",
+            "type": "quiz",
+            "title": "Final Check 🧠",
+            "content": "",
+            "quizData": {
                 "id": "q_l1_2",
                 "type": "multiple_choice",
-                "question": "Can you rename variables while destructuring?",
+                "question": "If you define `const numbers = [1, 2];`, which of the following actions is completely ALLOWED by JavaScript?",
                 "options": [
-                    {
-                        "id": "opt1",
-                        "text": "No, must match exactly",
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "opt2",
-                        "text": "Yes, with colon syntax",
-                        "isCorrect": true
-                    }
+                    {"id": "opt1", "text": "numbers = [3, 4];", "isCorrect": false},
+                    {"id": "opt2", "text": "numbers = \"A string\";", "isCorrect": false},
+                    {"id": "opt3", "text": "numbers.push(3);", "isCorrect": true},
+                    {"id": "opt4", "text": "const numbers = 5;", "isCorrect": false}
                 ],
-                "explanation": "`let { name: n } = user` creates a variable `n`."
+                "explanation": "const prevents entire variable reassignment (using the = sign). It does NOT prevent internal mutations like Array.push() or Object mutation.",
+                "xpReward": 10
             }
         }
     ]

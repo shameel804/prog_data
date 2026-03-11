@@ -1,59 +1,48 @@
 {
   "id": "l1",
   "chapterId": "ch_8",
-  "title": "Null Safety \ud83d\udee1\ufe0f",
-  "description": "No more crashes on null.",
+  "title": "When Things Break 💥",
+  "description": "Understand what an Exception is and why apps magically crash.",
   "xpReward": 25,
   "estimatedMinutes": 5,
-  "section": "Content",
+  "section": "Safety Nets",
   "slides": [
     {
-      "id": "s_ch8_l1_1",
+      "id": "s_l1_1",
       "type": "text",
-      "title": "The Billion Dollar Mistake \ud83d\udcb8",
-      "content": "Historically, an empty variable (`null`) caused apps to crash.\n\nDart ensures safety. Regular variables **cannot** be empty. If you want a nullable variable, you MUST add a `?`."
+      "title": "The Unpredictable World 🌪️",
+      "content": "# Code is Fragile\n\nYou write perfect code. But the real world is chaotic.\n\nWhat happens when your app tries to download a picture, but the user's phone suddenly loses Wi-Fi?\nWhat happens when your code tries to divide a number by zero?\n\nDart panics. It throws an **Exception**, and if you aren't prepared for it... your entire app instantly crashes."
     },
     {
-      "id": "s_ch8_l1_2",
+      "id": "s_l1_2",
       "type": "code",
-      "title": "Nullable variables",
-      "content": "Allowing null safely:",
-      "codeSnippet": "void main() {\n  int score = 10; // Must have value\n  int? emptyScore; // Can be null!\n  print(emptyScore);\n}",
+      "title": "A Deadly Mistake 💀",
+      "content": "Look at this seemingly innocent code below. Can you spot the danger?",
+      "codeSnippet": "void main() {\n  // We convert the string '50' into a real integer 50.\n  int age = int.parse('50'); \n  \n  print(age + 10); // Prints 60. Perfect!\n\n  // But what if the user typed letters?\n  int badAge = int.parse('hello'); // APP CRASHES HERE!\n}",
       "codeLanguage": "dart",
-      "canRunCode": true
+      "canRunCode": false
     },
     {
-      "id": "s_ch8_l1_3",
+      "id": "s_l1_3",
+      "type": "text",
+      "title": "The Red Screen of Death 🧨",
+      "content": "## What is an Exception?\n\nAn Exception is Dart's way of screaming: \"I don't know what to do!\"\n\nWhen `int.parse('hello')` fails, Dart creates a special `FormatException` object and throws it into the air.\nIf your code doesn't \"catch\" that thrown object, it hits the core engine, immediately terminating the app."
+    },
+    {
+      "id": "s_l1_4",
       "type": "quiz",
-      "title": "Quick Check \ud83e\udde0",
+      "title": "Quick Check 🧠",
       "content": "",
       "quizData": {
-        "id": "q_ch8_l1_1",
+        "id": "q_l1_1",
         "type": "multiple_choice",
-        "question": "What symbol specifies that a variable is allowed to be `null`?",
+        "question": "What is an Exception in Dart?",
         "options": [
-          {
-            "id": "opt1",
-            "text": "!",
-            "isCorrect": false
-          },
-          {
-            "id": "opt2",
-            "text": "?",
-            "isCorrect": true
-          },
-          {
-            "id": "opt3",
-            "text": "*",
-            "isCorrect": false
-          },
-          {
-            "id": "opt4",
-            "text": "#",
-            "isCorrect": false
-          }
+          {"id": "opt1", "text": "A special variable used for loops.", "isCorrect": false},
+          {"id": "opt2", "text": "An error object thrown by the system when something unexpected and fatal happens.", "isCorrect": true},
+          {"id": "opt3", "text": "A technique to speed up the app.", "isCorrect": false}
         ],
-        "explanation": "Appending a `?` to the type allows it to hold a `null` value.",
+        "explanation": "Exceptions represent catastrophic failures in logic or environment (like losing internet or parsing bad data).",
         "xpReward": 10
       }
     }

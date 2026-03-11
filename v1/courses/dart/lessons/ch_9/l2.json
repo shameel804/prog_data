@@ -1,0 +1,76 @@
+{
+  "id": "l2",
+  "chapterId": "ch_9",
+  "title": "Nullable Variables (?) ❓",
+  "description": "Learn how to safely tell Dart that a box might be empty.",
+  "xpReward": 35,
+  "estimatedMinutes": 6,
+  "section": "Syntax",
+  "slides": [
+    {
+      "id": "s_l2_1",
+      "type": "text",
+      "title": "But I Want Null! 🥺",
+      "content": "# The Question Mark\n\nDart forbids `null` by default. But what if a user is signing up, and their 'middle name' is totally optional?\nWe NEED a way to represent an empty box legally.\n\nTo tell Dart \"this variable is ALLOWED to be empty\", you add a Question Mark `?` right after the Data Type!"
+    },
+    {
+      "id": "s_l2_2",
+      "type": "text",
+      "title": "Allowing the Empty Box 📦",
+      "content": "## The Syntax\n\n```dart\n// NOT ALLOWED: Standard strings must have data!\nString middleName = null; \n\n// PERFECT: A 'Nullable String' is allowed to be empty.\nString? optionalName = null; \n```\nBy adding the `?`, you've created a **Nullable Type**. It can hold a String, OR it can hold nothing."
+    },
+    {
+      "id": "s_l2_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_1",
+        "type": "multiple_choice",
+        "question": "Which variable declaration is allowed to safely store `null`?",
+        "options": [
+          {"id": "opt1", "text": "int age;", "isCorrect": false},
+          {"id": "opt2", "text": "int? age;", "isCorrect": true},
+          {"id": "opt3", "text": "?int age;", "isCorrect": false}
+        ],
+        "explanation": "Appending a ? to the type (like int?) signals to the compiler that this distinct variable is allowed to end up empty.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l2_4",
+      "type": "text",
+      "title": "The Compiler Knows All 👁️",
+      "content": "## Forced Checking\n\nBecause `String?` is nullable, Dart's compiler is terrified. If you try to run `.length` on it, Dart throws a massive red warning:\n\n*\"Warning: The property 'length' can't be unconditionally accessed because the receiver can be 'null'.\"*\n\nDart FORCES you to write an `if` statement to check if the box is empty before you are allowed to touch it!"
+    },
+    {
+      "id": "s_l2_5",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_2",
+        "type": "fill_blank",
+        "question": "Fill in the blank to safely check if the variable is NOT empty before using it:\nif (name != ____) {\n  print(name.length);\n}",
+        "options": [
+          "0",
+          "''",
+          "null",
+          "false"
+        ],
+        "correctAnswer": "null",
+        "explanation": "You manually check if (variable != null) to prove to the compiler that it is safe to use.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l2_6",
+      "type": "code",
+      "title": "See it in Action",
+      "content": "The compiler actually reads your `if` statements! Once the `if` proves it isn't null, Dart safely lets you run `.toUpperCase()`.",
+      "codeSnippet": "void main() {\n  String? optionalMessage = null;\n  \n  // This would crash the app if Dart didn't stop us earlier!\n  // print(optionalMessage.toUpperCase()); \n  \n  optionalMessage = 'Hello!';\n  \n  // Safe Check:\n  if (optionalMessage != null) {\n    print(optionalMessage.toUpperCase());\n  }\n}",
+      "codeLanguage": "dart",
+      "canRunCode": true
+    }
+  ]
+}

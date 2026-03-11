@@ -1,61 +1,76 @@
 {
   "id": "l2",
   "chapterId": "ch_7",
-  "title": "Constructors \ud83d\udc77",
-  "description": "Configure objects immediately.",
-  "xpReward": 25,
+  "title": "Overriding ✍️",
+  "description": "Change inherited behaviors to perfectly fit the child class.",
+  "xpReward": 30,
   "estimatedMinutes": 5,
-  "section": "Content",
+  "section": "Class Hierarchy",
   "slides": [
     {
-      "id": "s_ch7_l2_1",
+      "id": "s_l2_1",
       "type": "text",
-      "title": "Customization at Birth \u2699\ufe0f",
-      "content": "What if you want to name your player the moment you create them?\n\nA **Constructor** is a special function inside the class that runs upon object creation."
+      "title": "I Want to do it MY Way 😤",
+      "content": "# Changing the Rules\n\nSometimes, a parent class gives a child a method, but the child wants to do it slightly differently.\n\nImagine `class Bird extends Animal`. The `Animal` class has an `eat()` method that prints 'Nom nom'.\nBut for a Bird, you want it to print 'Peck peck'.\n\nYou can **Override** the parent's method!"
     },
     {
-      "id": "s_ch7_l2_2",
-      "type": "code",
-      "title": "Using Constructors",
-      "content": "Setting up properties on creation:",
-      "codeSnippet": "class Player {\n  String name;\n  Player(this.name); // Constructor!\n}\n\nvoid main() {\n  Player p1 = Player('Macho');\n  print(p1.name);\n}",
-      "codeLanguage": "dart",
-      "canRunCode": true
+      "id": "s_l2_2",
+      "type": "text",
+      "title": "The `@override` tag 🏷️",
+      "content": "## Rewriting History\n\nTo change a method from the parent, simply rewrite the EXACT same method in the child class, and put `@override` right above it.\n\n```dart\nclass Animal {\n  void speek() { print('...'); }\n}\n\nclass Dog extends Animal {\n  @override\n  void speek() {\n    print('Woof!'); // This replaces the parent's speek!\n  }\n}\n```\nThe `@override` physically tells Dart: \"Ignore the parent's version, use mine instead!\""
     },
     {
-      "id": "s_ch7_l2_3",
+      "id": "s_l2_3",
       "type": "quiz",
-      "title": "Quick Check \ud83e\udde0",
+      "title": "Quick Check 🧠",
       "content": "",
       "quizData": {
-        "id": "q_ch7_l2_1",
+        "id": "q_l2_1",
         "type": "multiple_choice",
-        "question": "What is the name of the constructor function in Dart?",
+        "question": "What is the purpose of `@override`?",
         "options": [
-          {
-            "id": "opt1",
-            "text": "init()",
-            "isCorrect": false
-          },
-          {
-            "id": "opt2",
-            "text": "create()",
-            "isCorrect": false
-          },
-          {
-            "id": "opt3",
-            "text": "The exact same name as the Class",
-            "isCorrect": true
-          },
-          {
-            "id": "opt4",
-            "text": "constructor()",
-            "isCorrect": false
-          }
+          {"id": "opt1", "text": "It destroys the parent class.", "isCorrect": false},
+          {"id": "opt2", "text": "It intentionally replaces an inherited method with a custom version for the child class.", "isCorrect": true},
+          {"id": "opt3", "text": "It prevents a method from running.", "isCorrect": false}
         ],
-        "explanation": "A constructor must exactly match the name of its Class.",
+        "explanation": "Overriding allows a subclass to provide a specific, modified implementation of a method that is already provided by its parent class.",
         "xpReward": 10
       }
+    },
+    {
+      "id": "s_l2_4",
+      "type": "text",
+      "title": "The `super` Keyword 🦸‍♀️",
+      "content": "## Getting the Best of Both Worlds\n\nWhat if you want to use the parent's original method AND add your own flavor to it?\n\nYou can trigger the parent's old code from inside the new overridden code using `super`!\n\n```dart\nclass CustomButton extends Button {\n  @override\n  void tap() {\n    print('Playing cool sound effect!');\n    super.tap(); // Now trigger the original parent tap logic!\n  }\n}\n```"
+    },
+    {
+      "id": "s_l2_5",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_2",
+        "type": "fill_blank",
+        "question": "Fill in the blank to trigger the parent class's version of the draw() method.\n_____.draw();",
+        "options": [
+          "parent",
+          "base",
+          "this",
+          "super"
+        ],
+        "correctAnswer": "super",
+        "explanation": "While 'this' refers to the current object, 'super' acts as a direct line referring explicitly to the Parent blueprint.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l2_6",
+      "type": "code",
+      "title": "See it in Action",
+      "content": "Notice how the subclass entirely redefines what it means to calculate speed!",
+      "codeSnippet": "class Vehicle {\n  int getSpeed() => 50;\n}\n\nclass Jet extends Vehicle {\n  // Override the inherited logic entirely!\n  @override\n  int getSpeed() => 500;\n}\n\nvoid main() {\n  Vehicle v = Vehicle();\n  Jet j = Jet();\n  \n  print(v.getSpeed()); // 50\n  print(j.getSpeed()); // 500\n}",
+      "codeLanguage": "dart",
+      "canRunCode": true
     }
   ]
 }

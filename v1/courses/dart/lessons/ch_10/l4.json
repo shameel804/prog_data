@@ -1,0 +1,67 @@
+{
+  "id": "l4",
+  "chapterId": "ch_10",
+  "title": "The .then() Method 🔗",
+  "description": "Chain multiple actions together as soon as a Future completes.",
+  "xpReward": 30,
+  "estimatedMinutes": 5,
+  "section": "Advanced Syntax",
+  "slides": [
+    {
+      "id": "s_l4_1",
+      "type": "text",
+      "title": "The Alternative to Await 🛤️",
+      "content": "# Chaining Futures\n\n`await` forces your function to pause and wait for the box to open.\nBut what if you DON'T want your function to pause? You want it to finish immediately, and just tell Dart: *\"Hey, whenever that box finally opens, run this other code.\"*\n\nYou can use the `.then()` method!"
+    },
+    {
+      "id": "s_l4_2",
+      "type": "text",
+      "title": "Then Do This 👉",
+      "content": "## Callbacks\n\nInstead of `String name = await downloadName();`, you attach the `.then()` method directly to the `Future` returning function.\n\n```dart\nvoid main() {\n  // This DOES NOT pause main!\n  downloadName().then((String name) {\n    print('The name just arrived: $name');\n  });\n  \n  print('Fetching data in the background...');\n}\n```\nIt might print \"Fetching data...\" FIRST, and then 3 seconds later print \"The name just arrived\"!"
+    },
+    {
+      "id": "s_l4_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_1",
+        "type": "multiple_choice",
+        "question": "What is the primary difference between `await` and `.then()`?",
+        "options": [
+          {"id": "opt1", "text": "They do exactly the same thing.", "isCorrect": false},
+          {"id": "opt2", "text": "`await` pauses the current function until the data arrives. `.then()` allows the function to continue instantly, scheduling the code to run later when the data arrives.", "isCorrect": true},
+          {"id": "opt3", "text": "`.then()` crashes if there is an error.", "isCorrect": false}
+        ],
+        "explanation": "Await is synchronous-style phrasing. Then() is callback-style phrasing.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l4_4",
+      "type": "text",
+      "title": "Catching Errors 💥",
+      "content": "## `.catchError()`\n\nIf you use `await`, you trap errors using a standard `try / catch` block.\nIf you use `.then()`, you trap errors by chaining `.catchError()` right onto the end!\n\n```dart\ndownloadAvatar()\n  .then((img) => print('Got image!'))\n  .catchError((error) => print('Failed to download: $error'));\n```\nThis is a very clean way to perform background tasks without stopping your UI."
+    },
+    {
+      "id": "s_l4_5",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_2",
+        "type": "fill_blank",
+        "question": "Fill in the blank to log a failure when chaining futures:\napi.login().then((user) => save()).________((e) => log(e));",
+        "options": [
+          "catch",
+          "catchError",
+          "tryCatch",
+          "error"
+        ],
+        "correctAnswer": "catchError",
+        "explanation": "The specific method chained to a Future to handle its failure is .catchError()",
+        "xpReward": 10
+      }
+    }
+  ]
+}

@@ -1,50 +1,59 @@
 {
   "id": "l3",
   "chapterId": "ch_8",
-  "title": "Async & Await \u23f3",
-  "description": "Managing required waiting time.",
+  "title": "The Finally Block 🧹",
+  "description": "Guarantee cleanup code runs, even if the world is burning.",
   "xpReward": 25,
   "estimatedMinutes": 6,
-  "section": "Content",
+  "section": "Safety Nets",
   "slides": [
     {
-      "id": "s_ch8_l3_1",
+      "id": "s_l3_1",
       "type": "text",
-      "title": "Patience Pays \u23f3",
-      "content": "Downloading data from the internet takes time. \n\nWe mark a function as `async` and use `await` to pause code execution until the downloaded data arrives, preventing the app from freezing."
+      "title": "The Cleanup Crew 🧹",
+      "content": "# Messy Situations\n\nImagine you try to open a file on the computer. Before reading, you `lock` the file so nobody else can edit it.\nSuddenly... the reading process crashes!\n\nExecution jumps to the `catch` block... but wait, the file is STILL locked! You never unlocked it!\nThis causes catastrophic memory leaks."
     },
     {
-      "id": "s_ch8_l3_2",
+      "id": "s_l3_2",
+      "type": "text",
+      "title": "Always Runs ⏱️",
+      "content": "## Finally!\n\nDart gives us a third block: `finally {}`.\nIt attaches to the bottom of the try/catch stack. Whether the code succeeded perfectly, OR crashed and burned into the catch block... the `finally` block ALWAYS executes!\n\n```dart\ntry {\n  print('Opening File');\n  // ... bad read code crashes here ...\n} catch (e) {\n  print('Caught an error!');\n} finally {\n  print('Closing File... Cleanup complete!');\n}\n```"
+    },
+    {
+      "id": "s_l3_3",
       "type": "quiz",
-      "title": "Quick Check \ud83e\udde0",
+      "title": "Quick Check 🧠",
       "content": "",
       "quizData": {
-        "id": "q_ch8_l3_1",
+        "id": "q_l3_1",
         "type": "multiple_choice",
-        "question": "Inside an `async` function, what keyword forces Dart to wait for the data?",
+        "question": "If the `try` block succeeds without any errors whatsoever, does the `finally` block execute?",
         "options": [
-          {
-            "id": "opt1",
-            "text": "wait",
-            "isCorrect": false
-          },
-          {
-            "id": "opt2",
-            "text": "pause",
-            "isCorrect": false
-          },
-          {
-            "id": "opt3",
-            "text": "await",
-            "isCorrect": true
-          },
-          {
-            "id": "opt4",
-            "text": "hold",
-            "isCorrect": false
-          }
+          {"id": "opt1", "text": "Yes, it always executes no matter what.", "isCorrect": true},
+          {"id": "opt2", "text": "No, it only executes if there was a catch.", "isCorrect": false},
+          {"id": "opt3", "text": "No, it throws an error.", "isCorrect": false}
         ],
-        "explanation": "The `await` keyword halts the execution on that line until the Future resolves.",
+        "explanation": "Finally represents guaranteed execution. It runs upon success AND upon failure.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l3_4",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_2",
+        "type": "fill_blank",
+        "question": "If you open a database connection in a try block, you should guarantee closing it by placing the close() command inside the _______ block.",
+        "options": [
+          "catch",
+          "try",
+          "error",
+          "finally"
+        ],
+        "correctAnswer": "finally",
+        "explanation": "You use finally to always clean up and release resources.",
         "xpReward": 10
       }
     }

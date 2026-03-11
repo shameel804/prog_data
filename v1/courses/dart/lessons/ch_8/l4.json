@@ -1,61 +1,76 @@
 {
   "id": "l4",
   "chapterId": "ch_8",
-  "title": "Try / Catch \ud83e\uddef",
-  "description": "Handling errors gracefully.",
-  "xpReward": 25,
-  "estimatedMinutes": 4,
-  "section": "Content",
+  "title": "Throwing Errors 🚀",
+  "description": "How to forcefully crash your own code when someone breaks the rules.",
+  "xpReward": 35,
+  "estimatedMinutes": 7,
+  "section": "Advanced Safety",
   "slides": [
     {
-      "id": "s_ch8_l4_1",
+      "id": "s_l4_1",
       "type": "text",
-      "title": "Fire Extinguisher \ud83e\uddef",
-      "content": "When connecting to APIs, things fail (like no internet). \n\nWrap risky code in a `try` block. If it crashes, the `catch` block catches the error instead of closing the app!"
+      "title": "Playing Defense 🛡️",
+      "content": "# Enforcing the Law\n\nSometimes, you WANT your app to crash immediately so you can catch a bug.\n\nImagine you wrote a banking app with a function: `void withdraw(int amount)`.\nWhat if another programmer accidentally writes `withdraw(-500)`?\n\nIf the code continues, it might ADD 500 dollars to their account! You must crash the code instantly.\nWe do this by **Throwing** an exception ourselves."
     },
     {
-      "id": "s_ch8_l4_2",
-      "type": "code",
-      "title": "Catching Errors",
-      "content": "Safely failing:",
-      "codeSnippet": "void main() {\n  try {\n    int result = 10 ~/ 0; // Dividing by zero!\n  } catch (e) {\n    print('Caught an error: $e');\n  }\n}",
-      "codeLanguage": "dart",
-      "canRunCode": true
+      "id": "s_l4_2",
+      "type": "text",
+      "title": "The `throw` Keyword 🧨",
+      "content": "## Launching the Error\n\nTo manually trigger a crash and alert the system of a violation, use the `throw` keyword followed by an Exception object.\n\n```dart\nvoid withdraw(int amount) {\n  if (amount < 0) {\n    // Crash the program right here!\n    throw Exception('Amount cannot be negative!');\n  }\n  \n  print('Withdrawing $amount');\n}\n```"
     },
     {
-      "id": "s_ch8_l4_3",
+      "id": "s_l4_3",
       "type": "quiz",
-      "title": "Quick Check \ud83e\udde0",
+      "title": "Quick Check 🧠",
       "content": "",
       "quizData": {
-        "id": "q_ch8_l4_1",
+        "id": "q_l4_1",
         "type": "multiple_choice",
-        "question": "Which block guarantees your app handles unexpected errors smoothly?",
+        "question": "What is the primary purpose of manually 'throwing' an Exception?",
         "options": [
-          {
-            "id": "opt1",
-            "text": "if/else",
-            "isCorrect": false
-          },
-          {
-            "id": "opt2",
-            "text": "try/catch",
-            "isCorrect": true
-          },
-          {
-            "id": "opt3",
-            "text": "throw/catch",
-            "isCorrect": false
-          },
-          {
-            "id": "opt4",
-            "text": "do/try",
-            "isCorrect": false
-          }
+          {"id": "opt1", "text": "To close the app gracefully.", "isCorrect": false},
+          {"id": "opt2", "text": "To immediately halt execution and alert the system that invalid or impossible data broke the fundamental rules of your code.", "isCorrect": true},
+          {"id": "opt3", "text": "To log a small warning in the console without stopping the app.", "isCorrect": false}
         ],
-        "explanation": "`try` attempts the risky code, `catch` manages the failure gracefully.",
+        "explanation": "Throwing is a critical defensive maneuver to prevent catastrophic logic bugs (like negative money withdrawals).",
         "xpReward": 10
       }
+    },
+    {
+      "id": "s_l4_4",
+      "type": "text",
+      "title": "The Custom Exception 🏷️",
+      "content": "## Making it Meaningful\n\nThe generic `Exception` is fine, but Dart has highly specific ones like `ArgumentError` (when a parameter is invalid) or `StateError`.\n\n```dart\nvoid login(String username) {\n  if (username.isEmpty) {\n    throw ArgumentError('Username cannot be totally empty!');\n  }\n}\n```\nThis tells the developer EXACTLY what kind of mistake they made!"
+    },
+    {
+      "id": "s_l4_5",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_2",
+        "type": "fill_blank",
+        "question": "Fill in the blank to manually crash the app if age is negative: \nif (age < 0) {\n  _______ ArgumentError('Age is invalid');\n}",
+        "options": [
+          "throw",
+          "catch",
+          "error",
+          "return"
+        ],
+        "correctAnswer": "throw",
+        "explanation": "The 'throw' keyword physically launches the Exception object into the system.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l4_6",
+      "type": "code",
+      "title": "See it in Action",
+      "content": "We can `throw` an error in one function, and easily `catch` it in another!",
+      "codeSnippet": "void checkEngine(double temperature) {\n  if (temperature > 250) {\n    // DANGER! Trigger the alarm!\n    throw Exception('Engine is overheating!');\n  }\n  print('Engine temperatures normal.');\n}\n\nvoid main() {\n  try {\n    checkEngine(300.0); // This will blow up!\n  } catch (e) {\n    print('MECHANIC ALERT: $e');\n  }\n}",
+      "codeLanguage": "dart",
+      "canRunCode": true
     }
   ]
 }

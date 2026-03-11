@@ -1,70 +1,63 @@
 {
     "id": "l5",
     "chapterId": "ch_10",
-    "title": "Modules 🧩",
-    "description": "Import and Export.",
-    "xpReward": 25,
-    "estimatedMinutes": 5,
-    "section": "Architecture",
+    "title": "The Fetch API 🌐",
+    "description": "Download thousands of live items from internet servers asyncronously.",
+    "xpReward": 40,
+    "estimatedMinutes": 12,
+    "section": "Next Level",
     "slides": [
         {
             "id": "s_l5_1",
             "type": "text",
-            "title": "Splitting Code 🔪",
-            "content": "As your code grows, putting everything in one file gets messy.\n\nES6 **Modules** let you split code into multiple files."
+            "title": "Grabbing Internet Data 🌐",
+            "content": "# Fetching\n\nSo how do we actually ask an external server (like a weather site or a movie database) for their live data?\n\nModern JavaScript uses the massive **`fetch()`** API method.\n\nYou pass `fetch(url)` the exact server URL you want, and it instantly shoves a Promise ticket into your hands while it contacts the remote server in the background.\n\n```javascript\n// Warning! The .then() chaining is about to get messy...\nfetch('https://google.com/data')\n  .then(response => response.json())\n  .then(data => console.log(data))\n  .catch(error => console.log(error));\n```"
         },
         {
             "id": "s_l5_2",
-            "type": "code",
-            "title": "Exporting 📤",
-            "content": "To share a function from a file, use `export`.",
-            "codeSnippet": "// math.js\n\nexport function add(a, b) {\n  return a + b;\n}\n\nexport const PI = 3.14;",
-            "codeLanguage": "javascript",
-            "canRunCode": false
+            "type": "text",
+            "title": "The Async/Await Miracle ✨",
+            "content": "## Stopping the Nightmare\n\nThe `.then()` structure is messy. It creates a chain of nested callbacks.\n\nIn 2017, JavaScript released a true miracle called **`async / await`**. \n\nIt allows developers to write Asynchronous background code using completely normal-looking Synchronous syntax! We don't have to write `.then()` anymore!\n\nAll we do is put the word `await` right before the `fetch` command. \n\n```javascript\n// Instead of then(), we just force the code to Await the promise!\nlet response = await fetch('https://google.com/data');\nlet data = await response.json();\n\nconsole.log(data);\n```"
         },
         {
             "id": "s_l5_3",
-            "type": "code",
-            "title": "Importing 📥",
-            "content": "To use it in another file, use `import`.",
-            "codeSnippet": "// main.js\n\nimport { add, PI } from './math.js';\n\nconsole.log(add(2, 3)); // 5",
-            "codeLanguage": "javascript",
-            "canRunCode": false
+            "type": "text",
+            "title": "The Big Rule ⚖️",
+            "content": "## async functions\n\nThere is one iron-clad rule: **You can ONLY use the `await` keyword inside of a function officially labelled as `async`.**\n\nYou must explicitly warn JavaScript that a function contains a slowing-down `await` keyword, so it can throw the *entire function wrapper* into the background lane!\n\n```javascript\n// 1. Label the wrapper function 'async'\nasync function getWeather() {\n  // 2. We can now use 'await' inside safely!\n  let result = await fetch('https://api.weather.com');\n  console.log(\"Done!\");\n}\n\n// 3. The exact millisecond we execute this, it throws into the background\ngetWeather();\nconsole.log(\"This log prints IMMEDIATELY before the weather is done! No freezing!\");\n```"
         },
         {
             "id": "s_l5_4",
-            "type": "text",
-            "title": "Default Export 🌟",
-            "content": "You can export one main thing using `export default`. When importing, you don't need curly braces `{}`."
+            "type": "code",
+            "title": "Try It Out 💻",
+            "content": "We are hitting a REAL live server on the internet using Fetch and Async/Await! Notice how the code gracefully pauses inside the wrapper without freezing.",
+            "codeSnippet": "async function getPokeData() {\n  console.log(\"1. Sending request to server...\");\n  \n  // Wait patiently for the internet connection to return\n  let response = await fetch(\"https://pokeapi.co/api/v2/pokemon/ditto\");\n  \n  // Wait patiently for the data to unpackage correctly\n  let pokeData = await response.json();\n  \n  console.log(\"3. Acquired! Pokemon is: \" + pokeData.name);\n}\n\ngetPokeData();\nconsole.log(\"2. This prints immediately because getPokeData is hiding in the background lane!\");",
+            "codeLanguage": "javascript",
+            "canRunCode": true
         },
         {
             "id": "s_l5_5",
             "type": "quiz",
-            "title": "Quick Check 🧠",
+            "title": "Final Check 🧠",
             "content": "",
             "quizData": {
                 "id": "q_l5_1",
                 "type": "multiple_choice",
-                "question": "Which keyword shares a function?",
+                "question": "What is the primary benefit of replacing old `.then()` Promise chains with the modern `async/await` syntax?",
                 "options": [
-                    {
-                        "id": "opt1",
-                        "text": "share",
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "opt2",
-                        "text": "export",
-                        "isCorrect": true
-                    },
-                    {
-                        "id": "opt3",
-                        "text": "public",
-                        "isCorrect": false
-                    }
+                    {"id": "opt1", "text": "It executes 10x faster natively in Chrome", "isCorrect": false},
+                    {"id": "opt2", "text": "It completely hides the fact that it is a Promise, allowing you to write highly complex background logic using clean, clean, normal top-to-bottom syntax.", "isCorrect": true},
+                    {"id": "opt3", "text": "It runs synchronously and freezes the browser", "isCorrect": false},
+                    {"id": "opt4", "text": "It no longer requires an internet connection", "isCorrect": false}
                 ],
-                "explanation": "`export` makes it available to other modules."
+                "explanation": "It's purely 'syntactic sugar' making developers' lives 100x easier! Instead of a pyramid of .then() callbacks, you just 'await' the result like a normal variable assignment.",
+                "xpReward": 10
             }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "COURSE COMPLETE! 🎓🎉",
+            "content": "# YOU DID IT!\n\n**Congratulations!** You have completed the intensive JavaScript course architecture.\n\nYou have mastered:\n* **Variables, Data Types, and Operators**\n* **Advanced Control Flow and Iterative Loops**\n* **Modular Application design using Scope and Arrow Functions**\n* **Massive Data handling via Arrays and Objects**\n* **Web Manipulation utilizing the core DOM and Selectors**\n* **Top-Tier Modern ES6 syntax with Async/Await, Fetch, and Destructuring!**\n\nThe entire world of React, NodeJS, and Application Development is now waiting for you! 🌍🚀"
         }
     ]
 }

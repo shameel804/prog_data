@@ -1,79 +1,72 @@
 {
     "id": "l2",
     "chapterId": "ch_9",
-    "title": "Callbacks 📞",
-    "description": "Call me maybe.",
+    "title": "Selecting Elements 🎯",
+    "description": "Locate specific buttons and tags hidden on the webpage.",
     "xpReward": 25,
-    "estimatedMinutes": 5,
-    "section": "Patterns",
+    "estimatedMinutes": 8,
+    "section": "The Browser",
     "slides": [
         {
             "id": "s_l2_1",
             "type": "text",
-            "title": "Call Me Later 📞",
-            "content": "Since async code doesn't wait, how do we know when it's done?\n\nWe pass it a **Callback Function**.\n\n\"Hey, run this function when you finish!\""
+            "title": "Finding Your Target 🎯",
+            "content": "# The Document Object\n\nIf we want to change a specific `<p>` or `<button>` tag, we first have to physically locate it inside the massive HTML `document` tree.\n\nWe do this by creating a variable, and saving the target HTML tag inside of it using special \"Query\" methods.\n\n```javascript\n// We reach into the document, and use a method!\nlet myButton = document.getElementById(\"submit-btn\");\n```\n\nNow, the variable `myButton` literally holds the physical HTML button!"
         },
         {
             "id": "s_l2_2",
-            "type": "code",
-            "title": "setTimeout ⏲️",
-            "content": "The simplest async function is `setTimeout`.\n\nIt waits for a time (in milliseconds), then runs the callback.",
-            "codeSnippet": "console.log('Start');\n\nsetTimeout(function() {\n  console.log('Wait for me!');\n}, 2000);\n\nconsole.log('End');",
-            "codeLanguage": "javascript",
-            "canRunCode": true
+            "type": "text",
+            "title": "The Old Way 🏛️",
+            "content": "## By ID and Class\n\nFor 20 years, developers exclusively used two main methods to find things:\n\n1. `document.getElementById(\"login\")`: Finds exactly 1 unique element that has `id=\"login\"`.\n2. `document.getElementsByClassName(\"card\")`: Finds a massive Array of EVERY element that uses the `class=\"card\"`.\n\nThese methods still work perfectly, but they are a bit clunky and only let you search by one specific attribute."
         },
         {
             "id": "s_l2_3",
-            "type": "quiz",
-            "title": "Quick Check 🧠",
-            "content": "In the example above, what order do the logs appear?",
-            "quizData": {
-                "id": "q_l2_1",
-                "type": "multiple_choice",
-                "question": "Order of logs?",
-                "options": [
-                    {
-                        "id": "opt1",
-                        "text": "Start -> Wait for me! -> End",
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "opt2",
-                        "text": "Start -> End -> Wait for me!",
-                        "isCorrect": true
-                    }
-                ],
-                "explanation": "JS prints 'End' immediately because it doesn't wait for the timeout."
-            }
+            "type": "text",
+            "title": "The Modern Way ✨",
+            "content": "## querySelector()\n\nModern JavaScript introduced a much more powerful method: **`querySelector()`**.\n\nInstead of searching explicitly by ID or Class, you just pass it a standard **CSS Selector** (exactly the same way you style things using `.css` files!).\n\n```javascript\n// Pass a # to find an ID\nlet loginBtn = document.querySelector(\"#login-btn\");\n\n// Pass a . to find a Class\nlet firstCard = document.querySelector(\".card\");\n\n// Pass nothing to search by raw HTML Tag!\nlet firstParagraph = document.querySelector(\"p\");\n```"
         },
         {
             "id": "s_l2_4",
-            "type": "text",
-            "title": "Callback Hell 🔥",
-            "content": "Callbacks can get messy if you nest them too deep.\n\nThis is called **Callback Hell** or the Pyramid of Doom."
-        },
-        {
-            "id": "s_l2_5",
             "type": "quiz",
             "title": "Quick Check 🧠",
             "content": "",
             "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the primary difference in how you write standard `document.getElementById(\"box\")` versus the modern `document.querySelector(\"#box\")`?",
+                "options": [
+                    {"id": "opt1", "text": "querySelector requires parentheses", "isCorrect": false},
+                    {"id": "opt2", "text": "querySelector requires standard CSS notation like '#' or '.' to know what it is looking for.", "isCorrect": true},
+                    {"id": "opt3", "text": "getElementById is faster", "isCorrect": false},
+                    {"id": "opt4", "text": "They are exactly the same", "isCorrect": false}
+                ],
+                "explanation": "Because querySelector is a highly flexible multi-tool, you MUST provide explicit CSS symbols (. for class, # for ID) so it knows exactly what to look for.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_5",
+            "type": "warning",
+            "title": "Finding Multiple Items 📦",
+            "content": "## querySelectorAll()\n\nStandard `querySelector()` is lazy. It scans the page, grabs the absolute **FIRST** match it finds, and completely ignores the rest.\n\nIf you want a list of EVERY item that matches the CSS selector, you must use **`querySelectorAll()`**.\n\n```javascript\n// Returns a NodeList (an Array!) of ALL items with this class\nlet allCards = document.querySelectorAll(\".card\");\n\n// Because it acts like an Array, we can loop it!\nallCards.forEach((card) => {\n  console.log(card);\n});\n```"
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Final Check 🧠",
+            "content": "",
+            "quizData": {
                 "id": "q_l2_2",
                 "type": "multiple_choice",
-                "question": "Is deeply nested code good?",
+                "question": "If you have 10 `<p>` tags on your website, and you run `let text = document.querySelector(\"p\");`, what is saved in the variable?",
                 "options": [
-                    {
-                        "id": "opt1",
-                        "text": "Yes, very organized",
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "opt2",
-                        "text": "No, hard to read",
-                        "isCorrect": true
-                    }
+                    {"id": "opt1", "text": "An array of 10 tags", "isCorrect": false},
+                    {"id": "opt2", "text": "Only the first <p> tag", "isCorrect": true},
+                    {"id": "opt3", "text": "Only the very last <p> tag", "isCorrect": false},
+                    {"id": "opt4", "text": "undefined", "isCorrect": false}
                 ],
-                "explanation": "We want clean, flat code."
+                "explanation": "Standard querySelector() grabs the FIRST matching item and immediately stops searching. To get all 10, you must use querySelectorAll()!",
+                "xpReward": 10
             }
         }
     ]

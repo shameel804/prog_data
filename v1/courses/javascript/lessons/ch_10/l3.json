@@ -1,61 +1,38 @@
 {
     "id": "l3",
     "chapterId": "ch_10",
-    "title": "Rest Parameters 🎒",
-    "description": "Gathering leftovers.",
-    "xpReward": 25,
-    "estimatedMinutes": 4,
-    "section": "Functions",
+    "title": "Spread & Rest Operators ... 💥",
+    "description": "Combine massive objects and clone arrays flawlessly.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Advanced",
     "slides": [
         {
             "id": "s_l3_1",
             "type": "text",
-            "title": "Gathering Leftovers 🧹",
-            "content": "What if you don't know how many arguments a function will receive?\n\nUse the **Rest Parameter** `...`."
+            "title": "The Exploding Array 💥",
+            "content": "# The Spread Operator `...`\n\nThe most distinctive symbol in modern JavaScript is the **Spread Operator**, which is just three simple dots: `...`\n\nThe Spread operator does exactly what its name implies: it explodes an Array (or Object) and \"spreads\" its internal contents out into the open space.\n\n```javascript\nlet nums = [1, 2, 3];\n\n// Look closely at what happens when we log it WITH the spread dots!\nconsole.log( ...nums ); \n// Outputs exactly: 1 2 3\n```"
         },
         {
             "id": "s_l3_2",
-            "type": "code",
-            "title": "Example 🎒",
-            "content": "It collects all remaining arguments into an ARRAY.",
-            "codeSnippet": "function sum(...numbers) {\n  let total = 0;\n  for (let n of numbers) {\n    total += n;\n  }\n  return total;\n}\n\nconsole.log(sum(1, 2, 3, 4)); // 10",
-            "codeLanguage": "javascript",
-            "canRunCode": true
+            "type": "text",
+            "title": "Cloning and Combining 🧬",
+            "content": "## Merging Data Instantly\n\nBefore Spread, combining two arrays usually required complex `.concat()` methods or slow loops.\n\nNow, we just open a brand new Array `[]`, explode the first one inside it, and explode the second one inside it!\n\n```javascript\nlet group1 = [\"Alice\", \"Bob\"];\nlet group2 = [\"Charlie\", \"Dave\"];\n\n// Explode both perfectly into a brand NEW array!\nlet combined = [...group1, ...group2];\n\nconsole.log(combined); // [\"Alice\", \"Bob\", \"Charlie\", \"Dave\"]\n```"
         },
         {
             "id": "s_l3_3",
-            "type": "quiz",
-            "title": "Quick Check 🧠",
-            "content": "",
-            "quizData": {
-                "id": "q_l3_1",
-                "type": "multiple_choice",
-                "question": "What type is the rest parameter?",
-                "options": [
-                    {
-                        "id": "opt1",
-                        "text": "Object",
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "opt2",
-                        "text": "Array",
-                        "isCorrect": true
-                    },
-                    {
-                        "id": "opt3",
-                        "text": "String",
-                        "isCorrect": false
-                    }
-                ],
-                "explanation": "It gathers arguments into a true Array."
-            }
+            "type": "text",
+            "title": "Spreading Objects 🗄️",
+            "content": "## Updating Profiles\n\nSpread is incredibly powerful for Objects. It copies every single key/value pair into a new object! \n\nEven better, if you spread an object, but then type out a matching key, it seamlessly overwrites the old data!\n\n```javascript\nlet user = { name: \"Alice\", age: 25 };\n\n// We open a NEW object, explode the old data inside, but overwrite Age!\nlet updatedUser = { ...user, age: 30 };\n\nconsole.log(updatedUser); // { name: \"Alice\", age: 30 }\n```"
         },
         {
             "id": "s_l3_4",
-            "type": "text",
-            "title": "Must be Last 🏁",
-            "content": "The rest parameter must be the **last** parameter in the list."
+            "type": "code",
+            "title": "Try It Out 💻",
+            "content": "Notice how spreading creates a PERFECT 1-to-1 clone of an object, leaving the fragile original perfectly untouched and safe!",
+            "codeSnippet": "let baseEnemy = { hp: 100, speed: 50, type: \"Grunt\" };\n\n// We spawn a Boss by cloning all the Grunt stats, but upgrading the HP!\nlet bossEnemy = { ...baseEnemy, hp: 5000, type: \"Boss\" };\n\nconsole.log(\"Base Enemy HP: \", baseEnemy.hp);\nconsole.log(\"Boss Enemy HP: \", bossEnemy.hp);",
+            "codeLanguage": "javascript",
+            "canRunCode": true
         },
         {
             "id": "s_l3_5",
@@ -63,22 +40,42 @@
             "title": "Quick Check 🧠",
             "content": "",
             "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "When spreading an object inside a NEW object `let cloned = { ...user, name: \"Bob\" }`, why did 'Bob' overwrite the original name?",
+                "options": [
+                    {"id": "opt1", "text": "Because spreading deletes the original completely", "isCorrect": false},
+                    {"id": "opt2", "text": "Because 'Bob' comes AFTER the spread. In JavaScript objects, the very last duplicated Key always wins cleanly.", "isCorrect": true},
+                    {"id": "opt3", "text": "Because bob is alphabetical", "isCorrect": false},
+                    {"id": "opt4", "text": "Because it caused an error", "isCorrect": false}
+                ],
+                "explanation": "If an object contains {name: 'A', name: 'B'}, it only keeps the very final (latest) entry! Thus spreading, then writing a new key, beautifully overwrites the cloned data.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_6",
+            "type": "warning",
+            "title": "The Rest Operator 🗑️",
+            "content": "## Packing it up\n\nThe three dots `...` have a dual identity. If used inside a Function Parameter definition, it does the exact REVERSE of Spread. It acts as the **Rest Operator**.\n\nIt \"gathers up the rest\" of the randomly provided arguments and packs them tightly into an Array!\n\n```javascript\n// It will pack all remaining arguments into a 'numbers' array!\nfunction printNumbers(a, b, ...numbers) {\n  console.log(numbers);\n}\n\n// We called it with 5 arguments.\nprintNumbers(\"First\", \"Second\", 3, 4, 5);\n// Outputs: [ 3, 4, 5 ]\n```"
+        },
+        {
+            "id": "s_l3_7",
+            "type": "quiz",
+            "title": "Final Logic Check 🧠",
+            "content": "",
+            "quizData": {
                 "id": "q_l3_2",
                 "type": "multiple_choice",
-                "question": "Is this valid: `function f(...rest, first)`?",
+                "question": "What is the core difference between Spread and Rest (even though they share the exact `...` syntax)?",
                 "options": [
-                    {
-                        "id": "opt1",
-                        "text": "Yes",
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "opt2",
-                        "text": "No",
-                        "isCorrect": true
-                    }
+                    {"id": "opt1", "text": "There is no difference, they are identical", "isCorrect": false},
+                    {"id": "opt2", "text": "Spread explodes an Array OUT into open items. Rest gathers open items IN to form an Array.", "isCorrect": true},
+                    {"id": "opt3", "text": "Spread is for Arrays, Rest is for Objects", "isCorrect": false},
+                    {"id": "opt4", "text": "Rest deletes the data", "isCorrect": false}
                 ],
-                "explanation": "No, you can't have parameters *after* the rest parameter."
+                "explanation": "Spread = Unpacking a box scattering it across the floor. Rest = Looking at loose items on the floor, packing them neatly back into an 'Array' box.",
+                "xpReward": 10
             }
         }
     ]

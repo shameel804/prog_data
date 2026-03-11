@@ -1,88 +1,62 @@
 {
     "id": "l4",
     "chapterId": "ch_6",
-    "title": "Updating Objects 📝",
-    "description": "Changing value inside.",
-    "xpReward": 25,
-    "estimatedMinutes": 4,
-    "section": "Manipulation",
+    "title": "Scope: Global vs Local 🌍",
+    "description": "Understand where variables live and who can see them.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Advanced",
     "slides": [
         {
             "id": "s_l4_1",
             "type": "text",
-            "title": "Changing Values ✏️",
-            "content": "Objects are **mutable** just like arrays.\n\nYou can change any value using `=`."
+            "title": "The One-Way Mirror 🪞",
+            "content": "# Understanding Scope\n\nWhen you create a variable using `let` or `const`, it can't always be seen by every line of code in your file.\n\n**Scope** dictates \"who can see what\". In JavaScript, scope works like a one-way mirror. \n\n* Inner blocks of code CAN see variables outside of them.\n* Outer blocks of code CANNOT see variables created inside inner blocks."
         },
         {
             "id": "s_l4_2",
+            "type": "text",
+            "title": "Global Scope 🌍",
+            "content": "## Seeing Everything\n\nIf you create a variable right in the main body of your JavaScript file (not inside any `{}`), it has **Global Scope**.\n\nGlobal variables are like the sun ☀️. Everything on the planet (every function and block in the file) can see and use them.\n\n```javascript\nlet userName = \"Alice\"; // Global Scope\n\nfunction sayHi() {\n  // Functions can perfectly see global variables!\n  console.log(\"Hi, \" + userName);\n}\nsayHi();\n```"
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Local Scope (Block Scope) 🏠",
+            "content": "## Keeping Secrets\n\nIf you create a variable *inside* a set of curly braces `{}` — like inside a function, an if-statement, or a loop — it is **Local Scope** (or Block Scope).\n\nIt is trapped! It only exists while that block is running, and nothing outside the block can see it.\n\n```javascript\nfunction createPassword() {\n  let secretCode = \"1234\"; // Local Scope\n}\n\ncreatePassword();\n\n// Error! secretCode does not exist out here!\nconsole.log(secretCode); \n```"
+        },
+        {
+            "id": "s_l4_4",
             "type": "quiz",
             "title": "Quick Check 🧠",
             "content": "",
             "quizData": {
                 "id": "q_l4_1",
                 "type": "multiple_choice",
-                "question": "Can you change object properties?",
+                "question": "Can an 'if' statement block access a variable created in the Global Scope?",
                 "options": [
-                    {
-                        "id": "opt1",
-                        "text": "Yes",
-                        "isCorrect": true
-                    },
-                    {
-                        "id": "opt2",
-                        "text": "No, they are frozen",
-                        "isCorrect": false
-                    }
+                    {"id": "opt1", "text": "Yes, inner blocks can look OUT and see global variables.", "isCorrect": true},
+                    {"id": "opt2", "text": "No, if blocks can only use variables made inside them.", "isCorrect": false},
+                    {"id": "opt3", "text": "Only if using the var keyword", "isCorrect": false}
                 ],
-                "explanation": "You can assign new values."
+                "explanation": "Correct! It works like a one-way mirror. The inner blocks look OUT to see global variables. But the global file cannot look IN at the local variables.",
+                "xpReward": 10
             }
-        },
-        {
-            "id": "s_l4_3",
-            "type": "code",
-            "title": "Overwrite & Add ➕",
-            "content": "If the key exists, it updates it.\nIf it doesn't, it ADDS it!",
-            "codeSnippet": "let user = { Name: 'Ben' };\nuser.Name = 'Benjamin'; // Update\nuser.Age = 30; // Add new!\n\nconsole.log(user);",
-            "codeLanguage": "javascript",
-            "canRunCode": true
-        },
-        {
-            "id": "s_l4_4",
-            "type": "code",
-            "title": "Deleting 🗑️",
-            "content": "Use the `delete` keyword to remove a property completely.",
-            "codeSnippet": "let bug = { legs: 8, fly: true };\ndelete bug.fly;\nconsole.log(bug); // { legs: 8 }",
-            "codeLanguage": "javascript",
-            "canRunCode": true
         },
         {
             "id": "s_l4_5",
-            "type": "quiz",
-            "title": "Quick Check 🧠",
-            "content": "",
-            "quizData": {
-                "id": "q_l4_2",
-                "type": "multiple_choice",
-                "question": "What keyword removes a property?",
-                "options": [
-                    {
-                        "id": "opt1",
-                        "text": "remove",
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "opt2",
-                        "text": "pop",
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "opt3",
-                        "text": "delete",
-                        "isCorrect": true
-                    }
-                ],
-                "explanation": "`delete` is the operator specifically for this."
-            }
+            "type": "code",
+            "title": "Scope Clashing 💥",
+            "content": "What happens if a global and a local variable have the exact same name? The inner scope always wins! Try guessing what this prints before running it.",
+            "codeSnippet": "let hero = \"Superman\"; // Global\n\nfunction showHero() {\n  let hero = \"Batman\"; // Local\n  console.log(\"Inside function: \" + hero);\n}\n\nshowHero();\nconsole.log(\"Outside function: \" + hero);",
+            "codeLanguage": "javascript",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_6",
+            "type": "warning",
+            "title": "Why Scope is Good 🦸‍♂️",
+            "content": "## Preventing Chaos\n\nYou might think, \"Why not make every variable Global?\"\n\nIf you have a 10,000 line application and use `let x = 5;` somewhere, you don't want to accidentally overwrite another developer's `let x` miles away!\n\nLocal scope functions act like little black boxes. What happens inside them, stays inside them, keeping your large applications safe from cross-contamination! ☣️"
         }
     ]
 }

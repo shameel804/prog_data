@@ -1,64 +1,35 @@
 {
     "id": "l4",
     "chapterId": "ch_10",
-    "title": "Template Literals 📜",
-    "description": "Super strings.",
-    "xpReward": 25,
-    "estimatedMinutes": 3,
-    "section": "Syntax",
+    "title": "Promises & Async JS ⏳",
+    "description": "Stop code blocking. Learn how to tell JavaScript to 'wait its turn'.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "Advanced",
     "slides": [
         {
             "id": "s_l4_1",
             "type": "text",
-            "title": "Backticks ` `",
-            "content": "Template Literals use backticks (` `) instead of quotes (' ' or \" \").\n\nThey have two superpowers:\n1. Multi-line strings\n2. String Interpolation"
+            "title": "The Traffic Jam 🚗",
+            "content": "# Synchronous Execution\n\nJavaScript is intrinsically **Synchronous**. This means it runs code line-by-line. Line 10 absolutely cannot execute until Line 9 is completely finished.\n\nImagine if Line 9 involves asking an internet Database to securely log in the user, taking 5 entire seconds to complete!\n\nThe entire website completely freezes (blocks) for 5 seconds waiting for Line 9 to finish. The user cannot scroll or click! This is a disaster."
         },
         {
             "id": "s_l4_2",
-            "type": "code",
-            "title": "Interpolation ✨",
-            "content": "You can put variables directly inside the string using `${name}`!",
-            "codeSnippet": "let name = 'Alice';\nconsole.log(`Hello, ${name}!`);",
-            "codeLanguage": "javascript",
-            "canRunCode": true
+            "type": "text",
+            "title": "Asynchronous JavaScript 🛣️",
+            "content": "## Adding a Second Lane\n\nTo solve the \"blocking\" freeze, JavaScript uses **Asynchronous** behavior.\n\nWhen a time-consuming task is called (like downloading a file), JavaScript essentially throws that task into an empty background lane, and immediately rushes ahead executing Line 10!\n\nThe user can keep scrolling flawlessly while the heavy file downloads silently in the background!"
         },
         {
             "id": "s_l4_3",
-            "type": "quiz",
-            "title": "Quick Check 🧠",
-            "content": "",
-            "quizData": {
-                "id": "q_l4_1",
-                "type": "multiple_choice",
-                "question": "Which symbol is used for template literals?",
-                "options": [
-                    {
-                        "id": "opt1",
-                        "text": "' (Single Quote)",
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "opt2",
-                        "text": "` (Backtick)",
-                        "isCorrect": true
-                    },
-                    {
-                        "id": "opt3",
-                        "text": "\" (Double Quote)",
-                        "isCorrect": false
-                    }
-                ],
-                "explanation": "Backticks are typically above the TAB key."
-            }
+            "type": "text",
+            "title": "The Promise Object 🤝",
+            "content": "## I Owe You\n\nHow do we know when the background task actually finishes assembling the data?\n\nWhen JavaScript throws the massive task to the background lane, the task instantly hands back an I.O.U ticket called a **`Promise`**.\n\nA Promise simply states: \"This variable is totally empty right now, but I PROMISE you I will magically fill it with real data the exact second the background download finishes.\""
         },
         {
             "id": "s_l4_4",
-            "type": "code",
-            "title": "Many Lines 📜",
-            "content": "No more `\\n` for new lines.",
-            "codeSnippet": "let poem = `Roses are red,\nViolets are blue,\nCode is fun,\nAnd so are you!`;\n\nconsole.log(poem);",
-            "codeLanguage": "javascript",
-            "canRunCode": true
+            "type": "text",
+            "title": ".then() and .catch() 🎣",
+            "content": "## Collecting the Debt\n\nInstead of freezing the browser, we use `.then()` directly on the Promise ticket.\n\nWe say: \"Hey JavaScript, go ahead and keep running the rest of the website code without waiting. But **.then()** when you finally get the data from the background, run this specific callback function!\"\n\n```javascript\n// Fake network request that returns a Promise ticket!\ndownloadUserData()\n  .then(function(realData) {\n    // This only fires 5 seconds later!\n    console.log(\"File finished downloading: \", realData);\n  })\n  .catch(function(error) {\n    // If the internet completely crashed, run this!\n    console.log(\"Failed! \", error);\n  });\n```"
         },
         {
             "id": "s_l4_5",
@@ -66,22 +37,36 @@
             "title": "Quick Check 🧠",
             "content": "",
             "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is the primary architectural purpose of a 'Promise' in JavaScript?",
+                "options": [
+                    {"id": "opt1", "text": "To guarantee that a variable will never be changed by another function", "isCorrect": false},
+                    {"id": "opt2", "text": "To act as a temporary place-holder ticket for Asynchronous data that has not finished downloading from the background lane yet", "isCorrect": true},
+                    {"id": "opt3", "text": "To stop the user from closing the browser tab", "isCorrect": false},
+                    {"id": "opt4", "text": "It is an alternative to standard arrays", "isCorrect": false}
+                ],
+                "explanation": "Because JavaScript immediately sprinted past the download task, it needed SOMETHING physical to store in the variable spot. It stores the empty 'Promise' ticket, which acts as a beacon waiting for the real data.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Final Logic Check 🧠",
+            "content": "",
+            "quizData": {
                 "id": "q_l4_2",
                 "type": "multiple_choice",
-                "question": "Can you put math inside `${}`?",
+                "question": "What is the primary catastrophe that happens during purely 'Synchronous' blocking execution when a massive 15-second database request occurs?",
                 "options": [
-                    {
-                        "id": "opt1",
-                        "text": "Yes, any expression",
-                        "isCorrect": true
-                    },
-                    {
-                        "id": "opt2",
-                        "text": "No, just variables",
-                        "isCorrect": false
-                    }
+                    {"id": "opt1", "text": "The entire browser tab is physically frozen (blocked) and completely fails to respond to any user scrolling or clicking until the task completes.", "isCorrect": true},
+                    {"id": "opt2", "text": "The internet connection drops", "isCorrect": false},
+                    {"id": "opt3", "text": "The database rejects the request", "isCorrect": false},
+                    {"id": "opt4", "text": "The CSS colors invert", "isCorrect": false}
                 ],
-                "explanation": "`console.log(`1 + 1 is ${1 + 1}`)` works perfectly."
+                "explanation": "Synchronous means Single Line strict execution! If Line 5 takes 15 seconds, Line 6 (which updates the mouse clicks or scrolling) physically cannot exist. The tab locks up solid.",
+                "xpReward": 10
             }
         }
     ]

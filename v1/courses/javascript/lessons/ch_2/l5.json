@@ -1,17 +1,17 @@
 {
     "id": "l5",
     "chapterId": "ch_2",
-    "title": "True or False? ✅",
-    "description": "Understanding Booleans.",
+    "title": "Type Conversion & typeof 🔄",
+    "description": "Convert between types and inspect what type your data is.",
     "xpReward": 25,
-    "estimatedMinutes": 3,
-    "section": "Data Types",
+    "estimatedMinutes": 7,
+    "section": "Advanced",
     "slides": [
         {
             "id": "s_l5_1",
             "type": "text",
-            "title": "Yes or No? 👍👎",
-            "content": "A **Boolean** data type has only two possible values:\n\n* `true` (Yes, On, 1)\n* `false` (No, Off, 0)\n\nIt's named after George Boole!"
+            "title": "What's My Type? 🕵️",
+            "content": "# The typeof Operator\n\nSometimes, especially when dealing with data given to you by a user, you won't know exactly what type of data you're looking at. Is it a number `5`? Or the string `\"5\"`?\n\nJavaScript gives us a built-in detective called **`typeof`**.\n\n```javascript\nconsole.log(typeof 42);           // Prints: \"number\"\nconsole.log(typeof \"Hello\");      // Prints: \"string\"\nconsole.log(typeof true);         // Prints: \"boolean\"\nconsole.log(typeof undefined);    // Prints: \"undefined\"\n```\n\nIt's like asking JavaScript: \"Hey, what kind of box is this?\""
         },
         {
             "id": "s_l5_2",
@@ -21,65 +21,87 @@
             "quizData": {
                 "id": "q_l5_1",
                 "type": "multiple_choice",
-                "question": "Which of these is a Boolean?",
+                "question": "What will typeof \"100\" return?",
                 "options": [
-                    {
-                        "id": "opt1",
-                        "text": "'true'",
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "opt2",
-                        "text": "true",
-                        "isCorrect": true
-                    },
-                    {
-                        "id": "opt3",
-                        "text": "1",
-                        "isCorrect": false
-                    }
+                    {"id": "opt1", "text": "\"number\"", "isCorrect": false},
+                    {"id": "opt2", "text": "\"string\"", "isCorrect": true},
+                    {"id": "opt3", "text": "\"boolean\"", "isCorrect": false},
+                    {"id": "opt4", "text": "Error", "isCorrect": false}
                 ],
-                "explanation": "`true` without quotes is a Boolean keyword."
+                "explanation": "Because \"100\" has quotes around it, it is a String, not a Number.",
+                "xpReward": 10
             }
         },
         {
             "id": "s_l5_3",
+            "type": "text",
+            "title": "Converting Types 🔄",
+            "content": "## Manual Type Conversion\n\nEarlier, we saw that `\"5\" + 5` results in `\"55\"` because JavaScript **coerces** (forces) the number into a string.\n\nWhat if we actually wanted them to add mathematically? We need to convert the string `\"5\"` into the number `5` first!\n\nWe can do this using built-in functions:\n\n* **`Number()`** → Converts data into a Number\n* **`String()`** → Converts data into a String\n* **`Boolean()`** → Converts data into a Boolean"
+        },
+        {
+            "id": "s_l5_4",
             "type": "code",
-            "title": "Logic Gates 🚪",
-            "content": "Booleans are used to make decisions in code (if this is true, do that).\n\nWe'll use them a lot with `if` statements later!",
-            "codeSnippet": "let isRaining = true;\nlet isSunny = false;\nconsole.log(isRaining);",
+            "title": "String to Number 🔢",
+            "content": "Notice the difference when we use Number():",
+            "codeSnippet": "let stringFive = \"5\";\nlet stringTen = \"10\";\n\n// String Math (concatenation!)\nconsole.log(stringFive + stringTen);  // Output: \"510\"\n\n// Real Math (conversion!)\nconsole.log(Number(stringFive) + Number(stringTen)); // Output: 15",
             "codeLanguage": "javascript",
             "canRunCode": true
         },
         {
-            "id": "s_l5_4",
-            "type": "tip",
-            "title": "No Quotes! 🚫",
-            "content": "## Important\n\n`true` is a Boolean.\n`'true'` is just text (String).\n\nThey act very differently!"
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Number to String 📝",
+            "content": "## Converting to Text\n\nConverting the other way is just as easy using **`String()`**.\n\n```javascript\nlet pi = 3.14159;\nlet textPi = String(pi);\n```\n\nWhy would you do this? Sometimes you need to check how many characters long a number is, or you need to format it in a specific way for a user interface."
         },
         {
-            "id": "s_l5_5",
+            "id": "s_l5_6",
             "type": "quiz",
-            "title": "Quick Check 🧠",
+            "title": "Knowledge Check 🧠",
             "content": "",
             "quizData": {
                 "id": "q_l5_2",
                 "type": "multiple_choice",
-                "question": "Is 'false' a Boolean?",
+                "question": "Which function safely converts the string \"42\" into a usable mathematical number?",
                 "options": [
-                    {
-                        "id": "opt1",
-                        "text": "Yes",
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "opt2",
-                        "text": "No, it's a String",
-                        "isCorrect": true
-                    }
+                    {"id": "opt1", "text": "let x = Int(\"42\")", "isCorrect": false},
+                    {"id": "opt2", "text": "let x = String(\"42\")", "isCorrect": false},
+                    {"id": "opt3", "text": "let x = Math(\"42\")", "isCorrect": false},
+                    {"id": "opt4", "text": "let x = Number(\"42\")", "isCorrect": true}
                 ],
-                "explanation": "Because it's wrapped in quotes, it's text."
+                "explanation": "The Number() function takes a string (or other type) and attempts to convert it into a pure Number.",
+                "xpReward": 10
             }
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Failing to Convert: NaN 🤯",
+            "content": "## Not a Number (NaN)\n\nWhat happens if you ask JavaScript to turn the word `\"Apple\"` into a Number?\n\n```javascript\nlet result = Number(\"Apple\");\nconsole.log(result); // Prints: NaN\n```\n\n**`NaN`** stands for **Not a Number**. It's JavaScript's way of saying: \"I tried to do math on this, but it physically makes no sense.\"\n\nIf you ever see `NaN` popping up in your games or apps, it means somewhere you accidentally tried to do math with a Word or an Undefined value!"
+        },
+        {
+            "id": "s_l5_8",
+            "type": "quiz",
+            "title": "Final Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_3",
+                "type": "multiple_choice",
+                "question": "What does NaN stand for in JavaScript?",
+                "options": [
+                    {"id": "opt1", "text": "No active Network", "isCorrect": false},
+                    {"id": "opt2", "text": "Not a Number", "isCorrect": true},
+                    {"id": "opt3", "text": "Null and Nothing", "isCorrect": false},
+                    {"id": "opt4", "text": "Numeric array Notation", "isCorrect": false}
+                ],
+                "explanation": "NaN stands for Not a Number. It appears when a mathematical operation fails or when trying to convert invalid text into a number.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_9",
+            "type": "text",
+            "title": "Chapter Summary! 🎉",
+            "content": "## You Finished Chapter 2!\n\nYou've mastered the building blocks of JavaScript:\n\n* **Variables:** `let` and `const` to store data\n* **Numbers:** Doing math in code\n* **Strings:** Managing text with quotes and backticks\n* **Booleans:** `true` and `false` logic\n* **Empty values:** `null` and `undefined`\n* **Type checking and conversion:** `typeof()`, `Number()`, and `String()`\n\nUp next: Chapter 3, where we learn how to **compare** data and build complex expressions! 🚀"
         }
     ]
 }

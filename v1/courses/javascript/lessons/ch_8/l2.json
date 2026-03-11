@@ -1,89 +1,73 @@
 {
     "id": "l2",
     "chapterId": "ch_8",
-    "title": "Selecting Elements 🎯",
-    "description": "Finding things on the page.",
+    "title": "Length & Searching 🔎",
+    "description": "Find exactly what you are looking for inside massive strings.",
     "xpReward": 25,
-    "estimatedMinutes": 5,
-    "section": "Selection",
+    "estimatedMinutes": 8,
+    "section": "Strings",
     "slides": [
         {
             "id": "s_l2_1",
             "type": "text",
-            "title": "The Hook 🪝",
-            "content": "To change something on the page (like a header), you first need to **select** it.\n\nThe most powerful way is `document.querySelector()`."
+            "title": "Measuring Length 📏",
+            "content": "# How Big Is It?\n\nJust like arrays, every string comes with a built-in `.length` property that tells you exactly how many characters are inside it (including spaces and punctuation!).\n\n```javascript\nlet tweet = \"Hello world!\";\n\nconsole.log(tweet.length); \n// Outputs: 12 (10 letters + 1 space + 1 exclamation)\n```\n\nIf you want to build a feature like Twitter's 280-character limit, you would simply write an `if` statement checking if `tweet.length > 280`!"
         },
         {
             "id": "s_l2_2",
+            "type": "text",
+            "title": "Finding Text 🔎",
+            "content": "## indexOf()\n\nHow do we know if a paragraph contains a specific word?\n\nWe use the **`.indexOf()`** method. You pass it a search string, and it will return the **exact starting index number** where it found that text!\n\n```javascript\nlet phrase = \"I love coding in JavaScript\";\n\nconsole.log( phrase.indexOf(\"coding\") ); // Outputs: 7\n```\n\nThe word \"coding\" starts at the 7th indexed character of the string!"
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Missing Text? 👻",
+            "content": "What happens if .indexOf() searches for a word but cannot find it anywhere?",
+            "codeSnippet": "let phrase = \"I love coding in JavaScript\";\n\n// We are searching for a word that doesn't exist\nlet searchResult = phrase.indexOf(\"Python\");\n\n// Look carefully at this result! It's an important number in JavaScript.\nconsole.log(\"Search returned: \" + searchResult);\n\nif (searchResult === -1) {\n  console.log(\"Word not found! ❌\");\n}",
+            "codeLanguage": "javascript",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_4",
             "type": "quiz",
             "title": "Quick Check 🧠",
             "content": "",
             "quizData": {
                 "id": "q_l2_1",
                 "type": "multiple_choice",
-                "question": "Which method finds the first match?",
+                "question": "What number does `.indexOf()` return if it CANNOT find the text you are searching for?",
                 "options": [
-                    {
-                        "id": "opt1",
-                        "text": "find()",
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "opt2",
-                        "text": "querySelector()",
-                        "isCorrect": true
-                    },
-                    {
-                        "id": "opt3",
-                        "text": "select()",
-                        "isCorrect": false
-                    }
+                    {"id": "opt1", "text": "false", "isCorrect": false},
+                    {"id": "opt2", "text": "0", "isCorrect": false},
+                    {"id": "opt3", "text": "-1", "isCorrect": true},
+                    {"id": "opt4", "text": "undefined", "isCorrect": false}
                 ],
-                "explanation": "`querySelector` returns the first matching element."
+                "explanation": "It returns -1. Why? Because 0 is a valid index! If your search word is at the very beginning of the string, it will return 0.",
+                "xpReward": 10
             }
         },
         {
-            "id": "s_l2_3",
-            "type": "text",
-            "title": "CSS Selectors 🎨",
-            "content": "It uses the same selectors as CSS!\n\n* `querySelector('h1')` finds the first `<h1>`.\n* `querySelector('.btn')` finds the first with class `btn`.\n* `querySelector('#main')` finds the ID `main`."
-        },
-        {
-            "id": "s_l2_4",
-            "type": "code",
-            "title": "Example 🔎",
-            "content": "Let's grab the main title.",
-            "codeSnippet": "// HTML: <h1 id=\"title\">Hello</h1>\n\nlet title = document.querySelector('#title');\nconsole.log(title);",
-            "codeLanguage": "javascript",
-            "canRunCode": false
-        },
-        {
             "id": "s_l2_5",
+            "type": "text",
+            "title": "The Modern Solution ✨",
+            "content": "## includes()\n\nOften, we don't care *where* the word is; we just want a simple True/False answer if it exists.\n\nModern JavaScript gives us **`.includes()`**! It returns `true` if the text exists, and `false` if it doesn't.\n\n```javascript\nlet url = \"https://google.com\";\n\nif (url.includes(\"https://\")) {\n  console.log(\"This connection is secure! 🔒\");\n}\n```\n\nThis is much cleaner than writing `if (url.indexOf() > -1)`!"
+        },
+        {
+            "id": "s_l2_6",
             "type": "quiz",
-            "title": "Quick Check 🧠",
+            "title": "Final Logic Check 🧠",
             "content": "",
             "quizData": {
                 "id": "q_l2_2",
                 "type": "multiple_choice",
-                "question": "How do you select an element with class 'hero'?",
+                "question": "Is `.includes()` case-sensitive? Would `\"Apple\".includes(\"apple\")` return true or false?",
                 "options": [
-                    {
-                        "id": "opt1",
-                        "text": "querySelector('hero')",
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "opt2",
-                        "text": "querySelector('.hero')",
-                        "isCorrect": true
-                    },
-                    {
-                        "id": "opt3",
-                        "text": "querySelector('#hero')",
-                        "isCorrect": false
-                    }
+                    {"id": "opt1", "text": "True. It ignores casing.", "isCorrect": false},
+                    {"id": "opt2", "text": "False. It perfectly matches the casing.", "isCorrect": true}
                 ],
-                "explanation": "Classes are prefixed with a dot `.`."
+                "explanation": "JavaScript is fiercely case-sensitive. Big 'A' and little 'a' are completely different characters to the computer. A common trick is to run .toLowerCase() on the string before you search it!",
+                "xpReward": 10
             }
         }
     ]

@@ -1,61 +1,76 @@
 {
   "id": "l4",
   "chapterId": "ch_7",
-  "title": "Inheritance \ud83e\uddec",
-  "description": "Share blueprints.",
-  "xpReward": 25,
-  "estimatedMinutes": 4,
-  "section": "Content",
+  "title": "Mixins (Superpowers) 🦸‍♂️",
+  "description": "Inject standalone abilities perfectly into any class you want.",
+  "xpReward": 40,
+  "estimatedMinutes": 8,
+  "section": "Architecture",
   "slides": [
     {
-      "id": "s_ch7_l4_1",
+      "id": "s_l4_1",
       "type": "text",
-      "title": "Family Trees \ud83e\uddec",
-      "content": "Why rewrite code? You can make a new class that inherits everything from an existing class using the `extends` keyword."
+      "title": "The Inheritance Problem 🧱",
+      "content": "# The Single Parent Rule\n\nIn Dart, a class can `extend` exactly ONE parent.\nWhat if you have a `class Bird extends Animal` and a `class Airplane extends Vehicle`?\n\nThey BOTH need the ability to `fly()`! But you can't put `fly()` in Animal (dogs can't fly) and you can't put it in Vehicle (cars can't fly).\nAnd you definitely shouldn't write `fly()` twice."
     },
     {
-      "id": "s_ch7_l4_2",
-      "type": "code",
-      "title": "Using extends",
-      "content": "A dog is an animal:",
-      "codeSnippet": "class Animal {\n  void breathe() => print('Breathing');\n}\n\nclass Dog extends Animal {\n  void bark() => print('Woof!');\n}\n\nvoid main() {\n  Dog rex = Dog();\n  rex.breathe(); // Inherited!\n  rex.bark();\n}",
-      "codeLanguage": "dart",
-      "canRunCode": true
+      "id": "s_l4_2",
+      "type": "text",
+      "title": "Enter the Mixin 🧬",
+      "content": "## Reusable Superpowers\n\nA **Mixin** is a standalone chunk of code that you can inject into ANY class, regardless of what its parent is!\n\n```dart\n// We write the ability ONCE\nmixin CanFly {\n  void fly() => print('Whoosh! Im flying!');\n}\n```\nIt's not a blueprint for an object. It's just a superpower waiting to be assigned."
     },
     {
-      "id": "s_ch7_l4_3",
+      "id": "s_l4_3",
       "type": "quiz",
-      "title": "Quick Check \ud83e\udde0",
+      "title": "Quick Check 🧠",
       "content": "",
       "quizData": {
-        "id": "q_ch7_l4_1",
+        "id": "q_l4_1",
         "type": "multiple_choice",
-        "question": "What keyword connects a child class to a parent class?",
+        "question": "Why use a Mixin instead of normal Inheritance (extends)?",
         "options": [
-          {
-            "id": "opt1",
-            "text": "inherits",
-            "isCorrect": false
-          },
-          {
-            "id": "opt2",
-            "text": "shares",
-            "isCorrect": false
-          },
-          {
-            "id": "opt3",
-            "text": "receives",
-            "isCorrect": false
-          },
-          {
-            "id": "opt4",
-            "text": "extends",
-            "isCorrect": true
-          }
+          {"id": "opt1", "text": "Because classes can only extend from one Parent, but might need isolated abilities shared across different families.", "isCorrect": true},
+          {"id": "opt2", "text": "Because inheritance deletes the methods.", "isCorrect": false},
+          {"id": "opt3", "text": "Because mixins run faster.", "isCorrect": false}
         ],
-        "explanation": "`extends` is used to create a subclass inheriting from a parent class.",
+        "explanation": "Mixins solve the 'multiple inheritance' problem. A Bird and a Plane aren't related, but they share the specific 'Flying' trait.",
         "xpReward": 10
       }
+    },
+    {
+      "id": "s_l4_4",
+      "type": "text",
+      "title": "Equipping the Power 🦸",
+      "content": "## Using `with`\n\nTo inject a mixin into a class, we use the `with` keyword alongside our normal `extends`.\n\n```dart\n// Normal Inheritance + Superpower Injection!\nclass Bird extends Animal with CanFly {\n}\n\nclass Airplane extends Vehicle with CanFly {\n}\n```\nNow, both `Bird` and `Airplane` have the `fly()` method, without copying any code!"
+    },
+    {
+      "id": "s_l4_5",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_2",
+        "type": "fill_blank",
+        "question": "Fill in the blank to inject the 'Swimmer' mixin into the Fish class: \nclass Fish _______ Swimmer {\n}",
+        "options": [
+          "using",
+          "extends",
+          "with",
+          "add"
+        ],
+        "correctAnswer": "with",
+        "explanation": "The 'with' keyword attaches the Mixin to the Class.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l4_6",
+      "type": "code",
+      "title": "See it in Action",
+      "content": "You can even inject MULTIPLE mixins by separating them with commas: `with Swimmer, Flyer`!",
+      "codeSnippet": "mixin Jumper {\n  void jump() => print('Jumping high!');\n}\n\nmixin Runner {\n  void run() => print('Running fast!');\n}\n\n// We attach BOTH superpowers to the Athlete!\nclass Athlete with Jumper, Runner {}\n\nvoid main() {\n  Athlete usain = Athlete();\n  usain.run();\n  usain.jump();\n}",
+      "codeLanguage": "dart",
+      "canRunCode": true
     }
   ]
 }

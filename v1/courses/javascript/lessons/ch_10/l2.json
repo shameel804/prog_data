@@ -1,57 +1,36 @@
 {
     "id": "l2",
     "chapterId": "ch_10",
-    "title": "Spread Operator 🧈",
-    "description": "Spreading items out.",
-    "xpReward": 25,
-    "estimatedMinutes": 5,
-    "section": "Syntax",
+    "title": "Destructuring 🎁",
+    "description": "Quickly unpack Arrays and Objects instantly into fresh variables.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Modern JS",
     "slides": [
         {
             "id": "s_l2_1",
             "type": "text",
-            "title": "Spread It Out 🧈",
-            "content": "The **Spread Operator** `...` takes an array and spreads its items into individual elements."
+            "title": "Unpacking the Box 📦",
+            "content": "# The TEDIOUS Way\n\nImagine you have a `user` Object containing a `name` and an `age`.\n\nYou want to create standalone variables for those properties. The old way required typing the object name over and over:\n\n```javascript\nlet user = { name: \"Alice\", age: 25 };\n\n// Annoying repetition!\nlet name = user.name;\nlet age = user.age;\n```\n\nIs there a faster way to rip open the Object and magically pull both variables out at once?"
         },
         {
             "id": "s_l2_2",
-            "type": "code",
-            "title": "Cloning arrays ©",
-            "content": "Make a copy easily.",
-            "codeSnippet": "let nums = [1, 2, 3];\nlet clone = [...nums];\n\nclone.push(4);\nconsole.log(nums); // [1, 2, 3] (Untouched!)",
-            "codeLanguage": "javascript",
-            "canRunCode": true
+            "type": "text",
+            "title": "Object Destructuring 🗄️",
+            "content": "## One Line of Magic\n\nIn ES6, we got **Destructuring**. It uses curly braces {} on the *left* side of the equals sign to \"unpack\" matching properties directly into fresh variables.\n\n```javascript\nlet user = { name: \"Bob\", age: 34 };\n\n// Look at the LEFT side of the equals sign!\nlet { name, age } = user;\n\nconsole.log(name); // Bob\nconsole.log(age);  // 34\n```\n\nIn a single line, JavaScript looked inside the `user` object, found the matching keys, and spawned them as perfectly independent `let` variables!"
         },
         {
             "id": "s_l2_3",
-            "type": "quiz",
-            "title": "Quick Check 🧠",
-            "content": "",
-            "quizData": {
-                "id": "q_l2_1",
-                "type": "multiple_choice",
-                "question": "What happens if you assign `let a = b`?",
-                "options": [
-                    {
-                        "id": "opt1",
-                        "text": "It copies the array",
-                        "isCorrect": false
-                    },
-                    {
-                        "id": "opt2",
-                        "text": "It references the SAME array",
-                        "isCorrect": true
-                    }
-                ],
-                "explanation": "Assignment references the same memory. Spread creates a shallow copy."
-            }
+            "type": "text",
+            "title": "Array Destructuring 🚂",
+            "content": "## Unpacking Lists\n\nYou can do the exact same thing with Arrays, but you use Square Brackets `[]` on the left side instead!\n\nBecause Arrays don't have named keys, Destructuring automatically assigns variables strictly by their ordered Index positions (0, 1, 2).\n\n```javascript\nlet winners = [\"Alice\", \"Bob\", \"Charlie\"];\n\n// Automatically pulls Index 0 and Index 1\nlet [firstGroup, secondGroup] = winners;\n\nconsole.log(firstGroup); // \"Alice\"\n```\n\nWe unpacked the first two spots by position!"
         },
         {
             "id": "s_l2_4",
             "type": "code",
-            "title": "Merging Arrays 🤝",
-            "content": "Combining arrays is super easy.",
-            "codeSnippet": "let odd = [1, 3];\nlet even = [2, 4];\n\nlet all = [...odd, ...even];\nconsole.log(all); // [1, 3, 2, 4]",
+            "title": "Try It Out 💻",
+            "content": "Look how much cleaner it is to destructure an object passed into a function instead of writing 'e.target' or 'user.data' a hundred times!",
+            "codeSnippet": "let systemData = {\n  status: 200,\n  message: \"OK\",\n  ping: 15\n};\n\nfunction printDiagnostics(dataObj) {\n  // Instantly unpack the keys we actually care about!\n  const { status, ping } = dataObj;\n  \n  console.log(\"Status Code: \" + status);\n  console.log(\"Latency: \" + ping + \"ms\");\n}\n\nprintDiagnostics(systemData);",
             "codeLanguage": "javascript",
             "canRunCode": true
         },
@@ -61,22 +40,42 @@
             "title": "Quick Check 🧠",
             "content": "",
             "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What happens if you try to Destructure a key that DOES NOT exist in the target object? (e.g., `let { password } = user;`)",
+                "options": [
+                    {"id": "opt1", "text": "It throws a ReferenceError", "isCorrect": false},
+                    {"id": "opt2", "text": "It finds the closest matching property", "isCorrect": false},
+                    {"id": "opt3", "text": "It successfully creates the variable, but its value is purely 'undefined'", "isCorrect": true},
+                    {"id": "opt4", "text": "It creates the variable with value 'null'", "isCorrect": false}
+                ],
+                "explanation": "JavaScript fails silently. It will build the 'password' variable as requested, check the object, find nothing, and assign 'undefined'.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_6",
+            "type": "warning",
+            "title": "Renaming on the Fly! 🔄",
+            "content": "## Alias Syntax\n\nWhat if you want to pull `user.name`, but the variable `name` is already taken in your app?\n\nYou can pull the exact key, but instantly alias (rename) it inside the Destructuring block using a colon `:`! \n\n```javascript\nlet user = { name: \"Alice\", age: 25 };\n\n// We are pulling the 'name' key, but renaming it to 'firstName'\nlet { name: firstName, age } = user;\n\nconsole.log(firstName); // Prints: Alice\n```\n\nThis is a highly advanced trick used extensively in React!"
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "Final Logic Check 🧠",
+            "content": "",
+            "quizData": {
                 "id": "q_l2_2",
                 "type": "multiple_choice",
-                "question": "Does spread work on Objects too?",
+                "question": "Which set of syntax brackets is required to Destructure an Array into isolated variables by index position?",
                 "options": [
-                    {
-                        "id": "opt1",
-                        "text": "Yes",
-                        "isCorrect": true
-                    },
-                    {
-                        "id": "opt2",
-                        "text": "No, only arrays",
-                        "isCorrect": false
-                    }
+                    {"id": "opt1", "text": "{ curly_braces }", "isCorrect": false},
+                    {"id": "opt2", "text": "[ square_brackets ]", "isCorrect": true},
+                    {"id": "opt3", "text": "( parentheses )", "isCorrect": false},
+                    {"id": "opt4", "text": "< angle_brackets >", "isCorrect": false}
                 ],
-                "explanation": "`let newObj = { ...oldObj }` works great for copying objects."
+                "explanation": "You ALWAYS match the bracket symbol to the data structure. Arrays use []. Objects use {}.",
+                "xpReward": 10
             }
         }
     ]

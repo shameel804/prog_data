@@ -1,61 +1,76 @@
 {
   "id": "l2",
   "chapterId": "ch_8",
-  "title": "The `late` keyword \u23f0",
-  "description": "Promise to initialize later.",
-  "xpReward": 25,
-  "estimatedMinutes": 4,
-  "section": "Content",
+  "title": "Try / Catch 🪂",
+  "description": "Deploy a safety parachute to catch the crash before it hits the ground.",
+  "xpReward": 35,
+  "estimatedMinutes": 7,
+  "section": "Safety Nets",
   "slides": [
     {
-      "id": "s_ch8_l2_1",
+      "id": "s_l2_1",
       "type": "text",
-      "title": "Better Late Than Never \u23f0",
-      "content": "Sometimes you don't know the variable's value immediately, but you promise it won't be null when used.\n\nUse the `late` keyword."
+      "title": "The Safety Net 🕸️",
+      "content": "# Try this... Catch that\n\nTo stop an Exception from destroying your app, we wrap dangerous code inside a `try` block.\n\nIf the code inside `try {}` blows up, execution immediately jumps down into the `catch {}` block.\n\nInstead of crashing the app, YOU get to decide what happens next! (Like showing an error popup to the user)."
     },
     {
-      "id": "s_ch8_l2_2",
-      "type": "code",
-      "title": "Using Late",
-      "content": "Initializing later:",
-      "codeSnippet": "late String dinner;\n\nvoid main() {\n  dinner = 'Pizza'; \n  print(dinner);\n}",
-      "codeLanguage": "dart",
-      "canRunCode": true
+      "id": "s_l2_2",
+      "type": "text",
+      "title": "Writing the Net 🕸️",
+      "content": "## Syntax Breakdown\n\n```dart\ntry {\n  int age = int.parse('hello');\n  print('This will never print'); // Skipped!\n} catch (e) {\n  print('Oops! Something broke. Sending user a warning...');\n  print('The actual error was: $e');\n}\n```\nThe `(e)` holds the actual Exception object that was thrown, so you can inspect *why* it crashed."
     },
     {
-      "id": "s_ch8_l2_3",
+      "id": "s_l2_3",
       "type": "quiz",
-      "title": "Quick Check \ud83e\udde0",
+      "title": "Quick Check 🧠",
       "content": "",
       "quizData": {
-        "id": "q_ch8_l2_1",
+        "id": "q_l2_1",
         "type": "multiple_choice",
-        "question": "What happens if you use a `late` variable before initializing it?",
+        "question": "If the code inside the `try` block succeeds perfectly, what happens to the `catch` block?",
         "options": [
-          {
-            "id": "opt1",
-            "text": "It's null",
-            "isCorrect": false
-          },
-          {
-            "id": "opt2",
-            "text": "It crashes",
-            "isCorrect": true
-          },
-          {
-            "id": "opt3",
-            "text": "It throws a dart",
-            "isCorrect": false
-          },
-          {
-            "id": "opt4",
-            "text": "It works fine",
-            "isCorrect": false
-          }
+          {"id": "opt1", "text": "It executes normally.", "isCorrect": false},
+          {"id": "opt2", "text": "It is completely ignored and skipped.", "isCorrect": true},
+          {"id": "opt3", "text": "It crashes the app.", "isCorrect": false}
         ],
-        "explanation": "Dart trusts your promise. Breaking it (using it before init) causes a runtime crash!",
+        "explanation": "The catch block ONLY triggers if a catastrophic error occurs in the try block.",
         "xpReward": 10
       }
+    },
+    {
+      "id": "s_l2_4",
+      "type": "text",
+      "title": "Targeting Specific Errors 🎯",
+      "content": "## On Clause\n\nSometimes an operation can fail in three different ways (No WiFi, Bad Password, Server Down).\nYou can stack `on` blocks before the `catch` to handle specific exceptions differently!\n\n```dart\ntry {\n  // Dangerous code\n} on FormatException {\n  print('You typed letters instead of numbers!');\n} on TimeoutException {\n  print('Your internet is too slow!');\n} catch (e) {\n  print('Some totally unknown error occurred: $e');\n}\n```"
+    },
+    {
+      "id": "s_l2_5",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_2",
+        "type": "fill_blank",
+        "question": "Fill in the blank to specify that you want to target a specific 'SocketException'.\n___ SocketException {\n  print('No signal');\n}",
+        "options": [
+          "catch",
+          "try",
+          "case",
+          "on"
+        ],
+        "correctAnswer": "on",
+        "explanation": "You use 'on SpecificException' to route specific errors differently.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l2_6",
+      "type": "code",
+      "title": "See it in Action",
+      "content": "Watch the execution jump instantly from line 4 down to the catch block!",
+      "codeSnippet": "void main() {\n  print('Starting app...');\n  \n  try {\n    int data = int.parse('apple');\n    print('Data loaded successfully!');\n  } catch (error) {\n    print('Safety Net Activated! Ignoring failure.');\n  }\n  \n  print('App continues running normally...');\n}",
+      "codeLanguage": "dart",
+      "canRunCode": true
     }
   ]
 }

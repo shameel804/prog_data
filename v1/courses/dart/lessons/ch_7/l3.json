@@ -1,61 +1,76 @@
 {
   "id": "l3",
   "chapterId": "ch_7",
-  "title": "Methods \ud83c\udfc3",
-  "description": "Functions inside classes.",
-  "xpReward": 25,
-  "estimatedMinutes": 4,
-  "section": "Content",
+  "title": "Abstract Classes 👻",
+  "description": "Create strict rules and empty templates that other classes MUST follow.",
+  "xpReward": 35,
+  "estimatedMinutes": 7,
+  "section": "Architecture",
   "slides": [
     {
-      "id": "s_ch7_l3_1",
+      "id": "s_l3_1",
       "type": "text",
-      "title": "Object Behaviors \ud83c\udfc3",
-      "content": "Classes don't just hold data; they do things.\n\nA function sitting inside a Class is called a **Method**."
+      "title": "The Ghost Blueprint 👻",
+      "content": "# A Concept, Not a Thing\n\nThink about the word 'Shape'. What does a physical 'Shape' look like? You can't picture it.\nYou can picture a Circle, or a Square, but 'Shape' is just an abstract concept.\n\nIn programming, an **Abstract Class** is a blueprint that is so generic, Dart FORBIDS you from ever actually building an object out of it!"
     },
     {
-      "id": "s_ch7_l3_2",
-      "type": "code",
-      "title": "Adding Methods",
-      "content": "Making the player jump:",
-      "codeSnippet": "class Player {\n  void jump() {\n    print('Super jump!');\n  }\n}\n\nvoid main() {\n  Player p1 = Player();\n  p1.jump(); // Calling the method\n}",
-      "codeLanguage": "dart",
-      "canRunCode": true
+      "id": "s_l3_2",
+      "type": "text",
+      "title": "Making it Abstract 🛡️",
+      "content": "## Establishing Rules\n\nWhy make a class you can't build? Because it forces strict rules on any child class that `extends` it!\n\n```dart\nabstract class Shape {\n  // An empty method with NO body {}\n  void draw(); \n}\n```\nBecause `draw()` has no body, any class (like `Square`) that `extends Shape` is FORCED by Dart to provide its own `@override void draw() {}` code. If it doesn't, the app crashes!"
     },
     {
-      "id": "s_ch7_l3_3",
+      "id": "s_l3_3",
       "type": "quiz",
-      "title": "Quick Check \ud83e\udde0",
+      "title": "Quick Check 🧠",
       "content": "",
       "quizData": {
-        "id": "q_ch7_l3_1",
+        "id": "q_l3_1",
         "type": "multiple_choice",
-        "question": "What do we call a function that lives completely inside a Class?",
+        "question": "What happens if you try to literally build an abstract class: `Shape s1 = Shape();`?",
         "options": [
-          {
-            "id": "opt1",
-            "text": "Sub-function",
-            "isCorrect": false
-          },
-          {
-            "id": "opt2",
-            "text": "Method",
-            "isCorrect": true
-          },
-          {
-            "id": "opt3",
-            "text": "Procedure",
-            "isCorrect": false
-          },
-          {
-            "id": "opt4",
-            "text": "Task",
-            "isCorrect": false
-          }
+          {"id": "opt1", "text": "It builds an invisible object.", "isCorrect": false},
+          {"id": "opt2", "text": "It works normally.", "isCorrect": false},
+          {"id": "opt3", "text": "Dart throws an error because abstract classes cannot be instantiated (built).", "isCorrect": true}
         ],
-        "explanation": "Functions belonging to a specific class/object are called Methods.",
+        "explanation": "Abstract classes are purely for structuring other classes. You can never build a direct physical instance of them.",
         "xpReward": 10
       }
+    },
+    {
+      "id": "s_l3_4",
+      "type": "text",
+      "title": "The Contract 📜",
+      "content": "## Forcing the Issue\n\nAbstract classes are like legal contracts.\n\n```dart\nabstract class Database {\n  void saveData(); // Empty contract\n}\n\n// To be a valid database, LocalDB MUST write the saveData code.\nclass LocalDB extends Database {\n  @override\n  void saveData() {\n    print('Saved to phone!');\n  }\n}\n```\nThis guarantees your entire team writes predictable code."
+    },
+    {
+      "id": "s_l3_5",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_2",
+        "type": "fill_blank",
+        "question": "Fill in the blank to make the class abstract: \n________ class Animal {\n  void makeSound();\n}",
+        "options": [
+          "ghost",
+          "interface",
+          "abstract",
+          "void"
+        ],
+        "correctAnswer": "abstract",
+        "explanation": "Placing 'abstract' before the class keyword creates the template.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l3_6",
+      "type": "code",
+      "title": "See it in Action",
+      "content": "If you erased the `@override void calculateArea()` inside `Circle`, the whole program would instantly break!",
+      "codeSnippet": "abstract class Shape {\n  void calculateArea(); // No body!\n}\n\nclass Circle extends Shape {\n  @override\n  void calculateArea() {\n    print('Calculating PI * r * r...');\n  }\n}\n\nvoid main() {\n  Circle c = Circle();\n  c.calculateArea();\n}",
+      "codeLanguage": "dart",
+      "canRunCode": true
     }
   ]
 }
