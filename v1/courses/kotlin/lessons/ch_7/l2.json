@@ -1,0 +1,70 @@
+{
+  "id": "l2",
+  "chapterId": "ch_7",
+  "title": "Nullable Types",
+  "description": "How Kotlin actively prevents your app from crashing.",
+  "xpReward": 25,
+  "estimatedMinutes": 5,
+  "section": "Null Safety",
+  "slides": [
+    {
+      "id": "s_l2_1",
+      "type": "text",
+      "title": "Strict by Default 🚫",
+      "content": "## No Nulls Allowed\n\nBy default, Kotlin variables strictly **cannot** hold `null`. \n\nIf you define `var name: String = \"Alice\"`, and then later try to write `name = null`, the Kotlin compiler will throw a nasty red error and absolutely refuse to even build your app."
+    },
+    {
+      "id": "s_l2_2",
+      "type": "code",
+      "title": "The Question Mark ❓",
+      "content": "But what if a variable legitimately *needs* to be capable of holding nothing? (e.g., A user hasn't uploaded a profile picture yet).\n\nYou must explicitly declare the data type as **Nullable** by appending a question mark `?` to the end of the type.",
+      "codeSnippet": "// Non-Nullable (Standard)\nvar safeName: String = \"Alice\"\n// safeName = null // ❌ Compiler Error!\n\n// Nullable (Special)\nvar riskyName: String? = \"Bob\"\nriskyName = null // ✅ Perfectly fine, it's allowed!",
+      "codeLanguage": "kotlin",
+      "canRunCode": false
+    },
+    {
+      "id": "s_l2_3",
+      "type": "quiz",
+      "title": "Nullable Quiz 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_1",
+        "type": "multiple_choice",
+        "question": "Which of these variable definitions explicitly allows the variable to hold a `null` value?",
+        "options": [
+          {"id": "opt1", "text": "var age: Int = 0", "isCorrect": false},
+          {"id": "opt2", "text": "var age: Int?", "isCorrect": true},
+          {"id": "opt3", "text": "var age! Int", "isCorrect": false},
+          {"id": "opt4", "text": "var nullable age", "isCorrect": false}
+        ],
+        "explanation": "Appending the strict `?` to the DataType (e.g., `Int?`) signals to the compiler that this specialized box is permitted to sit empty.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l2_4",
+      "type": "text",
+      "title": "The Trade-off ⚖️",
+      "content": "## With Great Power...\n\nIf you declare a variable as Nullable (e.g. `String?`), Kotlin will immediately lock that variable down.\n\nYou can no longer safely call methods on it (like `.length`), because Kotlin is terrified the variable might currently be empty and cause a crash!"
+    },
+    {
+      "id": "s_l2_5",
+      "type": "quiz",
+      "title": "Lockdown Quiz 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_2",
+        "type": "multiple_choice",
+        "question": "If `var word: String? = null`, why won't Kotlin let you directly call `word.length`?",
+        "options": [
+          {"id": "opt1", "text": "Because it would crash the program if it executed while empty.", "isCorrect": true},
+          {"id": "opt2", "text": "Because Strings don't have lengths.", "isCorrect": false},
+          {"id": "opt3", "text": "Because the variable is locked by a password.", "isCorrect": false},
+          {"id": "opt4", "text": "Because `length` is an Int.", "isCorrect": false}
+        ],
+        "explanation": "Kotlin intentionally blocks compilation to save you. It refuses to let you risk a fatal NullPointerException. You must prove it is safe first!",
+        "xpReward": 10
+      }
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "id": "l5",
+  "chapterId": "ch_7",
+  "title": "Mutating Methods 🧬",
+  "description": "How a Struct can change its own internal data safely.",
+  "xpReward": 25,
+  "estimatedMinutes": 6,
+  "section": "Advanced Structs",
+  "slides": [
+    {
+      "id": "s_l5_1",
+      "type": "text",
+      "title": "The Struct Security Lockdown 🔒",
+      "content": "# Structs are Value Types\n\nBy default, a Struct is incredibly safe. It views its properties as locked down. It refuses to let its own methods change its own properties!\n\n```swift\nstruct Player {\n    var score: Int\n    \n    // This will cause a compiler Error!\n    func levelUp() {\n        score += 10\n    }\n}\n```\nSwift will block the code above, saying: \"Hey! You're trying to mutate (change) a property inside a normal method!\""
+    },
+    {
+      "id": "s_l5_2",
+      "type": "text",
+      "title": "The Override Switch 🧬",
+      "content": "# The `mutating` Keyword\n\nTo tell Swift that you *intentionally* want a Method to modify the Struct's data, you must label the method with the `mutating` keyword.\n\n```swift\nstruct Player {\n    var score: Int\n    \n    // Now it works perfectly!\n    mutating func levelUp() {\n        score += 10\n    }\n}\n```\nAdding `mutating` removes the safety lock and allows the function to change the `score`."
+    },
+    {
+      "id": "s_l5_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l5_1",
+        "type": "multiple_choice",
+        "question": "If a Struct method tries to change the Struct's own property without the `mutating` keyword, what happens?",
+        "options": [
+          {"id": "opt1", "text": "It changes it normally.", "isCorrect": false},
+          {"id": "opt2", "text": "It creates a new copy of the property.", "isCorrect": false},
+          {"id": "opt3", "text": "Swift throws an error and refuses to compile.", "isCorrect": true}
+        ],
+        "explanation": "Structs are extremely safe by design. To prevent accidental data overrides, Swift forces you to explicitly authorize mutations.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l5_4",
+      "type": "code",
+      "title": "See It in Action",
+      "content": "Run this code and see how the mutating method successfully alters the internal `balance` of the BankAccount struct.",
+      "codeSnippet": "struct BankAccount {\n    var balance: Double\n    \n    mutating func deposit(amount: Double) {\n        balance += amount\n        print(\"Deposited \\(amount). New Balance is \\(balance)\")\n    }\n}\n\nvar myAccount = BankAccount(balance: 100.0)\nmyAccount.deposit(amount: 50.0)",
+      "codeLanguage": "swift",
+      "canRunCode": true
+    }
+  ]
+}

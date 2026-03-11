@@ -1,0 +1,75 @@
+{
+  "id": "l3",
+  "chapterId": "ch_8",
+  "title": "Pass by Reference 📬",
+  "description": "How to edit remote variables directly.",
+  "xpReward": 25,
+  "estimatedMinutes": 7,
+  "section": "Pointers In Action",
+  "slides": [
+    {
+      "id": "s_l3_1",
+      "type": "text",
+      "title": "The Clone Problem 🐑",
+      "content": "Normally, when you pass a variable into a function in C, it creates a **copy** (a clone) of the value.\n\nIf the function changes the copy, the original variable back in `main()` is completely unaffected! This is called **Pass by Value**."
+    },
+    {
+      "id": "s_l3_2",
+      "type": "code",
+      "title": "Pass by Value Fails",
+      "content": "Look closely: `tryToCheat()` changes its cloned copy of `health`, but the real `health` in `main()` stays at 100.",
+      "codeSnippet": "#include <stdio.h>\n\nvoid tryToCheat(int hpClone) {\n    hpClone = 999; // Only changes the clone!\n}\n\nint main() {\n    int health = 100;\n    tryToCheat(health);\n    printf(\"Real health: %d\\n\", health); // Still 100!\n    return 0;\n}",
+      "codeLanguage": "c",
+      "canRunCode": true
+    },
+    {
+      "id": "s_l3_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_1",
+        "type": "true_false",
+        "question": "By default, passing an integer to a function in C gives the function direct access to edit the original variable.",
+        "isTrue": false,
+        "correctAnswer": "false",
+        "options": [],
+        "explanation": "No! By default, C strictly hands functions a photocopy of the data. The original is safe from modification.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l3_4",
+      "type": "text",
+      "title": "The Solution: Pass by Reference 📬",
+      "content": "To let a function edit the original variable, you don't pass the photocopy. You pass the **Memory Address** (using `&`).\n\nThe function parameters receive a **Pointer** (`*`), which allows it to \"Dereference\" the address and remotely edit the original box!"
+    },
+    {
+      "id": "s_l3_5",
+      "type": "code",
+      "title": "Working Code",
+      "content": "Notice how we pass `&health` and the function accepts `int *hpPtr`.",
+      "codeSnippet": "#include <stdio.h>\n\n// Expect an address!\nvoid successfullyCheat(int *hpPtr) {\n    *hpPtr = 999; // Follow the map, change the real value\n}\n\nint main() {\n    int health = 100;\n    successfullyCheat(&health); // Pass the map!\n    printf(\"Real health: %d\\n\", health); // Now it's 999!\n    return 0;\n}",
+      "codeLanguage": "c",
+      "canRunCode": true
+    },
+    {
+      "id": "s_l3_6",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_2",
+        "type": "multiple_choice",
+        "question": "If changing a pointer's target is so dangerous, why is Pass by Reference useful?",
+        "options": [
+          { "id": "opt1", "text": "It lets a function quickly modify massive amounts of data without wasting CPU time making millions of photocopies.", "isCorrect": true },
+          { "id": "opt2", "text": "It makes the code look more professional.", "isCorrect": false },
+          { "id": "opt3", "text": "It is exactly as slow as making photocopies but safer.", "isCorrect": false }
+        ],
+        "explanation": "Passing a heavy 1GB file by value creates a 1GB copy, freezing the computer. Passing a pointer just hands over an 8-byte treasure map pointing to the 1GB file.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

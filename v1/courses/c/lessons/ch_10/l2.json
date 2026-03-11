@@ -1,0 +1,70 @@
+{
+  "id": "l2",
+  "chapterId": "ch_10",
+  "title": "Cleaning Up (free) 🗑️",
+  "description": "Prevent your app from crashing the system.",
+  "xpReward": 20,
+  "estimatedMinutes": 5,
+  "section": "Memory Management",
+  "slides": [
+    {
+      "id": "s_l2_1",
+      "type": "text",
+      "title": "With Great Power... 🦸‍♂️",
+      "content": "When you create standard variables like `int x = 5;`, C guarantees that the memory will be automatically deleted and cleaned up the moment the function finishes.\n\nBut Dynamic Memory (`malloc`) is built differently."
+    },
+    {
+      "id": "s_l2_2",
+      "type": "text",
+      "title": "The Memory Leak 🚰",
+      "content": "When you use `malloc`, that memory is permanently locked under your name until you explicitly tell the OS you are done with it.\n\nIf you have a game loop running 60 times a second, and every frame you `malloc` 1 MB of memory without ever releasing it, your program will rapidly consume all the RAM on the entire computer until the OS violently force-kills your app. This is called a **Memory Leak**."
+    },
+    {
+      "id": "s_l2_3",
+      "type": "code",
+      "title": "Using free()",
+      "content": "To release the memory back to the Operating System, you must pass the pointer to the `free()` function when you are finished.",
+      "codeSnippet": "#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n    // 1. Borrow memory\n    int *ptr = malloc(100 * sizeof(int));\n    \n    // 2. Use it (pretend we did cool stuff here)\n    ptr[0] = 99;\n    \n    // 3. RETURN it!\n    free(ptr);\n    \n    // After free(), accessing ptr is strictly forbidden!\n    // ptr[0] = 50; // CRASH!\n    return 0;\n}",
+      "codeLanguage": "c",
+      "canRunCode": true
+    },
+    {
+      "id": "s_l2_4",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_1",
+        "type": "multiple_choice",
+        "question": "What happens if you use `free()` on a pointer, and then try to read the data from that pointer on the very next line of code?",
+        "options": [
+          { "id": "opt1", "text": "It works normally.", "isCorrect": false },
+          { "id": "opt2", "text": "You trigger undefined behavior (often a Segfault crash) because you gave the memory back to the OS and no longer have permission to look at it.", "isCorrect": true },
+          { "id": "opt3", "text": "It resets the data to 0.", "isCorrect": false }
+        ],
+        "explanation": "`free` revokes your ownership. The pointer still physically holds the address, but if you attempt to use it, the OS will punish you.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l2_5",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_2",
+        "type": "fill_blank",
+        "question": "A massive, slowly compounding crash caused by a programmer forgetting to `free` memory requested by `malloc` is famously called a Memory ______.",
+        "options": [
+          "Crash",
+          "Drain",
+          "Leak",
+          "Fault"
+        ],
+        "correctAnswer": "Leak",
+        "explanation": "Memory leaks are the number one cause of applications slowly grinding to a halt over the course of several hours of run-time.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

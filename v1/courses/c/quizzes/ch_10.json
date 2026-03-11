@@ -1,0 +1,246 @@
+{
+  "id": "quiz_ch_10",
+  "chapterId": "ch_10",
+  "title": "Chapter 10 Quiz",
+  "description": "The Final Challenge: Conquer RAM and Hard Drives!",
+  "passingScore": 80,
+  "xpReward": 100,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "mcq",
+      "question": "What is the massive problem with defining an array like `int players[100];` normally?",
+      "options": [
+        "It takes up 100 megabytes.",
+        "The size is rigidly locked at exactly 100. If 101 players join, the program crashes. If 2 players join, 98 slots of memory are wasted completely.",
+        "It cannot be accessed by a loop.",
+        "It requires `const`."
+      ],
+      "correctAnswer": 1,
+      "explanation": "Standard arrays are strictly 'Static Allocation'. The compiler carves out an inflexible block of memory."
+    },
+    {
+      "id": "q2",
+      "type": "mcq",
+      "question": "What does the `malloc` function do?",
+      "options": [
+        "Multiplies all memory.",
+        "Moves an array to another memory address.",
+        "Politely asks the Operating System for a requested number of Bytes of fresh RAM while the program is actively running.",
+        "Monitors local variable allocation."
+      ],
+      "correctAnswer": 2,
+      "explanation": "`malloc` stands for Memory Allocate. It allows apps to gracefully expand to fit their needs."
+    },
+    {
+      "id": "q3",
+      "type": "mcq",
+      "question": "Why must you use `sizeof(int)` when asking `malloc` for an integer array?",
+      "options": [
+        "Because `malloc` only communicates with the OS in raw Bytes. It has no idea how heavy an integer actually is.",
+        "To make the memory run faster.",
+        "Because `sizeof` initializes the values to 0.",
+        "To satisfy the compiler warning."
+      ],
+      "correctAnswer": 0,
+      "explanation": "Telling `malloc(5)` means give me 5 bytes. A single integer is usually 4 bytes! `malloc(5 * sizeof(int))` correctly calculates 20 bytes."
+    },
+    {
+      "id": "q4",
+      "type": "mcq",
+      "question": "What is mathematically returned by the `malloc` function if successful?",
+      "options": [
+        "A 0.",
+        "A string identifying the memory.",
+        "A Pointer pointing specifically to the very first byte of the massive new block of memory.",
+        "An array bracket []."
+      ],
+      "correctAnswer": 2,
+      "explanation": "Because it hands back a pointer, you can immediately assign it to a pointer variable like `int *arr = malloc...` and use array syntax on it."
+    },
+    {
+      "id": "q5",
+      "type": "true_false",
+      "question": "Memory requested by `malloc` (the Heap) is automatically deleted and cleaned up the moment your function ends.",
+      "correctAnswer": false,
+      "explanation": "Absolutely false! Standard variables (the Stack) are auto-cleaned. `malloc` memory is permanently locked under your name until you manually free it, or until the entire application terminates."
+    },
+    {
+      "id": "q6",
+      "type": "mcq",
+      "question": "What is a 'Memory Leak'?",
+      "options": [
+        "When RAM physically breaks.",
+        "When variables leak into other directories.",
+        "A fatal condition where a program repeatedly `malloc`s memory but forgets to `free` it, slowly consuming all available RAM on the computer until it crashes.",
+        "When a game saves too often."
+      ],
+      "correctAnswer": 2,
+      "explanation": "A major memory leak can take down an entire operating system if the app locks up 16GB of RAM with ghost data."
+    },
+    {
+      "id": "q7",
+      "type": "fill_blank",
+      "question": "To give memory borrowed via `malloc` back to the operating system, you pass its pointer into the ______() function.",
+      "options": [
+        "delete",
+        "remove",
+        "clean",
+        "free"
+      ],
+      "correctAnswer": "free",
+      "explanation": "`free(ptr);` revokes your ownership of the memory spanning from that specific address."
+    },
+    {
+      "id": "q8",
+      "type": "mcq",
+      "question": "What disaster occurs if you try to `free()` a pointer, and then print its value on the next line?",
+      "options": [
+        "It prints 0.",
+        "It prints the old value safely.",
+        "It triggers 'Undefined Behavior' (often a fierce crash called a Segfault), because you are trespassing on memory you no longer own.",
+        "The compiler prevents it."
+      ],
+      "correctAnswer": 2,
+      "explanation": "Never touch memory after freeing it. This is famously called a \"Use-After-Free\" vulnerability."
+    },
+    {
+      "id": "q9",
+      "type": "true_false",
+      "question": "Variables stored in RAM survive after the computer is turned off.",
+      "correctAnswer": false,
+      "explanation": "RAM is 'volatile'. Loss of power or program termination completely wipes the memory clean. You must save to the Hard Drive."
+    },
+    {
+      "id": "q10",
+      "type": "mcq",
+      "question": "What object type do you use in C to interact with an open text file?",
+      "options": [
+        "A string",
+        "A FILE pointer",
+        "An int",
+        "A file[] array"
+      ],
+      "correctAnswer": 1,
+      "explanation": "`FILE *filePtr = fopen(...);` handles all the complex OS-level communication required to read drives."
+    },
+    {
+      "id": "q11",
+      "type": "mcq",
+      "question": "What happens if you open `\"save.txt\"` in Mode `\"w\"` (Write) but the file already contains 50 pages of text?",
+      "options": [
+        "The program reads the 50 pages.",
+        "The computer asks if it is safe to overwrite.",
+        "Mode 'w' violently eradicates all old text inside the file before letting you write your first character.",
+        "It starts writing on page 51."
+      ],
+      "correctAnswer": 2,
+      "explanation": "`w` stands for write (truncating). If you want to keep the 50 pages and just add one sentence to the bottom, use `a` (Append) mode."
+    },
+    {
+      "id": "q12",
+      "type": "fill_blank",
+      "question": "If you open a file requesting `\"r\"` (Read) mode, but the file doesn't exist, `fopen` returns ______.",
+      "options": [
+        "ERROR",
+        "0",
+        "NULL",
+        "FALSE"
+      ],
+      "correctAnswer": "NULL",
+      "explanation": "Always explicitly check `if (file == NULL)` to prevent your app from crashing when a player accidentally deletes their save file."
+    },
+    {
+      "id": "q13",
+      "type": "mcq",
+      "question": "What does the `fgets` function do?",
+      "options": [
+        "Gets the file size.",
+        "Reads a string of text from a File stream, safely pausing before it causes a buffer overflow.",
+        "Forces a generic text string into memory.",
+        "Format Gets."
+      ],
+      "correctAnswer": 1,
+      "explanation": "`fgets(buffer, max_chars, file)` is the exceptionally safe standard for reading file lines in C."
+    },
+    {
+      "id": "q14",
+      "type": "true_false",
+      "question": "The `fprintf` function works identically to standard `printf`, but requires you to provide a `FILE` pointer as the first argument.",
+      "correctAnswer": true,
+      "explanation": "Yes. `fprintf(myFile, \"Hello %s\", name);` seamlessly prints formatted text directly into the open document instead of your screen."
+    },
+    {
+      "id": "q15",
+      "type": "mcq",
+      "question": "Why is it absolutely critical to use `fclose()` when you finish working with a file?",
+      "options": [
+        "Because it saves CPU power.",
+        "If you do not close it, the Operating System maintains a 'Lock', completely preventing the user from moving or deleting the file, and changes may not be saved.",
+        "Because the file will explode.",
+        "To allow strings to format."
+      ],
+      "correctAnswer": 1,
+      "explanation": "`fclose` forces the Operating System to flush all remaining text to the drive and unlocks the file for regular use."
+    },
+    {
+      "id": "q16",
+      "type": "mcq",
+      "question": "If you `malloc` memory, how does the memory size change if you forget to `free` it?",
+      "options": [
+        "It eventually frees itself.",
+        "It shrinks slowly.",
+        "It stays perfectly rigid exactly at the size you allocated until the entire program is forcefully shut down by the OS.",
+        "It grows."
+      ],
+      "correctAnswer": 2,
+      "explanation": "The OS respects your allocation. It simply waits forever until you return it."
+    },
+    {
+      "id": "q17",
+      "type": "mcq",
+      "question": "If `int *grid = malloc(400);` creates memory for 100 integers, can you confidently use `grid[50] = 9;` on the pointer immediately?",
+      "options": [
+        "No, you must wait 1 second.",
+        "No, it's not an array.",
+        "Yes, because C inherently respects pointer arrays and performs the identical pointer arithmetic under the hood perfectly.",
+        "Yes, but only in strict mode."
+      ],
+      "correctAnswer": 2,
+      "explanation": "`grid[50]` is mathematically translated directly into `*(grid + 50)`. It works identically to a stack array."
+    },
+    {
+      "id": "q18",
+      "type": "true_false",
+      "question": "If you open a file for Append mode (`\"a\"`), writing to it will place text at the absolute TOP of the file, shifting everything else down.",
+      "correctAnswer": false,
+      "explanation": "Append mode strictly locks the cursor to the absolute BOTTOM (end) of the file, adding completely new text there."
+    },
+    {
+      "id": "q19",
+      "type": "mcq",
+      "question": "What is the number one golden rule of Dynamic Memory Management?",
+      "options": [
+        "Always use arrays instead.",
+        "If you don't know the exact size, ask for 1 Gigabyte.",
+        "For every single `malloc` you call, you must guarantee there is exactly one `free` call to clean it up before the code completes.",
+        "Never allocate more than 100 bytes."
+      ],
+      "correctAnswer": 2,
+      "explanation": "If `mallocs` > `frees`, you have a Memory Leak. If `frees` > `mallocs`, you have a Double-Free Crash."
+    },
+    {
+      "id": "q20",
+      "type": "mcq",
+      "question": "You have survived the C course! What are the primary strengths of the C programming language?",
+      "options": [
+        "It runs through a slow Virtual Machine interpretation engine with complex object hierarchies.",
+        "It lacks memory management, making it safe.",
+        "It provides raw, brutally unabstracted access to the absolute hardware RAM, allowing for lighting-fast performance explicitly tuned to the metal.",
+        "It is designed solely for web apps."
+      ],
+      "correctAnswer": 2,
+      "explanation": "C is the language of operating systems, game engines, and embedded microcontrollers. It sacrifices safety for raw, unadulterated speed."
+    }
+  ]
+}

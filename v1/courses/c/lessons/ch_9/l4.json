@@ -1,0 +1,77 @@
+{
+  "id": "l4",
+  "chapterId": "ch_9",
+  "title": "Typedef & Unions 🎭",
+  "description": "Shortcuts and shape-shifting memory.",
+  "xpReward": 20,
+  "estimatedMinutes": 6,
+  "section": "Advanced Structs",
+  "slides": [
+    {
+      "id": "s_l4_1",
+      "type": "text",
+      "title": "The Typedef Shortcut ✂️",
+      "content": "Typing `struct Player myPlayer;` over and over gets annoying.\n\nC provides the **`typedef`** keyword to create shortcut aliases for data types."
+    },
+    {
+      "id": "s_l4_2",
+      "type": "code",
+      "title": "Using Typedef",
+      "content": "By wrapping our struct in a `typedef`, we tell C: \"Rename this entire block to just `Player`.\"",
+      "codeSnippet": "#include <stdio.h>\n\n// We add typedef at the start, and the shortcut name at the very end\ntypedef struct {\n    int hp;\n    int speed;\n} Player;\n\nint main() {\n    // Now we can just say 'Player' instead of 'struct Player'!\n    Player p1 = {100, 5};\n    \n    printf(\"HP: %d\", p1.hp);\n    return 0;\n}",
+      "codeLanguage": "c",
+      "canRunCode": true
+    },
+    {
+      "id": "s_l4_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_1",
+        "type": "multiple_choice",
+        "question": "What is the primary benefit of using `typedef` with a struct?",
+        "options": [
+          { "id": "opt1", "text": "It makes the struct run faster.", "isCorrect": false },
+          { "id": "opt2", "text": "It removes the need to type the word `struct` every time you declare a variable of that type.", "isCorrect": true },
+          { "id": "opt3", "text": "It protects the variables from being deleted.", "isCorrect": false }
+        ],
+        "explanation": "`typedef` is purely syntactic sugar. It saves keystrokes and makes code cleaner.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l4_4",
+      "type": "text",
+      "title": "The Shape-Shifter: Union 🎭",
+      "content": "A **Union** uses the exact same syntax as a Struct, but has one insane difference:\n\n**All members inside a Union share the exact same physical memory address.**\n\nIf a union has an `int` and a `float`, you can ONLY use one of them at a time, because writing to the `int` will literally overwrite the memory of the `float`!"
+    },
+    {
+      "id": "s_l4_5",
+      "type": "code",
+      "title": "Union Overwriting",
+      "content": "Watch how assigning a string completely destroys the integer that was stored at the same memory location.",
+      "codeSnippet": "#include <stdio.h>\n#include <string.h>\n\n// A Union only reserves enough memory for its LARGEST member\nunion Box {\n    int number;\n    char text[20];\n};\n\nint main() {\n    union Box myBox;\n    \n    myBox.number = 999;\n    printf(\"Number is: %d\\n\", myBox.number); // Works fine\n    \n    // Using the text part overwrites the number!\n    strcpy(myBox.text, \"Hello World\");\n    printf(\"Text is: %s\\n\", myBox.text); \n    \n    // The number is now corrupted memory garbage!\n    printf(\"Number is now: %d\\n\", myBox.number); \n    return 0;\n}",
+      "codeLanguage": "c",
+      "canRunCode": true
+    },
+    {
+      "id": "s_l4_6",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_2",
+        "type": "multiple_choice",
+        "question": "If you have a struct with 3 ints, it consumes 12 bytes. If you have a union with 3 ints, how much memory does it consume?",
+        "options": [
+          { "id": "opt1", "text": "12 bytes", "isCorrect": false },
+          { "id": "opt2", "text": "4 bytes", "isCorrect": true },
+          { "id": "opt3", "text": "24 bytes", "isCorrect": false }
+        ],
+        "explanation": "A union only reserves enough memory for its single largest component, because every member is strictly stacked on top of each other at the exact same location.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

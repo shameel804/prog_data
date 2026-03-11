@@ -1,0 +1,66 @@
+{
+  "id": "l4",
+  "chapterId": "ch_10",
+  "title": "Writing Files 📝",
+  "description": "Save player progress permanently.",
+  "xpReward": 20,
+  "estimatedMinutes": 6,
+  "section": "File I/O",
+  "slides": [
+    {
+      "id": "s_l4_1",
+      "type": "text",
+      "title": "Leaving a Mark ✍️",
+      "content": "To write data to a file, we use `fopen` but change the mode from `\"r\"` (Read) to **`\"w\"` (Write)** or **`\"a\"` (Append)**.\n\n- `\"w\"` Mode: Opens a file for writing. If it already has text inside, it completely nukes the old text and starts fresh. If the file doesn't exist, it creates it instantly.\n- `\"a\"` Mode: Opens the file and safely adds new text to the very bottom, preserving the old data."
+    },
+    {
+      "id": "s_l4_2",
+      "type": "code",
+      "title": "Writing Data",
+      "content": "Writing is almost identical to standard `printf`. In fact, the function we use is called `fprintf` (File Print Format).",
+      "codeSnippet": "#include <stdio.h>\n\nint main() {\n    // Open in Write mode to create/overwrite the file\n    FILE *file = fopen(\"save_data.txt\", \"w\");\n    \n    if (file != NULL) {\n        int finalScore = 9500;\n        \n        // Write to the file just like replacing printf\n        fprintf(file, \"Player Name: Hero\\n\");\n        fprintf(file, \"Final Score: %d\\n\", finalScore);\n        \n        fprintf(stdout, \"Save Complete!\\n\");\n        \n        fclose(file); // Don't forget!\n    }\n    return 0;\n}",
+      "codeLanguage": "c",
+      "canRunCode": false
+    },
+    {
+      "id": "s_l4_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_1",
+        "type": "multiple_choice",
+        "question": "What happens if you open an existing 10-page text document in `\"w\"` (Write) mode?",
+        "options": [
+          { "id": "opt1", "text": "The computer throws an error stating the file already exists.", "isCorrect": false },
+          { "id": "opt2", "text": "It finds the bottom of page 10 and prepares to add text there safely.", "isCorrect": false },
+          { "id": "opt3", "text": "It instantly deletes all 10 pages, leaving a completely blank 0-byte file ready for fresh text.", "isCorrect": true }
+        ],
+        "explanation": "Write mode is extremely violent. It truncates (destroys) existing files. If you want to keep the data, use `\"a\"` (Append) mode.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l4_4",
+      "type": "text",
+      "title": "The Circle is Complete 🌌",
+      "content": "You've navigated the chaotic realm of Memory and File Systems!\n\nBetween variables, arrays, structures, pointers, heap memory (`malloc`), and the hard drive (`FILE`), you now possess the core arsenal needed to conquer C."
+    },
+    {
+      "id": "s_l4_5",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_2",
+        "type": "true_false",
+        "question": "Using `fprintf()` allows you to write perfectly structured strings and variables directly to a text file just as easily as writing to the terminal console.",
+        "isTrue": true,
+        "correctAnswer": "true",
+        "options": [],
+        "explanation": "`fprintf` uses the exact same format specifiers (`%d`, `%s`) as standard `printf`.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

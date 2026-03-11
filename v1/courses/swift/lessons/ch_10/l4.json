@@ -1,0 +1,50 @@
+{
+  "id": "l4",
+  "chapterId": "ch_10",
+  "title": "The 'try?' Shortcut 🩼",
+  "description": "When you don't care *why* it failed, you just want an Optional.",
+  "xpReward": 20,
+  "estimatedMinutes": 5,
+  "section": "Advanced Error Handling",
+  "slides": [
+    {
+      "id": "s_l4_1",
+      "type": "text",
+      "title": "The Fast Method 🩼",
+      "content": "# Using try?\n\nSetting up a massive `do-catch` block every time is exhausting. Sometimes, you don't care *which* specific error was thrown... you just want to know if it Worked or if it Failed.\n\nSwift provides a shortcut: `try?` (with a question mark!).\n\nIt completely skips the `do-catch` block, attempts the function, and safely returns an **Optional**! If the function fails, it silently returns `nil`!"
+    },
+    {
+      "id": "s_l4_2",
+      "type": "code",
+      "title": "Look How Clean! ✨",
+      "content": "```swift\n// A dangerous network call\nfunc fetchScore() throws -> Int { ... }\n\n// Using the shortcut!\nlet finalScore: Int? = try? fetchScore()\n```\nIf the server connects, `finalScore` holds the integer (`Optional(100)`). If the server is strictly offline and throws an error... `finalScore` just safely evaluates to `nil`!"
+    },
+    {
+      "id": "s_l4_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_1",
+        "type": "multiple_choice",
+        "question": "If you don't want to write a full `do-catch` block to handle nuanced errors, and just want the function to silently return `nil` if it breaks, what keyword do you use?",
+        "options": [
+          {"id": "opt1", "text": "let?", "isCorrect": false},
+          {"id": "opt2", "text": "catch?", "isCorrect": false},
+          {"id": "opt3", "text": "try?", "isCorrect": true}
+        ],
+        "explanation": "The `try?` keyword converts any thrown error silently into a `nil`, allowing you to use perfectly safe Optionals instead of complex do-catch logic.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l4_4",
+      "type": "code",
+      "title": "See It in Action",
+      "content": "We can seamlessly combine `try?` with the `guard let` bouncer we learned in Chapter 5!",
+      "codeSnippet": "enum NetError: Error { case failed }\nfunc loadData() throws -> String { throw NetError.failed }\n\n// Using 'try?' with 'if let'\nif let data = try? loadData() {\n    print(\"Success: \\(data)\")\n} else {\n    print(\"It failed, returning nil. Safely handled!\")\n}",
+      "codeLanguage": "swift",
+      "canRunCode": true
+    }
+  ]
+}

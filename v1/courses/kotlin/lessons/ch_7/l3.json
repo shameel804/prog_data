@@ -1,0 +1,51 @@
+{
+  "id": "l3",
+  "chapterId": "ch_7",
+  "title": "Safe Calls (?.)",
+  "description": "Safely access properties that might not exist.",
+  "xpReward": 20,
+  "estimatedMinutes": 4,
+  "section": "Null Safety",
+  "slides": [
+    {
+      "id": "s_l3_1",
+      "type": "text",
+      "title": "Unlocking the Box 🔓",
+      "content": "## Proving it's Safe\n\nIf we have a nullable variable `var text: String?`, how do we ever access its `.length` if Kotlin keeps blocking us?\n\nOne way is to write a traditional `if` statement to manually check if it is null first. But Kotlin has a much cleaner shortcut."
+    },
+    {
+      "id": "s_l3_2",
+      "type": "code",
+      "title": "The Safe Call Operator (?.) 🛟",
+      "content": "Instead of a regular dot `.`, use the **Safe Call** operator `?.`.\n\nThis translates to: \"If the variable is NOT null, give me the length. But if it IS null, safely abort the operation and just return null instead of crashing.\"",
+      "codeSnippet": "fun main() {\n    val greeting: String? = \"Hello\"\n    val noGreeting: String? = null\n\n    // Using Safe Call ?.\n    println(greeting?.length)   // Prints: 5\n\n    // Doesn't crash! Just safely prints \"null\"\n    println(noGreeting?.length) \n}",
+      "codeLanguage": "kotlin",
+      "canRunCode": true
+    },
+    {
+      "id": "s_l3_3",
+      "type": "quiz",
+      "title": "Safe Call Quiz 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_1",
+        "type": "multiple_choice",
+        "question": "What happens when you use `?.` on a variable that currently contains `null`?",
+        "options": [
+          {"id": "opt1", "text": "It throws an NPE (NullPointerException).", "isCorrect": false},
+          {"id": "opt2", "text": "It skips the execution entirely and outputs `null`.", "isCorrect": true},
+          {"id": "opt3", "text": "It converts it to a String.", "isCorrect": false},
+          {"id": "opt4", "text": "It crashes.", "isCorrect": false}
+        ],
+        "explanation": "The Safe Call actively checks. If the box is empty, it elegantly aborts the attempt and returns null rather than forcing a fatal crash.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l3_4",
+      "type": "text",
+      "title": "Chaining Safe Calls ⛓️",
+      "content": "## Deep Diving\n\nSafe calls become incredibly powerful when chained together. \n\nImagine: `user?.profile?.address?.city?.length`\n\nIf **ANY** of those properties happens to be null along the chain, the entire chain instantly aborts and silently returns `null` instead of crashing your app!"
+    }
+  ]
+}

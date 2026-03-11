@@ -1,0 +1,68 @@
+{
+  "id": "l1",
+  "chapterId": "ch_10",
+  "title": "Dynamic Memory 🧠",
+  "description": "Ask the OS for memory on the fly.",
+  "xpReward": 25,
+  "estimatedMinutes": 7,
+  "section": "Memory Management",
+  "slides": [
+    {
+      "id": "s_l1_1",
+      "type": "text",
+      "title": "The Rigid Array 🧱",
+      "content": "When you write `int scores[100];`, the compiler secures 100 slots of memory the exact moment the program starts.\n\nBut what if you don't know how many players will join the game? If only 2 join, you wasted 98 slots. If 200 join, the game crashes because the array is too small!"
+    },
+    {
+      "id": "s_l1_2",
+      "type": "text",
+      "title": "Dynamic Memory Allocation 🏗️",
+      "content": "Instead of hardcoding sizes, you can politely ask the Operating System (Windows/Mac) to generate memory *while* the program is running!\n\nThis is called **Dynamic Memory Allocation**, and we use a function called `malloc` (Memory Allocate) to do it."
+    },
+    {
+      "id": "s_l1_3",
+      "type": "code",
+      "title": "Using malloc",
+      "content": "`malloc` takes one argument: exactly how many TOTAL Bytes you want. It finds a block of free memory that size, and returns a Pointer to the first byte.",
+      "codeSnippet": "#include <stdio.h>\n#include <stdlib.h> // Required for malloc!\n\nint main() {\n    // Ask the user how many slots they need\n    int numPlayers = 5; \n    \n    // malloc( total bytes needed ). \n    // An int is usually 4 bytes, so 5 * 4 = 20 Bytes.\n    int *scores = malloc(numPlayers * sizeof(int));\n    \n    // Treat the pointer EXACTLY like a normal array!\n    scores[0] = 100;\n    printf(\"Player 1 score: %d\\n\", scores[0]);\n    \n    return 0;\n}",
+      "codeLanguage": "c",
+      "canRunCode": true
+    },
+    {
+      "id": "s_l1_4",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l1_1",
+        "type": "multiple_choice",
+        "question": "Why do we multiply `numPlayers` by `sizeof(int)` when calling `malloc`?",
+        "options": [
+          { "id": "opt1", "text": "Because malloc only accepts integers.", "isCorrect": false },
+          { "id": "opt2", "text": "Because malloc doesn't know what an 'int' is. It only understands raw Bytes. We have to manually calculate how many bytes 5 ints require.", "isCorrect": true },
+          { "id": "opt3", "text": "It makes the memory run faster.", "isCorrect": false }
+        ],
+        "explanation": "`malloc(5)` would only ask for 5 Bytes. Since an integer takes 4 bytes, 5 Bytes could only hold 1 integer safely! `5 * sizeof(int)` ensures we get 20 Bytes.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l1_5",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l1_2",
+        "type": "multiple_choice",
+        "question": "What does `malloc` actually return back to the program after finding the requested memory?",
+        "options": [
+          { "id": "opt1", "text": "An array.", "isCorrect": false },
+          { "id": "opt2", "text": "A Pointer containing the Memory Address where the new raw block of memory begins.", "isCorrect": true },
+          { "id": "opt3", "text": "A confirmation string.", "isCorrect": false }
+        ],
+        "explanation": "Because it returns a Pointer (`int *scores`), and because array names are secretly just pointers under the hood, we can treat `scores` exactly like a normal array!",
+        "xpReward": 10
+      }
+    }
+  ]
+}

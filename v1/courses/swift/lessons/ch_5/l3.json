@@ -1,0 +1,68 @@
+{
+  "id": "l3",
+  "chapterId": "ch_5",
+  "title": "The 'guard let' Bouncer 🛡️",
+  "description": "A cleaner, safer way to handle missing data early.",
+  "xpReward": 25,
+  "estimatedMinutes": 6,
+  "section": "Advanced Optionals",
+  "slides": [
+    {
+      "id": "s_l3_1",
+      "type": "text",
+      "title": "The Pyramid of Doom 🔺",
+      "content": "# The Problem with 'if let'\n\nIf you have 4 optionals to unwrap, using `if let` creates a messy \"pyramid\":\n\n```swift\nif let safeA = a {\n    if let safeB = b {\n        if let safeC = c {\n            // Code is getting squished!\n        }\n    }\n}\n```\nSwift offers a much cleaner way to handle this using the `guard` keyword."
+    },
+    {
+      "id": "s_l3_2",
+      "type": "text",
+      "title": "The Bouncer 🛡️",
+      "content": "# Using 'guard let'\n\nThink of `guard let` like a bouncer at a club. It checks your ID right at the door. If you don't have it (if it's `nil`), it kicks you out immediately!\n\n```swift\nfunc processUser(name: String?) {\n    guard let safeName = name else {\n        print(\"No name provided! Exiting.\")\n        return // Kicks you out of the function\n    }\n\n    // Down here, we can freely use safeName!\n    print(\"Welcome, \\(safeName)!\")\n}\n```"
+    },
+    {
+      "id": "s_l3_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_1",
+        "type": "multiple_choice",
+        "question": "What MUST a 'guard let' statement include?",
+        "options": [
+          {"id": "opt1", "text": "An 'else' block that contains an exit statement like 'return' or 'break'.", "isCorrect": true},
+          {"id": "opt2", "text": "An 'if' block.", "isCorrect": false},
+          {"id": "opt3", "text": "A 'print' statement.", "isCorrect": false}
+        ],
+        "explanation": "Because a guard's job is to protect the code below it, the `else` block MUST exit the current scope (using string like `return`, `break`, or `throw`).",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l3_4",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_2",
+        "type": "multiple_choice",
+        "question": "What is the primary benefit of using 'guard let' instead of 'if let'?",
+        "options": [
+          {"id": "opt1", "text": "It runs much faster.", "isCorrect": false},
+          {"id": "opt2", "text": "It requires less lines of code.", "isCorrect": false},
+          {"id": "opt3", "text": "It keeps your code from nesting too deep, and makes the \"unwrapped\" variable available for the REST of the function.", "isCorrect": true}
+        ],
+        "explanation": "Unlike `if let` (where the variable only exists inside the curly braces), `guard let` makes the unwrapped variable available for the entire remainder of the function!",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l3_5",
+      "type": "code",
+      "title": "See It in Action",
+      "content": "Look how clean the code reads after the bouncer finishes verifying the data!",
+      "codeSnippet": "func payBill(amount: Double?) {\n    guard let cost = amount else {\n        print(\"Error: No bill amount found.\")\n        return\n    }\n    \n    // We are past the bouncer, cost is safe!\n    print(\"Paying $\\(cost) now.\")\n}\n\npayBill(amount: 50.00)\npayBill(amount: nil)",
+      "codeLanguage": "swift",
+      "canRunCode": true
+    }
+  ]
+}

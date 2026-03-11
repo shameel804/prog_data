@@ -1,0 +1,66 @@
+{
+  "id": "l3",
+  "chapterId": "ch_9",
+  "title": "Structs & Pointers 🎯",
+  "description": "The Arrow Operator (->).",
+  "xpReward": 25,
+  "estimatedMinutes": 7,
+  "section": "Advanced Structs",
+  "slides": [
+    {
+      "id": "s_l3_1",
+      "type": "text",
+      "title": "Heavy Data 🏋️",
+      "content": "Structs can become exceptionally massive, containing thousands of variables. Remember `Pass by Value`? If you pass a massive struct to a function, C has to photocopy the entire massive chunk of memory, which is incredibly slow."
+    },
+    {
+      "id": "s_l3_2",
+      "type": "text",
+      "title": "Pointer Power ⚡",
+      "content": "Instead, we should pass **struct pointers** to functions. It's lightning fast because we just hand the function an 8-byte treasure map.\n\nBut there's a syntax trick you need to know."
+    },
+    {
+      "id": "s_l3_3",
+      "type": "code",
+      "title": "The Arrow Operator (->)",
+      "content": "If you have a pointer to a struct, you CANNOT say `ptr.health = 100`.\n\nYou have to use the **Arrow Operator `->`**, which tells C: \"Follow this pointer across memory, AND THEN grab the member.\"",
+      "codeSnippet": "#include <stdio.h>\n\nstruct Player {\n    int health;\n};\n\n// Expect a pointer to a Player struct\nvoid heal(struct Player *p) {\n    // We MUST use -> because p is a pointer, not the real thing\n    p->health = 100;\n}\n\nint main() {\n    struct Player hero = {10};\n    \n    heal(&hero); // Pass the address map!\n    \n    printf(\"Hero HP is now %d\\n\", hero.health);\n    return 0;\n}",
+      "codeLanguage": "c",
+      "canRunCode": true
+    },
+    {
+      "id": "s_l3_4",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_1",
+        "type": "multiple_choice",
+        "question": "When do you use the dot `.` operator versus the arrow `->` operator?",
+        "options": [
+          { "id": "opt1", "text": "Dot is for ints, Arrow is for arrays.", "isCorrect": false },
+          { "id": "opt2", "text": "Dot `.` is used on the real physical struct variable. Arrow `->` is used when you only have a Pointer pointing to a struct.", "isCorrect": true },
+          { "id": "opt3", "text": "They are exactly the same; it's just stylistic preference.", "isCorrect": false }
+        ],
+        "explanation": "If it's the real object, use `.`. If you are holding a remote control (a pointer) to the object, use `->` to bridge the gap.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l3_5",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_2",
+        "type": "true_false",
+        "question": "Writing `(*ptr).health = 100` is the mathematically identical, harder-to-read version of writing `ptr->health = 100`.",
+        "isTrue": true,
+        "correctAnswer": "true",
+        "options": [],
+        "explanation": "Yes! The arrow operator was literally invented specifically because programmers got tired of typing `(*ptr).member`.",
+        "xpReward": 10
+      }
+    }
+  ]
+}
