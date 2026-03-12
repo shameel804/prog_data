@@ -1,0 +1,71 @@
+{
+  "id": "l4",
+  "chapterId": "ch_6",
+  "title": "The Option Enum 🎁",
+  "description": "Rust's brilliant alternative to Null values.",
+  "xpReward": 35,
+  "estimatedMinutes": 6,
+  "section": "Advanced Types",
+  "slides": [
+    {
+      "id": "s_l4_1",
+      "type": "text",
+      "title": "The Billion Dollar Mistake 💸",
+      "content": "In many languages, like Java or JavaScript, any variable can be secretly 'Null' (completely empty). If you try to use it without manually checking... **CRASH**.\n\nRust handles this brilliantly: **Null does not exist in Rust.**"
+    },
+    {
+      "id": "s_l4_2",
+      "type": "text",
+      "title": "Enter: Option 🎁",
+      "content": "Instead of null, Rust provides a globally built-in Enum called `Option<T>`.\n\n```rust\nenum Option<T> {\n    None,\n    Some(T),\n}\n```\nIt explicitly asks: \"Are you empty (`None`), or do you secretly contain `Some` actual data inside you?\""
+    },
+    {
+      "id": "s_l4_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_1",
+        "type": "multiple_choice",
+        "question": "Does Rust have a 'null' feature like other languages?",
+        "options": [
+          {"id": "opt1", "text": "Yes, but it's called 'void'.", "isCorrect": false},
+          {"id": "opt2", "text": "No, it forces you to use the explicit `Option` enum to represent the potential absence of a value.", "isCorrect": true},
+          {"id": "opt3", "text": "Yes, but only for Strings.", "isCorrect": false}
+        ],
+        "explanation": "Because null implicitly exists everywhere in other languages, it causes endless surprise crashes. The explicit `Option` enum prevents this entirely.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l4_4",
+      "type": "text",
+      "title": "Using Option 🕵️",
+      "content": "Because `Option` is so incredibly common, Rust automatically imports its two variants (`Some` and `None`) perfectly into every program.\n\n```rust\nlet some_number = Some(5);\nlet some_text = Some(\"a string\");\n\nlet absent_number: Option<i32> = None;\n```"
+    },
+    {
+      "id": "s_l4_5",
+      "type": "text",
+      "title": "Why is this better? 🛡️",
+      "content": "Because `Option<i32>` and basic `i32` are functionally two **different types**, the Rust compiler adamantly REFUSES to let you do math with an `Option`.\n\n```rust\nlet x: i32 = 5;\nlet y: Option<i32> = Some(5);\nlet sum = x + y; // COMPILER ERROR!\n```\nYou are forced to manually unpack `y` and explicitly handle the possibility of it being `None` before using it. **Zero crashes.**"
+    },
+    {
+      "id": "s_l4_6",
+      "type": "quiz",
+      "title": "Knowledge Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_2",
+        "type": "multiple_choice",
+        "question": "Why does Rust block you from directly adding an `i32` number and an `Option<i32>` together?",
+        "options": [
+          {"id": "opt1", "text": "Math functions are slower with Options.", "isCorrect": false},
+          {"id": "opt2", "text": "They are categorically distinct types. You MUST manually prove you safely extracted the inner value (and handled the `None` scenario) before using it.", "isCorrect": true},
+          {"id": "opt3", "text": "It doesn't block it, it works automatically.", "isCorrect": false}
+        ],
+        "explanation": "Requiring developers to explicitly open the 'box' (Option) safely guarantees they never accidentally process a null execution.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

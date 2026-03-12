@@ -1,0 +1,59 @@
+{
+  "id": "l1",
+  "chapterId": "ch_10",
+  "title": "Type Assertions ('as')",
+  "description": "Telling TypeScript you know better.",
+  "xpReward": 25,
+  "estimatedMinutes": 5,
+  "section": "Advanced Types",
+  "slides": [
+    {
+      "id": "s_l1_1",
+      "type": "text",
+      "title": "Trust Me, I'm a Dev 👨‍💻",
+      "content": "Sometimes you have information about a value's type that TypeScript possibly can't know.\n\nFor example, if you grab an HTML element by its ID: `document.getElementById('my-canvas')`.\nTypeScript only knows this returns a generic `HTMLElement`. But YOU know for a fact it's specifically an `HTMLCanvasElement`."
+    },
+    {
+      "id": "s_l1_2",
+      "type": "code",
+      "title": "The `as` Keyword",
+      "content": "You can force TypeScript to treat a variable as a specific type using type assertions via the `as` keyword.",
+      "codeSnippet": "// We assert that this generic element is specifically a Canvas\nlet myCanvas = document.getElementById('my-canvas') as HTMLCanvasElement;\n\n// Now TS auto-completes canvas-specific properties!\nmyCanvas.getContext('2d');",
+      "codeLanguage": "typescript",
+      "canRunCode": false
+    },
+    {
+      "id": "s_l1_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l1_1",
+        "type": "multiple_choice",
+        "question": "Does using `as` mathematically convert or cast the actual underlying JavaScript data at runtime?",
+        "options": [
+          { "id": "opt1", "text": "Yes, it transforms the raw variable shape in memory.", "isCorrect": false },
+          { "id": "opt2", "text": "No. Type assertions are strictly a compile-time concept. They vanish at runtime.", "isCorrect": true },
+          { "id": "opt3", "text": "Yes, but only if the data is an Array.", "isCorrect": false }
+        ],
+        "explanation": "TypeScript assertions exist entirely for the developer and the compiler. They have absolute zero impact or existence in the compiled final JavaScript runtime.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l1_4",
+      "type": "code",
+      "title": "The Danger of 'as' ⚠️",
+      "content": "Because `as` forces the compiler to blindly trust you, you can easily shoot yourself in the foot if you lie to it.",
+      "codeSnippet": "interface User { name: string; age: number; }\n\n// We are LYING to the compiler here. This object is missing 'age'.\n// But because we used 'as User', TS forcefully ignores the error.\nconst fakeUser = { name: \"Alice\" } as User;\n\nconsole.log(fakeUser.age); // Undefined! Runtime crash risk!",
+      "codeLanguage": "typescript",
+      "canRunCode": false
+    },
+    {
+      "id": "s_l1_5",
+      "type": "tip",
+      "title": "Best Practice 💎",
+      "content": "Use `as` extremely sparingly. Only use it when you are interacting with third-party data or the DOM where TS structurally cannot infer the deep type on its own."
+    }
+  ]
+}

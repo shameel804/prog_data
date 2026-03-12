@@ -1,0 +1,74 @@
+{
+  "id": "l3",
+  "chapterId": "ch_7",
+  "title": "Pattern Matching Results 🧩",
+  "description": "Using match to elegantly handle Success or Error.",
+  "xpReward": 30,
+  "estimatedMinutes": 5,
+  "section": "Control Flow",
+  "slides": [
+    {
+      "id": "s_l3_1",
+      "type": "text",
+      "title": "Opening the Box 📦",
+      "content": "So, a function returned a `Result`. How do we actually open this protective box to get our data (or strictly handle the error) safely?\n\nThe most robust, standard way is by using a `match` expression."
+    },
+    {
+      "id": "s_l3_2",
+      "type": "code",
+      "title": "Matching on Result 🧩",
+      "content": "You provide dedicated code blocks to execute for each possible variant.",
+      "codeSnippet": "let f = File::open(\"hello.txt\");\n\nlet mut file = match f {\n    Ok(file) => file,\n    Err(error) => {\n        println!(\"Problem opening the file: {:?}\", error);\n        panic!(\"Failed to open\");\n    },\n};",
+      "codeLanguage": "rust",
+      "canRunCode": false
+    },
+    {
+      "id": "s_l3_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_1",
+        "type": "multiple_choice",
+        "question": "What happens if you use a `match` statement on a Result, but accidentally forget to write an arm for the `Err` case?",
+        "options": [
+          {"id": "opt1", "text": "It silently ignores the error at runtime", "isCorrect": false},
+          {"id": "opt2", "text": "The compiler throws a hard error, stating your match is non-exhaustive", "isCorrect": true},
+          {"id": "opt3", "text": "It automatically crashes the program", "isCorrect": false}
+        ],
+        "explanation": "Rust forces you to explicitly acknowledge and handle every single solitary variant of an Enum when matching. If an error is possible, the compiler holds you strictly accountable to deal with it.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l3_4",
+      "type": "text",
+      "title": "Quick Unpacking: unwrap() 🔨",
+      "content": "Using `match` takes a lot of typing. What if you just want to grab the pure success value or instantly crash the entire program if an error occurs?\n\nYou can call `.unwrap()` directly on the Result.\n\n```rust\n// If successful, returns the file. If an Error, panics instantly!\nlet f = File::open(\"hello.txt\").unwrap(); \n```"
+    },
+    {
+      "id": "s_l3_5",
+      "type": "text",
+      "title": "Friendly Crashing: expect() 💡",
+      "content": "Similar to `unwrap()`, the `.expect()` method will instantly extract the value or brutally panic. The core difference? You provide a custom crash message.\n\n```rust\nlet f = File::open(\"hello.txt\")\n    .expect(\"Failed to open hello.txt, checking disk structure\");\n```\nIn production, you should universally prefer `expect` over `unwrap` to give developers context on *why* the crash happened."
+    },
+    {
+      "id": "s_l3_6",
+      "type": "quiz",
+      "title": "Knowledge Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_2",
+        "type": "multiple_choice",
+        "question": "What is the key difference between `.unwrap()` and `.expect(\"message\")` on a Result type?",
+        "options": [
+          {"id": "opt1", "text": "`expect` never crashes the program", "isCorrect": false},
+          {"id": "opt2", "text": "`unwrap` tries to fix the error, while `expect` does not", "isCorrect": false},
+          {"id": "opt3", "text": "Both extract variables or successfully panic, but `expect` attaches a custom helpful developer error message.", "isCorrect": true}
+        ],
+        "explanation": "Using `.expect()` actively leaves breadcrumbs for other developers so that if the program does crash, they can read exactly why it failed in the terminal log.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

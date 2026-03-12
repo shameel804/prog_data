@@ -1,0 +1,71 @@
+{
+  "id": "l4",
+  "chapterId": "ch_5",
+  "title": "Borrowing & References 🤝",
+  "description": "Lending your data out without giving up control.",
+  "xpReward": 30,
+  "estimatedMinutes": 6,
+  "section": "Ownership Rules",
+  "slides": [
+    {
+      "id": "s_l4_1",
+      "type": "text",
+      "title": "The Function Trap 🪤",
+      "content": "Because of Move semantics, passing a variable into a function instantly steals its ownership!\n\n```rust\nlet s = String::from(\"hello\");\ncalculate_length(s); // Ownership passed into the function\n// ERROR! `s` is now DEAD. You cannot print it here.\n```\nThis gets incredibly annoying. How do we let a function view data without giving away ownership?"
+    },
+    {
+      "id": "s_l4_2",
+      "type": "text",
+      "title": "Borrowing! 🤝",
+      "content": "We use **References** and **Borrowing**.\n\nA reference allows you to refer to a value without taking ownership of it. You denote a reference with the ampersand `&` symbol.\n\n```rust\nlet s1 = String::from(\"hello\");\nlet len = calculate_length(&s1); // We pass a REFERENCE\nprintln!(\"The string '{}' has length {}\", s1, len);\n```"
+    },
+    {
+      "id": "s_l4_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_1",
+        "type": "multiple_choice",
+        "question": "What symbol is used to create a reference that 'borrows' data instead of taking ownership?",
+        "options": [
+          {"id": "opt1", "text": "*", "isCorrect": false},
+          {"id": "opt2", "text": "&", "isCorrect": true},
+          {"id": "opt3", "text": "#", "isCorrect": false}
+        ],
+        "explanation": "The strict ampersand `&` creates an immutable reference, meaning it's pointing to the data but does not own it.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l4_4",
+      "type": "text",
+      "title": "Immutable by Default 🔒",
+      "content": "Just like standard variables, References are entirely *immutable* by default!\n\n```rust\nfn calculate_length(s: &String) {\n    s.push_str(\", world\"); // ERROR! You cannot modify a borrowed read-only value\n}\n```\nIf you lend someone your bicycle, you don't expect them to paint it red."
+    },
+    {
+      "id": "s_l4_5",
+      "type": "text",
+      "title": "Mutable References 🎨",
+      "content": "To modify a borrowed value, you must use a **Mutable Reference**: `&mut`.\n\n```rust\nlet mut s = String::from(\"hello\");\nchange(&mut s); // We pass a mutable reference!\n\nfn change(s: &mut String) {\n    s.push_str(\", world\"); // Works perfectly!\n}\n```"
+    },
+    {
+      "id": "s_l4_6",
+      "type": "quiz",
+      "title": "Knowledge Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_2",
+        "type": "multiple_choice",
+        "question": "The strict Rule of Borrowing states:",
+        "options": [
+          {"id": "opt1", "text": "You can have exactly one mutable reference, OR infinite immutable references at the same time. Never both.", "isCorrect": true},
+          {"id": "opt2", "text": "You can have as many mutable references simultaneously as you want.", "isCorrect": false},
+          {"id": "opt3", "text": "References must be larger than 50 bytes.", "isCorrect": false}
+        ],
+        "explanation": "This guarantees that if data is being heavily read simultaneously by hundreds of threads, absolutely NO thread is allowed to mutate it under the hood. Perfect Concurrency!",
+        "xpReward": 10
+      }
+    }
+  ]
+}

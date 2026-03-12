@@ -1,0 +1,67 @@
+{
+  "id": "l2",
+  "chapterId": "ch_7",
+  "title": "The Result Enum 🛡️",
+  "description": "Handling expected failures gracefully.",
+  "xpReward": 30,
+  "estimatedMinutes": 6,
+  "section": "Error Handling",
+  "slides": [
+    {
+      "id": "s_l2_1",
+      "type": "text",
+      "title": "Exceptions? No thanks. 🚫",
+      "content": "Most modern programming languages handle predictable errors (like a bad network request) by 'Throwing Exceptions' using `try/catch`.\n\nRust famously **does not have exceptions**. Instead, it uses an incredibly powerful Enum called `Result`."
+    },
+    {
+      "id": "s_l2_2",
+      "type": "text",
+      "title": "Meet Result 🎁",
+      "content": "The `Result` Enum is built into Rust globally, and it has exactly two variants:\n\n```rust\nenum Result<T, E> {\n    Ok(T),    // Contains the success value\n    Err(E),   // Contains the Error value\n}\n```\nIt literally forces you to acknowledge that an operation could fail."
+    },
+    {
+      "id": "s_l2_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_1",
+        "type": "multiple_choice",
+        "question": "Instead of throwing spontaneous exceptions like Java or Python, how does Rust represent recoverable errors?",
+        "options": [
+          {"id": "opt1", "text": "It returns a global error code", "isCorrect": false},
+          {"id": "opt2", "text": "It returns a standard `Result` Enum containing either an `Ok` success or an `Err` failure.", "isCorrect": true},
+          {"id": "opt3", "text": "It uses `Option` specifically for everything.", "isCorrect": false}
+        ],
+        "explanation": "By securely returning a `Result`, the compiler guarantees that developers must actively write code to handle both the `Ok(data)` path and the `Err(error)` path before moving forward.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l2_4",
+      "type": "text",
+      "title": "Returning a Result 📬",
+      "content": "If you write a function that could fail (like logging into an account), you don't return a simple string. You return a `Result`!\n\n```rust\nfn open_file(path: &str) -> Result<String, String> {\n    if path == \"secret.txt\" {\n        Ok(String::from(\"File data here\"))\n    } else {\n        Err(String::from(\"File not found!\"))\n    }\n}\n```"
+    },
+    {
+      "id": "s_l2_5",
+      "type": "text",
+      "title": "The Iron Clad Guarantee 🛡️",
+      "content": "If a function returns a `Result`, the compiler will **refuse to compile** if you try to use its returned value directly without unpacking it.\n\n```rust\nlet file = open_file(\"data.txt\");\nprintln!(\"{}\", file); // ERROR! Cannot print a Result directly.\n```\nYou MUST open the wrapper and gracefully address the potential `Err` inside!"
+    },
+    {
+      "id": "s_l2_6",
+      "type": "quiz",
+      "title": "Knowledge Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_2",
+        "type": "true_false",
+        "question": "If a function successfully returns a `Result<i32, String>`, you can instantly and seamlessly add that result together with another standard `i32` integer.",
+        "correctAnswer": false,
+        "explanation": "No! A `Result` is a protective wrapper. You cannot legitimately add a wrapper to a regular number; you must firmly unpack the inner `Ok(data)` carefully to access the integer safely.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

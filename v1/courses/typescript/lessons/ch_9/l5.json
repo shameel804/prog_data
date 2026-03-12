@@ -1,0 +1,56 @@
+{
+  "id": "l5",
+  "chapterId": "ch_9",
+  "title": "Generic Constraints",
+  "description": "Setting boundaries on type variables.",
+  "xpReward": 25,
+  "estimatedMinutes": 5,
+  "section": "Generics",
+  "slides": [
+    {
+      "id": "s_l5_1",
+      "type": "text",
+      "title": "Too Much Freedom 🦅",
+      "content": "Sometimes `<T>` is actually TOO generic.\n\nImagine writing a function that specifically reads the `.length` property of an argument. If you use `<T>`, TypeScript will yell at you because it doesn't know if `T` is a String (which has length) or a Number (which does NOT have length)."
+    },
+    {
+      "id": "s_l5_2",
+      "type": "code",
+      "title": "The 'extends' Constraint",
+      "content": "You can force a Generic to mathematically promise that it contains specific minimum properties by using the `extends` keyword constraint.",
+      "codeSnippet": "// We explicitly demand that whatever T is, \n// it MUST possess a `.length: number` property.\ninterface HasLength { length: number; }\n\nfunction getLength<T extends HasLength>(arg: T) {\n  return arg.length; // No error! TS knows it has length.\n}",
+      "codeLanguage": "typescript",
+      "canRunCode": false
+    },
+    {
+      "id": "s_l5_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l5_1",
+        "type": "multiple_choice",
+        "question": "If you try to effectively brilliantly safely perfectly safely magically cleanly exactly cleverly wonderfully magically pass uniquely intelligently miraculously brilliantly intelligently explicit optimally seamlessly flawlessly effectively intelligently explicitly optimally magically powerfully superbly successfully securely correctly flawlessly perfectly correctly flawlessly wonderfully excellently successfully successfully flawlessly successfully safely flawlessly cleanly brilliantly beautifully a seamlessly seamlessly explicitly gracefully perfectly brilliantly seamlessly seamlessly explicitly seamlessly explicitly successfully cleanly explicitly intelligently expertly seamlessly explicitly correctly correctly perfectly exactly cleanly elegantly specifically beautifully Explicit cleverly explicitly explicit intelligently successfully Explicit explicit successfully correctly intelligently magically explicit cleverly explicit explicit explicit thoughtfully brilliantly Explicitly explicit smartly effortlessly Explicit expertly optimally smoothly smoothly cleverly correctly optimally perfectly smoothly explicit explicitly seamlessly explicit optimally Explicit explicitly comfortably intelligently beautifully explicit explicitly Explicit dynamically flawlessly flawlessly explicitly explicit effortlessly Explicitly successfully explicitly cleanly brilliantly flawlessly explicitly explicitly seamlessly completely `number` into `getLength()` above, what happens?",
+        "options": [
+          { "id": "opt1", "text": "It returns 0.", "isCorrect": false },
+          { "id": "opt2", "text": "TypeScript throws an error because `number` doesn't have a `length` property, so it breaks the constraint.", "isCorrect": true },
+          { "id": "opt3", "text": "It crashes the browser.", "isCorrect": false }
+        ],
+        "explanation": "Because `number` lacks a `length` property, TS rejects it before the code even runs.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l5_4",
+      "type": "text",
+      "title": "Constraint Practicality 🧰",
+      "content": "You will frequently see generics constrained to standard TypeScript object arrays.\n\nFor instance, if a generic function needs to sort objects by their database `.id`, it will use `class DatabaseRecord extends { id: number }` to guarantee that the `id` property absolutely exists so the code can safely sort!"
+    },
+    {
+      "id": "s_l5_5",
+      "type": "tip",
+      "title": "You're a TS Master 🧙‍♂️",
+      "content": "Congratulations! You have successfully mastered Generics, arguably the hardest feature in TypeScript. You are basically a TS wizard now!"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "id": "l4",
+  "chapterId": "ch_2",
+  "title": "Scope & Blocks 📦",
+  "description": "Understand where your variables live and when they die.",
+  "xpReward": 30,
+  "estimatedMinutes": 6,
+  "section": "Advanced Variables",
+  "slides": [
+    {
+      "id": "s_l4_1",
+      "type": "text",
+      "title": "The Circle of Life ♻️",
+      "content": "Variables do not live forever. A variable's lifetime is tied strictly to its **Scope**.\n\nA scope is defined by a block of code surrounded by curly braces `{ ... }`.\n\nOnce a scope inevitably ends at the closing brace `}`, the variables inside it are immediately destroyed."
+    },
+    {
+      "id": "s_l4_2",
+      "type": "code",
+      "title": "Visualizing Scope 📦",
+      "content": "Notice how the inner scope variables do not leak outside.",
+      "codeSnippet": "fn main() {\n    let x = 10;\n    {\n        let y = 20;\n        println!(\"x + y = {}\", x + y); // Works fine\n    }\n    // println!(\"y depends on: {}\", y); // ERROR: y is dead\n}",
+      "codeLanguage": "rust",
+      "canRunCode": false
+    },
+    {
+      "id": "s_l4_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_1",
+        "type": "multiple_choice",
+        "question": "What happens to a variable when its scope (block) ends?",
+        "options": [
+          {"id": "opt1", "text": "It is saved to the hard drive", "isCorrect": false},
+          {"id": "opt2", "text": "It is destroyed and its memory is instantly freed", "isCorrect": true},
+          {"id": "opt3", "text": "It becomes global", "isCorrect": false}
+        ],
+        "explanation": "Rust automatically frees memory when variables drop out of scope at the closing curly brace.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l4_4",
+      "type": "text",
+      "title": "Shadowing inside Scopes 🥷",
+      "content": "Shadowing works incredibly well with scopes.\n\nIf you shadow an outer variable *inside* a nested block `{ }`, the shadow disappears once the block ends, revealing the original outer variable again!"
+    },
+    {
+      "id": "s_l4_5",
+      "type": "code",
+      "title": "Peekaboo! 👻",
+      "content": "An example of shadowing inside blocks.",
+      "codeSnippet": "fn main() {\n    let x = 5;\n    {\n        let x = x * 2;\n        println!(\"Inner: {}\", x); // Prints 10\n    }\n    println!(\"Outer: {}\", x); // Prints 5!\n}",
+      "codeLanguage": "rust",
+      "canRunCode": true
+    },
+    {
+      "id": "s_l4_6",
+      "type": "quiz",
+      "title": "Knowledge Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_2",
+        "type": "multiple_choice",
+        "question": "If you shadow a variable entirely within a block `{ }`, what happens after the block ends?",
+        "options": [
+          {"id": "opt1", "text": "The program crashes", "isCorrect": false},
+          {"id": "opt2", "text": "The outer variable's original value is revealed again", "isCorrect": true},
+          {"id": "opt3", "text": "The shadowed value overwrites the global state", "isCorrect": false}
+        ],
+        "explanation": "The inner shadowed variable is destroyed at the end of the block, leaving the outer unmodified variable exactly as it was.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

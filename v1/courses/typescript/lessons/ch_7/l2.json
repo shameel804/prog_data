@@ -1,0 +1,59 @@
+{
+  "id": "l2",
+  "chapterId": "ch_7",
+  "title": "Type Narrowing",
+  "description": "Safely using Union Types.",
+  "xpReward": 25,
+  "estimatedMinutes": 5,
+  "section": "Unions & Intersections",
+  "slides": [
+    {
+      "id": "s_l2_1",
+      "type": "text",
+      "title": "The Union Dilemma 🧩",
+      "content": "When a parameter has a Union type like `id: number | string`, TypeScript gets highly protective.\n\nIt will NOT let you call a string-specific method (like `.toUpperCase()`) on `id`, because at runtime, `id` might actually be a number, which would crash the code!"
+    },
+    {
+      "id": "s_l2_2",
+      "type": "code",
+      "title": "The Error",
+      "content": "TypeScript blocks this action immediately.",
+      "codeSnippet": "function printId(id: number | string) {\n  // ERROR: Property 'toUpperCase' does not exist on type 'number'.\n  console.log(id.toUpperCase());\n}",
+      "codeLanguage": "typescript",
+      "canRunCode": false
+    },
+    {
+      "id": "s_l2_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_1",
+        "type": "multiple_choice",
+        "question": "What is the only type of operation TypeScript allows directly on a raw Union variable?",
+        "options": [
+          { "id": "opt1", "text": "String operations only.", "isCorrect": false },
+          { "id": "opt2", "text": "Operations that are valid for ALL types in the union.", "isCorrect": true },
+          { "id": "opt3", "text": "Any operation you want.", "isCorrect": false }
+        ],
+        "explanation": "TypeScript only allows operations that are common (overlapping) between all the types in the union.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l2_4",
+      "type": "text",
+      "title": "Narrowing the Type 🔍",
+      "content": "We solve this by checking what type it currently is using standard JavaScript `typeof` logic.\n\nOnce inside the `if` block, TypeScript magically \"narrows\" the type and knows it's 100% safe."
+    },
+    {
+      "id": "s_l2_5",
+      "type": "code",
+      "title": "Type Guards",
+      "content": "This `if` statement is called a Type Guard.",
+      "codeSnippet": "function printId(id: number | string) {\n  if (typeof id === \"string\") {\n    // TS now guarantees `id` is a string here!\n    console.log(id.toUpperCase());\n  } else {\n    // TS guarantees it is a number here!\n    console.log(id.toFixed(2));\n  }\n}",
+      "codeLanguage": "typescript",
+      "canRunCode": false
+    }
+  ]
+}

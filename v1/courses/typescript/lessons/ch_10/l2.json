@@ -1,0 +1,59 @@
+{
+  "id": "l2",
+  "chapterId": "ch_10",
+  "title": "Keyof & Nullability",
+  "description": "Extracting keys and bypassing nulls.",
+  "xpReward": 25,
+  "estimatedMinutes": 5,
+  "section": "Advanced Types",
+  "slides": [
+    {
+      "id": "s_l2_1",
+      "type": "text",
+      "title": "The Keyof Operator 🔑",
+      "content": "The `keyof` operator is incredibly powerful. It takes an object type and cleanly extracts all of its keys as a union of literal strings."
+    },
+    {
+      "id": "s_l2_2",
+      "type": "code",
+      "title": "Extracting Keys",
+      "content": "Notice how `keyof User` automatically transforms into the precise union `'id' | 'username' | 'email'`.",
+      "codeSnippet": "interface User {\n  id: number;\n  username: string;\n  email: string;\n}\n\n// We explicitly demand the variable matches one of the User keys\ntype UserKey = keyof User;\n\nlet validKey: UserKey = \"email\"; // Works perfectly\nlet invalidKey: UserKey = \"password\"; // Error: 'password' is not in User",
+      "codeLanguage": "typescript",
+      "canRunCode": false
+    },
+    {
+      "id": "s_l2_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_1",
+        "type": "multiple_choice",
+        "question": "If you dynamically add `role: string` to the `User` interface, what intelligently happens to the `UserKey` extracted type above?",
+        "options": [
+          { "id": "opt1", "text": "It fails and you must manually rewrite the UserKey alias.", "isCorrect": false },
+          { "id": "opt2", "text": "It automatically updates to include 'role'. The dynamic union instantly becomes `'id' | 'username' | 'email' | 'role'`.", "isCorrect": true },
+          { "id": "opt3", "text": "It throws a recursive compiler error.", "isCorrect": false }
+        ],
+        "explanation": "`keyof` behaves dynamically. As the master interface scales, anything utilizing `keyof` structurally inherits the new keys automatically.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l2_4",
+      "type": "code",
+      "title": "Non-Null Assertion Operator ❗️",
+      "content": "Another highly common advanced trick is the `!` operator. It structurally commands TypeScript: *\"I promise this specific variable is NOT null or undefined right now.\"*",
+      "codeSnippet": "let userEmail: string | null = \"alice@test.com\";\n\n// TS natively complains because userEmail might be exactly null here\n// console.log(userEmail.toUpperCase()); \n\n// Appending ! firmly asserts it is definitely a valid string\nconsole.log(userEmail!.toUpperCase());",
+      "codeLanguage": "typescript",
+      "canRunCode": false
+    },
+    {
+      "id": "s_l2_5",
+      "type": "tip",
+      "title": "Danger Zone ☢️",
+      "content": "Just exactly like the `as` keyword, appending `!` lies to the compiler. If the value randomly turns out to genuinely be null at runtime, your entire app explicitly crashes! Use with extreme caution."
+    }
+  ]
+}

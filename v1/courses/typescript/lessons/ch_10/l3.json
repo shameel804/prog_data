@@ -1,0 +1,59 @@
+{
+  "id": "l3",
+  "chapterId": "ch_10",
+  "title": "Partial & Required",
+  "description": "Built-in utility types for quick changes.",
+  "xpReward": 25,
+  "estimatedMinutes": 5,
+  "section": "Utility Types",
+  "slides": [
+    {
+      "id": "s_l3_1",
+      "type": "text",
+      "title": "Utility Types 🧰",
+      "content": "TypeScript comes packed with beautifully built-in global Utility Types.\n\nThese are essentially completely pre-written Generics that take an existing Interface and mathematically transform it into a brand new shape instantly!"
+    },
+    {
+      "id": "s_l3_2",
+      "type": "code",
+      "title": "The `Partial<Type>` Utility",
+      "content": "`Partial<T>` takes all the properties of an interface and instantly makes every single one of them optional (`?`). It perfectly handles massive profile updates.",
+      "codeSnippet": "interface User {\n  id: number;\n  name: string;\n  email: string;\n}\n\n// We only want to update the name. Without Partial, \n// TS would yell that 'id' and 'email' are missing!\nfunction updateUser(id: number, updates: Partial<User>) {\n  // database.update(id, updates);\n}\n\nupdateUser(1, { name: \"Bob\" }); // Perfectly valid!",
+      "codeLanguage": "typescript",
+      "canRunCode": false
+    },
+    {
+      "id": "s_l3_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_1",
+        "type": "multiple_choice",
+        "question": "If you dynamically pass `{ email: \"bob@test.com\" }` into the `updates` argument above, will it successfully miraculously compile cleanly?",
+        "options": [
+          { "id": "opt1", "text": "Yes, because Partial<User> means you can provide any subset of the User properties.", "isCorrect": true },
+          { "id": "opt2", "text": "No, because the original interface strictly structurally requires all three.", "isCorrect": false },
+          { "id": "opt3", "text": "Yes, but only if you provide exactly two properties at minimum.", "isCorrect": false }
+        ],
+        "explanation": "Partial converts `id: number` to `id?: number` and so on, enabling you to safely pass one, some, or all properties.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l3_4",
+      "type": "code",
+      "title": "The `Required<Type>` Utility",
+      "content": "`Required<T>` does the exact opposite. It takes an interface that might have optional properties, and mathematically strips away all the `?` marks, strictly forcing everything to be mandatory.",
+      "codeSnippet": "interface Props {\n  title?: string;\n  color?: string;\n}\n\n// Error! Property 'color' is missing but REQUIRED dynamically\nconst strictProps: Required<Props> = {\n  title: \"Welcome\"\n};",
+      "codeLanguage": "typescript",
+      "canRunCode": false
+    },
+    {
+      "id": "s_l3_5",
+      "type": "tip",
+      "title": "The `Readonly<Type>` Utility 🔒",
+      "content": "There is also `Readonly<T>`, which gracefully transforms every property into a `readonly` property, preventing mutations!"
+    }
+  ]
+}

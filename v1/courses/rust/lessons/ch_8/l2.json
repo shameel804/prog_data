@@ -1,0 +1,61 @@
+{
+  "id": "l2",
+  "chapterId": "ch_8",
+  "title": "UTF-8 Strings 🧶",
+  "description": "Why Rust Strings are complex.",
+  "xpReward": 30,
+  "estimatedMinutes": 6,
+  "section": "Collections",
+  "slides": [
+    {
+      "id": "s_l2_1",
+      "type": "text",
+      "title": "Strings are Vectors 😱",
+      "content": "A `String` in Rust is actually just a wrapper over a `Vec<u8>` (a vector of bytes) that guarantees the bytes represent valid UTF-8 text."
+    },
+    {
+      "id": "s_l2_2",
+      "type": "text",
+      "title": "Creating Strings",
+      "content": "You can push new data onto a String just like a vector.\n\n```rust\nlet mut s = String::from(\"foo\");\ns.push_str(\"bar\"); // \"foobar\"\ns.push('!'); // \"foobar!\"\n```"
+    },
+    {
+      "id": "s_l2_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_1",
+        "type": "multiple_choice",
+        "question": "Under the hood, what is a `String` in Rust?",
+        "options": [
+          {"id": "opt1", "text": "A fixed Array of characters", "isCorrect": false},
+          {"id": "opt2", "text": "A dynamically growing Vector of valid UTF-8 bytes", "isCorrect": true},
+          {"id": "opt3", "text": "A linked list", "isCorrect": false}
+        ],
+        "explanation": "Strings are secretly Vectors disguised as text.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l2_4",
+      "type": "text",
+      "title": "No Indexing Allowed 🛑",
+      "content": "Because strings are UTF-8, some fancy characters take 2, 3, or even 4 bytes each! \n\nRust explicitly **forbids** you from doing `let c = s[0];` because byte `0` might only be half of a character, crashing your program."
+    },
+    {
+      "id": "s_l2_5",
+      "type": "quiz",
+      "title": "Knowledge Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_2",
+        "type": "true_false",
+        "question": "Rust cleanly allows you to access a String's characters precisely by raw index, like `let letter = text[0];`.",
+        "correctAnswer": false,
+        "explanation": "Rust outright refuses integer indexing on Strings because underlying UTF-8 byte lengths constantly fluctuate per-character.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

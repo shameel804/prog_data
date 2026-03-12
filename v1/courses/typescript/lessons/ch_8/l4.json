@@ -1,0 +1,59 @@
+{
+  "id": "l4",
+  "chapterId": "ch_8",
+  "title": "Readonly in Classes",
+  "description": "Making locked class properties.",
+  "xpReward": 25,
+  "estimatedMinutes": 5,
+  "section": "Classes",
+  "slides": [
+    {
+      "id": "s_l4_1",
+      "type": "text",
+      "title": "Different from Private 🔒",
+      "content": "A `private` property cannot be seen by outside code.\n\nBut what if you want external code to be able to *see* the property (like a username) but NEVER be able to *change* it?\n\nEnter the `readonly` modifier!"
+    },
+    {
+      "id": "s_l4_2",
+      "type": "code",
+      "title": "The 'readonly' Usage",
+      "content": "Placing `readonly` before a property locks it down. It must be assigned either immediately upon declaration, or inside the constructor once.",
+      "codeSnippet": "class Book {\n  readonly title: string;\n\n  constructor(t: string) {\n    this.title = t; // Allowed once\n  }\n}\n\nlet lotr = new Book(\"LOTR\");\nconsole.log(lotr.title); // Works!\n// lotr.title = \"Hobbit\"; ERROR! Read-only!",
+      "codeLanguage": "typescript",
+      "canRunCode": false
+    },
+    {
+      "id": "s_l4_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_1",
+        "type": "multiple_choice",
+        "question": "Can a method *inside* the class safely change a `readonly` property whenever it wants after the class is fully constructed?",
+        "options": [
+          { "id": "opt1", "text": "Yes, because the method is inside the class itself like `private`.", "isCorrect": false },
+          { "id": "opt2", "text": "No! Only the constructor can assign it initially. Afterward, it is strictly permanently locked everywhere.", "isCorrect": true },
+          { "id": "opt3", "text": "Yes, but it returns a warning.", "isCorrect": false }
+        ],
+        "explanation": "`readonly` permanently locks the entire memory reference the second the constructor finishes.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l4_4",
+      "type": "text",
+      "title": "Combining Modifiers 🤝",
+      "content": "You can actually combine `readonly` with `public` (default), `private`, or `protected`!\n\nFor example, `private readonly secretKey: string;` means NO outside code can see it, AND no internal methods can change it."
+    },
+    {
+      "id": "s_l4_5",
+      "type": "code",
+      "title": "Parameter Shorthand Magic ✨",
+      "content": "Just like `private` in the previous lesson...",
+      "codeSnippet": "class Book {\n  // This automatically creates a public, readonly property instantly!\n  constructor(readonly title: string) {}\n}",
+      "codeLanguage": "typescript",
+      "canRunCode": false
+    }
+  ]
+}

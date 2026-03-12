@@ -1,0 +1,71 @@
+{
+  "id": "l3",
+  "chapterId": "ch_5",
+  "title": "Move Semantics 🚚",
+  "description": "When does data get copied vs moved between variables?",
+  "xpReward": 30,
+  "estimatedMinutes": 6,
+  "section": "Ownership Rules",
+  "slides": [
+    {
+      "id": "s_l3_1",
+      "type": "text",
+      "title": "The Classic Copy 📝",
+      "content": "Let's bind a primitive number to a variable, and then assign it to another.\n\n```rust\nlet x = 5;\nlet y = x;\n```\nBoth `x` and `y` equal 5! This is trivial because integers are completely fixed-size on the **Stack**. Rust effortlessly *copies* the data."
+    },
+    {
+      "id": "s_l3_2",
+      "type": "text",
+      "title": "The String Type 🧶",
+      "content": "Let's do the same thing with a complex `String`. (A `String` lives on the Heap because it can grow!)\n\n```rust\nlet s1 = String::from(\"hello\");\nlet s2 = s1;\n// If we try: println!(\"{}\", s1);\n// ERROR! We cannot use s1 here 💣\n```"
+    },
+    {
+      "id": "s_l3_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_1",
+        "type": "multiple_choice",
+        "question": "What happens when you assign a Heap-based variable (`s1`) to another variable (`s2`)?",
+        "options": [
+          {"id": "opt1", "text": "Both variables safely point to the data", "isCorrect": false},
+          {"id": "opt2", "text": "The first variable (`s1`) becomes permanently invalid", "isCorrect": true},
+          {"id": "opt3", "text": "Rust automatically clones the entire heap memory", "isCorrect": false}
+        ],
+        "explanation": "Due to Ownership Rule #2 (There can only be ONE owner at a time), `s1` MUST instantly become invalid otherwise memory would be freed twice when they both go out of scope.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l3_4",
+      "type": "text",
+      "title": "Moves, not Copies 🚚",
+      "content": "Why does this error happen?\n\nBecause there can only be **one owner**. When you type `let s2 = s1;`, Rust copies the *Pointer* (on the Stack), but does NOT copy the giant Heap data.\n\nIf `s1` and `s2` both lived to the end of the scope, they would both try to delete the exact same Heap memory (a deadly 'double free' error). \n\nSo Rust simply declares `s1` dead immediately. We say the data was **Moved**!"
+    },
+    {
+      "id": "s_l3_5",
+      "type": "text",
+      "title": "Cloning 🐑",
+      "content": "What if we *actually* want to deeply copy the Heap data so we have two safe variables?\n\nYou explicitly call `.clone()`!\n\n```rust\nlet s1 = String::from(\"hello\");\nlet s2 = s1.clone();\nprintln!(\"{} and {}\", s1, s2); // Works perfectly!\n```"
+    },
+    {
+      "id": "s_l3_6",
+      "type": "quiz",
+      "title": "Knowledge Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_2",
+        "type": "multiple_choice",
+        "question": "What is the key difference between moving and cloning a String?",
+        "options": [
+          {"id": "opt1", "text": "Moving is an error. Cloning is the default.", "isCorrect": false},
+          {"id": "opt2", "text": "Moving simply transfers the pointer (fast) and invalidates the old variable. Cloning completely duplicates the heap data (slow).", "isCorrect": true},
+          {"id": "opt3", "text": "There is no difference", "isCorrect": false}
+        ],
+        "explanation": "Because duplicating a huge Heap object could aggressively drag down performance, Rust never automatically clones. It strictly **moves** the pointer instead.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "id": "sq_rust_1",
+  "title": "Rust Fundamentals Debugging",
+  "triggerChapterIndex": 2,
+  "metadata": {
+    "type": "debug"
+  },
+  "questions": [
+    {
+      "id": "sq_rust_1_q1",
+      "type": "multiple_choice",
+      "question": "Find the mutability bug.",
+      "codeSnippet": "fn main() {\n  let score = 50;\n  score = score + 10;\n  println!(\"Score: {}\", score);\n}",
+      "bugLineIndex": 2,
+      "options": [],
+      "correctAnswer": "",
+      "explanation": "The variable `score` is declared without `mut`, meaning it is immutable. Reassigning it will cause a compile-time error. You must declare it as `let mut score = 50;`.",
+      "xpReward": 25,
+      "difficulty": 1
+    },
+    {
+      "id": "sq_rust_1_q2",
+      "type": "multiple_choice",
+      "question": "Find the printing bug.",
+      "codeSnippet": "fn main() {\n  let x = 100;\n  println(\"The value is {}\", x);\n}",
+      "bugLineIndex": 2,
+      "options": [],
+      "correctAnswer": "",
+      "explanation": "Because `println` is a macro, it requires an exclamation mark: `println!()`. Without it, Rust thinks you are calling an undefined function.",
+      "xpReward": 20,
+      "difficulty": 1
+    },
+    {
+      "id": "sq_rust_1_q3",
+      "type": "multiple_choice",
+      "question": "Find the bug with constant definition.",
+      "codeSnippet": "fn main() {\n  const CURRENT_YEAR = 2024;\n  println!(\"Year: {}\", CURRENT_YEAR);\n}",
+      "bugLineIndex": 1,
+      "options": [],
+      "correctAnswer": "",
+      "explanation": "When declaring a `const`, Rust requires explicit type annotations. It must be written as `const CURRENT_YEAR: i32 = 2024;`.",
+      "xpReward": 25,
+      "difficulty": 2
+    },
+    {
+      "id": "sq_rust_1_q4",
+      "type": "multiple_choice",
+      "question": "Find the tuple indexing bug.",
+      "codeSnippet": "fn main() {\n  let point = (10, 20);\n  let x_axis = point[0];\n  println!(\"X: {}\", x_axis);\n}",
+      "bugLineIndex": 2,
+      "options": [],
+      "correctAnswer": "",
+      "explanation": "Unlike arrays, Tuples use dot notation for access, not square brackets! It should be `let x_axis = point.0;`.",
+      "xpReward": 20,
+      "difficulty": 2
+    },
+    {
+      "id": "sq_rust_1_q5",
+      "type": "multiple_choice",
+      "question": "Find the array size bug.",
+      "codeSnippet": "fn main() {\n  let mut numbers = [1, 2, 3];\n  numbers = [1, 2, 3, 4];\n  println!(\"{:?}\", numbers);\n}",
+      "bugLineIndex": 2,
+      "options": [],
+      "correctAnswer": "",
+      "explanation": "In Rust, primitive arrays have a fixed size. The variable `numbers` is inferred as `[i32; 3]`. You cannot overwrite it with a `[i32; 4]` entirely new array without violating the variable's size type constraint.",
+      "xpReward": 30,
+      "difficulty": 3
+    },
+    {
+      "id": "sq_rust_1_q6",
+      "type": "multiple_choice",
+      "question": "Find the scoping bug.",
+      "codeSnippet": "fn main() {\n  let name = \"Alice\";\n  {\n    let age = 30;\n  }\n  println!(\"Age: {}\", age);\n}",
+      "bugLineIndex": 5,
+      "options": [],
+      "correctAnswer": "",
+      "explanation": "The variable `age` is entirely confined to the inner scope delimited by `{ }`. When the scope ends at line 4, `age` is destroyed. Line 5 cannot access it anymore.",
+      "xpReward": 25,
+      "difficulty": 2
+    }
+  ]
+}

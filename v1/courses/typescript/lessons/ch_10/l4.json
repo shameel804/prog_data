@@ -1,0 +1,59 @@
+{
+  "id": "l4",
+  "chapterId": "ch_10",
+  "title": "Pick & Omit",
+  "description": "Surgically altering interfaces.",
+  "xpReward": 25,
+  "estimatedMinutes": 5,
+  "section": "Utility Types",
+  "slides": [
+    {
+      "id": "s_l4_1",
+      "type": "text",
+      "title": "Surgical Precision 🔪",
+      "content": "Sometimes you don't want to make *everything* optional. Sometimes you just want to grab a few specific properties from a giant Interface and completely ignore the rest.\n\nThis is incredibly common when passing props down to UI components."
+    },
+    {
+      "id": "s_l4_2",
+      "type": "code",
+      "title": "The `Pick<Type, Keys>` Utility",
+      "content": "`Pick` lets you construct a new type by picking a specific set of properties from an existing one.",
+      "codeSnippet": "interface FullUser {\n  id: number;\n  name: string;\n  email: string;\n  address: string;\n  passwordHash: string;\n}\n\n// We ONLY want name and email for the frontend\ntype PublicUser = Pick<FullUser, \"name\" | \"email\">;\n\nconst user: PublicUser = {\n  name: \"Alice\",\n  email: \"alice@test.com\"\n  // Cannot add 'address' or 'id' here!\n};",
+      "codeLanguage": "typescript",
+      "canRunCode": false
+    },
+    {
+      "id": "s_l4_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_1",
+        "type": "multiple_choice",
+        "question": "If you try to add `id: 1` to the `user` object above perfectly typed as `PublicUser`, what logically happens?",
+        "options": [
+          { "id": "opt1", "text": "It silently drops the ID at runtime.", "isCorrect": false },
+          { "id": "opt2", "text": "TypeScript throws a compile error because 'id' does not exist on the elegantly precise new Picked type.", "isCorrect": true },
+          { "id": "opt3", "text": "It accepts it perfectly gracefully.", "isCorrect": false }
+        ],
+        "explanation": "Because you specifically Picked `\"name\" | \"email\"`, the new structure explicitly excludes `id`.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l4_4",
+      "type": "code",
+      "title": "The `Omit<Type, Keys>` Utility",
+      "content": "`Omit` is the exact inverse of Pick. Rather than stating what you want, you state exactly what you fundamentally want to delete or exclude.",
+      "codeSnippet": "// We want EVERYTHING from FullUser EXCEPT the passwordHash\ntype SafeUser = Omit<FullUser, \"passwordHash\">;\n\nconst safe: SafeUser = {\n  id: 1,\n  name: \"Bob\",\n  email: \"bob@test.com\",\n  address: \"123 Main St\"\n};",
+      "codeLanguage": "typescript",
+      "canRunCode": false
+    },
+    {
+      "id": "s_l4_5",
+      "type": "tip",
+      "title": "When to Use Which? 🤔",
+      "content": "Use `Pick` when you only need a small handful of properties. Use `Omit` when you want almost everything but deeply need to hide one or two sensitive keys."
+    }
+  ]
+}

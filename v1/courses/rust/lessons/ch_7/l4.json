@@ -1,0 +1,73 @@
+{
+  "id": "l4",
+  "chapterId": "ch_7",
+  "title": "The ? Operator 🎩",
+  "description": "The magic shortcut for propagating errors up the chain.",
+  "xpReward": 35,
+  "estimatedMinutes": 6,
+  "section": "Advanced Syntax",
+  "slides": [
+    {
+      "id": "s_l4_1",
+      "type": "text",
+      "title": "Error Propagation 📤",
+      "content": "Sometimes, when a function fails, you don't want to handle the error there. You want to pass it up to the calling function so *they* can deal with it.\n\nThis is called **propagating** errors."
+    },
+    {
+      "id": "s_l4_2",
+      "type": "text",
+      "title": "The Old Way 🧱",
+      "content": "To propagate an error manually, you'd use a massive `match` statement inside your function, explicitly returning the `Err` out if it failed.\n\nBut if you have 10 operations that might fail, writing 10 `match` blocks becomes an absolute nightmare."
+    },
+    {
+      "id": "s_l4_3",
+      "type": "text",
+      "title": "The Magic Question Mark ❓",
+      "content": "Rust created the `?` operator to solve this instantly.\n\n```rust\nfn read_username() -> Result<String, io::Error> {\n    let mut f = File::open(\"hello.txt\")?;\n    let mut s = String::new();\n    f.read_to_string(&mut s)?;\n    Ok(s)\n}\n```"
+    },
+    {
+      "id": "s_l4_4",
+      "type": "text",
+      "title": "What ? actually does 🎩",
+      "content": "If `File::open` is **Ok**, the `?` operator quietly extracts the file data and moves to the next line of code.\n\nIf it is an **Err**, the `?` operator immediately STOPS the entire function and returns the Error back up to the caller instantly. Magic!"
+    },
+    {
+      "id": "s_l4_5",
+      "type": "quiz",
+      "title": "Knowledge Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_1",
+        "type": "multiple_choice",
+        "question": "What specifically does the `?` operator eliminate the need for?",
+        "options": [
+          {"id": "opt1", "text": "Variables", "isCorrect": false},
+          {"id": "opt2", "text": "Writing massive boilerplate `match` statements just to return an `Err` upwards.", "isCorrect": true},
+          {"id": "opt3", "text": "Semicolons", "isCorrect": false}
+        ],
+        "explanation": "The `?` operator essentially writes the boilerplate `match` statement silently for you, passing errors rapidly up the chain.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l4_6",
+      "type": "text",
+      "title": "The One Rule 📏",
+      "content": "You can ONLY use the `?` operator inside a function that actually historically returns a `Result` or an `Option`.\n\nYou cannot use it directly in a standard `main()` function unless you change `main` to explicitly return a `Result`!"
+    },
+    {
+      "id": "s_l4_7",
+      "type": "quiz",
+      "title": "Final Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_2",
+        "type": "true_false",
+        "question": "You can seamlessly attach the `?` operator to the end of any standard function call, regardless of what the parent function returns.",
+        "correctAnswer": false,
+        "explanation": "Because `?` immediately returns an Error if it fails, the parent function it lives inside MUST authentically have a return type like `Result<T, E>` that can legally pass that error backward.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

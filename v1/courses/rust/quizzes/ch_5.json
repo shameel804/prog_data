@@ -1,0 +1,240 @@
+{
+  "id": "quiz_ch_5",
+  "chapterId": "ch_5",
+  "title": "Chapter 5 Quiz",
+  "description": "Prove your mastery over the single most important concept in Rust: Ownership and Borrowing!",
+  "passingScore": 70,
+  "xpReward": 50,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "mcq",
+      "question": "What is the primary problem that Rust's Ownership system solves without hitting runtime performance?",
+      "options": [
+        "Network latency",
+        "Memory management and thread safety",
+        "Slow UI rendering",
+        "Poor syntax highlighting"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ownership rules prevent catastrophic memory bugs (like double frees or null pointers) completely at compile-time."
+    },
+    {
+      "id": "q2",
+      "type": "true_false",
+      "question": "Like Java and Python, Rust uses an invisible Garbage Collector that pauses the program to clean up memory.",
+      "correctAnswer": false,
+      "explanation": "Rust absolutely does NOT use a Garbage Collector. It explicitly enforces rules at compile-time so that it knows exactly when perfectly safe drop functions should be inserted automatically."
+    },
+    {
+      "id": "q3",
+      "type": "mcq",
+      "question": "Which is NOT one of the three absolute rules of Ownership?",
+      "options": [
+        "Every value in Rust has a designated owner variable.",
+        "There can only be one owner at exactly one time.",
+        "When the owner goes out of scope, the value drops and memory is freed.",
+        "Variables on the Heap can have multiple concurrent mutable owners."
+      ],
+      "correctAnswer": 3,
+      "explanation": "Rust STRICTLY prohibits multiple owners of heap data simultaneously."
+    },
+    {
+      "id": "q4",
+      "type": "fill_blank",
+      "question": "When an owner variable successfully goes out of bounds (reaches the closing curly brace `}`), Rust automatically cleans its memory by silently calling the magic `________` function.",
+      "options": [
+        "delete",
+        "remove",
+        "drop",
+        "clean"
+      ],
+      "correctAnswer": "drop",
+      "explanation": "Rust essentially inserts a `drop` function everywhere a scope safely concludes."
+    },
+    {
+      "id": "q5",
+      "type": "mcq",
+      "question": "In the computer's memory architecture, what is the primary difference between the Stack and the Heap?",
+      "options": [
+        "The Stack is very slow and large, the Heap is very fast and small",
+        "The Stack is for dynamically expanding variables, the Heap is for integers",
+        "The Stack requires all data to be of a statically known, fixed size. The Heap allows data to be dynamically mapped and grown.",
+        "The Heap is only for Global Variables."
+      ],
+      "correctAnswer": 2,
+      "explanation": "Because the Stack is neatly ordered and operates on explicit offset addresses, it demands fixed-size data. The flexible Heap accommodates unpredictable growth."
+    },
+    {
+      "id": "q6",
+      "type": "true_false",
+      "question": "When storing a large `String` variable, the actual massive chunk of text lives on the Heap, while a small, fixed-size \"Pointer\" (storing the exact Heap address) lives on the fast Stack.",
+      "correctAnswer": true,
+      "explanation": "Yes. This split architecture keeps programs blazingly fast while ensuring seamless dynamic flexibility."
+    },
+    {
+      "id": "q7",
+      "type": "mcq",
+      "question": "What happens when you declare: `let x = 5; let y = x;`?",
+      "options": [
+        "The data is Moved. x becomes completely invalid.",
+        "The small static integer data is fully Copied. Both x and y independently equal 5.",
+        "Both variable names simply point to the identical memory heap.",
+        "The compiler throws an Error."
+      ],
+      "correctAnswer": 1,
+      "explanation": "Because pure primitive scalars (like integers) live totally on the Stack and possess a rigidly known size, making a full copy is trivially fast."
+    },
+    {
+      "id": "q8",
+      "type": "mcq",
+      "question": "What happens when you declare: `let s1 = String::from(\"hello\"); let s2 = s1;`?",
+      "options": [
+        "The huge heap data is deeply cloned. s1 and s2 are separate identical strings.",
+        "The heap address pointer is copied, creating two concurrent owners. (DANGEROUS!)",
+        "The original Pointer is transferred. The pointer `s1` instantly becomes dead/invalid. This is called a Move.",
+        "It loops endlessly"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Because Rust strictly permits only one owner at a time, moving the pointer from `s1` to `s2` instantly 'kills' the `s1` variable to stop memory corruption."
+    },
+    {
+      "id": "q9",
+      "type": "fill_blank",
+      "question": "To deliberately and safely command Rust to expensively duplicate the entire Heap memory of a String so that you explicitly have two identical live variables, you call the `________()` function.",
+      "options": [
+        "copy",
+        "duplicate",
+        "clone",
+        "migrate"
+      ],
+      "correctAnswer": "clone",
+      "explanation": "The `.clone()` function deeply copies dynamic heap memory."
+    },
+    {
+      "id": "q10",
+      "type": "true_false",
+      "question": "Passing a `String` into a function as an argument automatically steals its Ownership, causing that original variable to instantly die in its previous scope.",
+      "correctAnswer": true,
+      "explanation": "Yes! Standard method calls consume and usurp ownership directly."
+    },
+    {
+      "id": "q11",
+      "type": "mcq",
+      "question": "If you just want a function to view internal variable data WITHOUT destroying or stealing its Ownership, what Rust feature do you use?",
+      "options": [
+        "Global variables",
+        "Mutable Cloning",
+        "Borrowing (using References)",
+        "Dangling Pointers"
+      ],
+      "correctAnswer": 2,
+      "explanation": "References dynamically allow safe, temporary viewing access without transferring Ownership."
+    },
+    {
+      "id": "q12",
+      "type": "mcq",
+      "question": "What explicit symbol completely signifies that a variable is \"borrowing\" data (i.e. acting as a Reference)?",
+      "options": [
+        "*",
+        "#",
+        "@",
+        "&"
+      ],
+      "correctAnswer": 3,
+      "explanation": "The Ampersand `&` acts exclusively as the Reference indicator."
+    },
+    {
+      "id": "q13",
+      "type": "true_false",
+      "question": "Just like standard variables, an explicit `&` Reference in Rust is permanently immutable by default.",
+      "correctAnswer": true,
+      "explanation": "To mutate a reference, you must deliberately write `&mut` to signify explicit changing intent."
+    },
+    {
+      "id": "q14",
+      "type": "fill_blank",
+      "question": "To permit an external function to actually modify a string variable you lent it, you must pass not just an `&`, but an `&________` reference.",
+      "options": [
+        "change",
+        "let",
+        "mut",
+        "ref"
+      ],
+      "correctAnswer": "mut",
+      "explanation": "`&mut` constitutes a unique Mutable Reference."
+    },
+    {
+      "id": "q15",
+      "type": "mcq",
+      "question": "What is the critical constraint Rule for using Mutable Borrowing (`&mut`) on a specific variable?",
+      "options": [
+        "You can have unlimited mutable references everywhere.",
+        "You cannot have ANY strictly immutable references simultaneously while a mutable reference exists.",
+        "It can solely be used on pure integers.",
+        "It only exists inside functions."
+      ],
+      "correctAnswer": 1,
+      "explanation": "To guarantee there are no Data Races on concurrent code, Rust explicitly enforces that if one single part of your code is modifying a value `&mut`, ZERO other parts can be viewing or mutating it."
+    },
+    {
+      "id": "q16",
+      "type": "mcq",
+      "question": "You successfully declare `let text = \"Rust is great\";`. \nWhat exactly is the compiled type of `text`?",
+      "options": [
+        "String",
+        "char",
+        "&str (A statically embedded String Slice)",
+        "&String"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Raw quotation strings written seamlessly into source code compile down directly into immutable binary pointers `&str`."
+    },
+    {
+      "id": "q17",
+      "type": "mcq",
+      "question": "Which specific syntax creates an immutable Slice pointing effectively to the first 4 letters of a huge `String` variable `s`?",
+      "options": [
+        "&s[0-4]",
+        "s.slice(0, 4)",
+        "&s[0..4]",
+        "s_slice(4)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Rust fundamentally uses dynamic range bracket syntax combined with immutable referencers: `&var[start..end]`."
+    },
+    {
+      "id": "q18",
+      "type": "true_false",
+      "question": "Creating a string slice automatically clones identical memory entirely onto the Heap.",
+      "correctAnswer": false,
+      "explanation": "Slices are mere pointers to sequence offsets. They require essentially zero extra memory and strictly do NOT own data."
+    },
+    {
+      "id": "q19",
+      "type": "fill_blank",
+      "question": "If you try entirely to return a local implicitly created string Reference out of a function, the compiler aggressively hits you with a ________ Reference Error.",
+      "options": [
+        "Missing",
+        "Dangling",
+        "Hanging",
+        "Null"
+      ],
+      "correctAnswer": "Dangling",
+      "explanation": "Because the local string instantly dies and drops when the function scope expires, sending an active pointer back would point directly to destroyed memory (Dangling). Rust prevents this perfectly."
+    },
+    {
+      "id": "q20",
+      "type": "mcq",
+      "question": "In summary, if you just want to pass a value temporarily into a helper function for quick analysis without losing use of the local variable, you should use:",
+      "options": [
+        "An explicitly owned pure variable Move",
+        "A destructive Clone",
+        "A rigid System Call",
+        "A lightweight, immutable Borrowing Reference (`&`)"
+      ],
+      "correctAnswer": 3,
+      "explanation": "Passing read-only references massively aids code logic by retaining master Ownership perfectly in the parent function while delegating lightweight views."
+    }
+  ]
+}

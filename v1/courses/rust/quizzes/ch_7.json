@@ -1,0 +1,240 @@
+{
+  "id": "quiz_ch_7",
+  "chapterId": "ch_7",
+  "title": "Chapter 7 Quiz",
+  "description": "Prove your mastery over Panics, Results, and error propagation!",
+  "passingScore": 70,
+  "xpReward": 50,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "mcq",
+      "question": "What is the primary function of the `panic!` macro in Rust?",
+      "options": [
+        "To pause execution for debugging",
+        "To instantly halt the program when an unrecoverable fatal error occurs",
+        "To throw a catchable exception",
+        "To warn the user"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Panic is used for catastrophic bugs. It safely stops the program."
+    },
+    {
+      "id": "q2",
+      "type": "true_false",
+      "question": "If you try to access an array out of bounds, Rust will silently read garbage memory instead of crashing.",
+      "correctAnswer": false,
+      "explanation": "Rust checks bounds at runtime and triggers an automatic panic to protect memory."
+    },
+    {
+      "id": "q3",
+      "type": "mcq",
+      "question": "How does Rust primarily handle expected, recoverable errors?",
+      "options": [
+        "Throwing exceptions with try/catch",
+        "Returning global error codes",
+        "Using the built-in Result Enum",
+        "Using the Option Enum exclusively"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Rust uses the Result enum (Ok/Err) to force developers to handle expected errors explicitly."
+    },
+    {
+      "id": "q4",
+      "type": "fill_blank",
+      "question": "The Result Enum has two variants: `Ok` for success, and `________` for failure.",
+      "options": [
+        "Error",
+        "Err",
+        "Fail",
+        "None"
+      ],
+      "correctAnswer": "Err",
+      "explanation": "Result<T, E> is either Ok(T) or Err(E)."
+    },
+    {
+      "id": "q5",
+      "type": "mcq",
+      "question": "Why is the Result Enum safer than traditional Exceptions?",
+      "options": [
+        "It runs faster at runtime",
+        "The compiler physically forces you to acknowledge and unpack the wrapper before using the inner value",
+        "It automatically fixes the error",
+        "It hides the error from the user"
+      ],
+      "correctAnswer": 1,
+      "explanation": "You cannot compile code that tries to use a Result as if it were a normal value."
+    },
+    {
+      "id": "q6",
+      "type": "true_false",
+      "question": "The best and safest way to open a Result wrapper and handle both success and failure paths is using a `match` statement.",
+      "correctAnswer": true,
+      "explanation": "Match requires you to exhaustively handle both the Ok and Err paths securely."
+    },
+    {
+      "id": "q7",
+      "type": "mcq",
+      "question": "What happens if you use `match` on a Result but forget to write the `Err` arm?",
+      "options": [
+        "It silently ignores the error",
+        "It defaults to panicking",
+        "The compiler throws a hard error because match checks must be exhaustive",
+        "It returns null"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Rust's match must be exhaustive, covering all possible enum variants."
+    },
+    {
+      "id": "q8",
+      "type": "mcq",
+      "question": "If you want to quickly get the success value out of a Result, but immediately panic if it is an Err, you can call:",
+      "options": [
+        ".open()",
+        ".panic()",
+        ".unwrap()",
+        ".get()"
+      ],
+      "correctAnswer": 2,
+      "explanation": "`unwrap()` is a fast but dangerous way to access a Result, as it panics on failure."
+    },
+    {
+      "id": "q9",
+      "type": "fill_blank",
+      "question": "To get the value or panic with a *custom* helpful error message, you should use the `.________(\"message\")` method instead of unwrap.",
+      "options": [
+        "expect",
+        "panic_with",
+        "unwrap_or",
+        "assert"
+      ],
+      "correctAnswer": "expect",
+      "explanation": "`expect()` provides developer context to why a specific panic occurred."
+    },
+    {
+      "id": "q10",
+      "type": "true_false",
+      "question": "In production code, you should generally prefer `.expect()` over `.unwrap()`.",
+      "correctAnswer": true,
+      "explanation": "Contextual error messages save countless hours during debugging."
+    },
+    {
+      "id": "q11",
+      "type": "mcq",
+      "question": "What is 'Error Propagation'?",
+      "options": [
+        "When an error corrupts other parts of memory",
+        "When a function decides not to handle a failure, but passes the Error back up to the function that called it",
+        "When an error repeats in a loop",
+        "When you clone an error"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Propagation means delegating the handling logic to a higher upstream function."
+    },
+    {
+      "id": "q12",
+      "type": "mcq",
+      "question": "What magical syntax operator instantly propagates errors up the chain without requiring boilerplate match statements?",
+      "options": [
+        "!",
+        "?",
+        "@",
+        "#"
+      ],
+      "correctAnswer": 1,
+      "explanation": "The `?` operator unpacks Ok values or instantly returns early with the Err."
+    },
+    {
+      "id": "q13",
+      "type": "true_false",
+      "question": "You can use the `?` operator inside any function, including a normal `main()` function that returns nothing.",
+      "correctAnswer": false,
+      "explanation": "You can only use `?` if the parent function's return type matches the error being propagated (like a Result or Option)."
+    },
+    {
+      "id": "q14",
+      "type": "fill_blank",
+      "question": "If `File::open(\"x.txt\")?` succeeds, the `?` operator evaluates directly to the inner `________` value, allowing the code to continue.",
+      "options": [
+        "Err",
+        "Ok",
+        "Success",
+        "True"
+      ],
+      "correctAnswer": "Ok",
+      "explanation": "If successful, the magic question mark seamlessly yields the Ok data payload."
+    },
+    {
+      "id": "q15",
+      "type": "mcq",
+      "question": "Why is Rust's approach to errors considered superior by many to Exceptions?",
+      "options": [
+        "Exceptions are too verbose",
+        "It treats errors as standard return values, making control flow explicitly visible in the type schema.",
+        "It uses less RAM globally",
+        "It compiles faster"
+      ],
+      "correctAnswer": 1,
+      "explanation": "If a function can fail, its signature `-> Result` screams that fact to developers, unlike hidden exceptions."
+    },
+    {
+      "id": "q16",
+      "type": "mcq",
+      "question": "```rust\nfn main() {\n  let x: Result<i32, &str> = Ok(10);\n  let y = x + 5;\n}\n```\nWhat is the result of the above code?",
+      "options": [
+        "15",
+        "Ok(15)",
+        "A compiler error because you cannot add a Result to an integer",
+        "Panic"
+      ],
+      "correctAnswer": 2,
+      "explanation": "The result is boxed. You must match/unwrap `x` before doing math."
+    },
+    {
+      "id": "q17",
+      "type": "mcq",
+      "question": "What happens if `.unwrap()` is called on an `Err(\"disk failure\")`?",
+      "options": [
+        "It returns null",
+        "It returns 'disk failure'",
+        "It crashes the entire program with a panic",
+        "It enters an infinite loop"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Unwrapping a failure results in an immediate unrecoverable panic."
+    },
+    {
+      "id": "q18",
+      "type": "fill_blank",
+      "question": "The `panic!` macro usually signifies a bug in your logic, whereas returning a(n) `________` signifies a perfectly normal environmental failure (like a missing file).",
+      "options": [
+        "Option",
+        "None",
+        "Result",
+        "Error"
+      ],
+      "correctAnswer": "Result",
+      "explanation": "Results are for operations that naturally can fail under normal circumstances."
+    },
+    {
+      "id": "q19",
+      "type": "true_false",
+      "question": "The `Result` Enum and `Option` Enum are identical and can be used perfectly interchangeably everywhere.",
+      "correctAnswer": false,
+      "explanation": "Result has `Ok/Err` (for failures with a specific reason). Option has `Some/None` (for simple absence of a value without an explicit error reason)."
+    },
+    {
+      "id": "q20",
+      "type": "mcq",
+      "question": "In robust, mission-critical Rust applications, how should you manage almost all your file and network system errors?",
+      "options": [
+        "Unwrap everything quickly",
+        "Panic at the first sign of trouble",
+        "Propagate them cleanly upwards using `?` to a centralized handler",
+        "Ignore the compilation warnings"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Clean error propagation using `?` allows you to write perfectly clean logic while bubbling all errors back to UI logic gracefully."
+    }
+  ]
+}
