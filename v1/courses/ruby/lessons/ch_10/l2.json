@@ -1,0 +1,113 @@
+{
+  "id": "l2",
+  "chapterId": "ch_10",
+  "title": "Rescue Me 🛟",
+  "description": "Catch errors gracefully before they can terminate your code.",
+  "xpReward": 25,
+  "estimatedMinutes": 7,
+  "section": "Error Handling",
+  "slides": [
+    {
+      "id": "s_1",
+      "type": "text",
+      "title": "The Safety Net 🕸️",
+      "content": "We don't want our whole app to instantly die just because one user typed a bad number.\n\nTo prevent the crash, we must catch the error as it falls. We do this using a `begin...rescue` block!"
+    },
+    {
+      "id": "s_2",
+      "type": "text",
+      "title": "Begin and Rescue",
+      "content": "You wrap your dangerous code inside `begin`.\n\nIf it works perfectly, the program ignores `rescue` and keeps going. But if the dangerous code crashes, Ruby immediately jumps down into the `rescue` block instead of dying!\n\n```ruby\nbegin\n  # Dangerous code here\nrescue\n  # Fallback code here\nend\n```"
+    },
+    {
+      "id": "s_3",
+      "type": "code",
+      "title": "A Graceful Recovery",
+      "content": "Run this! The division by zero still fails. But instead of the program terminating, it gracefully falls perfectly into the `rescue` block and prints the warning, allowing the script to beautifully finish!",
+      "codeSnippet": "puts \"1. Starting...\"\n\nbegin\n  result = 10 / 0 # Crash!\nrescue\n  puts \"WARNING: You cannot divide by zero!\"\nend\n\nputs \"2. Finished! Look, we survived!\"",
+      "codeLanguage": "ruby",
+      "canRunCode": true
+    },
+    {
+      "id": "s_4",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "The keywords.",
+      "quizData": {
+        "id": "q_1",
+        "type": "multiple_choice",
+        "question": "Which keyword acts as the safety net, essentially saying 'If the code above me crashes, run this code instead of dying'?",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "begin",
+            "isCorrect": false
+          },
+          {
+            "id": "opt2",
+            "text": "rescue",
+            "isCorrect": true
+          },
+          {
+            "id": "opt3",
+            "text": "catch",
+            "isCorrect": false
+          }
+        ],
+        "explanation": "If the `begin` block generates an Exception, it is instantly passed down into the `rescue` block to be handled.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_5",
+      "type": "text",
+      "title": "Catching Specifics 🔍",
+      "content": "A naked `rescue` catches absolutely ALL errors (almost).\n\nBut what if you brilliantly only want to rescue from a `ZeroDivisionError`, and you *want* to let standard `TypeError`s crash the app?\n\nYou can explicitly specify what your net catches: `rescue ZeroDivisionError`"
+    },
+    {
+      "id": "s_6",
+      "type": "code",
+      "title": "Named Rescue",
+      "content": "Run this! We try to rescue a `ZeroDivisionError`, but the code actually triggers a `TypeError`. Because our net was the wrong shape, the program crashes anyway!",
+      "codeSnippet": "begin\n  puts \"Adding string and number...\"\n  puts 5 + \"Hello\"\nrescue ZeroDivisionError\n  puts \"We saved you from a math error!\"\nend",
+      "codeLanguage": "ruby",
+      "canRunCode": true
+    },
+    {
+      "id": "s_7",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "Targeted rescuing.",
+      "quizData": {
+        "id": "q_2",
+        "type": "multiple_choice",
+        "question": "What happens if a `NoMethodError` occurs inside a block that specifically strictly says `rescue TypeError`?",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "The error passes straight through the net and crashes the program.",
+            "isCorrect": true
+          },
+          {
+            "id": "opt2",
+            "text": "It converts the error cleanly into a TypeError.",
+            "isCorrect": false
+          },
+          {
+            "id": "opt3",
+            "text": "It rescues it anyway.",
+            "isCorrect": false
+          }
+        ],
+        "explanation": "By explicitly naming the error class, you tell Ruby 'ONLY rescue this specific type of object. Let everything else die'.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_8",
+      "type": "tip",
+      "title": "Inspecting the Damage 🔬",
+      "content": "You can capture the actual Exception object itself to examine it by using a rocket: `rescue => e`. Then you can `puts e.message` to print the exact reason for the crash!"
+    }
+  ]
+}

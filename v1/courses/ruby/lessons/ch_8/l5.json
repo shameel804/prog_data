@@ -1,0 +1,113 @@
+{
+  "id": "l5",
+  "chapterId": "ch_8",
+  "title": "Getters and Setters 🚪",
+  "description": "Control who is allowed to read and edit your object's data.",
+  "xpReward": 25,
+  "estimatedMinutes": 8,
+  "section": "Object-Oriented Programming",
+  "slides": [
+    {
+      "id": "s_1",
+      "type": "text",
+      "title": "Maximum Security 🛡️",
+      "content": "By default, objects are maximum security data fortresses.\n\nYou cannot write to an Instance Variable from the outside, and you cannot read it either! Your script has no idea `@name` exists inside the `Dog` instance.\n\nIf you try `puts fido.name`, Ruby will crash!"
+    },
+    {
+      "id": "s_2",
+      "type": "text",
+      "title": "Getter Methods 👓",
+      "content": "If you want the outside world to be able to read an object's internally stored data, you must write a \"Getter\" instance method to hand it out.\n\n```ruby\nclass Dog\n  # ... initialize stuff\n  def name\n    @name \n  end\nend\n```\n\nNow, `puts fido.name` cleanly calls this method, which safely implicitly returns `@name`."
+    },
+    {
+      "id": "s_3",
+      "type": "code",
+      "title": "Setter Methods 📝",
+      "content": "If you want the outside world to be able to UPDATE (or \"set\") the data, you must build a Setter method using a special syntax: `def name=()`",
+      "codeSnippet": "class Dog\n  def name=(new_name)\n    @name = new_name\n  end\nend\n\nfido = Dog.new\n# Ruby calls the setter method under the hood\nfido.name = \"Sparky\"",
+      "codeLanguage": "ruby",
+      "canRunCode": true
+    },
+    {
+      "id": "s_4",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "Default object security.",
+      "quizData": {
+        "id": "q_1",
+        "type": "multiple_choice",
+        "question": "Why can you not simply run `puts my_car.@model` to print an object's internal variable?",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "Because it is an Integer.",
+            "isCorrect": false
+          },
+          {
+            "id": "opt2",
+            "text": "Because Instance Variables are intensely secure and completely invisible to outside code by default.",
+            "isCorrect": true
+          },
+          {
+            "id": "opt3",
+            "text": "Because classes don't exist.",
+            "isCorrect": false
+          }
+        ],
+        "explanation": "If you want the outside world to read an object's internal data, you must explicitly construct a Getter Method that acts as a front door.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_5",
+      "type": "text",
+      "title": "A Better Door🚪",
+      "content": "# The `attr_accessor`\n\nWriting Getter and Setter methods for every single variable gets extremely tedious.\n\nRuby solves this with magic! If you place `attr_accessor` at the top of your class with a symbol, Ruby automatically generates the Getter and Setter methods for you invisibly!"
+    },
+    {
+      "id": "s_6",
+      "type": "code",
+      "title": "Accessor Magic",
+      "content": "Run this! We didn't write any getter or setter methods, yet `attr_accessor` automatically gave us full read and write abilities from the outside.",
+      "codeSnippet": "class Dog\n  attr_accessor :name\n  \n  def initialize(start_name)\n    @name = start_name\n  end\nend\n\nbad_boy = Dog.new(\"Fido\")\n# Writing to it (Setter)\nbad_boy.name = \"Spike\"\n# Reading from it (Getter)\nputs bad_boy.name",
+      "codeLanguage": "ruby",
+      "canRunCode": true
+    },
+    {
+      "id": "s_7",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "The famous macro.",
+      "quizData": {
+        "id": "q_2",
+        "type": "multiple_choice",
+        "question": "What specifically does `attr_accessor :age` do inside a Class?",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "It turns the Class into a Lambda.",
+            "isCorrect": false
+          },
+          {
+            "id": "opt2",
+            "text": "It instantly creates the `@age` variable.",
+            "isCorrect": false
+          },
+          {
+            "id": "opt3",
+            "text": "It automatically writes the invisible Getter and Setter instance methods so outside code can seamlessly read and edit `@age`.",
+            "isCorrect": true
+          }
+        ],
+        "explanation": "It stands for Attribute Accessor. It creates the doors so you don't have to.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_8",
+      "type": "tip",
+      "title": "Readers and Writers",
+      "content": "Don't want them to edit it? Use `attr_reader` (creates read-only Getters).\nDon't want them to read it? Use `attr_writer` (creates write-only Setters)."
+    }
+  ]
+}

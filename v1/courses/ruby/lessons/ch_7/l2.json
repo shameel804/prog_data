@@ -1,0 +1,107 @@
+{
+  "id": "l2",
+  "chapterId": "ch_7",
+  "title": "Custom Iterators 🔄",
+  "description": "Build your own iteration methods that gracefully handle blocks.",
+  "xpReward": 25,
+  "estimatedMinutes": 8,
+  "section": "Blocks",
+  "slides": [
+    {
+      "id": "s_1",
+      "type": "text",
+      "title": "Yielding with Data 🤝",
+      "content": "The `yield` keyword is powerful because you can actually pass arguments **through** it, directly into the block!\n\nThis is exactly how iterators like `.each` manage to give you variables like `|index|`."
+    },
+    {
+      "id": "s_2",
+      "type": "code",
+      "title": "Passing Values",
+      "content": "Watch closely: We pass \"Bob\" into the `yield` keyword. It flows out of the method, gets caught by the block parameter `|name|`, and is printed!",
+      "codeSnippet": "def greet_user\n  yield(\"Bob\")\nend\n\ngreet_user do |name|\n  puts \"Welcome to the site, #{name}!\"\nend",
+      "codeLanguage": "ruby",
+      "canRunCode": true
+    },
+    {
+      "id": "s_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "Yielding arguments.",
+      "quizData": {
+        "id": "q_1",
+        "type": "multiple_choice",
+        "question": "If a method says `yield(25)`, what must the attached code block look like to catch that number?",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "`do {age}`",
+            "isCorrect": false
+          },
+          {
+            "id": "opt2",
+            "text": "`do (age)`",
+            "isCorrect": false
+          },
+          {
+            "id": "opt3",
+            "text": "`do |age|`",
+            "isCorrect": true
+          }
+        ],
+        "explanation": "Just like how we iterated arrays, block parameters must always be wrapped in pipes `| |`.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_4",
+      "type": "text",
+      "title": "Multiple Yields 🔁",
+      "content": "Who said you can only yield once?\n\nIf you put `yield` inside a loop within your method, it will trigger the block multiple times! \n\nThis is secretly how the `.times` method is built beneath the surface of Ruby."
+    },
+    {
+      "id": "s_5",
+      "type": "code",
+      "title": "Building .times",
+      "content": "We just built a custom iterator method from scratch! The `while` loop forces it to yield to the block 3 times.",
+      "codeSnippet": "def three_times\n  counter = 0\n  while counter < 3\n    yield(counter)\n    counter += 1\n  end\nend\n\nthree_times do |num|\n  puts \"Loop executing: #{num}\"\nend",
+      "codeLanguage": "ruby",
+      "canRunCode": true
+    },
+    {
+      "id": "s_6",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "Iterator construction.",
+      "quizData": {
+        "id": "q_2",
+        "type": "multiple_choice",
+        "question": "At its core, what is a custom iterator?",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "A standard method with a loop inside of it that repeatedly calls the `yield` keyword.",
+            "isCorrect": true
+          },
+          {
+            "id": "opt2",
+            "text": "A block that calls itself.",
+            "isCorrect": false
+          },
+          {
+            "id": "opt3",
+            "text": "An array that has infinite items.",
+            "isCorrect": false
+          }
+        ],
+        "explanation": "Iterators are just methods manipulating loops to trigger your attached blocks over and over again.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_7",
+      "type": "tip",
+      "title": "Checking for Blocks 🔍",
+      "content": "If your method has a `yield` keyword, but the user forgets to attach a block, the method will crash! \n\nYou can prevent this by running `yield if block_given?`. The method will only yield if it detects a block was actually provided."
+    }
+  ]
+}

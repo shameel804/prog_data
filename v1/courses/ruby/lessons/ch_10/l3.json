@@ -1,0 +1,98 @@
+{
+  "id": "l3",
+  "chapterId": "ch_10",
+  "title": "The Ensure Block 🛡️",
+  "description": "Guarantee that crucial cleanup code runs, crash or no crash.",
+  "xpReward": 25,
+  "estimatedMinutes": 5,
+  "section": "Error Handling",
+  "slides": [
+    {
+      "id": "s_1",
+      "type": "text",
+      "title": "Closing Time 🧹",
+      "content": "Imagine your program is downloading a massive secure file.\n\nSuddenly, the internet cuts out. An Exception is thrown! Your program instantly crashes and dies midway through the download.\n\nThe secure file is now stuck permanently open, draining your computer's memory. This is called a memory leak."
+    },
+    {
+      "id": "s_2",
+      "type": "text",
+      "title": "The `ensure` Keyword",
+      "content": "To absolutely guarantee that the file gets closed, regardless of whether a crash occurred, you place cleanup code inside an `ensure` block.\n\nThe `ensure` block flawlessly guarantees that its code will be executed exactly right before the program terminates or finishes."
+    },
+    {
+      "id": "s_3",
+      "type": "code",
+      "title": "Ensuring Execution",
+      "content": "Run this! Even though the array division crashes the program instantly without a rescue block, Ruby strictly pauses its own death to run our `ensure` block first!",
+      "codeSnippet": "begin\n  puts \"Opening file...\"\n  crash_the_app = [1, 2, 3] / 5\nensure\n  puts \"Closing the file safely! The leak is prevented!\"\nend",
+      "codeLanguage": "ruby",
+      "canRunCode": true
+    },
+    {
+      "id": "s_4",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "The cleanup keyword.",
+      "quizData": {
+        "id": "q_1",
+        "type": "multiple_choice",
+        "question": "Which keyword acts as the absolute final safeguard, guaranteeing its code will flawlessly run even if a fatal unhandled Exception instantly destroys the block above it?",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "begin",
+            "isCorrect": false
+          },
+          {
+            "id": "opt2",
+            "text": "ensure",
+            "isCorrect": true
+          },
+          {
+            "id": "opt3",
+            "text": "rescue",
+            "isCorrect": false
+          }
+        ],
+        "explanation": "If the `begin` block generates an Exception, Ruby pauses, executes the `ensure` block, and then finally dies.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_5",
+      "type": "text",
+      "title": "Putting it all Together 🧩",
+      "content": "The ultimate defensive structure handles everything gracefully:\n\n```ruby\nbegin\n  # 1. Do risky stuff\nrescue ErrorClass => e\n  # 2. Fix the specific error gracefully\nensure\n  # 3. Always clean up the messy data here after 1 or 2 finishes\nend\n```"
+    },
+    {
+      "id": "s_6",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "Execution logic.",
+      "quizData": {
+        "id": "q_2",
+        "type": "multiple_choice",
+        "question": "If your `begin` block runs perfectly flawlessly with zero exceptions at all, does the `ensure` block still run?",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "Yes, absolutely.",
+            "isCorrect": true
+          },
+          {
+            "id": "opt2",
+            "text": "No, it only runs on errors.",
+            "isCorrect": false
+          },
+          {
+            "id": "opt3",
+            "text": "Only if there is no `rescue`.",
+            "isCorrect": false
+          }
+        ],
+        "explanation": "`ensure` ALWAYS runs. That's its entire purpose. It is the final guaranteed step of the block execution.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

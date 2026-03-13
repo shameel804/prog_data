@@ -1,0 +1,68 @@
+{
+  "id": "l3",
+  "chapterId": "ch_12",
+  "title": "Method Missing 👻",
+  "description": "Catch calls to non-existent methods and create true metaprogramming magic.",
+  "xpReward": 25,
+  "estimatedMinutes": 5,
+  "section": "Metaprogramming",
+  "slides": [
+    {
+      "id": "s_1",
+      "type": "text",
+      "title": "The Ghost Method 👻",
+      "content": "Typically, if you call a method on an Object that doesn't exist (like `\"hello\".bark`), Ruby instantly crashes and burns with a `NoMethodError`.\n\nBut what if you could elegantly intercept that exact crash before it happens?"
+    },
+    {
+      "id": "s_2",
+      "type": "text",
+      "title": "The `method_missing` Hook",
+      "content": "Deep inside every single Ruby object is a hidden, silent method called `method_missing`.\n\nWhen Ruby fails to find the method you called, it desperately fires `method_missing` as its last dying breath before crashing. \n\nIf you override this method in your class, you can do literal magic!"
+    },
+    {
+      "id": "s_3",
+      "type": "code",
+      "title": "Intercepting the Crash",
+      "content": "Run this! We call `robot.laser_blast`, which explicitly does not exist! But instead of crashing, our custom `method_missing` smoothly catches it and reacts!",
+      "codeSnippet": "class Robot\n  def method_missing(method_name, *arguments)\n    puts \"WARNING: I don't know how to '#{method_name}'!\"\n    puts \"But I'll pretend I did!\"\n  end\nend\n\nr2d2 = Robot.new\n# This should crash, but it doesn't!\nr2d2.laser_blast",
+      "codeLanguage": "ruby",
+      "canRunCode": true
+    },
+    {
+      "id": "s_4",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "The metaprogramming hook.",
+      "quizData": {
+        "id": "q_1",
+        "type": "multiple_choice",
+        "question": "Which explicitly strictly named built-in Ruby method gracefully triggers precisely automatically right before an object crashes due to a `NoMethodError`?",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "error_handler",
+            "isCorrect": false
+          },
+          {
+            "id": "opt2",
+            "text": "method_missing",
+            "isCorrect": true
+          },
+          {
+            "id": "opt3",
+            "text": "rescue",
+            "isCorrect": false
+          }
+        ],
+        "explanation": "`method_missing` is the ultimate magical safety net that enables dynamic method generation.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_5",
+      "type": "text",
+      "title": "Dynamic Magic ✨",
+      "content": "This is called Metaprogramming (code that writes code). \n\nMajor frameworks like Ruby on Rails heavily use `method_missing` to intelligently generate database query methods out of thin air dynamically based explicitly entirely on the exact words you type! (e.g. `User.find_by_email_and_name`)"
+    }
+  ]
+}

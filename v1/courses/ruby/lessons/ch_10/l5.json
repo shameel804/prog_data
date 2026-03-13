@@ -1,0 +1,98 @@
+{
+  "id": "l5",
+  "chapterId": "ch_10",
+  "title": "Custom Error Classes 🏗️",
+  "description": "Build dedicated exception types for your app's specific needs.",
+  "xpReward": 25,
+  "estimatedMinutes": 8,
+  "section": "Custom Errors",
+  "slides": [
+    {
+      "id": "s_1",
+      "type": "text",
+      "title": "Why Custom Errors? 🤷",
+      "content": "If you are strictly building a Banking App, throwing a generic `RuntimeError` or `ArgumentError` when a withdrawal fails isn't extremely descriptive.\n\nImagine if you could explicitly throw a perfectly-named `InsufficientFundsError`?"
+    },
+    {
+      "id": "s_2",
+      "type": "text",
+      "title": "Building the Bomb 🧨",
+      "content": "Because Exceptions are absolutely literally just Objects, you can brilliantly create your own Custom Error simply by creating an empty Class that perfectly inherits from the master `StandardError` class!\n\n```ruby\nclass InsufficientFundsError < StandardError\nend\n```\nIt inherits all the internal crash logic automatically!"
+    },
+    {
+      "id": "s_3",
+      "type": "code",
+      "title": "Custom Catching",
+      "content": "Run this! We created our own highly specific logic-driven error class, raised it aggressively, and perfectly rescued it cleanly using its exact name!",
+      "codeSnippet": "class InsufficientFundsError < StandardError; end\n\nbegin\n  balance = 100\n  withdraw = 500\n  \n  if withdraw > balance\n    raise InsufficientFundsError.new(\"You broke!\")\n  end\nrescue InsufficientFundsError => error_data\n  puts \"Transaction Declined: #{error_data.message}\"\nend\n\nputs \"Program finished happily!\"",
+      "codeLanguage": "ruby",
+      "canRunCode": true
+    },
+    {
+      "id": "s_4",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "Inheriting errors.",
+      "quizData": {
+        "id": "q_1",
+        "type": "multiple_choice",
+        "question": "If you brilliantly want to construct your very own Custom Error class called `BankError`, what single massive parent class MUST you mathematically inherit from?",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "Object",
+            "isCorrect": false
+          },
+          {
+            "id": "opt2",
+            "text": "StandardError",
+            "isCorrect": true
+          },
+          {
+            "id": "opt3",
+            "text": "RubyError",
+            "isCorrect": false
+          }
+        ],
+        "explanation": "Inheriting `class BankError < StandardError` grants your empty class all the violent crashing and rescuing capabilities it needs to actually function as a true throwable error.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_5",
+      "type": "text",
+      "title": "The Safety Net Shape 🕸️",
+      "content": "Why explicitly inherit from `StandardError` and not the literal absolute master top-level `Exception` class itself?\n\nBecause a naked `rescue` block ONLY catches `StandardError` and its children! If you boldly inherited straight from `Exception`, perfectly standard blank `rescue` blocks would completely miss your custom error!"
+    },
+    {
+      "id": "s_6",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "Rescue mechanics.",
+      "quizData": {
+        "id": "q_2",
+        "type": "multiple_choice",
+        "question": "If you write `rescue` incredibly bare, totally without mentioning any specific Exception Class name like `rescue TypeError`, what massive massive default class does it instantly implicitly catch?",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "RuntimeError",
+            "isCorrect": false
+          },
+          {
+            "id": "opt2",
+            "text": "StandardError",
+            "isCorrect": true
+          },
+          {
+            "id": "opt3",
+            "text": "It literally never actually catches anything unless you perfectly name it.",
+            "isCorrect": false
+          }
+        ],
+        "explanation": "A blank standard `rescue` specifically perfectly defaults to catching `StandardError` and absolutely any subclass derived directly from it (including basically all standard ruby errors).",
+        "xpReward": 10
+      }
+    }
+  ]
+}

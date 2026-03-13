@@ -1,0 +1,68 @@
+{
+  "id": "l2",
+  "chapterId": "ch_9",
+  "title": "Class Variables 🗃️",
+  "description": "Global data that is seamlessly shared across all instances.",
+  "xpReward": 25,
+  "estimatedMinutes": 5,
+  "section": "Class Level Data",
+  "slides": [
+    {
+      "id": "s_1",
+      "type": "text",
+      "title": "The Global Counter ⏱️",
+      "content": "What if you wanted to build 100 `Dog` objects, and dynamically keep track of EXACTLY how many dogs exist across your entire program?\n\nYou can't use an Instance Variable (`@count`), because that is trapped privately inside every single dog.\n\nYou need a **Class Variable**."
+    },
+    {
+      "id": "s_2",
+      "type": "text",
+      "title": "Two At Symbols @@",
+      "content": "A Class Variable belongs to the blueprint, but its data is openly shared across all of its child objects.\n\nYou define a Class Variable exactly like an instance variable, but you use TWO completely glued-together at symbols `@@`.\n\n`@@dog_counts = 0`"
+    },
+    {
+      "id": "s_3",
+      "type": "code",
+      "title": "Tracking the Total",
+      "content": "Run this brilliant logic! Every single time the constructor (`initialize`) runs during a `.new` call, the globally shared `@@count` goes up cleanly by one.",
+      "codeSnippet": "class Dog\n  @@total_dogs = 0\n  \n  def initialize(name)\n    @@total_dogs += 1\n    @name = name\n  end\n  \n  def self.report_count\n    puts \"Total dogs created: #{@@total_dogs}\"\n  end\nend\n\na = Dog.new(\"Fido\")\nb = Dog.new(\"Buddy\")\nc = Dog.new(\"Sparky\")\n\nDog.report_count",
+      "codeLanguage": "ruby",
+      "canRunCode": true
+    },
+    {
+      "id": "s_4",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "Variable symbols.",
+      "quizData": {
+        "id": "q_1",
+        "type": "multiple_choice",
+        "question": "Which prefix explicitly denotes a Class Variable that is securely shared across every single instance built from the Class?",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "A single `@`",
+            "isCorrect": false
+          },
+          {
+            "id": "opt2",
+            "text": "A double `@@`",
+            "isCorrect": true
+          },
+          {
+            "id": "opt3",
+            "text": "The phrase `class.`",
+            "isCorrect": false
+          }
+        ],
+        "explanation": "Remember: `@` is for private Instance data. `@@` is for shared Class data.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_5",
+      "type": "text",
+      "title": "Danger Zone ⚠️",
+      "content": "While Class Variables are cool, professional developers rarely use them.\n\nWhy? Because if you have complex code with subclasses, updating `@@shared_data` in one place can accidentally permanently overwrite it for everyone else and cause huge logic bugs!\n\nJust stick to standard `@instance` variables 99% of the time."
+    }
+  ]
+}

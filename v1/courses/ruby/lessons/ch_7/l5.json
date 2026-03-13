@@ -1,0 +1,107 @@
+{
+  "id": "l5",
+  "chapterId": "ch_7",
+  "title": "Proc vs Lambda 🥊",
+  "description": "The subtle but crucial differences between the two sibling data types.",
+  "xpReward": 25,
+  "estimatedMinutes": 8,
+  "section": "Procs & Lambdas",
+  "slides": [
+    {
+      "id": "s_1",
+      "type": "text",
+      "title": "If they are twins... Why two? 🧬",
+      "content": "Procs and Lambdas act identically 90% of the time. But there are two extremely critical differences that determine when you use which.\n\nThese differences are standard interview questions for Junior Ruby roles!"
+    },
+    {
+      "id": "s_2",
+      "type": "code",
+      "title": "Difference 1: Arguments 🛡️",
+      "content": "Lambdas are STRICT about arguments. Procs are LAZY.\n\nRun this code! The Lambda crashes because we forgot to pass an argument. The Proc just silently replaces it with `nil` and keeps going.",
+      "codeSnippet": "lazy_proc = Proc.new { |x| puts \"Value is #{x.inspect}\" }\nstrict_lambda = ->(x) { puts \"Value is #{x.inspect}\" }\n\nputs \"Calling Proc with no arguments:\"\nlazy_proc.call()\n\nputs \"\\nCalling Lambda with no arguments:\"\n# This will crash instantly!\nstrict_lambda.call()",
+      "codeLanguage": "ruby",
+      "canRunCode": true
+    },
+    {
+      "id": "s_3",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "Argument strictness.",
+      "quizData": {
+        "id": "q_1",
+        "type": "multiple_choice",
+        "question": "Which one will instantly crash (ArgumentError) if you pass it the wrong number of arguments?",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "A Proc",
+            "isCorrect": false
+          },
+          {
+            "id": "opt2",
+            "text": "A Lambda",
+            "isCorrect": true
+          },
+          {
+            "id": "opt3",
+            "text": "Both of them",
+            "isCorrect": false
+          }
+        ],
+        "explanation": "Lambdas expect to be treated like actual methods, so they demand their arguments to be strictly perfect. Procs are just loose blocks of code.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_4",
+      "type": "text",
+      "title": "Difference 2: The Return Keyword 🛑",
+      "content": "Lambdas and Procs handle the `return` keyword drastically differently. This is confusing, so listen closely:\n\nIf a **Lambda** hits `return`, it hands the value backward to the method that called the lambda, allowing the rest of the method to continue.\n\nIf a **Proc** hits `return`, it instantly permanently terminates NOT ONLY its own code, but heavily destroys the ENTIRE method it was called inside of as well!"
+    },
+    {
+      "id": "s_5",
+      "type": "code",
+      "title": "Return Logic in Action",
+      "content": "Run this! When the method hits the Proc, the Proc rips the method apart completely, so \"I survived\" never prints.",
+      "codeSnippet": "def proc_tester\n  my_proc = Proc.new { return \"Proc Return!\" }\n  my_proc.call\n  \n  puts \"I survived hitting the proc!\"\nend\n\ndef lambda_tester\n  my_lambda = ->() { return \"Lambda Return!\" }\n  my_lambda.call\n  \n  puts \"I survived hitting the lambda!\"\nend\n\nproc_tester\nputs \"---\"\nlambda_tester",
+      "codeLanguage": "ruby",
+      "canRunCode": true
+    },
+    {
+      "id": "s_6",
+      "type": "quiz",
+      "title": "Quick Check 🧠",
+      "content": "Proc behavior.",
+      "quizData": {
+        "id": "q_2",
+        "type": "multiple_choice",
+        "question": "What happens when a Proc block hits the explicit `return` keyword?",
+        "options": [
+          {
+            "id": "opt1",
+            "text": "It passes data back to the enclosing method like normal.",
+            "isCorrect": false
+          },
+          {
+            "id": "opt2",
+            "text": "It completely aborts/destroys both itself AND the method it's trapped inside of, taking everything down with it.",
+            "isCorrect": true
+          },
+          {
+            "id": "opt3",
+            "text": "It becomes a lambda.",
+            "isCorrect": false
+          }
+        ],
+        "explanation": "Because a Proc thinks it's just raw code pasted directly into the method, hitting `return` inside a proc forces the entire parent method to return and die.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_7",
+      "type": "tip",
+      "title": "The Rule of Thumb 👍",
+      "content": "Because they act exactly like normal methods, you should realistically always use Lambdas. Only use Procs if you have a very highly specific use case for their weird behavior."
+    }
+  ]
+}
