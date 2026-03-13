@@ -1,0 +1,73 @@
+{
+  "id": "l2",
+  "chapterId": "ch_6",
+  "title": "INNER JOIN",
+  "description": "Find the perfect overlap between two lists.",
+  "xpReward": 25,
+  "estimatedMinutes": 6,
+  "section": "Joins",
+  "slides": [
+    {
+      "id": "s_l2_1",
+      "type": "text",
+      "title": "The Strict Bouncer 👔",
+      "content": "# The INNER JOIN\n\nAn **`INNER JOIN`** is the most common and strict type of join.\n\nIt only returns rows if there is a **perfect, absolute match** in both tables. If a user has never bought an order, or an order doesn't have a valid user, they are summarily rejected from the resulting grid."
+    },
+    {
+      "id": "s_l2_2",
+      "type": "text",
+      "title": "How to link it 🔗",
+      "content": "## The ON clause\n\nYou declare the join in the `FROM` section, and use the word **`ON`** to explain *how* they connect mathematically.\n\n`SELECT * FROM users INNER JOIN orders ON users.id = orders.user_id;`\n\nThe `ON` clause is you explaining the rules: \"Please glue the users table to the orders table, BUT ONLY WHERE the user's id is perfectly equal to the order's user_id.\""
+    },
+    {
+      "id": "s_l2_3",
+      "type": "quiz",
+      "title": "Inner Workings 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_1",
+        "type": "multiple_choice",
+        "question": "If Bob is in the `users` table, but he has zero orders in the `orders` table... will Bob's name appear in an `INNER JOIN`?",
+        "options": [
+          { "id": "opt1", "text": "Yes, but it will show zero orders", "isCorrect": false },
+          { "id": "opt2", "text": "No! Inner Join fundamentally requires a perfect match on both sides. Bob gets excluded.", "isCorrect": true },
+          { "id": "opt3", "text": "Yes, the DB creates a fake order for him", "isCorrect": false }
+        ],
+        "explanation": "INNER JOIN is the intersection of a Venn Diagram. It ONLY accepts records that actively overlap in both tables.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l2_4",
+      "type": "text",
+      "title": "Dot Notation 🚦",
+      "content": "## Table.Column\n\nWhen you use `JOIN`, you suddenly have columns from two different tables colliding! \n\nIf both tables have a created_at date, `SELECT created_at` crashes because the DB asks \"WHICH ONE?!\"\n\nYou must clarify using Dot Notation: `SELECT users.created_at, orders.created_at ...`"
+    },
+    {
+      "id": "s_l2_5",
+      "type": "quiz",
+      "title": "Dotting the I's 🖊️",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_2",
+        "type": "multiple_choice",
+        "question": "Why do we use `users.id` in a JOIN instead of just writing `id`?",
+        "options": [
+          { "id": "opt1", "text": "Because both the 'users' and 'orders' table inherently possess an 'id' column, so we must be specific or the DB will crash in confusion", "isCorrect": true },
+          { "id": "opt2", "text": "Because 'id' alone is a reserved programming keyword and will crash", "isCorrect": false },
+          { "id": "opt3", "text": "It's just to make the query look prettier", "isCorrect": false }
+        ],
+        "explanation": "Dot notation (table_name.column_name) uniquely, explicitly identifies exactly which column you are referencing during complex joins.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l2_6",
+      "type": "code",
+      "title": "Try it Out!",
+      "content": "Join `students` to `grades`. The link is `students.id = grades.student_id`.",
+      "codeSnippet": "SELECT *\nFROM students\nINNER JOIN grades \n  ON students.id = grades.student_id;",
+      "codeLanguage": "sql"
+    }
+  ]
+}

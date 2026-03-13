@@ -1,0 +1,65 @@
+{
+  "id": "l1",
+  "chapterId": "ch_10",
+  "title": "Speed Hacks ⚡",
+  "description": "Instantly making your queries 100x faster.",
+  "xpReward": 25,
+  "estimatedMinutes": 5,
+  "section": "Mastery",
+  "slides": [
+    {
+      "id": "s_l1_1",
+      "type": "text",
+      "title": "The Big Search 🔍",
+      "content": "# The Problem with Huge Tables\n\nImagine a `users` table with 10 million rows. You run `SELECT * FROM users WHERE email = 'bob@test.com'`.\n\nWithout help, the database does a **Full Table Scan**. It literally checks row 1, then row 2, all the way to 10 million, just to find Bob. This is incredibly slow!"
+    },
+    {
+      "id": "s_l1_2",
+      "type": "text",
+      "title": "The Dictionary 📖",
+      "content": "## Database Indexes\n\nThink of a physical dictionary. If you want to find \"Zebra\", you don't read from page 1. You flip straight to 'Z'. Why? Because the dictionary is **indexed** alphabetically.\n\nYou can tell SQL to create a similar index for any column!\n\n`CREATE INDEX idx_email ON users(email);`"
+    },
+    {
+      "id": "s_l1_3",
+      "type": "quiz",
+      "title": "Searching 🔍",
+      "content": "",
+      "quizData": {
+        "id": "q_l1_1",
+        "type": "multiple_choice",
+        "question": "What happens inherently when you execute a search on a massive un-indexed table?",
+        "options": [
+          { "id": "opt1", "text": "The database uses a Full Table Scan, painstakingly checking every single row one by one sequentially", "isCorrect": true },
+          { "id": "opt2", "text": "It skips the search", "isCorrect": false },
+          { "id": "opt3", "text": "It automatically builds an index organically instantly on the fly", "isCorrect": false }
+        ],
+        "explanation": "Without an index, the database has no map; it must blindly check every record.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l1_4",
+      "type": "text",
+      "title": "The Tradeoff ⚖️",
+      "content": "## Why not index everything?\n\nIf indexes are so fast, why not index every single column?\n\nBecause of **Writes**. Every time you `INSERT`, `UPDATE`, or `DELETE` a row, the database has to do extra work to update the invisible Index table behind the scenes. \n\nToo many indexes = blazingly fast `SELECT`s, but incredibly slow `INSERT`s."
+    },
+    {
+      "id": "s_l1_5",
+      "type": "quiz",
+      "title": "The Speed Tradeoff ⚖️",
+      "content": "",
+      "quizData": {
+        "id": "q_l1_2",
+        "type": "multiple_choice",
+        "question": "What is the primary architectural penalty natively for actively creating too many Database Indexes on a single table?",
+        "options": [
+          { "id": "opt1", "text": "It forces searches to crash fundamentally", "isCorrect": false },
+          { "id": "opt2", "text": "It dramatically slows down `INSERT`, `UPDATE`, and `DELETE` commands, because the database must continuously cleanly update multiple indexes whenever data alters", "isCorrect": true },
+          { "id": "opt3", "text": "It makes SELECTs slower inherently", "isCorrect": false }
+        ],
+        "explanation": "Indexes speed up reading, but they slow down writing. Use them only on columns you frequently search or filter by.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

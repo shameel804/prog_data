@@ -1,0 +1,73 @@
+{
+  "id": "l3",
+  "chapterId": "ch_7",
+  "title": "Safety First ⚠️",
+  "description": "Why the WHERE clause is your best friend.",
+  "xpReward": 25,
+  "estimatedMinutes": 5,
+  "section": "Safety",
+  "slides": [
+    {
+      "id": "s_l3_1",
+      "type": "text",
+      "title": "Catastrophe 💣",
+      "content": "# The biggest mistake in SQL\n\nWhat happens if you run this query?\n`UPDATE users SET status = 'Pro';`\n\nBecause you didn't specify exactly *who* should get the update, the database faithfully updates EVERY SINGLE ROW IN THE ENTIRE TABLE.\n\nYou just accidentally gave 5 million users a free Pro account. You are fired."
+    },
+    {
+      "id": "s_l3_2",
+      "type": "text",
+      "title": "The WHERE Safety Net 🛟",
+      "content": "## Targeting the update\n\nYou MUST almost always use a **`WHERE`** clause when running an `UPDATE` statement to limit the blast radius.\n\n`UPDATE users SET status = 'Pro' WHERE id = 5;`\n\nNow, only the single user with ID #5 is upgraded. Your job is safe."
+    },
+    {
+      "id": "s_l3_3",
+      "type": "quiz",
+      "title": "Blast Radius 💥",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_1",
+        "type": "multiple_choice",
+        "question": "What is the consequence of running an UPDATE statement without a WHERE clause?",
+        "options": [
+          { "id": "opt1", "text": "It throws an automatic safety error and doesn't run", "isCorrect": false },
+          { "id": "opt2", "text": "It alters every single row in the whole entire table simultaneously", "isCorrect": true },
+          { "id": "opt3", "text": "It only alters the very first row it finds", "isCorrect": false }
+        ],
+        "explanation": "If you don't restrict an UPDATE with a WHERE clause, it applies the SET command universally across every record.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l3_4",
+      "type": "text",
+      "title": "Using the Primary Key 🔑",
+      "content": "## The safest target\n\nWhen updating specific rows, you should always target their Primary Key (like `id`). \n\nIf you try `WHERE first_name = 'John'`, you might accidentally update 50 different Johns at once! ID numbers are strictly unique, guaranteeing you only ever hit one target."
+    },
+    {
+      "id": "s_l3_5",
+      "type": "quiz",
+      "title": "Precision Targeting 🎯",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_2",
+        "type": "multiple_choice",
+        "question": "Why is it dangerous to run an UPDATE using a condition like `WHERE last_name = 'Smith'`?",
+        "options": [
+          { "id": "opt1", "text": "Because it might unintentionally overwrite the data for hundreds of people who happen to share that last name", "isCorrect": true },
+          { "id": "opt2", "text": "Because LAST_NAME isn't a valid column", "isCorrect": false },
+          { "id": "opt3", "text": "Because it's computationally too slow", "isCorrect": false }
+        ],
+        "explanation": "Names aren't unique. To be surgically precise with your updates, always use the unique Primary Key.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l3_6",
+      "type": "code",
+      "title": "Safely Update!",
+      "content": "Update the `inventory` table. `SET` the `stock` to `0`, but ONLY `WHERE` the `id` is exactly `99`.",
+      "codeSnippet": "UPDATE inventory\nSET stock = 0\nWHERE id = 99;",
+      "codeLanguage": "sql"
+    }
+  ]
+}

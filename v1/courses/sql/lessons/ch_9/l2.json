@@ -1,0 +1,65 @@
+{
+  "id": "l2",
+  "chapterId": "ch_9",
+  "title": "CTEs (The WITH Clause) 🧩",
+  "description": "Making complex subqueries infinitely more readable.",
+  "xpReward": 30,
+  "estimatedMinutes": 5,
+  "section": "Analytics",
+  "slides": [
+    {
+      "id": "s_l2_1",
+      "type": "text",
+      "title": "Spaghetti Code 🍝",
+      "content": "# The Problem with Subqueries\n\nSubqueries are great, but if you have a subquery inside a subquery inside a subquery... your code becomes an unreadable mess of parentheses.\n\nEnter **CTEs (Common Table Expressions)**. They let you define temporary tables clearly at the very top of your SQL query!"
+    },
+    {
+      "id": "s_l2_2",
+      "type": "text",
+      "title": "The WITH Clause 🛠️",
+      "content": "## Defining a CTE\n\nYou start a CTE using the `WITH` keyword.\n\n```sql\nWITH HighEarners AS (\n  SELECT id, name FROM employees WHERE salary > 100000\n)\nSELECT name FROM HighEarners;\n```\n\nThink of `HighEarners` as a temporary variable that holds a mini-table. We can then `SELECT` from it as if it were a real table!"
+    },
+    {
+      "id": "s_l2_3",
+      "type": "quiz",
+      "title": "Temporary Tables 🧩",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_1",
+        "type": "multiple_choice",
+        "question": "What is the primary benefit of using a CTE (Common Table Expression)?",
+        "options": [
+          { "id": "opt1", "text": "It permanently saves a new table to the database physically", "isCorrect": false },
+          { "id": "opt2", "text": "It makes complex queries much easier to read by defining temporary result sets at the top", "isCorrect": true },
+          { "id": "opt3", "text": "It bypasses all security constraints automatically", "isCorrect": false }
+        ],
+        "explanation": "CTEs are purely for readability and organization. They don't save anything permanently.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l2_4",
+      "type": "text",
+      "title": "Chaining CTEs 🔗",
+      "content": "## Multiple Steps\n\nYou can define multiple CTEs by separating them with a comma.\n\n```sql\nWITH StepOne AS (\n  SELECT * FROM users\n),\nStepTwo AS (\n  SELECT * FROM StepOne WHERE active = true\n)\nSELECT * FROM StepTwo;\n```\n\nThis makes logical step-by-step transformations incredibly easy to follow, top to bottom!"
+    },
+    {
+      "id": "s_l2_5",
+      "type": "quiz",
+      "title": "The CTE Chain ⛓️",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_2",
+        "type": "multiple_choice",
+        "question": "If you want to declare a second CTE right after the first one, how do you separate them syntax-wise?",
+        "options": [
+          { "id": "opt1", "text": "By typing the word WITH again", "isCorrect": false },
+          { "id": "opt2", "text": "By using a comma (,) between them", "isCorrect": true },
+          { "id": "opt3", "text": "By using a period (.)", "isCorrect": false }
+        ],
+        "explanation": "You only use the word WITH once. Subsequent CTEs are separated by commas.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "id": "l3",
+  "chapterId": "ch_4",
+  "title": "Limiting Results",
+  "description": "Don't load 1,000 rows if you only need the Top 10.",
+  "xpReward": 25,
+  "estimatedMinutes": 6,
+  "section": "Limiting",
+  "slides": [
+    {
+      "id": "s_l3_1",
+      "type": "text",
+      "title": "The Top 10 List 🏆",
+      "content": "# Stop downloading everything!\n\nIf you want to show a \"Top 10 Leaderboard\" in your app, it is a catastrophic disaster to run a query that downloads all 5 million players just so the app code can read the first 10.\n\nWe need to tell the database to literally *Stop Processing* after finding the first 10."
+    },
+    {
+      "id": "s_l3_2",
+      "type": "text",
+      "title": "The LIMIT Clause 🚫",
+      "content": "## A hard cap\n\nIn most SQL databases (Postgres, MySQL, SQLite), you add the **`LIMIT`** clause to the absolute very end of your query.\n\n`SELECT * FROM players ORDER BY score DESC LIMIT 10;`\n\nThe DB sorts by score, perfectly stops at number 10, and throws away the remaining 5 million. Incredible speed!"
+    },
+    {
+      "id": "s_l3_3",
+      "type": "quiz",
+      "title": "Performance Boost 🚀",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_1",
+        "type": "multiple_choice",
+        "question": "Why is LIMIT incredibly important for application performance?",
+        "options": [
+          { "id": "opt1", "text": "It prevents the database from performing any math", "isCorrect": false },
+          { "id": "opt2", "text": "It cuts off the database from processing millions of unneeded rows, drastically lowering network transfer speeds and computing time", "isCorrect": true },
+          { "id": "opt3", "text": "It ensures users can never access the database", "isCorrect": false }
+        ],
+        "explanation": "Downloading gigabytes of unneeded row data over a network crushes performance. Only asking for 10 removes the bottleneck.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l3_4",
+      "type": "text",
+      "title": "SQL Server Exception 🏢",
+      "content": "## Microsoft TOP\n\nNot every database uses LIMIT! Microsoft SQL Server uses the **`TOP`** keyword directly after SELECT.\n\nMicrosoft: `SELECT TOP 10 * FROM players ORDER BY score DESC;`\nEveryone Else: `SELECT * FROM players ORDER BY score DESC LIMIT 10;`\n\n*(For this course, we'll universally use LIMIT)*."
+    },
+    {
+      "id": "s_l3_5",
+      "type": "quiz",
+      "title": "Database differences 🌎",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_2",
+        "type": "multiple_choice",
+        "question": "Which databases typically use LIMIT?",
+        "options": [
+          { "id": "opt1", "text": "Only Microsoft SQL Server", "isCorrect": false },
+          { "id": "opt2", "text": "PostgreSQL, MySQL, and SQLite", "isCorrect": true },
+          { "id": "opt3", "text": "None, LIMIT is not a real command", "isCorrect": false }
+        ],
+        "explanation": "LIMIT is immensely popular across open-source databases. MS SQL Server is the major outlier using TOP.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l3_6",
+      "type": "code",
+      "title": "Try it Out!",
+      "content": "Find the absolutely most expensive single product in the `products` table.",
+      "codeSnippet": "SELECT *\nFROM products\nORDER BY price DESC\nLIMIT 1;",
+      "codeLanguage": "sql"
+    }
+  ]
+}

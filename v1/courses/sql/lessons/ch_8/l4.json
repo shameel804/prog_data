@@ -1,0 +1,65 @@
+{
+  "id": "l4",
+  "chapterId": "ch_8",
+  "title": "Declaring Keys 🔑",
+  "description": "How to officially set Primary and Foreign Keys.",
+  "xpReward": 30,
+  "estimatedMinutes": 6,
+  "section": "Architecture",
+  "slides": [
+    {
+      "id": "s_l4_1",
+      "type": "text",
+      "title": "The Golden Key 🔑",
+      "content": "# The PRIMARY KEY Constraint\n\nEvery table should theoretically have a mathematically completely unique identifier row (usually `id`).\n\nYou MUST rigidly declare this uniqueness explicitly by appending the **`PRIMARY KEY`** constraint to the column definition during table creation."
+    },
+    {
+      "id": "s_l4_2",
+      "type": "text",
+      "title": "What it actually does ⚙️",
+      "content": "## Two for the price of one\n\nWriting `id INT PRIMARY KEY` automatically forces two things simultaneously:\n1. It implies `NOT NULL` (a key cannot be blank).\n2. It implies `UNIQUE` (a key cannot be duplicated mathematically).\n\nThe SQL engine also optimizes 'Primary Keys' to be searched blazingly fast natively."
+    },
+    {
+      "id": "s_l4_3",
+      "type": "quiz",
+      "title": "Primary Checks 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_1",
+        "type": "multiple_choice",
+        "question": "What happens fundamentally automatically when you structurally assign the PRIMARY KEY trait to a column?",
+        "options": [
+          { "id": "opt1", "text": "It becomes a password", "isCorrect": false },
+          { "id": "opt2", "text": "It implicitly mandates that the column must permanently be both NOT NULL and mathematically universally UNIQUE", "isCorrect": true },
+          { "id": "opt3", "text": "It encrypts the entire table", "isCorrect": false }
+        ],
+        "explanation": "Primary keys are the unshakable foundation of the table, guaranteeing row uniqueness.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l4_4",
+      "type": "text",
+      "title": "The Bridge 🌉",
+      "content": "## FOREIGN KEY Constraints\n\nRemember JOINs? Where `orders.user_id` links to `users.id`?\n\nYou can structurally legally enforce that rule! If you add a **`FOREIGN KEY (user_id) REFERENCES users(id)`** constraint to the `orders` table... the database will physically reject any `INSERT` attempt if someone tries to create an order for a User ID that doesn't actually exist!"
+    },
+    {
+      "id": "s_l4_5",
+      "type": "quiz",
+      "title": "Enforcing the bridge 🌉",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_2",
+        "type": "multiple_choice",
+        "question": "What happens if you attempt inserting an order containing `user_id = 99`, but User #99 does not actually legally exist inside the users table natively, assuming a FOREIGN KEY is actively established?",
+        "options": [
+          { "id": "opt1", "text": "The database absolutely crashes the insert, rejecting it completely because it violates relational integrity", "isCorrect": true },
+          { "id": "opt2", "text": "It automatically generates User #99 instantly to fix the problem", "isCorrect": false },
+          { "id": "opt3", "text": "It ignores the error securely", "isCorrect": false }
+        ],
+        "explanation": "Foreign keys guarantee structural integrity. You cannot reference an entity that does not exist.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

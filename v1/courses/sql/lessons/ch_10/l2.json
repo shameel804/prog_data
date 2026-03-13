@@ -1,0 +1,65 @@
+{
+  "id": "l2",
+  "chapterId": "ch_10",
+  "title": "Transactions \uD83D\uDCB3",
+  "description": "All or Nothing.",
+  "xpReward": 35,
+  "estimatedMinutes": 6,
+  "section": "Mastery",
+  "slides": [
+    {
+      "id": "s_l2_1",
+      "type": "text",
+      "title": "The Bank Transfer \uD83C\uDFE6",
+      "content": "# The Danger of Partial Updates\n\nYou want to transfer $100 from Alice to Bob.\nCommand 1: `UPDATE accounts SET balance = balance - 100 WHERE name = 'Alice'`\nCommand 2: `UPDATE accounts SET balance = balance + 100 WHERE name = 'Bob'`\n\nWhat happens if the power goes out exactly between Command 1 and Command 2? Alice loses $100, but Bob never gets it!"
+    },
+    {
+      "id": "s_l2_2",
+      "type": "text",
+      "title": "The Safety Net \uD83D\uDD78\uFE0F",
+      "content": "## Database Transactions\n\nA **Transaction** wraps multiple SQL commands into a single, indivisible \"All or Nothing\" unit of work.\n\n```sql\nBEGIN;\nUPDATE accounts SET balance = balance - 100 WHERE name='Alice';\nUPDATE accounts SET balance = balance + 100 WHERE name='Bob';\nCOMMIT;\n```\n\nThe `BEGIN` starts it. The `COMMIT` makes it permanent."
+    },
+    {
+      "id": "s_l2_3",
+      "type": "quiz",
+      "title": "The All or Nothing Rule \uD83E\uDDF1",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_1",
+        "type": "multiple_choice",
+        "question": "What is the primary architectural purpose of a Database Transaction?",
+        "options": [
+          { "id": "opt1", "text": "It ensures that a series of SQL commands either all execute successfully, or none of them execute at all, preventing corrupted partial data", "isCorrect": true },
+          { "id": "opt2", "text": "It makes databases faster", "isCorrect": false },
+          { "id": "opt3", "text": "It deletes the database", "isCorrect": false }
+        ],
+        "explanation": "Transactions ensure data consistency. It's 'All or Nothing'.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l2_4",
+      "type": "text",
+      "title": "Hitting Undo \u23EA",
+      "content": "## ROLLBACK\n\nIf something goes terribly wrong *before* you `COMMIT` (like an error occurs mid-transaction), you can cancel everything using **`ROLLBACK`**.\n\nThis acts like a magical \"Undo\" button, reverting the database to exactly how it looked before the `BEGIN` command."
+    },
+    {
+      "id": "s_l2_5",
+      "type": "quiz",
+      "title": "The Undo Button \u23EA",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_2",
+        "type": "multiple_choice",
+        "question": "What command aborts an active Transaction and reverts the tables to their previous state?",
+        "options": [
+          { "id": "opt1", "text": "UNDO", "isCorrect": false },
+          { "id": "opt2", "text": "ROLLBACK", "isCorrect": true },
+          { "id": "opt3", "text": "CANCEL", "isCorrect": false }
+        ],
+        "explanation": "ROLLBACK completely erases all uncommitted changes effectively acting as an undo.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

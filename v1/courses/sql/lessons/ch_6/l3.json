@@ -1,0 +1,73 @@
+{
+  "id": "l3",
+  "chapterId": "ch_6",
+  "title": "LEFT JOIN",
+  "description": "Keep everything on the left, even without a match.",
+  "xpReward": 25,
+  "estimatedMinutes": 6,
+  "section": "Joins",
+  "slides": [
+    {
+      "id": "s_l3_1",
+      "type": "text",
+      "title": "The Silent Users 😶",
+      "content": "# The INNER problem\n\nWhat if we actually *want* Bob to appear in our resulting list, even if he hasn't ordered anything yet?\n\nIf we use INNER JOIN, Bob vanishes. We need a looser, friendlier join that forgives missing data."
+    },
+    {
+      "id": "s_l3_2",
+      "type": "text",
+      "title": "The LEFT JOIN 👈",
+      "content": "## Guaranteeing the left side\n\nA **`LEFT JOIN`** guarantees that EVERY single row in the \"Left\" table (the table you write first in `FROM`) will survive and appear in the final grid, no matter what.\n\n`SELECT * FROM users LEFT JOIN orders ON ...`"
+    },
+    {
+      "id": "s_l3_3",
+      "type": "quiz",
+      "title": "Left Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_1",
+        "type": "multiple_choice",
+        "question": "If you use a LEFT JOIN starting with `FROM users`, what is absolutely guaranteed?",
+        "options": [
+          { "id": "opt1", "text": "Every user will be returned, even if they have zero matches in the orders table", "isCorrect": true },
+          { "id": "opt2", "text": "Only users who have legally ordered items will be returned", "isCorrect": false },
+          { "id": "opt3", "text": "Only orders without users will legitimately exist", "isCorrect": false }
+        ],
+        "explanation": "A LEFT JOIN essentially says: 'Regardless of anything else, output everything from the Left (first) table. If it has matches in the Right table, cool. If not, still output it.'",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l3_4",
+      "type": "text",
+      "title": "Filling with NULLs 👻",
+      "content": "## Empty spaces\n\nIf Bob makes it into the final result because of the LEFT JOIN, but he has no order... what does the database put in his `order_date` column?\n\nThe database literally just inserts a **`NULL`** (blank) value for all the missing right-side order columns!"
+    },
+    {
+      "id": "s_l3_5",
+      "type": "quiz",
+      "title": "Null Fillers 👻",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_2",
+        "type": "multiple_choice",
+        "question": "If a user has no matching orders during a LEFT JOIN, what populates the 'order_price' column for that returned row?",
+        "options": [
+          { "id": "opt1", "text": "It says 'N/A'", "isCorrect": false },
+          { "id": "opt2", "text": "The entire query crashes", "isCorrect": false },
+          { "id": "opt3", "text": "It is filled with a NULL value", "isCorrect": true }
+        ],
+        "explanation": "Since Bob has no order, the database pads all the Order-specific columns with a NULL for his specific row.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l3_6",
+      "type": "code",
+      "title": "Try it Out!",
+      "content": "Get all the `customers`, even if they have zero `complaints`. Join them on their `id` vs the complaint's `customer_id`.",
+      "codeSnippet": "SELECT *\nFROM customers\nLEFT JOIN complaints \n  ON customers.id = complaints.customer_id;",
+      "codeLanguage": "sql"
+    }
+  ]
+}

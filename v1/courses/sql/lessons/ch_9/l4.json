@@ -1,0 +1,65 @@
+{
+  "id": "l4",
+  "chapterId": "ch_9",
+  "title": "RANK() & DENSE_RANK() 🥇",
+  "description": "Determining 1st, 2nd, and 3rd place dynamically.",
+  "xpReward": 30,
+  "estimatedMinutes": 5,
+  "section": "Analytics",
+  "slides": [
+    {
+      "id": "s_l4_1",
+      "type": "text",
+      "title": "Who is Number 1? 🥇",
+      "content": "# The RANK() Function\n\nAnother superpower of Window Functions is assigning rankings. \n\n```sql\nSELECT name,\n       score,\n       RANK() OVER(ORDER BY score DESC)\nFROM leaderboard;\n```\n\nThis automatically assigns `1` to the highest score, `2` to the next, etc."
+    },
+    {
+      "id": "s_l4_2",
+      "type": "text",
+      "title": "The Tie Problem 👔",
+      "content": "## Handling Ties\n\nIf Alice and Bob tie for 1st place, `RANK()` gives them both a `1`.\n\nBut what does Charlie get? `RANK()` skips a number. Charlie gets `3`.\n\nIf you don't want to skip numbers, you use **`DENSE_RANK()`**. In that case, Charlie would get `2` instead."
+    },
+    {
+      "id": "s_l4_3",
+      "type": "quiz",
+      "title": "Skipping vs Dense 🦘",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_1",
+        "type": "multiple_choice",
+        "question": "If three people tie for 2nd place, what is the next rank assigned by the `RANK()` function?",
+        "options": [
+          { "id": "opt1", "text": "3rd place", "isCorrect": false },
+          { "id": "opt2", "text": "5th place (It skips ranks 3 and 4 because 2nd place took up three spots)", "isCorrect": true },
+          { "id": "opt3", "text": "It throws an error", "isCorrect": false }
+        ],
+        "explanation": "RANK() skips subsequent numbers after ties. DENSE_RANK() does not skip.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l4_4",
+      "type": "text",
+      "title": "Row Number 🔢",
+      "content": "## Sequential Numbering\n\nSometimes you just want to literally count the rows `1, 2, 3...` regardless of ties.\n\nFor that, you use **`ROW_NUMBER() OVER(ORDER BY ...)`**. It perfectly numbers each row sequentially without ever duplicating a number, even if there are ties!"
+    },
+    {
+      "id": "s_l4_5",
+      "type": "quiz",
+      "title": "Counting rows 🔢",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_2",
+        "type": "multiple_choice",
+        "question": "Which window function guarantees absolutely unique numbers 1, 2, 3... for every row, even if there is a massive tie?",
+        "options": [
+          { "id": "opt1", "text": "RANK()", "isCorrect": false },
+          { "id": "opt2", "text": "DENSE_RANK()", "isCorrect": false },
+          { "id": "opt3", "text": "ROW_NUMBER()", "isCorrect": true }
+        ],
+        "explanation": "ROW_NUMBER() never cares about ties; it simply numbers the rows as they visually appear from top to bottom.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

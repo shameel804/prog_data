@@ -1,0 +1,65 @@
+{
+  "id": "l1",
+  "chapterId": "ch_9",
+  "title": "The Query Inception 🌀",
+  "description": "Writing queries inside of queries.",
+  "xpReward": 25,
+  "estimatedMinutes": 5,
+  "section": "Analytics",
+  "slides": [
+    {
+      "id": "s_l1_1",
+      "type": "text",
+      "title": "Query within a Query",
+      "content": "# Subqueries\n\nSometimes, to answer a question, you have to ask another question first.\n\nImagine asking: \"Who makes more money than average?\"\n\nYou can't answer that until you first find out what the average is! This is a **Subquery**—a query nested inside another query."
+    },
+    {
+      "id": "s_l1_2",
+      "type": "text",
+      "title": "How it looks 👓",
+      "content": "## Syntax Example\n\n```sql\nSELECT name, salary\nFROM employees\nWHERE salary > (\n  SELECT AVG(salary) FROM employees\n);\n```\n\nThe inner query `(SELECT AVG(salary) FROM employees)` runs FIRST. It acts exactly like a variable getting calculated, let's say it returns `50000`. Then the outer query runs as `WHERE salary > 50000`."
+    },
+    {
+      "id": "s_l1_3",
+      "type": "quiz",
+      "title": "Inception Check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l1_1",
+        "type": "multiple_choice",
+        "question": "In a subquery structure, which part executes first?",
+        "options": [
+          { "id": "opt1", "text": "The outer query executes first", "isCorrect": false },
+          { "id": "opt2", "text": "The inner query (in parentheses) evaluates first to provide a foundational result to the outer query", "isCorrect": true },
+          { "id": "opt3", "text": "They execute simultaneously", "isCorrect": false }
+        ],
+        "explanation": "SQL resolves the inner parenthesis first, just like in math (`(2+3)*4`).",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l1_4",
+      "type": "text",
+      "title": "The IN Operator with Subqueries 📦",
+      "content": "## Filtering Lists\n\nYou can use subqueries to generate lists for the `IN` operator.\n\n```sql\nSELECT name FROM users\nWHERE id IN (\n  SELECT user_id FROM orders WHERE total > 100\n);\n```\n\nThis finds all users who have made any high-value orders. The inner query produces a list of `user_id`s, and the outer query checks it."
+    },
+    {
+      "id": "s_l1_5",
+      "type": "quiz",
+      "title": "List Generation 📝",
+      "content": "",
+      "quizData": {
+        "id": "q_l1_2",
+        "type": "multiple_choice",
+        "question": "If an inner query returns exactly `(4, 9, 21)`, what does the outer query `WHERE id IN (subquery)` do?",
+        "options": [
+          { "id": "opt1", "text": "It checks if the ID is strictly greater than 21", "isCorrect": false },
+          { "id": "opt2", "text": "It checks if the ID is exactly equal to 4, 9, or 21", "isCorrect": true },
+          { "id": "opt3", "text": "It adds 4, 9, and 21 together", "isCorrect": false }
+        ],
+        "explanation": "The subquery generates the list dynamically, and IN checks for membership within that list.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

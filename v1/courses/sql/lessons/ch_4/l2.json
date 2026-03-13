@@ -1,0 +1,73 @@
+{
+  "id": "l2",
+  "chapterId": "ch_4",
+  "title": "Multiple Sorts",
+  "description": "Sort by one column, then by another.",
+  "xpReward": 25,
+  "estimatedMinutes": 5,
+  "section": "Sorting",
+  "slides": [
+    {
+      "id": "s_l2_1",
+      "type": "text",
+      "title": "The Tie-Breaker Problem 👔",
+      "content": "# What happens during a tie?\n\nIf you run `ORDER BY last_name`, and ten people share the last name 'Smith', how does the DB organize those ten Smiths?\n\nIt throws them in randomly again!"
+    },
+    {
+      "id": "s_l2_2",
+      "type": "text",
+      "title": "Layering Orders 🍰",
+      "content": "## A comma-separated list of orders\n\nYou can actually sort by multiple columns to act as tie-breakers. Just separate them with a comma.\n\n`ORDER BY last_name, first_name`\n\nThis says: Firstly, sort perfectly by last name. But if there are any ties... organize those specific tied records by their first name."
+    },
+    {
+      "id": "s_l2_3",
+      "type": "quiz",
+      "title": "Breaking Ties 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_1",
+        "type": "multiple_choice",
+        "question": "If I write `ORDER BY state, city`, what does the database do?",
+        "options": [
+          { "id": "opt1", "text": "It randomly picks if it wants to sort by state or by city", "isCorrect": false },
+          { "id": "opt2", "text": "It sorts perfectly by State first. If multiple records share the exact same State, it sorts those tied records by City.", "isCorrect": true },
+          { "id": "opt3", "text": "It sorts by City first, then State", "isCorrect": false }
+        ],
+        "explanation": "SQL evaluates comma-separated ORDER BY fields sequentially. The first column is the primary sort. The second column is only used when the first column ties.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l2_4",
+      "type": "text",
+      "title": "Mixed Directions 🔀",
+      "content": "## ASC and DESC together\n\nYou can even mix directions! Imagine a scoreboard. You want to sort by highest `score` descending, but if two players tied in score, you want to show the one who played the most `recent_date` descending.\n\n`ORDER BY score DESC, recent_date DESC`"
+    },
+    {
+      "id": "s_l2_5",
+      "type": "quiz",
+      "title": "Scoreboards 🏆",
+      "content": "",
+      "quizData": {
+        "id": "q_l2_2",
+        "type": "multiple_choice",
+        "question": "We want to see our students ordered by class 'grade' (A-Z Ascending). If they have the exact same grade, we want the older 'age' at the top (Descending).",
+        "options": [
+          { "id": "opt1", "text": "ORDER BY grade DESC, age ASC", "isCorrect": false },
+          { "id": "opt2", "text": "ORDER BY grade ASC, age DESC", "isCorrect": true },
+          { "id": "opt3", "text": "ORDER BY age DESC, grade ASC", "isCorrect": false }
+        ],
+        "explanation": "You can explicitly declare ASC or DESC for each individual column you sort by.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l2_6",
+      "type": "code",
+      "title": "Try it Out!",
+      "content": "Select everything from `users`. Order them first by `country` (A-Z default), and then by `salary` (highest to lowest).",
+      "codeSnippet": "SELECT *\nFROM users\nORDER BY country, salary DESC;",
+      "codeLanguage": "sql"
+    }
+  ]
+}

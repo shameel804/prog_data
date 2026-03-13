@@ -1,0 +1,73 @@
+{
+  "id": "l4",
+  "chapterId": "ch_5",
+  "title": "Grouping Data (GROUP BY)",
+  "description": "Create powerful sub-totals based on categories.",
+  "xpReward": 30,
+  "estimatedMinutes": 7,
+  "section": "Grouping",
+  "slides": [
+    {
+      "id": "s_l4_1",
+      "type": "text",
+      "title": "The Power of Subtotals 🗃️",
+      "content": "# Smashing data intelligently\n\n`SUM()` and `COUNT()` are great, but they smash the ENTIRE table into one single number.\n\nWhat if you run an international store, and you want to know the Total Sales... *per country*?\n\nYou want a list showing: USA ($5000), Canada ($3000), Mexico ($1000)."
+    },
+    {
+      "id": "s_l4_2",
+      "type": "text",
+      "title": "Enter GROUP BY 🤝",
+      "content": "## Organizing the smash\n\nThe **`GROUP BY`** clause tells the database to group rows together based on identical values in a certain column, and THEN calculate the aggregation for each group.\n\n`SELECT country, SUM(revenue) FROM sales GROUP BY country;`\n\nThis groups all USA rows into one bucket, sums their revenue, outputs it, then moves to Canada, does the same, and so on!"
+    },
+    {
+      "id": "s_l4_3",
+      "type": "quiz",
+      "title": "Grouping Logic 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_1",
+        "type": "multiple_choice",
+        "question": "What is the primary function of `GROUP BY`?",
+        "options": [
+          { "id": "opt1", "text": "To split the database into multiple files", "isCorrect": false },
+          { "id": "opt2", "text": "To organize identical data into groups, allowing aggregation functions (like SUM or COUNT) to calculate subtotals per group", "isCorrect": true },
+          { "id": "opt3", "text": "To filter out rows", "isCorrect": false }
+        ],
+        "explanation": "GROUP BY is how you generate segmented subtotals, like counting how many users exist PER city, rather than one giant global count.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l4_4",
+      "type": "text",
+      "title": "The Golden Rule of Grouping 🚨",
+      "content": "## The Number One SQL Error\n\nIf you use `GROUP BY`, your `SELECT` statement can ONLY contain two things:\n1. The actual column(s) you are grouping by.\n2. Aggregation functions (like COUNT, SUM).\n\nIf you group by `country`, you CANNOT say `SELECT name, country...`. The database would have no idea which name to pick, because you just smashed a thousand people into one massive USA bucket!"
+    },
+    {
+      "id": "s_l4_5",
+      "type": "quiz",
+      "title": "Golden Rule 🏆",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_2",
+        "type": "multiple_choice",
+        "question": "If you write `GROUP BY category`, what is the ONLY non-aggregated column you are allowed to put in your `SELECT` clause?",
+        "options": [
+          { "id": "opt1", "text": "Any column you want", "isCorrect": false },
+          { "id": "opt2", "text": "The category column", "isCorrect": true },
+          { "id": "opt3", "text": "None, you can only use COUNT()", "isCorrect": false }
+        ],
+        "explanation": "When you group data by category, the concept of individual row details vanishes. Therefore, you can only SELECT the category itself alongside your mathematical aggregations.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l4_6",
+      "type": "code",
+      "title": "Try it Out!",
+      "content": "Group the `users` table by `role`, and `COUNT` how many users are in each role.",
+      "codeSnippet": "SELECT role, COUNT(*)\nFROM users\nGROUP BY role;",
+      "codeLanguage": "sql"
+    }
+  ]
+}

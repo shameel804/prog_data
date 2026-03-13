@@ -1,0 +1,65 @@
+{
+  "id": "l3",
+  "chapterId": "ch_9",
+  "title": "Window Functions 🪟",
+  "description": "Looking at the big picture without losing row details.",
+  "xpReward": 35,
+  "estimatedMinutes": 6,
+  "section": "Analytics",
+  "slides": [
+    {
+      "id": "s_l3_1",
+      "type": "text",
+      "title": "The Group By Problem 🧱",
+      "content": "# The Limitation of GROUP BY\n\nWhen you use `GROUP BY dept, AVG(salary)`, you literally squash all employees into single department rows. You lose the individual employee names! \n\nWhat if you want to see *every* employee name, but *also* side-by-side see their department's average salary? \n\nEnter **Window Functions**."
+    },
+    {
+      "id": "s_l3_2",
+      "type": "text",
+      "title": "The OVER Clause 🪟",
+      "content": "## Looking through the Window\n\nWindow functions use the `OVER()` clause. It performs an aggregation, but it *doesn't squash the rows*.\n\n```sql\nSELECT name, \n       department,\n       AVG(salary) OVER(PARTITION BY department)\nFROM employees;\n```\n\nThis keeps every employee row intact, but adds a column showing the average salary for their specific department (`PARTITION BY` is like `GROUP BY` but for Windows)."
+    },
+    {
+      "id": "s_l3_3",
+      "type": "quiz",
+      "title": "Squashing vs Windows 🪟",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_1",
+        "type": "multiple_choice",
+        "question": "What is the crucial difference between GROUP BY and an OVER() Window Function?",
+        "options": [
+          { "id": "opt1", "text": "Window functions are faster", "isCorrect": false },
+          { "id": "opt2", "text": "GROUP BY aggregates and collapses rows into single summaries; OVER() aggregates data but preserves all original individual rows intact", "isCorrect": true },
+          { "id": "opt3", "text": "There is no difference natively", "isCorrect": false }
+        ],
+        "explanation": "Window functions let you attach high-level aggregates directly onto detailed row-level data.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l3_4",
+      "type": "text",
+      "title": "Running Totals 🏃‍♂️",
+      "content": "## Order inside the Window\n\nYou can also `ORDER BY` inside a window to create **Running Totals**.\n\n```sql\nSELECT day,\n       sales,\n       SUM(sales) OVER(ORDER BY day)\nFROM daily_revenue;\n```\n\nInstead of just a total sum, it calculates the sum *so far* up to that specific day! Row 1 gets Day 1's sales. Row 2 gets Day 1 + Day 2. It's magic! 🪄"
+    },
+    {
+      "id": "s_l3_5",
+      "type": "quiz",
+      "title": "Running logic 🏃‍♂️",
+      "content": "",
+      "quizData": {
+        "id": "q_l3_2",
+        "type": "multiple_choice",
+        "question": "What happens if you combine an aggregation like SUM() with an `OVER(ORDER BY ...)` clause?",
+        "options": [
+          { "id": "opt1", "text": "It calculates a grand total for the whole table only on the last row", "isCorrect": false },
+          { "id": "opt2", "text": "It creates a running total (cumulative sum) row by row", "isCorrect": true },
+          { "id": "opt3", "text": "It sorts the entire table alphabetically", "isCorrect": false }
+        ],
+        "explanation": "Ordering inside the window tells SQL to accumulate the sum cumulatively as it goes down the rows.",
+        "xpReward": 10
+      }
+    }
+  ]
+}

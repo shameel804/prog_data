@@ -1,0 +1,67 @@
+{
+  "id": "l5",
+  "chapterId": "ch_7",
+  "title": "The Danger of DELETE 💣",
+  "description": "How to not destroy your entire database.",
+  "xpReward": 30,
+  "estimatedMinutes": 6,
+  "section": "Safety",
+  "slides": [
+    {
+      "id": "s_l5_1",
+      "type": "text",
+      "title": "The Red Button 🚨",
+      "content": "# The terrifying reality\n\nJust like `UPDATE`, if you run a `DELETE` statement without a `WHERE` clause... it systematically vaporizes every single row in the entire table.\n\n`DELETE FROM users;`\n\nCongratulations, you just destroyed the company."
+    },
+    {
+      "id": "s_l5_2",
+      "type": "quiz",
+      "title": "Apocalypse 🌋",
+      "content": "",
+      "quizData": {
+        "id": "q_l5_1",
+        "type": "multiple_choice",
+        "question": "What happens if you run `DELETE FROM users;` without a WHERE clause?",
+        "options": [
+          { "id": "opt1", "text": "Every single piece of data inside the users table is irrevocably wiped out.", "isCorrect": true },
+          { "id": "opt2", "text": "It deletes the newest row.", "isCorrect": false },
+          { "id": "opt3", "text": "The database warns you first.", "isCorrect": false }
+        ],
+        "explanation": "The database assumes you know what you are doing. Without limits, it executes the command fully and completely.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l5_3",
+      "type": "text",
+      "title": "The Soft Delete alternative 🛡️",
+      "content": "## A safer approach\n\nIn modern apps, developers rarely ever actually use `DELETE`.\n\nInstead, they add a column to their tables called `is_deleted` (which defaults to False / 0).\n\nWhen a user 'deletes' their account, the app actually just runs an `UPDATE`: \n`UPDATE users SET is_deleted = 1 WHERE id = 10;`\n\nThis \"hides\" the user without destroying data permanently! This is called a **Soft Delete**."
+    },
+    {
+      "id": "s_l5_4",
+      "type": "quiz",
+      "title": "Soft Deleting 🛟",
+      "content": "",
+      "quizData": {
+        "id": "q_l5_2",
+        "type": "multiple_choice",
+        "question": "What is a 'Soft Delete'?",
+        "options": [
+          { "id": "opt1", "text": "Deleting data but keeping a backup file on a USB drive", "isCorrect": false },
+          { "id": "opt2", "text": "Avoiding the dangerous DELETE command by simply UPDATING a status column (like 'is_deleted') to hide the row instead", "isCorrect": true },
+          { "id": "opt3", "text": "Deleting one single column", "isCorrect": false }
+        ],
+        "explanation": "Soft deleting is essentially just toggling a light-switch off using UPDATE. It's wildly safer because you can just flip it back on if it was an accident.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l5_5",
+      "type": "code",
+      "title": "Perform a Soft Delete!",
+      "content": "Instead of deleting employee #34, safely use `UPDATE` to change their `is_active` status to `false`.",
+      "codeSnippet": "UPDATE employees\nSET is_active = false\nWHERE id = 34;",
+      "codeLanguage": "sql"
+    }
+  ]
+}

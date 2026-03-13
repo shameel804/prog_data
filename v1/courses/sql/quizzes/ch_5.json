@@ -1,0 +1,246 @@
+{
+  "id": "quiz_ch_5",
+  "chapterId": "ch_5",
+  "title": "Chapter 5 Quiz",
+  "description": "Test your knowledge on Aggregations, Grouping, and HAVING!",
+  "passingScore": 70,
+  "xpReward": 50,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "mcq",
+      "question": "What is the fundamental purpose of an Aggregation Function?",
+      "options": [
+        "To break tables apart",
+        "To smash numerous rows into one single summarized/calculated value",
+        "To sort data natively",
+        "To duplicate rows"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Aggregations evaluate groups of rows and yield one single cohesive result (like a grand total)."
+    },
+    {
+      "id": "q2",
+      "type": "mcq",
+      "question": "If you want to quickly know exactly how many items exist in your `inventory` table, you use:",
+      "options": [
+        "SELECT TOTAL(items) FROM inventory",
+        "SELECT SUM(items) FROM inventory",
+        "SELECT COUNT(*) FROM inventory",
+        "SELECT AMOUNT(items) FROM inventory"
+      ],
+      "correctAnswer": 2,
+      "explanation": "COUNT(*) counts the total number of physical rows present in the table."
+    },
+    {
+      "id": "q3",
+      "type": "true_false",
+      "question": "True or False: If you run `COUNT(phone_number)`, it calculates every row in the table unconditionally.",
+      "correctAnswer": false,
+      "explanation": "When you specify a column logically, COUNT explicitly skips and ignores rows where phone_number is NULL."
+    },
+    {
+      "id": "q4",
+      "type": "fill_blank",
+      "question": "To add up all the values in a column, you use the _____ function.",
+      "options": [
+        "ADD",
+        "PLUS",
+        "SUM",
+        "COUNT"
+      ],
+      "correctAnswer": "SUM",
+      "explanation": "SUM is the mathematical summation aggregation."
+    },
+    {
+      "id": "q5",
+      "type": "mcq",
+      "question": "What does AVG() do?",
+      "options": [
+        "Finds the lowest number",
+        "Calculates the mathematical mean/average of a column",
+        "Counts how many rows are empty",
+        "Adds the numbers together"
+      ],
+      "correctAnswer": 1,
+      "explanation": "AVG calculates the average value across all evaluated numbers."
+    },
+    {
+      "id": "q6",
+      "type": "mcq",
+      "question": "Can you run `SUM(first_name)`?",
+      "options": [
+        "Yes, it adds up the letters",
+        "No, SUM and AVG require strictly numeric data columns",
+        "Yes, but it won't be accurate",
+        "Yes, it counts how many names there are"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Mathematical functions break when passed standard alphabetical text data."
+    },
+    {
+      "id": "q7",
+      "type": "mcq",
+      "question": "Which function allows you to instantly locate the single oldest historical date in an `orders` table?",
+      "options": [
+        "OLDEST(date)",
+        "EARLIEST(date)",
+        "MAX(date)",
+        "MIN(date)"
+      ],
+      "correctAnswer": 3,
+      "explanation": "MIN() determines the lowest value, which inherently equates to the earliest, oldest point in time chronologically."
+    },
+    {
+      "id": "q8",
+      "type": "true_false",
+      "question": "True or False: If you attach a WHERE clause prior to a SUM(), the database automatically filters out all the unwanted rows BEFORE computing the grand total.",
+      "correctAnswer": true,
+      "explanation": "WHERE filters evaluate the raw individual rows first, establishing a subset of data that the aggregator then processes."
+    },
+    {
+      "id": "q9",
+      "type": "mcq",
+      "question": "Why wouldn't you just use `COUNT(*)` exclusively without `GROUP BY`?",
+      "options": [
+        "Because COUNT(*) without grouping only gives you one massive total for the entire entire table",
+        "Because it is very slow",
+        "Because it requires a premium database",
+        "Because you aren't allowed to"
+      ],
+      "correctAnswer": 0,
+      "explanation": "If you want segment breakdowns (like how many users live in Each specific City), a global COUNT is useless. You must GROUP BY."
+    },
+    {
+      "id": "q10",
+      "type": "mcq",
+      "question": "What is the primary function of GROUP BY?",
+      "options": [
+        "To group duplicate columns across tables",
+        "To split data based on a category allowing aggregation of logical sub-totals",
+        "To change the UI layout",
+        "To group numbers into strings"
+      ],
+      "correctAnswer": 1,
+      "explanation": "GROUP BY partitions data based on shared values. It turns one table into distinct 'sub-buckets' to individually calculate."
+    },
+    {
+      "id": "q11",
+      "type": "mcq",
+      "question": "What is the number one 'Golden Rule' when using GROUP BY?",
+      "options": [
+        "Never use it with COUNT",
+        "Your SELECT clause can only legitimately contain the actual column you are grouping by, alongside aggregated calculations",
+        "You must always put it before the WHERE clause",
+        "You must capitalize it completely"
+      ],
+      "correctAnswer": 1,
+      "explanation": "If you smash 100 people into one 'City' group, asking for their individual 'First Names' in SELECT makes the database explode, as it can't pick just one name for the summary group."
+    },
+    {
+      "id": "q12",
+      "type": "mcq",
+      "question": "Is this valid SQL? `SELECT first_name, COUNT(*) FROM orders GROUP BY country;`",
+      "options": [
+        "Yes, it works fine",
+        "No, first_name is neither an aggregation nor the stated GROUP BY column (country), thus rendering the query hopelessly invalid",
+        "Yes, but only in MySQL",
+        "No, COUNT isn't real"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Because `first_name` is unaggregated and un-grouped, it constitutes an egregious syntax violation."
+    },
+    {
+      "id": "q13",
+      "type": "fill_blank",
+      "question": "To filter groups based on their calculated totals AFTER aggregation, you strictly employ the _____ clause.",
+      "options": [
+        "WHERE",
+        "LIMIT",
+        "HAVING",
+        "FILTER"
+      ],
+      "correctAnswer": "HAVING",
+      "explanation": "HAVING was pioneered explicitly as a post-GROUP BY filter."
+    },
+    {
+      "id": "q14",
+      "type": "mcq",
+      "question": "Why can't you just use WHERE `SUM(price) > 50`?",
+      "options": [
+        "Because WHERE evaluates early in the process timeline, before the grouping and mathematical summation is ever processed.",
+        "Because Microsoft owns WHERE",
+        "Because no symbols are allowed in WHERE",
+        "You actually can use it there"
+      ],
+      "correctAnswer": 0,
+      "explanation": "It's a strict chronological timeline issue! The WHERE gatekeeper acts on individuals before mathematical sums are finalized."
+    },
+    {
+      "id": "q15",
+      "type": "mcq",
+      "question": "Which properly formats a grouped query assessing departments with > 10 distinct employees?",
+      "options": [
+        "SELECT dept FROM tbl GROUP BY dept WHERE COUNT(*) > 10",
+        "SELECT dept FROM tbl GROUP BY dept HAVING COUNT(*) > 10",
+        "SELECT dept FROM tbl HAVING dept > 10 GROUP BY dept",
+        "SELECT dept FROM tbl WHERE COUNT(*) > 10 GROUP BY dept"
+      ],
+      "correctAnswer": 1,
+      "explanation": "It systematically follows SELECT > FROM > GROUP BY > HAVING."
+    },
+    {
+      "id": "q16",
+      "type": "true_false",
+      "question": "True or False: A single query can logically contain both WHERE and HAVING at the same time.",
+      "correctAnswer": true,
+      "explanation": "Absolutely. You can WHERE to filter out dead users, GROUP BY city, and HAVING count > 1000!"
+    },
+    {
+      "id": "q17",
+      "type": "mcq",
+      "question": "What is the structural hierarchy for these advanced aggregation queries?",
+      "options": [
+        "SELECT > FROM > GROUP BY > HAVING > WHERE",
+        "SELECT > FROM > WHERE > GROUP BY > HAVING",
+        "WHERE > SELECT > HAVING > FROM > GROUP BY",
+        "FROM > SELECT > WHERE > HAVING > GROUP BY"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Retrieve (SELECT/FROM) > Filter Details (WHERE) > Smash (GROUP) > Filter Smash Totals (HAVING)."
+    },
+    {
+      "id": "q18",
+      "type": "mcq",
+      "question": "What happens if you run `SELECT COUNT(*)` on an empty table with 0 data?",
+      "options": [
+        "It crashes to a catastrophic error code",
+        "It politely returns 0",
+        "It returns NULL",
+        "It returns -1"
+      ],
+      "correctAnswer": 1,
+      "explanation": "An empty table simply evaluates to 0 records."
+    },
+    {
+      "id": "q19",
+      "type": "fill_blank",
+      "question": "To get the maximum purchase a customer ever made, you'd use _____ (price).",
+      "options": [
+        "MIN",
+        "AVG",
+        "HIGHEST",
+        "MAX"
+      ],
+      "correctAnswer": "MAX",
+      "explanation": "MAX returns the maximum mathematical value."
+    },
+    {
+      "id": "q20",
+      "type": "true_false",
+      "question": "True or False: Aggregations represent a foundational turning point where SQL becomes an analytics/data-science engine rather than just simple data storage.",
+      "correctAnswer": true,
+      "explanation": "Aggregations form the robust core element of all modern BI (Business Intelligence) queries."
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "id": "l5",
+  "chapterId": "ch_3",
+  "title": "Searching Text (LIKE)",
+  "description": "Find partial words and patterns in your data.",
+  "xpReward": 30,
+  "estimatedMinutes": 7,
+  "section": "Advanced Filtering",
+  "slides": [
+    {
+      "id": "s_l5_1",
+      "type": "text",
+      "title": "The exact match problem 🕵️‍♂️",
+      "content": "# I kinda know the name...\n\nIf you write `WHERE first_name = 'Rob'`, you won't find anyone named 'Robert' or 'Robbie'. The equals sign `=` demands an *exact* perfect match.\n\nBut what if you want to perform a partial search? Like finding all emails that end in '@gmail.com'?"
+    },
+    {
+      "id": "s_l5_2",
+      "type": "text",
+      "title": "The LIKE Operator 🔍",
+      "content": "## Pattern searching\n\nInstead of `=`, we use the word **`LIKE`** combined with a special wildcard character: the percent sign **`%`**.\n\nThe `%` sign basically tells SQL: \"I don't care what text goes here. It could be anything!\""
+    },
+    {
+      "id": "s_l5_3",
+      "type": "quiz",
+      "title": "Understanding the % 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l5_1",
+        "type": "multiple_choice",
+        "question": "If you write `WHERE first_name LIKE 'Rob%'`, what happens?",
+        "options": [
+          { "id": "opt1", "text": "It finds only exactly 'Rob'", "isCorrect": false },
+          { "id": "opt2", "text": "It finds anything that STARTS with 'Rob', followed by anything else (e.g. Robert, Robbie, Robb)", "isCorrect": true },
+          { "id": "opt3", "text": "It finds anything that ENDS with 'Rob'", "isCorrect": false }
+        ],
+        "explanation": "The position of the % sign matters. 'Rob%' means it must begin with 'Rob', and then can be followed by an infinite number of random characters.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l5_4",
+      "type": "text",
+      "title": "Wildcard Positions 🎯",
+      "content": "## Where you put the `%` matters exactly!\n\n* **`'A%'`** : Starts with A.\n* **`'%A'`** : Ends with A.\n* **`'%A%'`** : Contains an A anywhere inside it!\n\nIf you want all gmail users: `WHERE email LIKE '%@gmail.com';`"
+    },
+    {
+      "id": "s_l5_5",
+      "type": "quiz",
+      "title": "Domain Search 📧",
+      "content": "",
+      "quizData": {
+        "id": "q_l5_2",
+        "type": "multiple_choice",
+        "question": "How would you find a user whose email *contains* the word 'support' anywhere inside it?",
+        "options": [
+          { "id": "opt1", "text": "WHERE email LIKE 'support%'", "isCorrect": false },
+          { "id": "opt2", "text": "WHERE email LIKE '%support'", "isCorrect": false },
+          { "id": "opt3", "text": "WHERE email LIKE '%support%'", "isCorrect": true }
+        ],
+        "explanation": "Putting a % on both sides means 'any characters could be before this, and any characters could be after this, as long as support is in the middle somewhere'.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l5_6",
+      "type": "code",
+      "title": "Try it Out!",
+      "content": "Select everything from the `movies` table where the `title` starts with the word 'The'.",
+      "codeSnippet": "SELECT *\nFROM movies\nWHERE title LIKE 'The%';",
+      "codeLanguage": "sql"
+    }
+  ]
+}

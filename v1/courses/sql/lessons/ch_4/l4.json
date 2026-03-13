@@ -1,0 +1,73 @@
+{
+  "id": "l4",
+  "chapterId": "ch_4",
+  "title": "Offsets and Pagination",
+  "description": "Learn how Google's 'Next Page' buttons work.",
+  "xpReward": 30,
+  "estimatedMinutes": 6,
+  "section": "Limiting",
+  "slides": [
+    {
+      "id": "s_l4_1",
+      "type": "text",
+      "title": "Page 2? 📄",
+      "content": "# The Pagination Problem\n\nImagine examining Google search results. The first page loads 10 results (`LIMIT 10`).\n\nBut what happens when the user clicks 'Page 2'? How do we tell the database to give us 10 results, but *skip* the first 10 it just gave us?"
+    },
+    {
+      "id": "s_l4_2",
+      "type": "text",
+      "title": "The OFFSET Clause ⏭️",
+      "content": "## Skipping ahead\n\nWe use the **`OFFSET`** clause directly after LIMIT. It literally tells the database to close its eyes and skip over a certain number of rows before returning the data.\n\n`LIMIT 10 OFFSET 10` means 'Give me 10 rows, but skip the first 10.' This perfectly returns Page 2!"
+    },
+    {
+      "id": "s_l4_3",
+      "type": "quiz",
+      "title": "Pagination Math 🧮",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_1",
+        "type": "multiple_choice",
+        "question": "If an app shows 5 products per page. What would the query look like for Page 3?",
+        "options": [
+          { "id": "opt1", "text": "LIMIT 5 OFFSET 3", "isCorrect": false },
+          { "id": "opt2", "text": "LIMIT 5 OFFSET 5", "isCorrect": false },
+          { "id": "opt3", "text": "LIMIT 5 OFFSET 10", "isCorrect": true }
+        ],
+        "explanation": "Page 1 skips 0. Page 2 skips 5. Page 3 skips the 10 products seen on the previous two pages.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l4_4",
+      "type": "text",
+      "title": "Syntax Rules 📜",
+      "content": "## Structural hierarchy\n\nIf you use `OFFSET`, it must immediately follow `LIMIT`.\n\n1. `SELECT ...`\n2. `FROM ...`\n3. `ORDER BY ...`\n4. `LIMIT 5 OFFSET 10;`\n\nAlways ensure your order is explicit, or else you might skip random unpredictable data!"
+    },
+    {
+      "id": "s_l4_5",
+      "type": "quiz",
+      "title": "Structure 🏗️",
+      "content": "",
+      "quizData": {
+        "id": "q_l4_2",
+        "type": "multiple_choice",
+        "question": "Why is it absolutely critical to include an ORDER BY clause when utilizing pagination (LIMIT with OFFSET)?",
+        "options": [
+          { "id": "opt1", "text": "Because without ORDER BY, the data returns in random unpredictable ways, meaning 'Page 2' could accidentally duplicate rows from Page 1.", "isCorrect": true },
+          { "id": "opt2", "text": "Because SQL inherently requires it", "isCorrect": false },
+          { "id": "opt3", "text": "Because it speeds up the query", "isCorrect": false }
+        ],
+        "explanation": "If your basic result isn't predictably ordered, 'skipping 10' means absolutely nothing—the DB could just skip 10 randomly stored rows.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l4_6",
+      "type": "code",
+      "title": "Try it Out!",
+      "content": "Return the 2nd most expensive product. (Hint: Skip the 1st).",
+      "codeSnippet": "SELECT *\nFROM products\nORDER BY price DESC\nLIMIT 1 OFFSET 1;",
+      "codeLanguage": "sql"
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "id": "l5",
+  "chapterId": "ch_5",
+  "title": "Filtering Groups (HAVING)",
+  "description": "Learn the difference between WHERE and HAVING.",
+  "xpReward": 30,
+  "estimatedMinutes": 7,
+  "section": "Grouping",
+  "slides": [
+    {
+      "id": "s_l5_1",
+      "type": "text",
+      "title": "The WHERE Limitation 🛑",
+      "content": "# I only want the big groups!\n\nYou just created a query showing Total Sales Per Country using `GROUP BY`.\n\nNow, you only want to see the countries whose Total Sales are *greater than $10,000*. \n\nInstinctively, you try to use `WHERE SUM(sales) > 10000`. \n\n**CRASH! ERROR! ERROR!**"
+    },
+    {
+      "id": "s_l5_2",
+      "type": "text",
+      "title": "The Bouncer Timeline ⏱️",
+      "content": "## Why did WHERE fail?\n\nThe `WHERE` bouncer always checks rows *before* they get grouped and summed up. He literally runs before the `SUM()` math happens, so he has no clue what the final sum is!\n\nTo filter *after* the math happens, we need a new bouncer: **`HAVING`**."
+    },
+    {
+      "id": "s_l5_3",
+      "type": "quiz",
+      "title": "WHERE vs HAVING 🤼",
+      "content": "",
+      "quizData": {
+        "id": "q_l5_1",
+        "type": "multiple_choice",
+        "question": "What is the difference between WHERE and HAVING?",
+        "options": [
+          { "id": "opt1", "text": "They are exactly the same, HAVING is just the updated 2023 version", "isCorrect": false },
+          { "id": "opt2", "text": "WHERE filters raw individual rows BEFORE grouping. HAVING filters the aggregated math totals AFTER grouping.", "isCorrect": true },
+          { "id": "opt3", "text": "HAVING filters letters, WHERE filters numbers", "isCorrect": false }
+        ],
+        "explanation": "WHERE evaluates each raw row. HAVING evaluates the new mathematical 'group' (e.g. enforcing that a group's COUNT > 50).",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l5_4",
+      "type": "text",
+      "title": "Using HAVING 🛡️",
+      "content": "## The Post-Group Filter\n\nThe `HAVING` clause goes immediately *after* the `GROUP BY` clause.\n\n`SELECT country, SUM(sales) FROM orders GROUP BY country HAVING SUM(sales) > 10000;`\n\nThe database groups everything, performs the math, looks at the results, and discards whichever country fell short."
+    },
+    {
+      "id": "s_l5_5",
+      "type": "quiz",
+      "title": "Ordering the Query 🏗️",
+      "content": "",
+      "quizData": {
+        "id": "q_l5_2",
+        "type": "multiple_choice",
+        "question": "What is the correct structural order of clauses in an advanced SQL query?",
+        "options": [
+          { "id": "opt1", "text": "SELECT > FROM > GROUP BY > WHERE > HAVING", "isCorrect": false },
+          { "id": "opt2", "text": "SELECT > FROM > WHERE > GROUP BY > HAVING", "isCorrect": true },
+          { "id": "opt3", "text": "SELECT > FROM > HAVING > WHERE > GROUP BY", "isCorrect": false }
+        ],
+        "explanation": "First retrieve (SELECT/FROM). Second, filter raw rows (WHERE). Third, smash them together (GROUP BY). Fourth, filter the smashed results (HAVING).",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l5_6",
+      "type": "code",
+      "title": "Try it Out!",
+      "content": "Group the users by `country`, Count them via `COUNT(*)`, and only show groups that HAVE a count `>` 5.",
+      "codeSnippet": "SELECT country, COUNT(*)\nFROM users\nGROUP BY country\nHAVING COUNT(*) > 5;",
+      "codeLanguage": "sql"
+    }
+  ]
+}

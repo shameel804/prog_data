@@ -1,0 +1,72 @@
+{
+  "id": "l6",
+  "chapterId": "ch_6",
+  "title": "Aliasing Tables",
+  "description": "A clever shortcut to save you from typing too much.",
+  "xpReward": 30,
+  "estimatedMinutes": 5,
+  "section": "Advanced Joins",
+  "slides": [
+    {
+      "id": "s_l6_1",
+      "type": "text",
+      "title": "So much typing 💻",
+      "content": "# My fingers hurt!\n\nWhen you join big tables, Dot Notation becomes incredibly exhausting.\n\n`SELECT employees.first_name, departments.name FROM employees INNER JOIN departments ON employees.department_id = departments.id;`\n\nThat is so overwhelmingly annoying to type out!"
+    },
+    {
+      "id": "s_l6_2",
+      "type": "text",
+      "title": "Table Aliases 🕵️‍♂️",
+      "content": "## Nicknaming Tables\n\nJust like how we gave columns nicknames with `AS`, you can casually nickname your tables too! You don't even need the word `AS`. Just put a letter after the table name in the `FROM/JOIN` clauses.\n\n`FROM employees e INNER JOIN departments d`\n\nNow, `e` stands for employees, and `d` stands for departments!"
+    },
+    {
+      "id": "s_l6_3",
+      "type": "quiz",
+      "title": "Alias check 🧠",
+      "content": "",
+      "quizData": {
+        "id": "q_l6_1",
+        "type": "multiple_choice",
+        "question": "How does aliasing drastically improve code readability?",
+        "options": [
+          { "id": "opt1", "text": "It instantly deletes the secondary table", "isCorrect": false },
+          { "id": "opt2", "text": "It turns long table names (`departments`) into tiny 1-letter variables (`d`), making Dot Notation much faster to read and write", "isCorrect": true },
+          { "id": "opt3", "text": "It color codes the tables", "isCorrect": false }
+        ],
+        "explanation": "Writing `SELECT e.first_name, d.name ... ON e.dept_id = d.id` is vastly cleaner and more efficient.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l6_4",
+      "type": "text",
+      "title": "The Self Join 🪞",
+      "content": "## A weird edge case\n\nSometimes, a table needs to join *to itself*. Imagine an `employees` table where every row has a `manager_id`. But the manager is ALSO an employee in the same table!\n\nTo join it, you MUST use aliases to pretend it's two different tables: \n`SELECT e.name AS employee, m.name AS manager FROM employees e LEFT JOIN employees m ON e.manager_id = m.id;`"
+    },
+    {
+      "id": "s_l6_5",
+      "type": "quiz",
+      "title": "Self Joining Magic 🪞",
+      "content": "",
+      "quizData": {
+        "id": "q_l6_2",
+        "type": "multiple_choice",
+        "question": "If you need to join an `employees` table strictly to itself to find managers, why MUST you employ aliases?",
+        "options": [
+          { "id": "opt1", "text": "Because it speeds up the math calculation", "isCorrect": false },
+          { "id": "opt2", "text": "Because otherwise the SQL engine wouldn't know which 'employees' table you were talking about when matching the IDs", "isCorrect": true }
+        ],
+        "explanation": "By aliasing the singular table as 'e' and 'm', the database briefly pretends it has two distinct tables and can safely compare them.",
+        "xpReward": 10
+      }
+    },
+    {
+      "id": "s_l6_6",
+      "type": "code",
+      "title": "Try it Out!",
+      "content": "Join `players` (alias `p`) to `teams` (alias `t`), using `p.team_id = t.id`.",
+      "codeSnippet": "SELECT p.name, t.city\nFROM players p\nINNER JOIN teams t\n  ON p.team_id = t.id;",
+      "codeLanguage": "sql"
+    }
+  ]
+}
