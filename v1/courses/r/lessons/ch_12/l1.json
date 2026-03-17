@@ -1,0 +1,88 @@
+{
+    "id": "l1",
+    "chapterId": "ch_12",
+    "title": "Reading Data from CSV and Text Files",
+    "description": "Learn to import data from CSV and other text files using base R and readr.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Import/Export",
+    "slides": [
+        {
+            "id": "s12_1_1",
+            "type": "text",
+            "title": "Why Import Data? 📂",
+            "content": "# Getting Data into R\n\nMost real-world analysis starts with data stored in files. R can read data from many formats. The most common is **CSV** (Comma-Separated Values).\n\nWe'll cover:\n- Base R functions: `read.csv()`, `read.table()`\n- Tidyverse functions: `readr::read_csv()` (faster, better defaults)"
+        },
+        {
+            "id": "s12_1_2",
+            "type": "text",
+            "title": "Reading CSV with Base R",
+            "content": "Base R provides `read.csv()` which is a wrapper around `read.table()` with sensible defaults.\n\n```r\n# Read a CSV file\ndf <- read.csv(\"path/to/file.csv\")\n\n# Common options:\n# header = TRUE  (first row as column names)\n# sep = \",\"      (separator)\n# stringsAsFactors = FALSE  (don't convert strings to factors)\n# na.strings = c(\"NA\", \"\") (values to treat as NA)\n```\n\nIf your file uses a different separator (e.g., tab), use `read.table()` or `read.delim()`."
+        },
+        {
+            "id": "s12_1_3",
+            "type": "code",
+            "title": "Base R Example",
+            "content": "We'll create a small CSV on the fly to demonstrate. In practice, you'd read from a file.",
+            "codeSnippet": "# Simulate reading a CSV (using a text connection)\ncsv_text <- \"name,age,score\nAlice,25,88\nBob,30,92\nCharlie,22,85\"\ndf <- read.csv(text = csv_text, stringsAsFactors = FALSE)\nprint(df)\nstr(df)",
+            "codeLanguage": "r",
+            "canRunCode": true
+        },
+        {
+            "id": "s12_1_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q12_1_1",
+                "type": "multiple_choice",
+                "question": "What does `stringsAsFactors = FALSE` do in `read.csv()`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Prevents character columns from being converted to factors",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Converts all columns to factors",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Removes missing strings",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's an error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It keeps character columns as character, not factors.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s12_1_5",
+            "type": "text",
+            "title": "Reading with readr (tidyverse)",
+            "content": "The `readr` package (part of tidyverse) provides fast and consistent functions:\n- `read_csv()` for CSV\n- `read_tsv()` for tab-separated\n- `read_delim()` for custom delimiters\n\nBenefits: faster, never converts strings to factors, prints progress, and returns a tibble.\n\n```r\nlibrary(readr)\ndf <- read_csv(\"file.csv\")\n```"
+        },
+        {
+            "id": "s12_1_6",
+            "type": "code",
+            "title": "readr Example",
+            "content": "Using the same data:",
+            "codeSnippet": "library(readr)\ncsv_text <- \"name,age,score\nAlice,25,88\nBob,30,92\nCharlie,22,85\"\ndf <- read_csv(csv_text)\nprint(df)\nstr(df)",
+            "codeLanguage": "r",
+            "canRunCode": true
+        },
+        {
+            "id": "s12_1_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Use `here::here(\"data\", \"file.csv\")` for reproducible file paths. The `here` package finds your project root."
+        }
+    ]
+}

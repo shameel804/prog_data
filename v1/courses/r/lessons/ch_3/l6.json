@@ -1,0 +1,141 @@
+{
+    "id": "l6",
+    "chapterId": "ch_3",
+    "title": "More Vectorized Comparisons and Logical Subsetting",
+    "description": "Deep dive into logical operations and subsetting with conditions.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Vectors",
+    "slides": [
+        {
+            "id": "s6_1",
+            "type": "text",
+            "title": "Comparison Operators 🔍",
+            "content": "Comparison operators are vectorized and return logical vectors:\n\n* `==` – equal to\n* `!=` – not equal to\n* `>` , `<` , `>=` , `<=`\n* `%in%` – checks if elements are in another vector\n\n```r\nx <- 1:5\nx == 3          # FALSE FALSE TRUE FALSE FALSE\nx %in% c(2,4,6) # FALSE TRUE FALSE TRUE FALSE\n```"
+        },
+        {
+            "id": "s6_2",
+            "type": "code",
+            "title": "Comparison Examples",
+            "content": "Try comparisons:",
+            "codeSnippet": "x <- c(5, 8, 2, 9, 1)\nprint(x > 4)\nprint(x == 8)\nprint(x %in% c(2,9,10))",
+            "codeLanguage": "r",
+            "canRunCode": true
+        },
+        {
+            "id": "s6_3",
+            "type": "quiz",
+            "title": "Comparison Quiz 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q6_1",
+                "type": "multiple_choice",
+                "question": "What does `c(1,2,3) %in% c(3,4,5)` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "FALSE FALSE TRUE",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "TRUE FALSE FALSE",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "FALSE TRUE FALSE",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "TRUE TRUE FALSE",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Only 3 is in the second set, so FALSE, FALSE, TRUE.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s6_4",
+            "type": "text",
+            "title": "Combining Conditions with Logical Operators",
+            "content": "Use `&` (AND) and `|` (OR) to combine logical vectors. Remember they are vectorized, so they operate element-wise.\n\n```r\nx <- 1:10\nx[(x > 3) & (x < 8)]   # 4 5 6 7\n```\n\nFor scalar comparisons (if you only have one condition to check), you can use `&&` and `||`, but they are not vectorized."
+        },
+        {
+            "id": "s6_5",
+            "type": "code",
+            "title": "Complex Subsetting",
+            "content": "Run these examples:",
+            "codeSnippet": "data <- c(12, 5, 8, 15, 3, 20)\n# Select numbers that are either less than 10 or greater than 15\nresult <- data[(data < 10) | (data > 15)]\nprint(result)\n\n# Select numbers that are between 5 and 15 inclusive\nmid <- data[(data >= 5) & (data <= 15)]\nprint(mid)",
+            "codeLanguage": "r",
+            "canRunCode": true
+        },
+        {
+            "id": "s6_6",
+            "type": "text",
+            "title": "any() and all()",
+            "content": "`any()` returns TRUE if at least one element is TRUE; `all()` returns TRUE if all are TRUE.\n\n```r\nx <- c(TRUE, FALSE, TRUE)\nany(x)   # TRUE\nall(x)   # FALSE\n```\n\nThese are great for checking conditions:\n\n```r\nany(x > 10)   # check if any value exceeds 10\nall(x > 0)    # check if all values are positive\n```"
+        },
+        {
+            "id": "s6_7",
+            "type": "code",
+            "title": "any and all",
+            "content": "Test these:",
+            "codeSnippet": "x <- c(1,2,3,4)\nprint(any(x > 3))\nprint(all(x > 0))\nprint(all(x %% 2 == 0))",
+            "codeLanguage": "r",
+            "canRunCode": true
+        },
+        {
+            "id": "s6_8",
+            "type": "quiz",
+            "title": "any/all Quiz 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q6_2",
+                "type": "multiple_choice",
+                "question": "Given `v <- c(2,4,6,8)`, what does `all(v %% 2 == 0)` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "TRUE",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "FALSE",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "c(TRUE,TRUE,TRUE,TRUE)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "All elements are even, so all are TRUE, thus `all()` returns TRUE.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s6_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "`which()` returns indices where a logical vector is TRUE. Combine with `any()` to safely check:\n\n```r\nif (any(x > 10)) {\n  high_vals <- x[which(x > 10)]\n}\n```"
+        },
+        {
+            "id": "s6_10",
+            "type": "exercise",
+            "title": "Challenging Subsetting",
+            "content": "Create a vector `nums <- c(3, 8, 2, 5, 9, 1, 7, 4)`. Extract all numbers that are either less than 4 or greater than 7. Then check if any number is exactly 10.",
+            "codeSnippet": "nums <- c(3, 8, 2, 5, 9, 1, 7, 4)\nselected <- nums[(nums < 4) | (nums > 7)]\nprint(selected)\nprint(any(nums == 10))",
+            "codeLanguage": "r",
+            "canRunCode": true
+        }
+    ]
+}

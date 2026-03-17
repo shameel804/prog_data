@@ -1,0 +1,82 @@
+{
+    "id": "l4",
+    "chapterId": "ch_12",
+    "title": "Final Project Part 1: Data Import and Cleaning",
+    "description": "Apply your skills to import a real dataset and clean it for analysis.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Final Project",
+    "slides": [
+        {
+            "id": "s12_4_1",
+            "type": "text",
+            "title": "Project Overview 🏆",
+            "content": "# Final Project: Analyzing a Dataset\n\nYou've learned the fundamentals of R: data types, vectors, matrices, lists, data frames, control flow, functions, dplyr, and ggplot2. Now it's time to put it all together.\n\nWe'll use a dataset about **customer churn** (simulated). The goal: understand what factors influence whether a customer leaves (churns).\n\nSteps:\n1. Import the data\n2. Clean and prepare it\n3. Explore with dplyr\n4. Visualize with ggplot2\n5. Draw conclusions"
+        },
+        {
+            "id": "s12_4_2",
+            "type": "code",
+            "title": "Load the Dataset",
+            "content": "First, we'll create a simulated dataset. In reality, you'd read from a file. Run this to create `churn_data`:",
+            "codeSnippet": "set.seed(123)\nchurn_data <- data.frame(\n  customer_id = 1:200,\n  tenure = sample(1:72, 200, replace = TRUE),        # months\n  monthly_charges = round(runif(200, 20, 120), 2),\n  total_charges = NA,                                 # to be calculated\n  gender = sample(c(\"Male\", \"Female\"), 200, replace = TRUE),\n  senior_citizen = sample(0:1, 200, replace = TRUE, prob = c(0.7,0.3)),\n  partner = sample(c(\"Yes\", \"No\"), 200, replace = TRUE),\n  dependents = sample(c(\"Yes\", \"No\"), 200, replace = TRUE),\n  phone_service = sample(c(\"Yes\", \"No\"), 200, replace = TRUE, prob = c(0.9,0.1)),\n  multiple_lines = sample(c(\"Yes\", \"No\", \"No phone service\"), 200, replace = TRUE),\n  internet_service = sample(c(\"DSL\", \"Fiber optic\", \"No\"), 200, replace = TRUE),\n  online_security = sample(c(\"Yes\", \"No\", \"No internet service\"), 200, replace = TRUE),\n  online_backup = sample(c(\"Yes\", \"No\", \"No internet service\"), 200, replace = TRUE),\n  device_protection = sample(c(\"Yes\", \"No\", \"No internet service\"), 200, replace = TRUE),\n  tech_support = sample(c(\"Yes\", \"No\", \"No internet service\"), 200, replace = TRUE),\n  streaming_tv = sample(c(\"Yes\", \"No\", \"No internet service\"), 200, replace = TRUE),\n  streaming_movies = sample(c(\"Yes\", \"No\", \"No internet service\"), 200, replace = TRUE),\n  contract = sample(c(\"Month-to-month\", \"One year\", \"Two year\"), 200, replace = TRUE),\n  paperless_billing = sample(c(\"Yes\", \"No\"), 200, replace = TRUE),\n  payment_method = sample(c(\"Electronic check\", \"Mailed check\", \"Bank transfer\", \"Credit card\"), 200, replace = TRUE),\n  churn = sample(c(\"Yes\", \"No\"), 200, replace = TRUE, prob = c(0.27, 0.73))\n)\n# Calculate total_charges as monthly_charges * tenure\nchurn_data$total_charges <- churn_data$monthly_charges * churn_data$tenure\nhead(churn_data)",
+            "codeLanguage": "r",
+            "canRunCode": true
+        },
+        {
+            "id": "s12_4_3",
+            "type": "quiz",
+            "title": "Project Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q12_4_1",
+                "type": "multiple_choice",
+                "question": "Why is it important to clean and explore data before analysis?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To find errors, missing values, and understand the structure",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To make the dataset smaller",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's not necessary",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only for big data",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Data cleaning ensures quality and prevents wrong conclusions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s12_4_4",
+            "type": "text",
+            "title": "Task 1: Inspect the Data",
+            "content": "Use `str()`, `summary()`, `head()`, and `glimpse()` to understand the data. Look for:\n- Missing values (NA)\n- Incorrect data types (e.g., numbers as characters)\n- Levels of categorical variables\n- Outliers in numeric columns"
+        },
+        {
+            "id": "s12_4_5",
+            "type": "code",
+            "title": "Inspect",
+            "content": "Run:",
+            "codeSnippet": "library(dplyr)\nstr(churn_data)\nsummary(churn_data)\n# Check for NAs\ncolSums(is.na(churn_data))",
+            "codeLanguage": "r",
+            "canRunCode": true
+        },
+        {
+            "id": "s12_4_6",
+            "type": "text",
+            "title": "Task 2: Clean the Data",
+            "content": "Based on inspection:\n- If any column has NAs, decide whether to remove or impute.\n- Convert appropriate columns to factors (especially for modeling).\n- Create new derived columns if needed (e.g., tenure groups).\n\nWe'll do some cleaning in the next lesson. For now, note any issues."
+        }
+    ]
+}

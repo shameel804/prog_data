@@ -1,0 +1,82 @@
+{
+    "id": "l6",
+    "chapterId": "ch_6",
+    "title": "Filtering Rows and Using subset()",
+    "description": "Select rows based on conditions with logical vectors and the subset() function.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Data Frames",
+    "slides": [
+        {
+            "id": "s6_6_1",
+            "type": "text",
+            "title": "Filtering with Logical Vectors 🔍",
+            "content": "The most common way to filter rows is to provide a logical vector in the row index position:\n\n```r\ndf[df$age >= 18, ]\n```\n\nYou can combine conditions with `&` (AND) and `|` (OR):\n\n```r\ndf[df$age >= 18 & df$gender == \"F\", ]\n```"
+        },
+        {
+            "id": "s6_6_2",
+            "type": "code",
+            "title": "Filtering Example",
+            "content": "Run:",
+            "codeSnippet": "df <- data.frame(\n  name = c(\"Alice\", \"Bob\", \"Charlie\", \"Diana\"),\n  age = c(25, 17, 30, 16),\n  gender = c(\"F\", \"M\", \"M\", \"F\")\n)\nadults <- df[df$age >= 18, ]\nprint(adults)\nadult_females <- df[df$age >= 18 & df$gender == \"F\", ]\nprint(adult_females)",
+            "codeLanguage": "r",
+            "canRunCode": true
+        },
+        {
+            "id": "s6_6_3",
+            "type": "quiz",
+            "title": "Filtering Quiz 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q6_6_1",
+                "type": "multiple_choice",
+                "question": "What does `df[df$x > 0, ]` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Returns rows where column x is positive",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Returns columns where x is positive",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Returns a vector of positive x values",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It subsets rows based on the condition, keeping all columns.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s6_6_4",
+            "type": "text",
+            "title": "The subset() Function",
+            "content": "`subset()` is a convenient wrapper for filtering. It avoids repeating the data frame name.\n\n```r\nsubset(df, age >= 18)\nsubset(df, age >= 18 & gender == \"F\", select = c(name, age))\n```\n\nThe `select` argument lets you choose columns."
+        },
+        {
+            "id": "s6_6_5",
+            "type": "code",
+            "title": "subset() Example",
+            "content": "Try:",
+            "codeSnippet": "df <- data.frame(name=c(\"A\",\"B\",\"C\"), age=c(20,30,25), score=c(85,90,95))\nsubset(df, age < 30)\nsubset(df, score > 90, select = name)",
+            "codeLanguage": "r",
+            "canRunCode": true
+        },
+        {
+            "id": "s6_6_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "`subset()` drops rows with NA in the condition. If you need to keep NAs, use logical subsetting with `%in%` or explicit handling."
+        }
+    ]
+}

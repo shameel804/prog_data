@@ -1,0 +1,88 @@
+{
+    "id": "l1",
+    "chapterId": "ch_10",
+    "title": "Introduction to dplyr and the Pipe",
+    "description": "Learn about the dplyr package for data manipulation and the pipe operator %>%.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "dplyr Basics",
+    "slides": [
+        {
+            "id": "s10_1_1",
+            "type": "text",
+            "title": "What is dplyr? 🛠️",
+            "content": "# dplyr: A Grammar of Data Manipulation\n\ndplyr is one of the most popular R packages for data manipulation. It provides a set of **verbs** that solve the most common data manipulation challenges:\n\n- `filter()` – pick rows based on conditions\n- `select()` – pick columns by name\n- `mutate()` – add new variables\n- `summarise()` – collapse to summary statistics\n- `arrange()` – reorder rows\n- `group_by()` – operate by group\n\nThese verbs work consistently and can be combined to perform complex operations."
+        },
+        {
+            "id": "s10_1_2",
+            "type": "text",
+            "title": "Installing and Loading dplyr",
+            "content": "dplyr is part of the **tidyverse**. You can install the whole tidyverse or just dplyr:\n\n```r\ninstall.packages(\"dplyr\")         # just dplyr\n# or\ninstall.packages(\"tidyverse\")      # entire collection\n```\n\nLoad it with:\n\n```r\nlibrary(dplyr)\n```\n\nWe'll also use the pipe operator `%>%`, which comes with dplyr (or from the magrittr package)."
+        },
+        {
+            "id": "s10_1_3",
+            "type": "code",
+            "title": "Load dplyr and Explore Data",
+            "content": "We'll use the built-in `mtcars` dataset. First, load dplyr and take a peek:",
+            "codeSnippet": "library(dplyr)\nhead(mtcars)",
+            "codeLanguage": "r",
+            "canRunCode": true
+        },
+        {
+            "id": "s10_1_4",
+            "type": "text",
+            "title": "The Pipe Operator %>% ",
+            "content": "The pipe `%>%` takes the result on its left and passes it as the first argument to the function on its right. This allows you to chain operations in a readable way.\n\nWithout pipe:\n```r\nsummarise(group_by(filter(mtcars, mpg > 20), cyl), mean_mpg = mean(mpg))\n```\n\nWith pipe:\n```r\nmtcars %>%\n  filter(mpg > 20) %>%\n  group_by(cyl) %>%\n  summarise(mean_mpg = mean(mpg))\n```\n\nRead as: take mtcars, then filter, then group, then summarise."
+        },
+        {
+            "id": "s10_1_5",
+            "type": "code",
+            "title": "First Pipe Example",
+            "content": "Run this pipeline:",
+            "codeSnippet": "library(dplyr)\nmtcars %>%\n  filter(mpg > 20) %>%\n  select(mpg, cyl, hp) %>%\n  head()",
+            "codeLanguage": "r",
+            "canRunCode": true
+        },
+        {
+            "id": "s10_1_6",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q10_1_1",
+                "type": "multiple_choice",
+                "question": "What does the pipe operator `%>%` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It creates a sequence of numbers",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It passes the left-hand side as the first argument to the right-hand function",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It is used for matrix multiplication",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It combines two data frames",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The pipe forwards the result along the pipeline, making code more readable.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s10_1_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Keyboard shortcut for `%>%` in RStudio: `Ctrl+Shift+M` (Cmd+Shift+M on Mac)."
+        }
+    ]
+}

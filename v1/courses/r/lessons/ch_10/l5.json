@@ -1,0 +1,82 @@
+{
+    "id": "l5",
+    "chapterId": "ch_10",
+    "title": "Summarising Data with summarise() and group_by()",
+    "description": "Compute summary statistics for groups using group_by() and summarise().",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "dplyr Verbs",
+    "slides": [
+        {
+            "id": "s10_5_1",
+            "type": "text",
+            "title": "summarise(): Reduce to Summary Statistics",
+            "content": "`summarise()` (or `summarize()`) creates a new data frame with one row for each group (or overall if no grouping). It's used with aggregation functions like `mean()`, `sum()`, `sd()`, `n()`, etc.\n\n```r\nmtcars %>% summarise(avg_mpg = mean(mpg), total_hp = sum(hp))\n```"
+        },
+        {
+            "id": "s10_5_2",
+            "type": "code",
+            "title": "Basic summarise()",
+            "content": "Run:",
+            "codeSnippet": "library(dplyr)\nmtcars %>% summarise(\n  mean_mpg = mean(mpg),\n  sd_mpg = sd(mpg),\n  n_cars = n()\n)",
+            "codeLanguage": "r",
+            "canRunCode": true
+        },
+        {
+            "id": "s10_5_3",
+            "type": "text",
+            "title": "Grouped Operations with group_by()",
+            "content": "`group_by()` changes the unit of analysis. Subsequent operations (like `summarise()`) are applied per group.\n\n```r\nmtcars %>%\n  group_by(cyl) %>%\n  summarise(avg_mpg = mean(mpg), n = n())\n```"
+        },
+        {
+            "id": "s10_5_4",
+            "type": "code",
+            "title": "group_by() + summarise()",
+            "content": "Run:",
+            "codeSnippet": "library(dplyr)\nmtcars %>%\n  group_by(cyl, gear) %>%\n  summarise(\n    mean_mpg = mean(mpg),\n    sd_mpg = sd(mpg),\n    count = n(),\n    .groups = \"drop\"  # to avoid a grouped result\n  )",
+            "codeLanguage": "r",
+            "canRunCode": true
+        },
+        {
+            "id": "s10_5_5",
+            "type": "quiz",
+            "title": "group_by() Quiz 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q10_5_1",
+                "type": "multiple_choice",
+                "question": "What does `n()` inside summarise() return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The number of rows in the whole data frame",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The number of rows in the current group",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The number of columns",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The number of groups",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`n()` gives the group size when used with group_by().",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s10_5_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "After grouping, you can use `ungroup()` to remove grouping. Also, you can group by multiple variables (e.g., `group_by(cyl, gear)`)."
+        }
+    ]
+}

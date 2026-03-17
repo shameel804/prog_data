@@ -1,0 +1,82 @@
+{
+    "id": "l4",
+    "chapterId": "ch_10",
+    "title": "Creating New Columns with mutate() and transmute()",
+    "description": "Add new variables or modify existing ones using mutate().",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "dplyr Verbs",
+    "slides": [
+        {
+            "id": "s10_4_1",
+            "type": "text",
+            "title": "mutate(): Add New Columns",
+            "content": "`mutate()` adds new columns at the end of your data frame. You can refer to existing columns.\n\n```r\nmtcars %>%\n  mutate(kmpl = mpg * 0.425)  # convert to km per liter\n```\n\nYou can create multiple columns in one `mutate()`, and newly created columns can be used immediately in the same call."
+        },
+        {
+            "id": "s10_4_2",
+            "type": "code",
+            "title": "mutate() Examples",
+            "content": "Run:",
+            "codeSnippet": "library(dplyr)\nmtcars %>%\n  mutate(kmpl = mpg * 0.425,\n         wt_kg = wt * 453.592 / 1000,  # convert to kg\n         efficiency = kmpl / wt_kg) %>%\n  select(mpg, kmpl, wt, wt_kg, efficiency) %>%\n  head()",
+            "codeLanguage": "r",
+            "canRunCode": true
+        },
+        {
+            "id": "s10_4_3",
+            "type": "quiz",
+            "title": "mutate() Quiz 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q10_4_1",
+                "type": "multiple_choice",
+                "question": "What does `mtcars %>% mutate(cyl2 = cyl * 2, gear2 = cyl2 + gear)` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It creates cyl2 and then uses it to create gear2",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Error because cyl2 doesn't exist when gear2 is created",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It overwrites cyl and gear",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It only creates cyl2",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "mutate creates columns sequentially, so gear2 can use cyl2.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s10_4_4",
+            "type": "text",
+            "title": "transmute(): Keep Only New Columns",
+            "content": "`transmute()` works like `mutate()` but drops all existing columns, keeping only the new ones.\n\n```r\nmtcars %>% transmute(kmpl = mpg * 0.425, hp_per_cyl = hp / cyl)\n```"
+        },
+        {
+            "id": "s10_4_5",
+            "type": "code",
+            "title": "transmute() Example",
+            "content": "Run:",
+            "codeSnippet": "library(dplyr)\nmtcars %>% transmute(disp_l = disp / 61.02, hp_per_cyl = hp / cyl) %>% head()",
+            "codeLanguage": "r",
+            "canRunCode": true
+        },
+        {
+            "id": "s10_4_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Use `if_else()` or `case_when()` inside `mutate()` for conditional transformations."
+        }
+    ]
+}

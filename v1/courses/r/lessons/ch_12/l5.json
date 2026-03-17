@@ -1,0 +1,112 @@
+{
+    "id": "l5",
+    "chapterId": "ch_12",
+    "title": "Final Project Part 2: Analysis and Visualization",
+    "description": "Analyze the cleaned data, create visualizations, and draw conclusions.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Final Project",
+    "slides": [
+        {
+            "id": "s12_5_1",
+            "type": "text",
+            "title": "Task 3: Clean Up (if needed)",
+            "content": "First, ensure data types are correct. For example, convert character columns with few levels to factors. Also, check if 'No phone service' etc. should be a separate level or combined with 'No'.\n\nWe'll keep it simple and convert relevant columns to factors."
+        },
+        {
+            "id": "s12_5_2",
+            "type": "code",
+            "title": "Convert to Factors",
+            "content": "Run:",
+            "codeSnippet": "library(dplyr)\nchurn_data <- churn_data %>%\n  mutate(across(where(is.character), as.factor))\nstr(churn_data)",
+            "codeLanguage": "r",
+            "canRunCode": true
+        },
+        {
+            "id": "s12_5_3",
+            "type": "text",
+            "title": "Task 4: Exploratory Analysis with dplyr",
+            "content": "Use dplyr to answer questions like:\n- What is the overall churn rate?\n- Does churn vary by contract type?\n- Are senior citizens more likely to churn?\n- How do monthly charges differ between churners and non-churners?"
+        },
+        {
+            "id": "s12_5_4",
+            "type": "code",
+            "title": "Churn Rate by Contract",
+            "content": "Run:",
+            "codeSnippet": "churn_data %>%\n  group_by(contract, churn) %>%\n  summarise(count = n(), .groups = \"drop\") %>%\n  group_by(contract) %>%\n  mutate(prop = count / sum(count)) %>%\n  filter(churn == \"Yes\") %>%\n  select(contract, churn_rate = prop)",
+            "codeLanguage": "r",
+            "canRunCode": true
+        },
+        {
+            "id": "s12_5_5",
+            "type": "quiz",
+            "title": "Analysis Quiz 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q12_5_1",
+                "type": "multiple_choice",
+                "question": "Based on the output, which contract type likely has the highest churn rate?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Month-to-month",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "One year",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Two year",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "All about the same",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Month-to-month contracts usually have highest churn because they're easiest to leave.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s12_5_6",
+            "type": "text",
+            "title": "Task 5: Visualization with ggplot2",
+            "content": "Create plots to visualize relationships:\n- Bar chart of churn by contract\n- Boxplot of monthly charges by churn\n- Histogram of tenure, colored by churn"
+        },
+        {
+            "id": "s12_5_7",
+            "type": "code",
+            "title": "Visualize Churn by Contract",
+            "content": "Run:",
+            "codeSnippet": "library(ggplot2)\nggplot(churn_data, aes(x = contract, fill = churn)) +\n  geom_bar(position = \"fill\") +\n  labs(y = \"Proportion\", title = \"Churn Proportion by Contract\") +\n  theme_minimal()",
+            "codeLanguage": "r",
+            "canRunCode": true
+        },
+        {
+            "id": "s12_5_8",
+            "type": "code",
+            "title": "Boxplot: Monthly Charges",
+            "content": "Run:",
+            "codeSnippet": "ggplot(churn_data, aes(x = churn, y = monthly_charges, fill = churn)) +\n  geom_boxplot() +\n  labs(title = \"Monthly Charges by Churn\") +\n  theme_minimal()",
+            "codeLanguage": "r",
+            "canRunCode": true
+        },
+        {
+            "id": "s12_5_9",
+            "type": "text",
+            "title": "Conclusions",
+            "content": "Based on your analysis, you might conclude that customers with month-to-month contracts and higher monthly charges are more likely to churn. This could inform business strategies like offering discounts for longer contracts.\n\n**Congratulations!** You've completed a full data analysis project in R. You've imported, cleaned, analyzed, and visualized data – skills that are valuable in any data-related role."
+        },
+        {
+            "id": "s12_5_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Document your analysis in an R Markdown report to create a reproducible record. You can export to HTML, PDF, or Word."
+        }
+    ]
+}
