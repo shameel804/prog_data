@@ -1,0 +1,105 @@
+{
+    "id": "l6",
+    "chapterId": "ch_10",
+    "title": "Working with Directories",
+    "description": "Create, read, and delete directories.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Directories",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Creating Directories",
+            "content": "# mkdir() – Make Directory\n\n`mkdir(string $directory, int $permissions = 0777, bool $recursive = false): bool` creates a directory.\n\n```php\nmkdir('uploads');\n```\n\nPermissions are modified by the current umask. To create nested directories, set `$recursive = true`.\n\n```php\nmkdir('images/2025/march', 0777, true);\n```"
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "mkdir Example",
+            "content": "```php\n<?php\n$dir = 'backups/daily';\nif (!file_exists($dir)) {\n    if (mkdir($dir, 0755, true)) {\n        echo \"Directory created.\";\n    } else {\n        echo \"Failed to create directory.\";\n    }\n} else {\n    echo \"Directory already exists.\";\n}\n?>\n```",
+            "codeSnippet": "<?php\n$dir = 'backups/daily';\nif (!file_exists($dir)) {\n    if (mkdir($dir, 0755, true)) {\n        echo \"Directory created.\";\n    } else {\n        echo \"Failed to create directory.\";\n    }\n} else {\n    echo \"Directory already exists.\";\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "text",
+            "title": "Reading Directories",
+            "content": "# scandir() – List Files\n\n`scandir(string $directory, int $sorting_order = SCANDIR_SORT_ASCENDING): array|false` returns an array of files and directories inside the given path. Includes `.` and `..`.\n\n```php\n$items = scandir('uploads');\nforeach ($items as $item) {\n    if ($item != '.' && $item != '..') {\n        echo $item . \"\\n\";\n    }\n}\n```\n\n# glob() – Find Pathnames Matching Pattern\n\n`glob(string $pattern, int $flags = 0): array|false` finds pathnames matching a pattern (like `*.txt`).\n\n```php\n$txtFiles = glob('*.txt');\n```"
+        },
+        {
+            "id": "s_l6_4",
+            "type": "code",
+            "title": "scandir and glob Examples",
+            "content": "```php\n<?php\n// List all files in current directory excluding . and ..\n$files = array_diff(scandir('.'), array('..', '.'));\nprint_r($files);\n\n// Get all .jpg files\n$images = glob('images/*.jpg');\nprint_r($images);\n?>\n```",
+            "codeSnippet": "<?php\n$files = array_diff(scandir('.'), array('..', '.'));\nprint_r($files);\n$images = glob('images/*.jpg');\nprint_r($images);\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_5",
+            "type": "text",
+            "title": "Deleting Directories",
+            "content": "# rmdir() – Remove Directory\n\n`rmdir(string $directory): bool` removes an **empty** directory. If the directory is not empty, you must delete its contents first.\n\n```php\nif (rmdir('tempdir')) {\n    echo \"Directory removed.\";\n}\n```\n\nTo delete a non-empty directory, you can write a recursive function or use external tools."
+        },
+        {
+            "id": "s_l6_6",
+            "type": "code",
+            "title": "Recursive Directory Deletion (Example)",
+            "content": "```php\n<?php\nfunction deleteDir($dir) {\n    if (!file_exists($dir)) return true;\n    if (!is_dir($dir)) return unlink($dir);\n    foreach (scandir($dir) as $item) {\n        if ($item == '.' || $item == '..') continue;\n        if (!deleteDir($dir . DIRECTORY_SEPARATOR . $item)) return false;\n    }\n    return rmdir($dir);\n}\n\ndeleteDir('old_folder');\n?>\n```",
+            "codeSnippet": "<?php\nfunction deleteDir($dir) {\n    if (!file_exists($dir)) return true;\n    if (!is_dir($dir)) return unlink($dir);\n    foreach (scandir($dir) as $item) {\n        if ($item == '.' || $item == '..') continue;\n        if (!deleteDir($dir . DIRECTORY_SEPARATOR . $item)) return false;\n    }\n    return rmdir($dir);\n}\ndeleteDir('old_folder');\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_7",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Which function returns an array of files in a directory?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "scandir()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "glob()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "ls()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "opendir()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "scandir returns an array of all entries. glob also returns matches but with pattern.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_8",
+            "type": "quiz",
+            "title": "Check Understanding",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "true_false",
+                "question": "rmdir() can remove a directory that contains files.",
+                "correctAnswer": false,
+                "explanation": "rmdir only removes empty directories.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

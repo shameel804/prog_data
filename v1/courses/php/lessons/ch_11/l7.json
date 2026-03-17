@@ -1,0 +1,79 @@
+{
+    "id": "l7",
+    "chapterId": "ch_11",
+    "title": "Practical Example: Login/Logout with Sessions",
+    "description": "Build a simple authentication system.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Project",
+    "slides": [
+        {
+            "id": "s_l7_1",
+            "type": "text",
+            "title": "Simple Login System",
+            "content": "# Putting It All Together\n\nWe'll create three pages:\n\n1. `login.php` – form to submit username/password.\n2. `dashboard.php` – protected page, only accessible if logged in.\n3. `logout.php` – destroy session and redirect.\n\nWe'll use hardcoded credentials for simplicity."
+        },
+        {
+            "id": "s_l7_2",
+            "type": "code",
+            "title": "login.php",
+            "content": "```php\n<?php\nsession_start();\n\n// Hardcoded user (in real app, check database)\n$valid_username = 'admin';\n$valid_password = 'secret';\n\n$error = '';\n\nif ($_SERVER['REQUEST_METHOD'] === 'POST') {\n    $username = $_POST['username'] ?? '';\n    $password = $_POST['password'] ?? '';\n\n    if ($username === $valid_username && $password === $valid_password) {\n        $_SESSION['logged_in'] = true;\n        $_SESSION['username'] = $username;\n        header('Location: dashboard.php');\n        exit;\n    } else {\n        $error = 'Invalid username or password';\n    }\n}\n?>\n<!DOCTYPE html>\n<html>\n<head>\n    <title>Login</title>\n</head>\n<body>\n    <h2>Login</h2>\n    <?php if ($error): ?>\n        <p style=\"color: red;\"><?php echo htmlspecialchars($error); ?></p>\n    <?php endif; ?>\n    <form method=\"post\">\n        <label>Username: <input type=\"text\" name=\"username\"></label><br>\n        <label>Password: <input type=\"password\" name=\"password\"></label><br>\n        <input type=\"submit\" value=\"Log In\">\n    </form>\n</body>\n</html>\n```",
+            "codeSnippet": "<?php\nsession_start();\n$valid_username = 'admin';\n$valid_password = 'secret';\n$error = '';\nif ($_SERVER['REQUEST_METHOD'] === 'POST') {\n    $username = $_POST['username'] ?? '';\n    $password = $_POST['password'] ?? '';\n    if ($username === $valid_username && $password === $valid_password) {\n        $_SESSION['logged_in'] = true;\n        $_SESSION['username'] = $username;\n        header('Location: dashboard.php');\n        exit;\n    } else {\n        $error = 'Invalid username or password';\n    }\n}\n?>\n<!DOCTYPE html>\n<html>\n<body>\n    <h2>Login</h2>\n    <?php if ($error): ?>\n        <p style=\"color: red;\"><?php echo htmlspecialchars($error); ?></p>\n    <?php endif; ?>\n    <form method=\"post\">\n        <label>Username: <input type=\"text\" name=\"username\"></label><br>\n        <label>Password: <input type=\"password\" name=\"password\"></label><br>\n        <input type=\"submit\" value=\"Log In\">\n    </form>\n</body>\n</html>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_3",
+            "type": "code",
+            "title": "dashboard.php",
+            "content": "```php\n<?php\nsession_start();\n\n// Check if user is logged in\nif (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {\n    header('Location: login.php');\n    exit;\n}\n?>\n<!DOCTYPE html>\n<html>\n<body>\n    <h1>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>\n    <p>This is your dashboard.</p>\n    <a href=\"logout.php\">Logout</a>\n</body>\n</html>\n```",
+            "codeSnippet": "<?php\nsession_start();\nif (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {\n    header('Location: login.php');\n    exit;\n}\n?>\n<!DOCTYPE html>\n<html>\n<body>\n    <h1>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>\n    <p>This is your dashboard.</p>\n    <a href=\"logout.php\">Logout</a>\n</body>\n</html>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_4",
+            "type": "code",
+            "title": "logout.php",
+            "content": "```php\n<?php\nsession_start();\n\n// Unset all session variables\n$_SESSION = [];\n\n// Destroy the session cookie\nif (ini_get(\"session.use_cookies\")) {\n    $params = session_get_cookie_params();\n    setcookie(session_name(), '', time() - 42000,\n        $params[\"path\"], $params[\"domain\"],\n        $params[\"secure\"], $params[\"httponly\"]\n    );\n}\n\n// Destroy the session\nsession_destroy();\n\n// Redirect to login page\nheader('Location: login.php');\nexit;\n?>\n```",
+            "codeSnippet": "<?php\nsession_start();\n$_SESSION = [];\nif (ini_get(\"session.use_cookies\")) {\n    $params = session_get_cookie_params();\n    setcookie(session_name(), '', time() - 42000,\n        $params[\"path\"], $params[\"domain\"],\n        $params[\"secure\"], $params[\"httponly\"]\n    );\n}\nsession_destroy();\nheader('Location: login.php');\nexit;\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_5",
+            "type": "quiz",
+            "title": "Final Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_1",
+                "type": "multiple_choice",
+                "question": "In the login example, how does dashboard.php know the user is logged in?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "By checking a cookie",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "By checking $_SESSION['logged_in']",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "By checking the URL",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "By checking the IP address",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The login script sets $_SESSION['logged_in'] = true, and dashboard.php checks that.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

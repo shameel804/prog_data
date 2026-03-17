@@ -1,0 +1,76 @@
+{
+    "id": "l5",
+    "chapterId": "ch_14",
+    "title": "Insert, Update, Delete with PDO",
+    "description": "Modify data using prepared statements.",
+    "xpReward": 20,
+    "estimatedMinutes": 7,
+    "section": "Manipulation",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "INSERT with PDO",
+            "content": "# Adding Records\n\nUse prepared statements for INSERT as well.\n\n```php\n$sql = \"INSERT INTO users (name, email, age) VALUES (:name, :email, :age)\";\n$stmt = $pdo->prepare($sql);\n$stmt->execute([\n    'name' => 'John Doe',\n    'email' => 'john@example.com',\n    'age' => 30\n]);\n\necho \"Inserted ID: \" . $pdo->lastInsertId();\n```\n\n`lastInsertId()` returns the auto-generated ID of the last insert."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "INSERT Example",
+            "content": "```php\n<?php\n$name = 'Jane';\n$email = 'jane@example.com';\n$age = 25;\n\n$sql = \"INSERT INTO users (name, email, age) VALUES (:name, :email, :age)\";\n$stmt = $pdo->prepare($sql);\nif ($stmt->execute(['name' => $name, 'email' => $email, 'age' => $age])) {\n    echo \"User added with ID: \" . $pdo->lastInsertId();\n} else {\n    echo \"Insert failed.\";\n}\n?>\n```",
+            "codeSnippet": "<?php\n$name = 'Jane';\n$email = 'jane@example.com';\n$age = 25;\n$sql = \"INSERT INTO users (name, email, age) VALUES (:name, :email, :age)\";\n$stmt = $pdo->prepare($sql);\nif ($stmt->execute(['name' => $name, 'email' => $email, 'age' => $age])) {\n    echo \"User added with ID: \" . $pdo->lastInsertId();\n} else {\n    echo \"Insert failed.\";\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "UPDATE and DELETE",
+            "content": "# Modifying and Removing\n\nSame pattern: prepare and execute.\n\n```php\n// UPDATE\n$stmt = $pdo->prepare(\"UPDATE users SET email = :email WHERE id = :id\");\n$stmt->execute(['email' => 'newemail@example.com', 'id' => 5]);\n\n// DELETE\n$stmt = $pdo->prepare(\"DELETE FROM users WHERE id = :id\");\n$stmt->execute(['id' => 5]);\n```\n\nYou can get the number of affected rows with `$stmt->rowCount()`."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "UPDATE and rowCount",
+            "content": "```php\n<?php\n$id = 10;\n$newAge = 32;\n\n$stmt = $pdo->prepare(\"UPDATE users SET age = :age WHERE id = :id\");\n$stmt->execute(['age' => $newAge, 'id' => $id]);\n\n$count = $stmt->rowCount();\necho \"Updated $count rows.\";\n?>\n```",
+            "codeSnippet": "<?php\n$id = 10;\n$newAge = 32;\n$stmt = $pdo->prepare(\"UPDATE users SET age = :age WHERE id = :id\");\n$stmt->execute(['age' => $newAge, 'id' => $id]);\n$count = $stmt->rowCount();\necho \"Updated $count rows.\";\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which method returns the number of rows affected by an INSERT, UPDATE, or DELETE?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "affectedRows()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "rowCount()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "count()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "numRows()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "rowCount() returns the number of rows affected by the last SQL statement.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

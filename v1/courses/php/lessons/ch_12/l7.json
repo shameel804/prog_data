@@ -1,0 +1,67 @@
+{
+    "id": "l7",
+    "chapterId": "ch_12",
+    "title": "Polymorphism and Interfaces",
+    "description": "Define contracts and implement them.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Polymorphism",
+    "slides": [
+        {
+            "id": "s_l7_1",
+            "type": "text",
+            "title": "Interfaces",
+            "content": "# What is an Interface?\n\nAn interface defines a contract: it lists method signatures that any implementing class must provide. Interfaces cannot contain properties (except constants) and all methods are public by default.\n\n```php\ninterface Logger {\n    public function log($message);\n}\n\nclass FileLogger implements Logger {\n    public function log($message) {\n        file_put_contents('log.txt', $message . PHP_EOL, FILE_APPEND);\n    }\n}\n```\n\nA class can implement multiple interfaces."
+        },
+        {
+            "id": "s_l7_2",
+            "type": "text",
+            "title": "Polymorphism",
+            "content": "# Polymorphism in Action\n\nPolymorphism means \"many forms\". With interfaces, you can write code that works with any class that implements a given interface, regardless of its specific type.\n\n```php\nfunction processLogger(Logger $logger) {\n    $logger->log(\"Processing...\");\n}\n\n$logger = new FileLogger();\nprocessLogger($logger); // works with any Logger\n```"
+        },
+        {
+            "id": "s_l7_3",
+            "type": "code",
+            "title": "Interface Example",
+            "content": "```php\n<?php\ninterface PaymentGateway {\n    public function charge($amount);\n}\n\nclass StripeGateway implements PaymentGateway {\n    public function charge($amount) {\n        echo \"Charging $$amount via Stripe.\";\n    }\n}\n\nclass PayPalGateway implements PaymentGateway {\n    public function charge($amount) {\n        echo \"Charging $$amount via PayPal.\";\n    }\n}\n\nfunction checkout(PaymentGateway $gateway, $amount) {\n    $gateway->charge($amount);\n}\n\n$stripe = new StripeGateway();\ncheckout($stripe, 100);\n\n$paypal = new PayPalGateway();\ncheckout($paypal, 200);\n?>\n```",
+            "codeSnippet": "<?php\ninterface PaymentGateway {\n    public function charge($amount);\n}\nclass StripeGateway implements PaymentGateway {\n    public function charge($amount) {\n        echo \"Charging $$amount via Stripe.\";\n    }\n}\nclass PayPalGateway implements PaymentGateway {\n    public function charge($amount) {\n        echo \"Charging $$amount via PayPal.\";\n    }\n}\nfunction checkout(PaymentGateway $gateway, $amount) {\n    $gateway->charge($amount);\n}\n$stripe = new StripeGateway();\ncheckout($stripe, 100);\n$paypal = new PayPalGateway();\ncheckout($paypal, 200);\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_1",
+                "type": "multiple_choice",
+                "question": "What keyword is used to implement an interface?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "extends",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "implements",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "inherits",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "uses",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A class uses `implements` to adopt an interface.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,73 @@
+{
+    "id": "l7",
+    "chapterId": "ch_15",
+    "title": "File Upload Security",
+    "description": "Validate and securely handle file uploads.",
+    "xpReward": 20,
+    "estimatedMinutes": 7,
+    "section": "Security",
+    "slides": [
+        {
+            "id": "s_l7_1",
+            "type": "text",
+            "title": "Risks of File Uploads",
+            "content": "# Why Secure Uploads?\n\nAllowing users to upload files can be dangerous:\n*   Malicious scripts (PHP, etc.) can be uploaded and executed on your server.\n*   Overwriting critical files.\n*   Denial of service (large files).\n\nYou must validate file type, size, and rename files to prevent execution."
+        },
+        {
+            "id": "s_l7_2",
+            "type": "text",
+            "title": "Validation Steps",
+            "content": "# Checklist for Secure Uploads\n\n1. **Limit file size** – check `$_FILES['file']['size']`.\n2. **Validate file type** – do not rely on MIME type from browser; use `finfo_open()` to detect actual type.\n3. **Validate extension** – allow only specific extensions.\n4. **Rename file** – use a random name to avoid collisions and hide original name.\n5. **Store outside web root** if possible, or use `.htaccess` to prevent script execution in upload folder.\n6. **Scan for malware** (optional, for high security)."
+        },
+        {
+            "id": "s_l7_3",
+            "type": "code",
+            "title": "Secure Upload Example",
+            "content": "```php\n<?php\nif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['upload'])) {\n    $file = $_FILES['upload'];\n    $maxSize = 2 * 1024 * 1024; // 2MB\n    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];\n    $uploadDir = __DIR__ . '/uploads/';\n\n    // Check error\n    if ($file['error'] !== UPLOAD_ERR_OK) {\n        die('Upload error');\n    }\n\n    // Check size\n    if ($file['size'] > $maxSize) {\n        die('File too large');\n    }\n\n    // Verify MIME type using finfo\n    $finfo = finfo_open(FILEINFO_MIME_TYPE);\n    $mime = finfo_file($finfo, $file['tmp_name']);\n    finfo_close($finfo);\n\n    if (!in_array($mime, $allowedTypes)) {\n        die('Invalid file type');\n    }\n\n    // Generate safe name\n    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);\n    $newName = bin2hex(random_bytes(16)) . '.' . $extension;\n    $destination = $uploadDir . $newName;\n\n    if (move_uploaded_file($file['tmp_name'], $destination)) {\n        echo 'File uploaded successfully: ' . htmlspecialchars($newName);\n    } else {\n        echo 'Failed to move file';\n    }\n}\n?>\n```",
+            "codeSnippet": "<?php\nif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['upload'])) {\n    $file = $_FILES['upload'];\n    $maxSize = 2 * 1024 * 1024;\n    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];\n    $uploadDir = __DIR__ . '/uploads/';\n    if ($file['error'] !== UPLOAD_ERR_OK) { die('Upload error'); }\n    if ($file['size'] > $maxSize) { die('File too large'); }\n    $finfo = finfo_open(FILEINFO_MIME_TYPE);\n    $mime = finfo_file($finfo, $file['tmp_name']);\n    finfo_close($finfo);\n    if (!in_array($mime, $allowedTypes)) { die('Invalid file type'); }\n    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);\n    $newName = bin2hex(random_bytes(16)) . '.' . $extension;\n    $destination = $uploadDir . $newName;\n    if (move_uploaded_file($file['tmp_name'], $destination)) {\n        echo 'File uploaded successfully: ' . htmlspecialchars($newName);\n    } else {\n        echo 'Failed to move file';\n    }\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_4",
+            "type": "warning",
+            "title": "Preventing Execution",
+            "content": "## Stop Scripts in Upload Folder\n\nIf you must store uploads in a web-accessible folder, create an `.htaccess` file (Apache) with:\n```apache\n<FilesMatch \".*\\.(php|php5|phtml)$\">\n    Order Deny,Allow\n    Deny from all\n</FilesMatch>\n```\nOr disable PHP execution in that folder. Better: store outside web root and serve via a script that reads and outputs files."
+        },
+        {
+            "id": "s_l7_5",
+            "type": "quiz",
+            "title": "Final Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_1",
+                "type": "multiple_choice",
+                "question": "Why should you not rely on the browser-provided MIME type in $_FILES?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It can be easily spoofed",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It's always incorrect",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's not available",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's too slow",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The MIME type sent by the browser can be faked; use server-side detection.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

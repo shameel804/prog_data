@@ -1,0 +1,82 @@
+{
+    "id": "l5",
+    "chapterId": "ch_6",
+    "title": "Variable Scope",
+    "description": "Understand local vs global variables inside functions.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Scope",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Where Can Variables Be Seen?",
+            "content": "# Local vs Global Scope\n\nVariables defined **outside** a function are **global**. They cannot be accessed directly inside a function.\n\nVariables defined **inside** a function are **local** to that function. They cannot be accessed outside.\n\n```php\n$globalVar = \"I'm global\";\n\nfunction test() {\n    $localVar = \"I'm local\";\n    echo $globalVar; // ERROR: undefined\n}\n\necho $localVar; // ERROR: undefined outside\n```"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Demonstrating Scope",
+            "content": "```php\n<?php\n$name = \"Alice\";\n\nfunction sayHello() {\n    $name = \"Bob\"; // local variable, different from global $name\n    echo \"Hello, $name\";\n}\n\nsayHello(); // Hello, Bob\necho $name; // Alice (global unchanged)\n?>\n```",
+            "codeSnippet": "<?php\n$name = \"Alice\";\n\nfunction sayHello() {\n    $name = \"Bob\";\n    echo \"Hello, $name\";\n}\n\nsayHello();\necho $name;\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Accessing Global Variables",
+            "content": "# The `global` Keyword\n\nIf you need to use a global variable inside a function, you can declare it with `global`.\n\n```php\n$count = 10;\n\nfunction increment() {\n    global $count;\n    $count++;\n}\n\nincrement();\necho $count; // 11\n```\n\nAlternatively, use the `$GLOBALS` array: `$GLOBALS['count']`."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Using global",
+            "content": "```php\n<?php\n$counter = 5;\n\nfunction addOne() {\n    global $counter;\n    $counter++;\n}\n\naddOne();\necho $counter; // 6\n?>\n```",
+            "codeSnippet": "<?php\n$counter = 5;\n\nfunction addOne() {\n    global $counter;\n    $counter++;\n}\n\naddOne();\necho $counter;\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "warning",
+            "title": "Avoid Global Variables When Possible",
+            "content": "## Best Practice\n\nUsing `global` can make code harder to debug and maintain. It's better to pass values as parameters and return results. We'll see more in later lessons."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What will this code output?\n\n```php\n$x = 5;\nfunction test() {\n    $x = 10;\n}\ntest();\necho $x;\n```",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "5",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "10",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "null",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Inside test(), $x is a local variable, not affecting the global $x. So global $x remains 5.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,76 @@
+{
+    "id": "l5",
+    "chapterId": "ch_11",
+    "title": "Setting and Reading Cookies",
+    "description": "Use setcookie() and $_COOKIE.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Cookies",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "setcookie()",
+            "content": "# Setting a Cookie\n\n`setcookie(string $name, string $value = \"\", int $expires = 0, string $path = \"\", string $domain = \"\", bool $secure = false, bool $httponly = false): bool`\n\nThis function must be called **before any output** (same rule as `session_start()`).\n\n```php\nsetcookie('username', 'john_doe', time() + 3600); // expires in 1 hour\n```\n\nAfter setting, the cookie will be available in the next request."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Setting a Cookie",
+            "content": "```php\n<?php\n// Set a cookie that expires in 7 days\nsetcookie('theme', 'dark', time() + (86400 * 7), '/'); // '/' means whole site\n?>\n<!DOCTYPE html>\n<html>\n<body>\n<?php\necho \"Cookie 'theme' is set.\";\n?>\n</body>\n</html>\n```",
+            "codeSnippet": "<?php\nsetcookie('theme', 'dark', time() + (86400 * 7), '/');\n?>\n<!DOCTYPE html>\n<html>\n<body>\n<?php\necho \"Cookie 'theme' is set.\";\n?>\n</body>\n</html>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Reading Cookies",
+            "content": "# $_COOKIE Superglobal\n\nCookies sent by the browser are available in the `$_COOKIE` associative array.\n\n```php\nif (isset($_COOKIE['theme'])) {\n    $theme = $_COOKIE['theme'];\n} else {\n    $theme = 'light'; // default\n}\n```\n\nNote: `$_COOKIE` is populated only **after** the cookie is received from the browser. A cookie set in the current request will not be available in `$_COOKIE` until the next page load."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Reading and Using a Cookie",
+            "content": "```php\n<?php\n$theme = $_COOKIE['theme'] ?? 'light';\n?>\n<!DOCTYPE html>\n<html>\n<body style=\"background: <?php echo $theme === 'dark' ? '#333' : '#fff'; ?>\">\n<p>Welcome!</p>\n</body>\n</html>\n```",
+            "codeSnippet": "<?php\n$theme = $_COOKIE['theme'] ?? 'light';\n?>\n<!DOCTYPE html>\n<html>\n<body style=\"background: <?php echo $theme === 'dark' ? '#333' : '#fff'; ?>\">\n<p>Welcome!</p>\n</body>\n</html>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "When does a cookie set with setcookie() become available in $_COOKIE?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Immediately in the same request",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "On the next request from the browser",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "After 1 second",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Never",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The cookie is sent to the browser and will be returned on subsequent requests.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

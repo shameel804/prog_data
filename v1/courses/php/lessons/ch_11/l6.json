@@ -1,0 +1,73 @@
+{
+    "id": "l6",
+    "chapterId": "ch_11",
+    "title": "Cookie Expiration and Security",
+    "description": "Control cookie lifetime, path, domain, and secure flags.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Cookies",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Cookie Parameters",
+            "content": "# Fine-Tuning Cookies\n\n`setcookie()` has several optional parameters:\n\n*   `expires` – Unix timestamp when the cookie expires. If 0 or omitted, it's a session cookie.\n*   `path` – The path on the server where the cookie is available. `'/'` makes it available across the entire domain.\n*   `domain` – The domain the cookie is available to. (e.g., 'example.com' or 'sub.example.com')\n*   `secure` – If true, cookie is sent only over HTTPS.\n*   `httponly` – If true, cookie is inaccessible to JavaScript (reduces XSS risk).\n*   `samesite` – (PHP 7.3+) Controls cross-site request behavior: 'None', 'Lax', or 'Strict'."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Setting a Secure Cookie",
+            "content": "```php\n<?php\n// Expires in 30 days, only on HTTPS, not accessible by JS\nsetcookie(\n    'auth_token',\n    'abc123',\n    [\n        'expires' => time() + 3600 * 24 * 30,\n        'path' => '/',\n        'domain' => 'example.com',\n        'secure' => true,\n        'httponly' => true,\n        'samesite' => 'Strict'\n    ]\n);\n?>\n```",
+            "codeSnippet": "<?php\nsetcookie(\n    'auth_token',\n    'abc123',\n    [\n        'expires' => time() + 3600 * 24 * 30,\n        'path' => '/',\n        'domain' => 'example.com',\n        'secure' => true,\n        'httponly' => true,\n        'samesite' => 'Strict'\n    ]\n);\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "text",
+            "title": "Deleting a Cookie",
+            "content": "# Expiring a Cookie\n\nTo delete a cookie, set its expiration time to a time in the past. You should also use the same path/domain parameters as when it was set.\n\n```php\nsetcookie('theme', '', time() - 3600, '/');\n```"
+        },
+        {
+            "id": "s_l6_4",
+            "type": "warning",
+            "title": "Security Considerations",
+            "content": "## Keep Cookies Safe\n\n*   Never store sensitive data like passwords in cookies.\n*   Use `httponly` to prevent JavaScript access.\n*   Use `secure` to ensure cookies are sent only over HTTPS.\n*   Use `samesite` to protect against CSRF.\n*   Validate and sanitize cookie data like any user input."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "quiz",
+            "title": "Check Understanding 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Which flag makes a cookie inaccessible to JavaScript?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "secure",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "httponly",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "samesite",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "noscript",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "httponly prevents client-side scripts from accessing the cookie.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

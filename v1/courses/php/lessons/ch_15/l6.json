@@ -1,0 +1,82 @@
+{
+    "id": "l6",
+    "chapterId": "ch_15",
+    "title": "Password Hashing",
+    "description": "Securely hash and verify passwords.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Security",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Never Store Plain Passwords",
+            "content": "# Why Hash?\n\nIf your database is compromised, plain passwords are exposed. Hashing converts a password into a fixed-length string that cannot be reversed. When a user logs in, you hash the entered password and compare with the stored hash.\n\n**Important:** Use a strong, slow hashing algorithm designed for passwords, like bcrypt. PHP provides `password_hash()` and `password_verify()`."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "password_hash()",
+            "content": "# Creating a Hash\n\n`password_hash(string $password, int $algo, array $options = []): string`\n\nIt automatically generates a strong salt and uses bcrypt by default.\n\n```php\n$hash = password_hash('user_password', PASSWORD_DEFAULT);\n// Store $hash in database\n```\n\n`PASSWORD_DEFAULT` currently uses bcrypt, but may change in future PHP versions. For bcrypt with specific cost, use `PASSWORD_BCRYPT` and options."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Hashing Example",
+            "content": "```php\n<?php\n$password = 'mySecret123';\n$hash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);\necho $hash; // e.g., $2y$12$...\n?>\n```",
+            "codeSnippet": "<?php\n$password = 'mySecret123';\n$hash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);\necho $hash;\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Verifying a Password",
+            "content": "# password_verify()\n\nWhen a user logs in, compare the submitted password with the stored hash:\n\n```php\nif (password_verify($enteredPassword, $storedHash)) {\n    // password correct\n} else {\n    // wrong password\n}\n```\n\n`password_verify()` is timing-safe, preventing side-channel attacks."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "code",
+            "title": "Complete Login Flow",
+            "content": "```php\n<?php\n// Registration\n$hash = password_hash($_POST['password'], PASSWORD_DEFAULT);\n// store $hash in database\n\n// Login\n$user = getUserByEmail($_POST['email']);\nif ($user && password_verify($_POST['password'], $user['password_hash'])) {\n    // login successful\n} else {\n    // invalid credentials\n}\n?>\n```",
+            "codeSnippet": "<?php\n// Registration\n$hash = password_hash($_POST['password'], PASSWORD_DEFAULT);\n// store $hash\n\n// Login\n$user = getUserByEmail($_POST['email']);\nif ($user && password_verify($_POST['password'], $user['password_hash'])) {\n    echo \"Logged in\";\n} else {\n    echo \"Invalid login\";\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_6",
+            "type": "quiz",
+            "title": "Check Understanding 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Which function verifies a password against a hash?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "password_verify()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "password_check()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "hash_equals()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "crypt()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "password_verify() checks if a password matches a hash.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

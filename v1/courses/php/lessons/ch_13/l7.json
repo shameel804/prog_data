@@ -1,0 +1,61 @@
+{
+    "id": "l7",
+    "chapterId": "ch_13",
+    "title": "Multiple Catch Blocks",
+    "description": "Handle different exception types separately.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l7_1",
+            "type": "text",
+            "title": "Catching Specific Exceptions",
+            "content": "# Multiple Catch Blocks\n\nYou can have multiple catch blocks for different exception types. PHP will match the first block that matches the exception type.\n\n```php\ntry {\n    // code\n} catch (ValidationException $e) {\n    echo \"Validation error: \" . $e->getMessage();\n} catch (DatabaseException $e) {\n    echo \"Database error: \" . $e->getMessage();\n} catch (Exception $e) {\n    // catch any other exception\n    echo \"General error: \" . $e->getMessage();\n}\n```\n\nOrder matters: put more specific exceptions first, then general ones."
+        },
+        {
+            "id": "s_l7_2",
+            "type": "code",
+            "title": "Multiple Catch Example",
+            "content": "```php\n<?php\nclass MathException extends Exception {}\nclass DivideByZeroException extends MathException {}\n\nfunction divide($a, $b) {\n    if ($b == 0) {\n        throw new DivideByZeroException('Cannot divide by zero');\n    }\n    return $a / $b;\n}\n\ntry {\n    echo divide(10, 0);\n} catch (DivideByZeroException $e) {\n    echo \"Math error: \" . $e->getMessage();\n} catch (MathException $e) {\n    echo \"Other math error: \" . $e->getMessage();\n} catch (Exception $e) {\n    echo \"General error: \" . $e->getMessage();\n}\n?>\n```",
+            "codeSnippet": "<?php\nclass MathException extends Exception {}\nclass DivideByZeroException extends MathException {}\nfunction divide($a, $b) {\n    if ($b == 0) {\n        throw new DivideByZeroException('Cannot divide by zero');\n    }\n    return $a / $b;\n}\ntry {\n    echo divide(10, 0);\n} catch (DivideByZeroException $e) {\n    echo \"Math error: \" . $e->getMessage();\n} catch (MathException $e) {\n    echo \"Other math error: \" . $e->getMessage();\n} catch (Exception $e) {\n    echo \"General error: \" . $e->getMessage();\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_1",
+                "type": "multiple_choice",
+                "question": "What happens if an exception is thrown that doesn't match any catch block?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's ignored",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It becomes a fatal error",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's caught by a default handler",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The script continues",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "An uncaught exception results in a fatal error.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,76 @@
+{
+    "id": "l2",
+    "chapterId": "ch_15",
+    "title": "Dates and Times",
+    "description": "Work with DateTime objects and functions.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Data",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The DateTime Class",
+            "content": "# Modern Date/Time Handling\n\nPHP's `DateTime` class provides an object-oriented way to work with dates and times.\n\n```php\n$now = new DateTime(); // current date/time\necho $now->format('Y-m-d H:i:s');\n\n$birthday = new DateTime('1990-05-15');\n```\n\nYou can also use `date_create()` procedural style, but OOP is recommended."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Formatting and Modifying",
+            "content": "```php\n<?php\n$date = new DateTime('2025-03-17');\n\n// Format\necho $date->format('l, F j, Y'); // Monday, March 17, 2025\n\n// Modify\n$date->modify('+1 month');\necho $date->format('Y-m-d'); // 2025-04-17\n\n$date->modify('first day of next month');\necho $date->format('Y-m-d'); // 2025-05-01\n?>\n```",
+            "codeSnippet": "<?php\n$date = new DateTime('2025-03-17');\necho $date->format('l, F j, Y') . \"\\n\";\n$date->modify('+1 month');\necho $date->format('Y-m-d') . \"\\n\";\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Date Differences",
+            "content": "# DateInterval\n\nYou can calculate the difference between two dates using `diff()`, which returns a `DateInterval` object.\n\n```php\n$start = new DateTime('2025-01-01');\n$end   = new DateTime('2025-12-31');\n$interval = $start->diff($end);\necho $interval->days; // 364 (or 365? depends on leap year)\necho $interval->format('%R%a days'); // +364 days\n```"
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Date Comparison",
+            "content": "```php\n<?php\n$date1 = new DateTime('2025-03-17');\n$date2 = new DateTime('2025-03-18');\n\nif ($date1 < $date2) {\n    echo '$date1 is earlier';\n}\n\n// Compare with diff\n$diff = $date1->diff($date2);\nif ($diff->invert) {\n    // $date1 is after $date2\n}\n?>\n```",
+            "codeSnippet": "<?php\n$date1 = new DateTime('2025-03-17');\n$date2 = new DateTime('2025-03-18');\nif ($date1 < $date2) {\n    echo '$date1 is earlier';\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_5",
+            "type": "quiz",
+            "title": "Check Understanding 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which method returns the difference between two DateTime objects?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "diff()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "subtract()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "interval()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "compare()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "diff() returns a DateInterval object representing the difference.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

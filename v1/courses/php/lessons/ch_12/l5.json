@@ -1,0 +1,61 @@
+{
+    "id": "l5",
+    "chapterId": "ch_12",
+    "title": "Visibility: public, private, protected",
+    "description": "Control access to properties and methods.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Encapsulation",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Access Modifiers",
+            "content": "# Public, Private, Protected\n\nPHP supports three visibility keywords:\n\n*   **public**: accessible from anywhere (inside class, derived classes, and outside).\n*   **protected**: accessible within the class itself and by inheriting classes, but not from outside.\n*   **private**: accessible only within the class that defines them. Not even in child classes.\n\nThis is part of **encapsulation** – hiding internal details and exposing only what's necessary."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Visibility Example",
+            "content": "```php\n<?php\nclass Person {\n    public $name;       // anyone can access\n    protected $age;     // accessible in Person and child classes\n    private $ssn;       // only inside Person\n\n    public function __construct($name, $age, $ssn) {\n        $this->name = $name;\n        $this->age = $age;\n        $this->ssn = $ssn;\n    }\n\n    protected function getAge() {\n        return $this->age;\n    }\n\n    private function getSsn() {\n        return $this->ssn;\n    }\n}\n\nclass Employee extends Person {\n    public function display() {\n        echo $this->name;      // OK\n        echo $this->getAge();  // OK (protected)\n        // echo $this->ssn;    // Error: private\n        // echo $this->getSsn(); // Error: private\n    }\n}\n\n$p = new Person('Alice', 30, '123-45-6789');\necho $p->name;       // OK\n// echo $p->age;      // Error: protected\n// echo $p->getAge(); // Error: protected method\n?>\n```",
+            "codeSnippet": "<?php\nclass Person {\n    public $name;\n    protected $age;\n    private $ssn;\n    public function __construct($name, $age, $ssn) {\n        $this->name = $name;\n        $this->age = $age;\n        $this->ssn = $ssn;\n    }\n}\n$p = new Person('Alice', 30, '123-45-6789');\necho $p->name;\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "A property declared as protected can be accessed from:",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Only within the same class",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Within the class and its descendants",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Anywhere in the script",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only from outside the class",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "protected allows access within the class itself and any child classes.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

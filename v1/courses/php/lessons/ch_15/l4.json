@@ -1,0 +1,76 @@
+{
+    "id": "l4",
+    "chapterId": "ch_15",
+    "title": "cURL: Making HTTP Requests",
+    "description": "Fetch external URLs with cURL.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Networking",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "What is cURL?",
+            "content": "# Client URL Library\n\ncURL allows you to make HTTP requests to other servers from PHP. It's great for consuming APIs, fetching web pages, or automating tasks.\n\nBasic steps:\n1. Initialize a cURL session with `curl_init()`.\n2. Set options with `curl_setopt()`.\n3. Execute with `curl_exec()`.\n4. Close with `curl_close()`."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Simple GET Request",
+            "content": "```php\n<?php\n$ch = curl_init();\ncurl_setopt($ch, CURLOPT_URL, 'https://api.example.com/data');\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // return as string\n$response = curl_exec($ch);\n\nif (curl_error($ch)) {\n    echo 'cURL error: ' . curl_error($ch);\n} else {\n    echo $response;\n}\ncurl_close($ch);\n?>\n```",
+            "codeSnippet": "<?php\n$ch = curl_init();\ncurl_setopt($ch, CURLOPT_URL, 'https://api.example.com/data');\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, true);\n$response = curl_exec($ch);\nif (curl_error($ch)) {\n    echo 'cURL error: ' . curl_error($ch);\n} else {\n    echo $response;\n}\ncurl_close($ch);\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "POST Request and Headers",
+            "content": "# Sending Data\n\nTo send a POST request, set `CURLOPT_POST` to true and provide data with `CURLOPT_POSTFIELDS`.\n\n```php\n$ch = curl_init();\ncurl_setopt($ch, CURLOPT_URL, 'https://api.example.com/users');\ncurl_setopt($ch, CURLOPT_POST, true);\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['name' => 'John', 'age' => 30]));\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, true);\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n    'Content-Type: application/x-www-form-urlencoded',\n    'Authorization: Bearer token'\n]);\n$response = curl_exec($ch);\ncurl_close($ch);\n```"
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "POST JSON Data",
+            "content": "```php\n<?php\n$data = ['name' => 'Jane', 'email' => 'jane@example.com'];\n$jsonData = json_encode($data);\n\n$ch = curl_init('https://api.example.com/users');\ncurl_setopt($ch, CURLOPT_POST, true);\ncurl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, true);\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n    'Content-Type: application/json',\n    'Content-Length: ' . strlen($jsonData)\n]);\n$response = curl_exec($ch);\ncurl_close($ch);\n?>\n```",
+            "codeSnippet": "<?php\n$data = ['name' => 'Jane', 'email' => 'jane@example.com'];\n$jsonData = json_encode($data);\n$ch = curl_init('https://api.example.com/users');\ncurl_setopt($ch, CURLOPT_POST, true);\ncurl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, true);\ncurl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);\n$response = curl_exec($ch);\ncurl_close($ch);\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Check Understanding 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which cURL option returns the response as a string instead of outputting it?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "CURLOPT_RETURNTRANSFER",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "CURLOPT_VERBOSE",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "CURLOPT_FOLLOWLOCATION",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "CURLOPT_HEADER",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "CURLOPT_RETURNTRANSFER makes curl_exec return the response as a string.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

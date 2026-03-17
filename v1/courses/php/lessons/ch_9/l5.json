@@ -1,0 +1,82 @@
+{
+    "id": "l5",
+    "chapterId": "ch_9",
+    "title": "Handling Form Data",
+    "description": "Validate and sanitize user input.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Processing",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Validation vs Sanitization",
+            "content": "# Two Steps\n\n*   **Validation**: Check if the data meets certain criteria (e.g., email format, required fields).\n*   **Sanitization**: Clean the data to make it safe (e.g., trim spaces, escape HTML).\n\nAlways validate and sanitize before using data."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Common Validation Functions",
+            "content": "# Validation Tools\n\n*   `empty()` – check if variable is empty (0, false, null, \"\", etc.)\n*   `isset()` – check if variable exists and is not null\n*   `filter_var()` – validate with built-in filters (e.g., `FILTER_VALIDATE_EMAIL`, `FILTER_VALIDATE_URL`)\n*   `preg_match()` – custom pattern validation\n\n```php\nif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {\n    // invalid email\n}\n```"
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Validation Example",
+            "content": "```php\n<?php\n$errors = [];\nif ($_SERVER['REQUEST_METHOD'] === 'POST') {\n    $name = trim($_POST['name'] ?? '');\n    $email = trim($_POST['email'] ?? '');\n\n    if (empty($name)) {\n        $errors[] = \"Name is required.\";\n    }\n    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {\n        $errors[] = \"Invalid email format.\";\n    }\n\n    if (empty($errors)) {\n        // process data\n    }\n}\n?>\n```",
+            "codeSnippet": "<?php\n$errors = [];\nif ($_SERVER['REQUEST_METHOD'] === 'POST') {\n    $name = trim($_POST['name'] ?? '');\n    $email = trim($_POST['email'] ?? '');\n    if (empty($name)) {\n        $errors[] = \"Name is required.\";\n    }\n    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {\n        $errors[] = \"Invalid email format.\";\n    }\n    if (empty($errors)) {\n        // process\n    }\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Sanitization Functions",
+            "content": "# Cleaning Input\n\n*   `trim()` – remove whitespace from ends\n*   `strip_tags()` – remove HTML and PHP tags\n*   `htmlspecialchars()` – convert special characters to HTML entities (prevents XSS)\n*   `filter_var()` with sanitization filters: `FILTER_SANITIZE_EMAIL`, `FILTER_SANITIZE_URL`, `FILTER_SANITIZE_STRING` (deprecated)\n\nWhen outputting user data to HTML, always use `htmlspecialchars()`:\n```php\necho htmlspecialchars($user_input, ENT_QUOTES, 'UTF-8');\n```"
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Sanitization Example",
+            "content": "```php\n<?php\n$raw_name = $_POST['name'] ?? '';\n$safe_name = htmlspecialchars(trim($raw_name), ENT_QUOTES, 'UTF-8');\n\n$raw_email = $_POST['email'] ?? '';\n$safe_email = filter_var($raw_email, FILTER_SANITIZE_EMAIL);\n?>\n```",
+            "codeSnippet": "<?php\n$raw_name = $_POST['name'] ?? '';\n$safe_name = htmlspecialchars(trim($raw_name), ENT_QUOTES, 'UTF-8');\n$raw_email = $_POST['email'] ?? '';\n$safe_email = filter_var($raw_email, FILTER_SANITIZE_EMAIL);\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Check Understanding 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which function should you use to prevent XSS when outputting user data?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "strip_tags()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "htmlspecialchars()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "trim()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "filter_var() with FILTER_SANITIZE_STRING",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "htmlspecialchars converts special characters to HTML entities, preventing XSS. (FILTER_SANITIZE_STRING is deprecated.)",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,58 @@
+{
+    "id": "l9",
+    "chapterId": "ch_13",
+    "title": "Error vs Exception",
+    "description": "When to use which? Best practices.",
+    "xpReward": 15,
+    "estimatedMinutes": 5,
+    "section": "Best Practices",
+    "slides": [
+        {
+            "id": "s_l9_1",
+            "type": "text",
+            "title": "Errors vs Exceptions",
+            "content": "# When to Use What?\n\n*   **Errors**: Represent unrecoverable problems or programming mistakes (like calling undefined function). In PHP 7+, many errors are throwable. Usually you don't catch them unless you have a good reason.\n*   **Exceptions**: Represent exceptional but recoverable conditions in your application logic (e.g., validation failure, file not found). Use exceptions to handle these gracefully.\n\nBest practice: Use exceptions for domain-specific errors. Let system errors (like parse errors, type errors) usually go uncaught, but you can catch them at the top level to log and show a user-friendly message."
+        },
+        {
+            "id": "s_l9_2",
+            "type": "text",
+            "title": "Error Handling Strategy",
+            "content": "# A Robust Approach\n\n1. Use `set_error_handler()` to convert PHP errors to `ErrorException` (so you can catch them).\n2. Use try/catch blocks to handle expected exceptions.\n3. Use a global exception/error handler for uncaught exceptions and errors (using `set_exception_handler()` and `register_shutdown_function()`).\n4. Log errors for debugging, and show a generic user-friendly page in production.\n\nExample error handler:\n```php\nset_error_handler(function($severity, $message, $file, $line) {\n    throw new ErrorException($message, 0, $severity, $file, $line);\n});\n```"
+        },
+        {
+            "id": "s_l9_3",
+            "type": "quiz",
+            "title": "Final Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l9_1",
+                "type": "multiple_choice",
+                "question": "Should you catch every error in your application?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Yes, always",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "No, let some errors bubble up to the global handler",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only catch parse errors",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Errors cannot be caught",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It's best to catch expected exceptions and have a global handler for unexpected ones, rather than catching everything indiscriminately.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

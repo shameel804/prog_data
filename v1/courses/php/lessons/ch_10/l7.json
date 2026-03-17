@@ -1,0 +1,88 @@
+{
+    "id": "l7",
+    "chapterId": "ch_10",
+    "title": "File Permissions and Ownership",
+    "description": "Understand and change file permissions with chmod.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l7_1",
+            "type": "text",
+            "title": "File Permissions",
+            "content": "# Understanding Permissions\n\nOn Unix-like systems, files have permissions for three categories: owner, group, and others. Each has read (r), write (w), and execute (x) permissions.\n\nPermissions are often represented as an octal number (e.g., 0644).\n\n*   `0644` – owner: read+write (6), group: read (4), others: read (4)\n*   `0755` – owner: read+write+execute (7), group: read+execute (5), others: read+execute (5)"
+        },
+        {
+            "id": "s_l7_2",
+            "type": "text",
+            "title": "chmod() – Change Permissions",
+            "content": "# chmod()\n\n`chmod(string $filename, int $permissions): bool` changes file permissions. The permissions must be an octal number, usually with a leading zero.\n\n```php\nchmod('file.txt', 0644); // make file readable by all, writable by owner\nchmod('script.sh', 0755); // make executable\n```\n\nReturns true on success, false on failure."
+        },
+        {
+            "id": "s_l7_3",
+            "type": "code",
+            "title": "chmod Example",
+            "content": "```php\n<?php\n$file = 'config.php';\n// Remove write for group and others, keep read\nif (chmod($file, 0644)) {\n    echo \"Permissions changed.\";\n} else {\n    echo \"Failed to change permissions.\";\n}\n?>\n```",
+            "codeSnippet": "<?php\n$file = 'config.php';\nif (chmod($file, 0644)) {\n    echo \"Permissions changed.\";\n} else {\n    echo \"Failed to change permissions.\";\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_4",
+            "type": "text",
+            "title": "fileperms() – Get Permissions",
+            "content": "# fileperms()\n\n`fileperms(string $filename): int|false` returns the permissions as a numeric mode. You can format it with `sprintf('%o', fileperms($file))` to get octal representation.\n\n```php\n$perms = fileperms('file.txt');\necho substr(sprintf('%o', $perms), -4); // e.g., 0644\n```"
+        },
+        {
+            "id": "s_l7_5",
+            "type": "code",
+            "title": "Getting and Setting Permissions",
+            "content": "```php\n<?php\n$file = 'data.txt';\nif (file_exists($file)) {\n    $perms = fileperms($file);\n    echo \"Current permissions: \" . substr(sprintf('%o', $perms), -4) . \"\\n\";\n    // Change to owner read/write, group/others read\n    chmod($file, 0644);\n    echo \"Permissions updated.\\n\";\n} else {\n    echo \"File not found.\";\n}\n?>\n```",
+            "codeSnippet": "<?php\n$file = 'data.txt';\nif (file_exists($file)) {\n    $perms = fileperms($file);\n    echo \"Current permissions: \" . substr(sprintf('%o', $perms), -4) . \"\\n\";\n    chmod($file, 0644);\n    echo \"Permissions updated.\\n\";\n} else {\n    echo \"File not found.\";\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_6",
+            "type": "warning",
+            "title": "Security Note",
+            "content": "## Avoid 0777\n\nNever set permissions to 0777 (world writable) on a production server unless absolutely necessary. It can allow any user on the system to modify your files, leading to security risks."
+        },
+        {
+            "id": "s_l7_7",
+            "type": "quiz",
+            "title": "Check Understanding 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_1",
+                "type": "multiple_choice",
+                "question": "What does the octal permission 0644 mean?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Owner can read/write, group and others can read",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Everyone can read and write",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Owner can read/write/execute, others can read",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Owner can read, group can write, others can execute",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "6 = read+write (4+2), 4 = read, so 0644 means owner read/write, group read, others read.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

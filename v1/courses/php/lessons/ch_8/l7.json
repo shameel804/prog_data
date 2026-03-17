@@ -1,0 +1,82 @@
+{
+    "id": "l7",
+    "chapterId": "ch_8",
+    "title": "More Regex Patterns",
+    "description": "Character classes, quantifiers, anchors, and groups.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Regex",
+    "slides": [
+        {
+            "id": "s_l7_1",
+            "type": "text",
+            "title": "Regex Building Blocks",
+            "content": "# Common Pattern Elements\n\n*   **Character classes**: `[abc]` matches a, b, or c. `[^abc]` matches anything except a,b,c.\n*   **Ranges**: `[a-z]` lowercase letters, `[0-9]` digits.\n*   **Predefined classes**: `\\d` digit, `\\w` word character (letter, digit, underscore), `\\s` whitespace.\n*   **Quantifiers**: `*` zero or more, `+` one or more, `?` zero or one, `{n}` exactly n, `{n,}` at least n, `{n,m}` between n and m.\n*   **Anchors**: `^` start of string, `$` end of string.\n*   **Groups**: `(pattern)` capturing group, `(?:pattern)` non-capturing group."
+        },
+        {
+            "id": "s_l7_2",
+            "type": "code",
+            "title": "Examples of Patterns",
+            "content": "```php\n<?php\n$email = \"test@example.com\";\nif (preg_match(\"/^[\\w.-]+@[\\w.-]+\\.\\w+$/\", $email)) {\n    echo \"Valid email format.\";\n}\n\n$phone = \"+1 (123) 456-7890\";\nif (preg_match(\"/^\\+?\\d{1,3} ?\\(?\\d{3}\\)? ?\\d{3}-\\d{4}$/\", $phone)) {\n    echo \"Valid phone.\";\n}\n?>\n```",
+            "codeSnippet": "<?php\n$email = \"test@example.com\";\nif (preg_match(\"/^[\\w.-]+@[\\w.-]+\\.\\w+$/\", $email)) {\n    echo \"Valid email format.\";\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_3",
+            "type": "text",
+            "title": "preg_match_all()",
+            "content": "# Finding All Matches\n\n`preg_match_all()` returns the number of full matches, and fills `$matches` with all occurrences.\n\n```php\n<?php\n$text = \"The numbers: 123, 456, 789\";\npreg_match_all(\"/\\d+/\", $text, $matches);\nprint_r($matches[0]); // [\"123\", \"456\", \"789\"]\n?>\n```"
+        },
+        {
+            "id": "s_l7_4",
+            "type": "code",
+            "title": "preg_match_all Example",
+            "content": "```php\n<?php\n$html = \"<p>First</p><p>Second</p><p>Third</p>\";\npreg_match_all(\"/<p>(.*?)<\\/p>/\", $html, $matches);\nprint_r($matches[1]); // [\"First\", \"Second\", \"Third\"]\n?>\n```\nNote the lazy quantifier `*?` to stop at the first closing tag.",
+            "codeSnippet": "<?php\n$html = \"<p>First</p><p>Second</p><p>Third</p>\";\npreg_match_all(\"/<p>(.*?)<\\/p>/\", $html, $matches);\nprint_r($matches[1]);\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_5",
+            "type": "warning",
+            "title": "Regex Performance",
+            "content": "## Beware of Catastrophic Backtracking\n\nSome regex patterns can be extremely slow on certain inputs (e.g., `/(a+)+$/`). Keep patterns simple, and test with edge cases."
+        },
+        {
+            "id": "s_l7_6",
+            "type": "quiz",
+            "title": "Check Understanding 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_1",
+                "type": "multiple_choice",
+                "question": "Which pattern matches a string consisting of exactly three digits?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "/\\d{3}/",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "/^\\d{3}$/",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "/\\d+/",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "/[0-9]/",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`/^\\d{3}$/` matches start, three digits, end – so exactly three digits.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

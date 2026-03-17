@@ -1,0 +1,67 @@
+{
+    "id": "l10",
+    "chapterId": "ch_12",
+    "title": "Late Static Binding and More",
+    "description": "Advanced OOP features in PHP.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l10_1",
+            "type": "text",
+            "title": "Late Static Binding",
+            "content": "# static:: vs self::\n\nWhen using `self::`, the class where the method is defined is used. With `static::`, the class that was called at runtime is used (late static binding).\n\n```php\nclass ParentClass {\n    public static function who() {\n        echo __CLASS__;\n    }\n\n    public static function testSelf() {\n        self::who();\n    }\n\n    public static function testStatic() {\n        static::who();\n    }\n}\n\nclass ChildClass extends ParentClass {\n    public static function who() {\n        echo __CLASS__;\n    }\n}\n\nChildClass::testSelf();    // outputs ParentClass\nChildClass::testStatic();  // outputs ChildClass\n```"
+        },
+        {
+            "id": "s_l10_2",
+            "type": "text",
+            "title": "Magic Methods",
+            "content": "# Common Magic Methods\n\nPHP provides several magic methods (starting with `__`) that are called automatically in certain situations:\n\n*   `__construct()`, `__destruct()`\n*   `__get($prop)`, `__set($prop, $value)` – for accessing inaccessible properties.\n*   `__call($name, $args)` – for invoking inaccessible methods.\n*   `__toString()` – when object is treated as a string.\n*   `__invoke($x)` – when object is called as a function.\n\nExample:\n```php\nclass User {\n    private $data = [];\n\n    public function __set($name, $value) {\n        $this->data[$name] = $value;\n    }\n\n    public function __get($name) {\n        return $this->data[$name] ?? null;\n    }\n}\n\n$user = new User();\n$user->name = 'Alice';\necho $user->name; // Alice\n```"
+        },
+        {
+            "id": "s_l10_3",
+            "type": "code",
+            "title": "Magic Method Example",
+            "content": "```php\n<?php\nclass Stringable {\n    private $value;\n\n    public function __construct($value) {\n        $this->value = $value;\n    }\n\n    public function __toString() {\n        return (string) $this->value;\n    }\n}\n\n$obj = new Stringable(123);\necho $obj; // 123, automatically calls __toString()\n?>\n```",
+            "codeSnippet": "<?php\nclass Stringable {\n    private $value;\n    public function __construct($value) {\n        $this->value = $value;\n    }\n    public function __toString() {\n        return (string) $this->value;\n    }\n}\n$obj = new Stringable(123);\necho $obj;\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l10_4",
+            "type": "quiz",
+            "title": "Check Understanding 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l10_1",
+                "type": "multiple_choice",
+                "question": "What is the difference between self:: and static::?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They are identical",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "self:: refers to the current class, static:: to the called class at runtime",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "static:: is for static methods only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "self:: is for static methods only",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "self:: uses the class where it's written; static:: uses the class that was actually called (late static binding).",
+                "xpReward": 10
+            }
+        }
+    ]
+}

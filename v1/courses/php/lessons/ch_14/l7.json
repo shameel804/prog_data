@@ -1,0 +1,76 @@
+{
+    "id": "l7",
+    "chapterId": "ch_14",
+    "title": "Error Handling and Transactions",
+    "description": "Handle errors and use transactions for data integrity.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l7_1",
+            "type": "text",
+            "title": "Error Handling with PDO",
+            "content": "# Catching PDO Exceptions\n\nIf you set error mode to `ERRMODE_EXCEPTION`, PDO throws `PDOException` on errors. You can catch them with try/catch.\n\n```php\ntry {\n    $pdo = new PDO(...);\n    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);\n    // queries\n} catch (PDOException $e) {\n    echo \"Database error: \" . $e->getMessage();\n    // log error, show user-friendly message\n}\n```"
+        },
+        {
+            "id": "s_l7_2",
+            "type": "code",
+            "title": "Error Handling Example",
+            "content": "```php\n<?php\ntry {\n    $pdo = new PDO($dsn, $user, $pass, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);\n    $stmt = $pdo->prepare('SELECT * FROM non_existent_table');\n    $stmt->execute();\n} catch (PDOException $e) {\n    echo 'Query failed: ' . $e->getMessage();\n    // optionally rethrow or handle\n}\n?>\n```",
+            "codeSnippet": "<?php\ntry {\n    $pdo = new PDO($dsn, $user, $pass, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);\n    $stmt = $pdo->prepare('SELECT * FROM non_existent_table');\n    $stmt->execute();\n} catch (PDOException $e) {\n    echo 'Query failed: ' . $e->getMessage();\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_3",
+            "type": "text",
+            "title": "Transactions",
+            "content": "# Ensuring Data Consistency\n\nA transaction groups multiple queries so they either all succeed or all fail (atomicity). Useful for operations like transferring money between accounts.\n\n```php\n$pdo->beginTransaction();\ntry {\n    $pdo->exec('UPDATE accounts SET balance = balance - 100 WHERE id = 1');\n    $pdo->exec('UPDATE accounts SET balance = balance + 100 WHERE id = 2');\n    $pdo->commit(); // all good\n} catch (Exception $e) {\n    $pdo->rollBack(); // revert changes\n    echo \"Transaction failed: \" . $e->getMessage();\n}\n```\n\n`beginTransaction()` starts, `commit()` saves, `rollBack()` undoes."
+        },
+        {
+            "id": "s_l7_4",
+            "type": "code",
+            "title": "Transaction Example",
+            "content": "```php\n<?php\n$pdo->beginTransaction();\ntry {\n    $pdo->exec(\"INSERT INTO logs (message) VALUES ('Starting transfer')\");\n    $pdo->exec(\"UPDATE accounts SET balance = balance - 50 WHERE id = 1\");\n    // Simulate error if second update fails\n    $pdo->exec(\"UPDATE accounts SET balance = balance + 50 WHERE id = 2\");\n    $pdo->commit();\n    echo \"Transfer complete.\";\n} catch (Exception $e) {\n    $pdo->rollBack();\n    echo \"Transfer failed: \" . $e->getMessage();\n}\n?>\n```",
+            "codeSnippet": "<?php\n$pdo->beginTransaction();\ntry {\n    $pdo->exec(\"UPDATE accounts SET balance = balance - 50 WHERE id = 1\");\n    $pdo->exec(\"UPDATE accounts SET balance = balance + 50 WHERE id = 2\");\n    $pdo->commit();\n    echo \"Transfer complete.\";\n} catch (Exception $e) {\n    $pdo->rollBack();\n    echo \"Transfer failed: \" . $e->getMessage();\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_1",
+                "type": "multiple_choice",
+                "question": "Which method commits a transaction?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "beginTransaction()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "commit()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "rollBack()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "endTransaction()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "commit() saves all changes made during the transaction.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

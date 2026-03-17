@@ -1,0 +1,82 @@
+{
+    "id": "l7",
+    "chapterId": "ch_6",
+    "title": "Anonymous Functions and Closures",
+    "description": "Create functions without names and use them as values.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l7_1",
+            "type": "text",
+            "title": "What is an Anonymous Function?",
+            "content": "# Functions Without Names\n\nAn anonymous function (or closure) is a function that has no specified name. It can be assigned to a variable or passed as an argument.\n\n```php\n$greet = function($name) {\n    echo \"Hello, $name\";\n};\n\n$greet(\"Alice\"); // Hello, Alice\n```\n\nNote the semicolon after the closing brace – it's an assignment."
+        },
+        {
+            "id": "s_l7_2",
+            "type": "code",
+            "title": "Using Anonymous Functions",
+            "content": "```php\n<?php\n$multiply = function($a, $b) {\n    return $a * $b;\n};\n\necho $multiply(3, 4); // 12\n\n// They can be passed to other functions\n$numbers = [1, 2, 3, 4];\n$squared = array_map(function($n) {\n    return $n * $n;\n}, $numbers);\n\nprint_r($squared); // [1, 4, 9, 16]\n?>\n```",
+            "codeSnippet": "<?php\n$multiply = function($a, $b) {\n    return $a * $b;\n};\necho $multiply(3, 4);\n\n$numbers = [1, 2, 3, 4];\n$squared = array_map(function($n) {\n    return $n * $n;\n}, $numbers);\nprint_r($squared);\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_3",
+            "type": "text",
+            "title": "Closures and 'use'",
+            "content": "# Capturing Variables from Outer Scope\n\nAnonymous functions can inherit variables from the parent scope using the `use` keyword.\n\n```php\n$message = \"Hello\";\n$example = function($name) use ($message) {\n    echo \"$message, $name\";\n};\n$example(\"World\"); // Hello, World\n```\n\nThis is different from global – it captures the variable at the time the function is defined."
+        },
+        {
+            "id": "s_l7_4",
+            "type": "code",
+            "title": "Using 'use'",
+            "content": "```php\n<?php\n$factor = 10;\n$calculator = function($number) use ($factor) {\n    return $number * $factor;\n};\n\necho $calculator(5); // 50\n\n$factor = 20; // doesn't affect the closure because it was captured earlier\necho $calculator(5); // still 50\n?>\n```",
+            "codeSnippet": "<?php\n$factor = 10;\n$calculator = function($number) use ($factor) {\n    return $number * $factor;\n};\n\necho $calculator(5);\n$factor = 20;\necho $calculator(5);\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Passing by Reference\n\nYou can pass variables by reference with `use (&$var)` to allow the closure to modify the outer variable."
+        },
+        {
+            "id": "s_l7_6",
+            "type": "quiz",
+            "title": "Check Understanding 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_1",
+                "type": "multiple_choice",
+                "question": "What will this code output?\n\n```php\n$msg = \"Hi\";\n$func = function() use ($msg) {\n    $msg = \"Bye\";\n};\n$func();\necho $msg;\n```",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Hi",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Bye",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "null",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `use` captures `$msg` by value, not reference. Changing it inside the closure doesn't affect the outer variable.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

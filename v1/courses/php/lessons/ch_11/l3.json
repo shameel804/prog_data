@@ -1,0 +1,61 @@
+{
+    "id": "l3",
+    "chapterId": "ch_11",
+    "title": "Destroying Sessions",
+    "description": "End sessions, unset variables, and log users out.",
+    "xpReward": 15,
+    "estimatedMinutes": 5,
+    "section": "Sessions",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Ending a Session",
+            "content": "# Logout / Session Cleanup\n\nTo completely destroy a session (e.g., on logout), you need to:\n\n1. Unset all session variables (`$_SESSION = []`).\n2. Delete the session cookie if used.\n3. Destroy the session data on the server with `session_destroy()`.\n\n```php\nsession_start();\n$_SESSION = []; // clear all session data\n\nif (ini_get(\"session.use_cookies\")) {\n    $params = session_get_cookie_params();\n    setcookie(session_name(), '', time() - 42000,\n        $params[\"path\"], $params[\"domain\"],\n        $params[\"secure\"], $params[\"httponly\"]\n    );\n}\n\nsession_destroy();\n```"
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Simple Logout Example",
+            "content": "```php\n<?php\nsession_start();\n\n// Remove specific variable\nunset($_SESSION['username']);\n\n// Or clear all\n$_SESSION = [];\n\n// Destroy the session file\nsession_destroy();\n\n// Redirect to login page\nheader('Location: login.php');\nexit;\n?>\n```",
+            "codeSnippet": "<?php\nsession_start();\nunset($_SESSION['username']);\n$_SESSION = [];\nsession_destroy();\nheader('Location: login.php');\nexit;\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which function destroys the session data on the server?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "session_unset()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "session_destroy()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "session_kill()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "session_end()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "session_destroy() destroys all data associated with the current session.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

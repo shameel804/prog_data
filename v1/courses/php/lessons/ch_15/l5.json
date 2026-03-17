@@ -1,0 +1,73 @@
+{
+    "id": "l5",
+    "chapterId": "ch_15",
+    "title": "Security Basics: SQL Injection, XSS, CSRF",
+    "description": "Understand and prevent common vulnerabilities.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Security",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "SQL Injection",
+            "content": "# SQL Injection (SQLi)\n\nAs seen in Chapter 14, SQL injection occurs when user input is concatenated into SQL queries. Attackers can modify queries to steal data, bypass authentication, or delete tables.\n\n**Prevention:**\n*   Always use prepared statements with PDO or MySQLi.\n*   Never trust user input.\n\nExample of vulnerable code:\n```php\n$id = $_GET['id'];\n$sql = \"SELECT * FROM users WHERE id = $id\"; // DANGEROUS!\n```"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Cross-Site Scripting (XSS)",
+            "content": "# XSS\n\nXSS allows attackers to inject client-side scripts into web pages viewed by other users. For example, if you output user input directly without escaping, an attacker could inject `<script>` tags.\n\n**Prevention:**\n*   Use `htmlspecialchars()` when outputting user data.\n*   Apply context-specific escaping (HTML, JavaScript, CSS).\n*   Use Content Security Policy (CSP) headers.\n\n```php\necho htmlspecialchars($userInput, ENT_QUOTES, 'UTF-8');\n```"
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Cross-Site Request Forgery (CSRF)",
+            "content": "# CSRF\n\nCSRF tricks an authenticated user into making unwanted requests (e.g., changing password, transferring money). The attacker creates a malicious site that submits a form to your site, and if the user is logged in, the request is sent with their cookies.\n\n**Prevention:**\n*   Use CSRF tokens: generate a unique token per form, store in session, and validate on submission.\n*   Use SameSite cookies.\n*   For state-changing requests, require re-authentication."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "CSRF Token Example",
+            "content": "```php\n<?php\nsession_start();\n\n// Generate token\nif (empty($_SESSION['csrf_token'])) {\n    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));\n}\n?>\n<form method=\"post\">\n    <input type=\"hidden\" name=\"csrf_token\" value=\"<?php echo $_SESSION['csrf_token']; ?>\">\n    <input type=\"submit\" value=\"Delete Account\">\n</form>\n\n<?php\nif ($_SERVER['REQUEST_METHOD'] === 'POST') {\n    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) {\n        die('Invalid CSRF token');\n    }\n    // process form\n}\n?>\n```",
+            "codeSnippet": "<?php\nsession_start();\nif (empty($_SESSION['csrf_token'])) {\n    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));\n}\n?>\n<form method=\"post\">\n    <input type=\"hidden\" name=\"csrf_token\" value=\"<?php echo $_SESSION['csrf_token']; ?>\">\n    <input type=\"submit\" value=\"Delete Account\">\n</form>\n<?php\nif ($_SERVER['REQUEST_METHOD'] === 'POST') {\n    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) {\n        die('Invalid CSRF token');\n    }\n    // process\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which function helps prevent XSS when outputting user data?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "htmlspecialchars()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "strip_tags()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "addslashes()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "urlencode()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "htmlspecialchars() converts special characters to HTML entities, preventing XSS.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

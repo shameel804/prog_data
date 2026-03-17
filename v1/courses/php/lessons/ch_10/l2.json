@@ -1,0 +1,82 @@
+{
+    "id": "l2",
+    "chapterId": "ch_10",
+    "title": "Writing to Files",
+    "description": "Write data to files and create new files.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Write",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Writing to Files",
+            "content": "# file_put_contents() – Simple Write\n\nThe easiest way to write to a file is `file_put_contents()`. It writes a string to a file, creating the file if it doesn't exist, and overwriting existing content by default.\n\n```php\nfile_put_contents('file.txt', 'Hello World!');\n```\n\nIt returns the number of bytes written, or false on failure."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Using file_put_contents",
+            "content": "```php\n<?php\n$data = \"This is a new line of text.\";\n$bytes = file_put_contents('output.txt', $data);\nif ($bytes !== false) {\n    echo \"Successfully wrote $bytes bytes.\";\n} else {\n    echo \"Write failed.\";\n}\n?>\n```",
+            "codeSnippet": "<?php\n$data = \"This is a new line of text.\";\n$bytes = file_put_contents('output.txt', $data);\nif ($bytes !== false) {\n    echo \"Successfully wrote $bytes bytes.\";\n} else {\n    echo \"Write failed.\";\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Writing with fopen() and fwrite()",
+            "content": "# More Control with fopen/fwrite\n\nIf you need more control (e.g., binary writes, flock), you can use `fopen()` with mode `'w'` (write, truncate) or `'x'` (create and write, fail if exists).\n\n```php\n$handle = fopen('file.txt', 'w');\nfwrite($handle, 'Hello');\nfclose($handle);\n```"
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Using fwrite",
+            "content": "```php\n<?php\n$handle = fopen('newfile.txt', 'w');\nif ($handle) {\n    fwrite($handle, \"First line\\n\");\n    fwrite($handle, \"Second line\\n\");\n    fclose($handle);\n    echo \"File written.\";\n} else {\n    echo \"Cannot open file.\";\n}\n?>\n```",
+            "codeSnippet": "<?php\n$handle = fopen('newfile.txt', 'w');\nif ($handle) {\n    fwrite($handle, \"First line\\n\");\n    fwrite($handle, \"Second line\\n\");\n    fclose($handle);\n    echo \"File written.\";\n} else {\n    echo \"Cannot open file.\";\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_5",
+            "type": "warning",
+            "title": "File Permissions",
+            "content": "## Write Permissions\n\nMake sure the web server has write permission to the directory. On Unix systems, you may need to set permissions (e.g., `chmod 777` for testing, but for production, be more restrictive)."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What does `file_put_contents()` return on success?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "true",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "the number of bytes written",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "the file handle",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "the content written",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "file_put_contents returns the number of bytes written, or false on error.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

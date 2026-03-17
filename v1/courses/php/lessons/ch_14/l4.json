@@ -1,0 +1,73 @@
+{
+    "id": "l4",
+    "chapterId": "ch_14",
+    "title": "Prepared Statements and Binding Parameters",
+    "description": "Protect against SQL injection with prepared statements.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Prepared Statements",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "SQL Injection Danger",
+            "content": "# Never Trust User Input\n\nIf you insert user input directly into SQL, attackers can manipulate your query. Example:\n\n```php\n// Dangerous!\n$sql = \"SELECT * FROM users WHERE name = '\" . $_POST['name'] . \"'\";\n```\n\nIf the user enters `' OR '1'='1`, the query becomes:\n```sql\nSELECT * FROM users WHERE name = '' OR '1'='1'\n```\nWhich returns all users!\n\n**Prepared statements** prevent this by separating SQL logic from data."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Prepared Statements with PDO",
+            "content": "# Using prepare() and execute()\n\nWith PDO, you use `prepare()` to send the query with placeholders, then `execute()` to send the actual values.\n\n```php\n$stmt = $pdo->prepare('SELECT * FROM users WHERE email = :email');\n$stmt->execute(['email' => $email]);\n$user = $stmt->fetch();\n```\n\nPlaceholders can be named (`:email`) or positional (`?`)."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Positional vs Named Placeholders",
+            "content": "```php\n<?php\n// Positional placeholders (?)\n$stmt = $pdo->prepare('SELECT * FROM users WHERE age > ? AND city = ?');\n$stmt->execute([18, 'Paris']);\n\n// Named placeholders\n$stmt = $pdo->prepare('SELECT * FROM users WHERE age > :age AND city = :city');\n$stmt->execute(['age' => 18, 'city' => 'Paris']);\n\n// You can also bind parameters individually\n$stmt->bindParam(':age', $age, PDO::PARAM_INT);\n$stmt->bindParam(':city', $city, PDO::PARAM_STR);\n$stmt->execute();\n?>\n```",
+            "codeSnippet": "<?php\n$stmt = $pdo->prepare('SELECT * FROM users WHERE age > :age AND city = :city');\n$stmt->execute(['age' => 18, 'city' => 'Paris']);\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_4",
+            "type": "warning",
+            "title": "Benefits",
+            "content": "## Why Prepared Statements?\n\n*   **Security**: Input values are never concatenated into the query; they are sent separately, so injection is impossible.\n*   **Performance**: For repeated queries, prepare once and execute many times.\n*   **Clarity**: Code is cleaner and easier to read."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Check Understanding 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which method sends the query with placeholders to the database?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "query()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "prepare()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "execute()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "bindParam()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "prepare() sends the query template; execute() sends the values.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

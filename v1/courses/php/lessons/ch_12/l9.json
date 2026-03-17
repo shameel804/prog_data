@@ -1,0 +1,61 @@
+{
+    "id": "l9",
+    "chapterId": "ch_12",
+    "title": "Traits",
+    "description": "Share methods across unrelated classes.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Traits",
+    "slides": [
+        {
+            "id": "s_l9_1",
+            "type": "text",
+            "title": "Traits",
+            "content": "# Code Reuse without Inheritance\n\nPHP is a single inheritance language: a class can only extend one parent. Traits allow you to reuse sets of methods in multiple classes, avoiding duplication.\n\nA trait is like a partial class; you can use the `use` keyword inside a class to include its methods.\n\n```php\ntrait Logger {\n    public function log($message) {\n        echo \"[LOG] \" . date('Y-m-d H:i:s') . \" - $message\\n\";\n    }\n}\n\nclass User {\n    use Logger;\n\n    public function create() {\n        $this->log('User created');\n    }\n}\n\nclass Order {\n    use Logger;\n\n    public function process() {\n        $this->log('Order processed');\n    }\n}\n```"
+        },
+        {
+            "id": "s_l9_2",
+            "type": "code",
+            "title": "Trait Example",
+            "content": "```php\n<?php\ntrait Timestampable {\n    public $createdAt;\n    public $updatedAt;\n\n    public function setTimestamps() {\n        $this->createdAt = new DateTime();\n        $this->updatedAt = new DateTime();\n    }\n}\n\nclass Post {\n    use Timestampable;\n\n    public function __construct() {\n        $this->setTimestamps();\n    }\n}\n\n$post = new Post();\nvar_dump($post->createdAt);\n?>\n```",
+            "codeSnippet": "<?php\ntrait Timestampable {\n    public $createdAt;\n    public $updatedAt;\n    public function setTimestamps() {\n        $this->createdAt = new DateTime();\n        $this->updatedAt = new DateTime();\n    }\n}\nclass Post {\n    use Timestampable;\n    public function __construct() {\n        $this->setTimestamps();\n    }\n}\n$post = new Post();\nvar_dump($post->createdAt);\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l9_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l9_1",
+                "type": "multiple_choice",
+                "question": "What keyword is used to include a trait in a class?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "include",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "use",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "trait",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "import",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Inside a class, you write `use TraitName;` to include a trait.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

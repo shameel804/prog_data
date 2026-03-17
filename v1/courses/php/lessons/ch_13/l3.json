@@ -1,0 +1,67 @@
+{
+    "id": "l3",
+    "chapterId": "ch_13",
+    "title": "Custom Error Handlers",
+    "description": "Take control of errors with set_error_handler().",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "set_error_handler()",
+            "content": "# Taking Over Error Handling\n\nYou can define your own function to handle errors using `set_error_handler()`. This function will be called whenever an error occurs (except fatal errors).\n\n```php\nfunction myErrorHandler($errno, $errstr, $errfile, $errline) {\n    echo \"Error [$errno]: $errstr in $errfile on line $errline\";\n    // You can log, display custom page, etc.\n    return true; // indicate error handled\n}\n\nset_error_handler('myErrorHandler');\n```\n\nTo restore the previous handler, use `restore_error_handler()`."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Custom Error Handler Example",
+            "content": "```php\n<?php\nfunction customError($errno, $errstr) {\n    echo \"<b>Custom Error:</b> [$errno] $errstr<br>\";\n    error_log(\"Error: $errstr\"); // log to server error log\n}\n\nset_error_handler('customError');\n\necho $undefinedVar; // triggers custom handler\necho \"Script continues...\";\n?>\n```",
+            "codeSnippet": "<?php\nfunction customError($errno, $errstr) {\n    echo \"<b>Custom Error:</b> [$errno] $errstr<br>\";\n}\nset_error_handler('customError');\necho $undefinedVar;\necho \"Script continues...\";\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "warning",
+            "title": "Limitations",
+            "content": "## Fatal Errors Not Caught\n\nThe custom error handler cannot catch fatal errors (E_ERROR) or parse errors. For those, you might use a shutdown function (register_shutdown_function) to catch the last error."
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which function sets a custom error handler?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "error_handler()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "set_error_handler()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "register_error_handler()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "custom_error()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "set_error_handler() registers a custom error handler.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

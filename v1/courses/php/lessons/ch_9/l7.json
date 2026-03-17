@@ -1,0 +1,87 @@
+{
+    "id": "l7",
+    "chapterId": "ch_9",
+    "title": "File Uploads",
+    "description": "Accept file uploads from forms.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l7_1",
+            "type": "text",
+            "title": "Uploading Files",
+            "content": "# File Uploads in PHP\n\nTo upload files, your HTML form must have `enctype=\"multipart/form-data\"` and method `POST`.\n\n```html\n<form action=\"upload.php\" method=\"post\" enctype=\"multipart/form-data\">\n    <input type=\"file\" name=\"uploadedFile\">\n    <input type=\"submit\" value=\"Upload\">\n</form>\n```\n\nIn PHP, uploaded files are available in the `$_FILES` superglobal."
+        },
+        {
+            "id": "s_l7_2",
+            "type": "text",
+            "title": "The $_FILES Array",
+            "content": "# Structure of $_FILES\n\nFor a file input named `uploadedFile`, `$_FILES['uploadedFile']` is an array with keys:\n\n*   `name` – original filename\n*   `type` – MIME type (e.g., `image/png`)\n*   `tmp_name` – temporary file path on server\n*   `error` – error code (0 if success)\n*   `size` – file size in bytes\n\nAfter upload, the file is stored in a temporary location. You must move it to a permanent location using `move_uploaded_file()`."
+        },
+        {
+            "id": "s_l7_3",
+            "type": "code",
+            "title": "Basic File Upload Script",
+            "content": "```php\n<?php\nif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploadedFile'])) {\n    $file = $_FILES['uploadedFile'];\n\n    if ($file['error'] === UPLOAD_ERR_OK) {\n        $uploadDir = 'uploads/';\n        // Ensure directory exists and is writable\n        $destination = $uploadDir . basename($file['name']);\n        if (move_uploaded_file($file['tmp_name'], $destination)) {\n            echo \"File uploaded successfully.\";\n        } else {\n            echo \"Failed to move file.\";\n        }\n    } else {\n        echo \"Upload error: \" . $file['error'];\n    }\n}\n?>\n```",
+            "codeSnippet": "<?php\nif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['uploadedFile'])) {\n    $file = $_FILES['uploadedFile'];\n    if ($file['error'] === UPLOAD_ERR_OK) {\n        $uploadDir = 'uploads/';\n        $destination = $uploadDir . basename($file['name']);\n        if (move_uploaded_file($file['tmp_name'], $destination)) {\n            echo \"File uploaded successfully.\";\n        } else {\n            echo \"Failed to move file.\";\n        }\n    } else {\n        echo \"Upload error: \" . $file['error'];\n    }\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_4",
+            "type": "warning",
+            "title": "Security Considerations",
+            "content": "## Never Trust Uploaded Files\n\n*   Always validate file type and size.\n*   Use `is_uploaded_file()` and `move_uploaded_file()` for security.\n*   Store files outside the web root if possible, or use a script to serve them.\n*   Rename files to avoid collisions and malicious names.\n\nExample validation:\n```php\n$allowedTypes = ['image/png', 'image/jpeg'];\nif (!in_array($file['type'], $allowedTypes)) {\n    die(\"Invalid file type.\");\n}\nif ($file['size'] > 2 * 1024 * 1024) { // 2MB\n    die(\"File too large.\");\n}\n```"
+        },
+        {
+            "id": "s_l7_5",
+            "type": "quiz",
+            "title": "Check Understanding 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_1",
+                "type": "multiple_choice",
+                "question": "What superglobal contains information about uploaded files?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "$_POST",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "$_GET",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "$_FILES",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "$_UPLOAD",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "File uploads are stored in $_FILES.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l7_6",
+            "type": "quiz",
+            "title": "Quick Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_2",
+                "type": "true_false",
+                "question": "The form enctype must be set to 'multipart/form-data' for file uploads.",
+                "correctAnswer": true,
+                "explanation": "Yes, that enctype is required for file uploads.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

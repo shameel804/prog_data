@@ -1,0 +1,67 @@
+{
+    "id": "l2",
+    "chapterId": "ch_14",
+    "title": "Connecting to a Database",
+    "description": "Create a PDO connection to MySQL.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Connection",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Creating a PDO Object",
+            "content": "# PDO Constructor\n\nTo connect, create a new PDO object with a **DSN** (Data Source Name), username, and password.\n\n```php\n$dsn = 'mysql:host=localhost;dbname=testdb;charset=utf8mb4';\n$username = 'root';\n$password = '';\n\n$pdo = new PDO($dsn, $username, $password);\n```\n\nThe DSN format depends on the database driver. For MySQL: `mysql:host=HOST;dbname=NAME;charset=CHARSET`"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Connection Example",
+            "content": "```php\n<?php\n$host = 'localhost';\n$db   = 'myapp';\n$user = 'root';\n$pass = '';\n$charset = 'utf8mb4';\n\n$dsn = \"mysql:host=$host;dbname=$db;charset=$charset\";\n$options = [\n    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,\n    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,\n    PDO::ATTR_EMULATE_PREPARES => false,\n];\n\ntry {\n    $pdo = new PDO($dsn, $user, $pass, $options);\n    echo \"Connected successfully\";\n} catch (PDOException $e) {\n    throw new PDOException($e->getMessage(), (int)$e->getCode());\n}\n?>\n```",
+            "codeSnippet": "<?php\n$host = 'localhost';\n$db   = 'myapp';\n$user = 'root';\n$pass = '';\n$charset = 'utf8mb4';\n$dsn = \"mysql:host=$host;dbname=$db;charset=$charset\";\n$options = [\n    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,\n    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,\n    PDO::ATTR_EMULATE_PREPARES => false,\n];\ntry {\n    $pdo = new PDO($dsn, $user, $pass, $options);\n    echo \"Connected successfully\";\n} catch (PDOException $e) {\n    throw new PDOException($e->getMessage(), (int)$e->getCode());\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Connection Options",
+            "content": "# Important PDO Options\n\nThe fourth parameter to the PDO constructor is an array of driver-specific options. Commonly used:\n\n*   `PDO::ATTR_ERRMODE`: Set error reporting mode.\n    *   `PDO::ERRMODE_SILENT` (default) – set error codes, you check with `errorCode()`.\n    *   `PDO::ERRMODE_WARNING` – emit warnings.\n    *   `PDO::ERRMODE_EXCEPTION` – throw exceptions (recommended).\n*   `PDO::ATTR_DEFAULT_FETCH_MODE`: Set default fetch style.\n*   `PDO::ATTR_EMULATE_PREPARES`: Disable emulated prepared statements for real prepared statements (more secure)."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Check Understanding 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which option tells PDO to throw exceptions on errors?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "PDO::ATTR_EXCEPTION => true",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "PDO::ERRMODE_EXCEPTION",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "PDO::ERRMODE_WARNING",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Setting ATTR_ERRMODE to ERRMODE_EXCEPTION makes PDO throw exceptions on errors.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

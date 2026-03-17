@@ -1,0 +1,76 @@
+{
+    "id": "l6",
+    "chapterId": "ch_6",
+    "title": "Default Parameters and Type Declarations",
+    "description": "Set default values and enforce parameter types.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Default Parameter Values",
+            "content": "# Making Parameters Optional\n\nYou can assign default values to parameters. If the caller doesn't provide an argument, the default is used.\n\n```php\nfunction greet($name = \"Guest\") {\n    echo \"Hello, $name\";\n}\n\ngreet();       // Hello, Guest\ngreet(\"John\"); // Hello, John\n```\n\nDefault parameters must come **after** any required parameters."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Example with Defaults",
+            "content": "```php\n<?php\nfunction createMessage($message, $sender = \"System\") {\n    return \"[$sender] $message\";\n}\n\necho createMessage(\"Server restarted\");        // [System] Server restarted\necho createMessage(\"Login failed\", \"Auth\");   // [Auth] Login failed\n?>\n```",
+            "codeSnippet": "<?php\nfunction createMessage($message, $sender = \"System\") {\n    return \"[$sender] $message\";\n}\n\necho createMessage(\"Server restarted\");\necho createMessage(\"Login failed\", \"Auth\");\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "text",
+            "title": "Type Declarations (Type Hints)",
+            "content": "# Enforcing Parameter Types\n\nYou can specify the expected type of a parameter. If the wrong type is passed, PHP throws a `TypeError` (in strict mode) or attempts to convert.\n\nTo enable strict mode, add `declare(strict_types=1);` at the top of the file.\n\n```php\ndeclare(strict_types=1);\n\nfunction add(int $a, int $b) {\n    return $a + $b;\n}\n\necho add(5, 3);     // 8\necho add(\"5\", \"3\"); // TypeError in strict mode\n```"
+        },
+        {
+            "id": "s_l6_4",
+            "type": "code",
+            "title": "Type Declarations in Action",
+            "content": "```php\n<?php\ndeclare(strict_types=1);\n\nfunction multiply(float $x, float $y): float {\n    return $x * $y;\n}\n\necho multiply(2.5, 4); // 10.0 (int 4 converts to float)\n?>\n```\n\nNotice we also added a **return type** `: float` after the parentheses.",
+            "codeSnippet": "<?php\ndeclare(strict_types=1);\n\nfunction multiply(float $x, float $y): float {\n    return $x * $y;\n}\n\necho multiply(2.5, 4);\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_5",
+            "type": "quiz",
+            "title": "Check Understanding 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What will happen in strict mode if you call `add(5, \"3\")` with `function add(int $a, int $b)`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It will convert \"3\" to 3 and output 8",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It will throw a TypeError",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It will output 53",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It will silently ignore",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "With strict_types=1, passing a string where int is expected causes a TypeError.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,67 @@
+{
+    "id": "l6",
+    "chapterId": "ch_13",
+    "title": "The Exception Class and Custom Exceptions",
+    "description": "Extend the base Exception class.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Custom",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "The Exception Class",
+            "content": "# Built-in Exception Methods\n\nThe base `Exception` class provides several methods:\n\n*   `getMessage()` – get the exception message\n*   `getCode()` – get the error code\n*   `getFile()` – file where exception was thrown\n*   `getLine()` – line number\n*   `getTrace()` – stack trace as array\n*   `getTraceAsString()` – stack trace as string\n\nWhen throwing, you can pass a message and an optional code.\n\n```php\nthrow new Exception('Something went wrong', 42);\n```"
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "Custom Exception Classes",
+            "content": "# Extending Exception\n\nYou can create your own exception classes by extending `Exception`. This allows you to define custom exception types for different error categories.\n\n```php\nclass ValidationException extends Exception {}\nclass DatabaseException extends Exception {}\n\n// Then throw specific exceptions\nif (!$valid) {\n    throw new ValidationException('Invalid input');\n}\n```\n\nYou can add your own methods to custom exceptions."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Custom Exception Example",
+            "content": "```php\n<?php\nclass InsufficientFundsException extends Exception {\n    protected $balance;\n\n    public function __construct($message, $balance, $code = 0) {\n        parent::__construct($message, $code);\n        $this->balance = $balance;\n    }\n\n    public function getBalance() {\n        return $this->balance;\n    }\n}\n\nclass BankAccount {\n    private $balance = 0;\n\n    public function withdraw($amount) {\n        if ($amount > $this->balance) {\n            throw new InsufficientFundsException(\"Insufficient funds\", $this->balance);\n        }\n        $this->balance -= $amount;\n    }\n}\n?>\n```",
+            "codeSnippet": "<?php\nclass InsufficientFundsException extends Exception {\n    protected $balance;\n    public function __construct($message, $balance, $code = 0) {\n        parent::__construct($message, $code);\n        $this->balance = $balance;\n    }\n    public function getBalance() { return $this->balance; }\n}\nclass BankAccount {\n    private $balance = 0;\n    public function withdraw($amount) {\n        if ($amount > $this->balance) {\n            throw new InsufficientFundsException(\"Insufficient funds\", $this->balance);\n        }\n        $this->balance -= $amount;\n    }\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_4",
+            "type": "quiz",
+            "title": "Check Understanding 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "How do you create a custom exception class?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "class MyException implements Exception",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "class MyException extends Exception",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "class MyException inherits Exception",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "create_exception('MyException')",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Extend the built-in Exception class.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

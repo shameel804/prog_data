@@ -1,0 +1,67 @@
+{
+    "id": "l6",
+    "chapterId": "ch_14",
+    "title": "Fetching Data: Different Fetch Modes",
+    "description": "Get results as objects, arrays, or custom classes.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Fetching",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "PDO Fetch Modes",
+            "content": "# fetch() and fetchAll() Styles\n\nPDO offers several fetch modes to control how each row is returned.\n\n*   `PDO::FETCH_ASSOC` – associative array (column names as keys)\n*   `PDO::FETCH_NUM` – indexed array\n*   `PDO::FETCH_BOTH` – both (default)\n*   `PDO::FETCH_OBJ` – anonymous object with properties\n*   `PDO::FETCH_CLASS` – map to a specific class\n\nYou can set the default with `PDO::ATTR_DEFAULT_FETCH_MODE`."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Fetch Modes in Action",
+            "content": "```php\n<?php\n$stmt = $pdo->query('SELECT name, email FROM users');\n\n// Associative array\n$user = $stmt->fetch(PDO::FETCH_ASSOC);\necho $user['name'];\n\n// Object\n$user = $stmt->fetch(PDO::FETCH_OBJ);\necho $user->name;\n\n// Fetch all as objects\n$users = $stmt->fetchAll(PDO::FETCH_OBJ);\nforeach ($users as $user) {\n    echo $user->name;\n}\n?>\n```",
+            "codeSnippet": "<?php\n$stmt = $pdo->query('SELECT name, email FROM users');\n$user = $stmt->fetch(PDO::FETCH_OBJ);\necho $user->name;\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "text",
+            "title": "Fetching into a Class",
+            "content": "# PDO::FETCH_CLASS\n\nYou can map rows directly to objects of a specific class. Properties are set before the constructor is called.\n\n```php\nclass User {\n    public $name;\n    public $email;\n}\n\n$stmt = $pdo->query('SELECT name, email FROM users');\n$users = $stmt->fetchAll(PDO::FETCH_CLASS, 'User');\n```\n\nThis is very handy for clean OOP code."
+        },
+        {
+            "id": "s_l6_4",
+            "type": "quiz",
+            "title": "Check Understanding 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Which fetch mode returns an anonymous object?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "PDO::FETCH_ASSOC",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "PDO::FETCH_OBJ",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "PDO::FETCH_CLASS",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "PDO::FETCH_NUM",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "FETCH_OBJ returns each row as an object with property names matching column names.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

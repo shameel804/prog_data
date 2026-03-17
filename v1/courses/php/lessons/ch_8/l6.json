@@ -1,0 +1,82 @@
+{
+    "id": "l6",
+    "chapterId": "ch_8",
+    "title": "Regular Expressions Intro",
+    "description": "Match patterns with preg_match and preg_replace.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Regex",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "What are Regular Expressions?",
+            "content": "# Patterns for Text\n\nA regular expression (regex) is a sequence of characters that defines a search pattern. PHP uses Perl-compatible regular expressions (PCRE) with functions like `preg_match()`, `preg_replace()`, etc.\n\nPatterns are enclosed in **delimiters** – usually forward slashes `/pattern/`, but can be other characters like `#`, `~`.\n\nExample: `/^[a-z]+$/` matches a string consisting only of lowercase letters."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "preg_match()",
+            "content": "# preg_match() – First Match\n\n`preg_match(string $pattern, string $subject, array &$matches = null, int $flags = 0, int $offset = 0): int|false` returns 1 if the pattern matches, 0 if not, or false on error.\n\n```php\n<?php\nif (preg_match(\"/php/i\", \"I love PHP\")) {\n    echo \"Found!\";\n}\n// The 'i' modifier makes it case-insensitive\n?>\n```\n\nIf `$matches` is provided, it will be filled with the matches."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "preg_match Example",
+            "content": "```php\n<?php\n$str = \"The quick brown fox jumps over the lazy dog.\";\nif (preg_match(\"/quick.*fox/\", $str)) {\n    echo \"Match found!\\n\";\n}\n\n// Capture the word after 'brown'\npreg_match(\"/brown (\\w+)/\", $str, $matches);\nprint_r($matches); // [0 => \"brown fox\", 1 => \"fox\"]\n?>\n```",
+            "codeSnippet": "<?php\n$str = \"The quick brown fox jumps over the lazy dog.\";\npreg_match(\"/brown (\\w+)/\", $str, $matches);\nprint_r($matches);\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "preg_replace()",
+            "content": "# Search and Replace with Regex\n\n`preg_replace(mixed $pattern, mixed $replacement, mixed $subject, int $limit = -1, int &$count = null): mixed` performs a regular expression search and replace.\n\n```php\n<?php\n$text = \"My phone number is 123-456-7890.\";\n$newText = preg_replace(\"/\\d+/\", \"[number]\", $text);\necho $newText; // \"My phone number is [number]-[number]-[number].\"\n?>\n```"
+        },
+        {
+            "id": "s_l6_5",
+            "type": "code",
+            "title": "preg_replace with Backreferences",
+            "content": "You can use captured groups in the replacement with `$1`, `$2`, etc.\n\n```php\n<?php\n$date = \"2025-03-17\";\n$formatted = preg_replace(\"/(\\d{4})-(\\d{2})-(\\d{2})/\", \"$3/$2/$1\", $date);\necho $formatted; // 17/03/2025\n?>\n```",
+            "codeSnippet": "<?php\n$date = \"2025-03-17\";\n$formatted = preg_replace(\"/(\\d{4})-(\\d{2})-(\\d{2})/\", \"$3/$2/$1\", $date);\necho $formatted;\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_6",
+            "type": "quiz",
+            "title": "Check Understanding 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What does `preg_match(\"/[0-9]+/\", \"abc123\")` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "1",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "0",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "false",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "3",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The pattern matches digits, and \"abc123\" contains digits, so preg_match returns 1 (true).",
+                "xpReward": 10
+            }
+        }
+    ]
+}

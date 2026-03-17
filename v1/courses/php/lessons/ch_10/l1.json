@@ -1,0 +1,117 @@
+{
+    "id": "l1",
+    "chapterId": "ch_10",
+    "title": "Reading Files",
+    "description": "Learn how to read entire files or line by line.",
+    "xpReward": 20,
+    "estimatedMinutes": 7,
+    "section": "Read",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Reading Files in PHP",
+            "content": "# Getting Data from Files\n\nPHP provides several ways to read files. The simplest is `file_get_contents()` which reads the entire file into a string.\n\n```php\n$content = file_get_contents('file.txt');\necho $content;\n```\n\nIf the file doesn't exist, it returns `false` and raises a warning."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "code",
+            "title": "Using file_get_contents",
+            "content": "```php\n<?php\n$filename = 'data.txt';\n$content = file_get_contents($filename);\nif ($content === false) {\n    echo \"Failed to read file.\";\n} else {\n    echo $content;\n}\n?>\n```",
+            "codeSnippet": "<?php\n$filename = 'data.txt';\n$content = file_get_contents($filename);\nif ($content === false) {\n    echo \"Failed to read file.\";\n} else {\n    echo $content;\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "Reading a File Line by Line",
+            "content": "# Using fopen() and fgets()\n\nFor large files, reading the entire file at once may use too much memory. You can open a file handle and read line by line.\n\n```php\n$handle = fopen('file.txt', 'r'); // 'r' for read\nif ($handle) {\n    while (($line = fgets($handle)) !== false) {\n        echo $line;\n    }\n    fclose($handle);\n}\n```\n\nAlways close the file handle with `fclose()`."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "code",
+            "title": "Reading Line by Line",
+            "content": "```php\n<?php\n$handle = fopen(\"data.txt\", \"r\");\nif ($handle) {\n    while (($line = fgets($handle)) !== false) {\n        // Process each line\n        echo \"Line: \" . $line . \"<br>\";\n    }\n    fclose($handle);\n} else {\n    echo \"Could not open file.\";\n}\n?>\n```",
+            "codeSnippet": "<?php\n$handle = fopen(\"data.txt\", \"r\");\nif ($handle) {\n    while (($line = fgets($handle)) !== false) {\n        echo \"Line: \" . $line . \"<br>\";\n    }\n    fclose($handle);\n} else {\n    echo \"Could not open file.\";\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_5",
+            "type": "text",
+            "title": "Other Reading Functions",
+            "content": "# file() – Read into Array\n\n`file()` reads the entire file into an array, each line as an element.\n\n```php\n$lines = file('data.txt');\nforeach ($lines as $lineNum => $line) {\n    echo \"Line $lineNum: $line\";\n}\n```\n\n# readfile() – Read and Output Directly\n\n`readfile('file.txt')` reads a file and writes it to the output buffer. Useful for serving files."
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Which function reads an entire file into a string?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "fopen()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "file_get_contents()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "fgets()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "readfile()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "file_get_contents() reads the whole file into a string.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_7",
+            "type": "quiz",
+            "title": "Check Understanding",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "What does `fgets($handle)` return when it reaches the end of file?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "an empty string",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "false",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "null",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "EOF constant",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "fgets() returns false on EOF or error.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

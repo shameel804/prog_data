@@ -1,0 +1,67 @@
+{
+    "id": "l8",
+    "chapterId": "ch_13",
+    "title": "The Throwable Interface",
+    "description": "Understand the base interface for all errors and exceptions.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l8_1",
+            "type": "text",
+            "title": "Throwable",
+            "content": "# The Root of All Errors and Exceptions\n\nIn PHP 7+, both errors and exceptions implement the `Throwable` interface. This means you can catch both errors and exceptions with `Throwable`.\n\n```php\ntry {\n    // code that may throw Exception or Error\n} catch (Throwable $t) {\n    echo \"Caught: \" . $t->getMessage();\n}\n```\n\n`Throwable` is implemented by two main classes: `Exception` and `Error`."
+        },
+        {
+            "id": "s_l8_2",
+            "type": "text",
+            "title": "Error Class",
+            "content": "# PHP 7 Errors\n\nMany fatal errors in PHP 5 have been converted to `Error` exceptions in PHP 7. They can be caught like exceptions.\n\nExamples:\n*   `TypeError` – type mismatch\n*   `ParseError` – syntax error in eval'd code\n*   `ArithmeticError` – division by zero? Actually division by zero is a Warning, but some math errors.\n\n```php\ntry {\n    intdiv(5, 0); // Division by zero? Actually intdiv throws DivisionByZeroError\n} catch (DivisionByZeroError $e) {\n    echo \"Caught error: \" . $e->getMessage();\n}\n```"
+        },
+        {
+            "id": "s_l8_3",
+            "type": "code",
+            "title": "Catching Errors",
+            "content": "```php\n<?php\ntry {\n    // This will throw a TypeError\n    function add(int $a, int $b) { return $a + $b; }\n    add('abc', 5);\n} catch (TypeError $e) {\n    echo \"Type error: \" . $e->getMessage();\n}\n?>\n```",
+            "codeSnippet": "<?php\ntry {\n    function add(int $a, int $b) { return $a + $b; }\n    add('abc', 5);\n} catch (TypeError $e) {\n    echo \"Type error: \" . $e->getMessage();\n}\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l8_4",
+            "type": "quiz",
+            "title": "Check Understanding 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l8_1",
+                "type": "multiple_choice",
+                "question": "What interface is implemented by both Exception and Error?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Throwable",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "ErrorInterface",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "BaseException",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Loggable",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Throwable is the base interface for all errors and exceptions.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

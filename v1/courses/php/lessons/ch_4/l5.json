@@ -1,0 +1,67 @@
+{
+    "id": "l5",
+    "chapterId": "ch_4",
+    "title": "The match Expression (PHP 8)",
+    "description": "A modern, strict alternative to switch.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "match: The New Kid",
+            "content": "# match Expression (PHP 8+)\n\n`match` is similar to `switch` but stricter and returns a value.\n\n```php\n$result = match ($variable) {\n    value1 => expression1,\n    value2 => expression2,\n    default => defaultExpression,\n};\n```\n\nKey differences:\n*   No `break` needed.\n*   Strict comparison (`===`) by default.\n*   Returns a value.\n*   Throws an error if no default and no match."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "match Example",
+            "content": "```php\n<?php\n$statusCode = 404;\n\n$message = match ($statusCode) {\n    200, 201 => 'OK',\n    404 => 'Not Found',\n    500 => 'Server Error',\n    default => 'Unknown',\n};\n\necho $message; // Not Found\n?>\n```",
+            "codeSnippet": "<?php\n$statusCode = 404;\n\n$message = match ($statusCode) {\n    200, 201 => 'OK',\n    404 => 'Not Found',\n    500 => 'Server Error',\n    default => 'Unknown',\n};\n\necho $message;\n?>",
+            "codeLanguage": "php",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Strict Comparison",
+            "content": "# match is Strict\n\n`match` uses `===`, so `\"1\"` does not match `1`.\n\n```php\n$value = \"1\";\n\n$result = match ($value) {\n    1 => 'integer',\n    \"1\" => 'string',\n};\n// result is 'string'\n```\n\nThis avoids the type juggling surprises of `switch`."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What happens if no case matches in a match expression without a default?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Returns null",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Throws an UnhandledMatchError",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Executes the first case",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Returns false",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "match throws an UnhandledMatchError if no case matches and no default is provided.",
+                "xpReward": 10
+            }
+        }
+    ]
+}
