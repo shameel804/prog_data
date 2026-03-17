@@ -1,0 +1,61 @@
+{
+    "id": "l4",
+    "chapterId": "ch_6",
+    "title": "Using Index as Key – Safe or Not?",
+    "description": "Understand when using array index as key is acceptable.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Index Trap 🪤",
+            "content": "# When is index as key OK?\n\nUsing the array index as a key is **discouraged** because if the list changes (items added/removed/reordered), the index also changes, causing keys to become unstable. This can lead to:\n\n* Unnecessary re-renders\n* Buggy behavior with component state (e.g., input fields losing focus or keeping wrong values)\n\n## When it might be safe:\n\n* The list is static and will never change.\n* The list will never be reordered or filtered.\n* The items have no state (like plain text).\n\nIn most real-world apps, it's better to use a unique ID."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "The Problem Demonstrated",
+            "content": "Consider a list of inputs where each has internal state:",
+            "codeSnippet": "function ProblemList() {\n  const [items, setItems] = useState(['a', 'b', 'c']);\n\n  const removeFirst = () => {\n    setItems(items.slice(1)); // remove first item\n  };\n\n  return (\n    <div>\n      <button onClick={removeFirst}>Remove first</button>\n      <ul>\n        {items.map((item, index) => (\n          // ❌ Bad: index as key\n          <li key={index}>\n            <input defaultValue={item} />\n          </li>\n        ))}\n      </ul>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Check Your Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "When is it acceptable to use array index as a key?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Never – it's always wrong",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "When the list is static and won't change",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "When the list has more than 10 items",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "When you also provide a unique id prop",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "If the list never changes (no additions, removals, reordering), index as key can be safe. But it's still brittle; better to use a stable ID when possible.",
+                "xpReward": 5
+            }
+        }
+    ]
+}

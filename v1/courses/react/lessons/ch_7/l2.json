@@ -1,0 +1,61 @@
+{
+    "id": "l2",
+    "chapterId": "ch_7",
+    "title": "Handling Multiple Inputs",
+    "description": "Manage many form fields efficiently.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Basics",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "One State Object to Rule Them All 🗂️",
+            "content": "# Managing Multiple Inputs\n\nWhen you have many form fields, you can store them all in a single state object and use a generic change handler.\n\nThe trick: give each input a `name` attribute, and in the handler, use that name to update the correct property.\n\n```jsx\nconst [formData, setFormData] = useState({ firstName: '', lastName: '' });\n\nconst handleChange = (e) => {\n  const { name, value } = e.target;\n  setFormData(prev => ({\n    ...prev,\n    [name]: value\n  }));\n};\n\n<input name=\"firstName\" value={formData.firstName} onChange={handleChange} />\n<input name=\"lastName\" value={formData.lastName} onChange={handleChange} />\n```\n\nThis pattern scales to any number of inputs."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Example: Registration Form",
+            "content": "A form with multiple fields:",
+            "codeSnippet": "function RegistrationForm() {\n  const [form, setForm] = useState({\n    username: '',\n    email: '',\n    password: ''\n  });\n\n  const handleChange = (e) => {\n    const { name, value } = e.target;\n    setForm(prev => ({ ...prev, [name]: value }));\n  };\n\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    console.log('Form data:', form);\n  };\n\n  return (\n    <form onSubmit={handleSubmit}>\n      <input name=\"username\" value={form.username} onChange={handleChange} placeholder=\"Username\" />\n      <input name=\"email\" value={form.email} onChange={handleChange} placeholder=\"Email\" type=\"email\" />\n      <input name=\"password\" value={form.password} onChange={handleChange} placeholder=\"Password\" type=\"password\" />\n      <button type=\"submit\">Register</button>\n    </form>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Check Your Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of the `name` attribute in a generic change handler?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To style the input",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To identify which input changed so we can update the correct state field",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To bind the input to a label",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's required for form submission",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `name` attribute tells us which property in the state object to update.",
+                "xpReward": 5
+            }
+        }
+    ]
+}

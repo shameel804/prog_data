@@ -1,0 +1,45 @@
+{
+    "id": "l4",
+    "chapterId": "ch_4",
+    "title": "Updating State Correctly",
+    "description": "Understand asynchronous updates and functional updates.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "State Management",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "State Updates May Be Asynchronous ⏳",
+            "content": "# Don't Rely on Current State Directly\n\nReact may batch multiple state updates for performance. This means you cannot always rely on the current state value immediately after calling `setState`.\n\n**Example of a pitfall:**\n\n```jsx\nfunction Counter() {\n  const [count, setCount] = useState(0);\n\n  function handleClick() {\n    setCount(count + 1);\n    setCount(count + 1); // This won't work as expected!\n  }\n  // Only increments by 1, because both use the same `count` value.\n}\n```\n\n## Solution: Functional Update\n\nPass a function to the setter that receives the **previous state** and returns the new state.\n\n```jsx\nsetCount(prevCount => prevCount + 1);\n```\n\nThis guarantees you're working with the most up‑to‑date value."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Functional Update Example",
+            "content": "Now both updates work correctly:",
+            "codeSnippet": "function Counter() {\n  const [count, setCount] = useState(0);\n\n  function handleClick() {\n    setCount(prev => prev + 1);\n    setCount(prev => prev + 1); // Now increments by 2\n  }\n\n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={handleClick}>+2</button>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Check Your Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "true_false",
+                "question": "State updates are always applied immediately after calling the setter function.",
+                "correctAnswer": false,
+                "explanation": "False. React batches updates for performance; the new state may not be available until the next render."
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## When to Use Functional Updates\n\nWhenever the new state depends on the previous state, always use the functional update form to avoid bugs."
+        }
+    ]
+}

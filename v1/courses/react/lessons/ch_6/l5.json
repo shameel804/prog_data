@@ -1,0 +1,39 @@
+{
+    "id": "l5",
+    "chapterId": "ch_6",
+    "title": "List Reordering and Dynamic Lists",
+    "description": "Add, remove, and reorder items with stable keys.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Working with Dynamic Lists 🎛️",
+            "content": "# Add, Remove, and Reorder\n\nWhen lists change, keys must remain stable. Usually, your data items have unique `id` fields. If not, you can generate temporary IDs (e.g., using `uuid` or `crypto.randomUUID()`).\n\n## Example: Adding and Removing\n\nWe'll maintain an array of objects with `id` and `text`."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Todo List with Add/Remove",
+            "content": "Stable keys prevent bugs when manipulating the list:",
+            "codeSnippet": "import { useState } from 'react';\n\nfunction TodoApp() {\n  const [todos, setTodos] = useState([\n    { id: 1, text: 'Learn React' },\n    { id: 2, text: 'Build a project' }\n  ]);\n  const [input, setInput] = useState('');\n\n  const addTodo = () => {\n    if (input.trim() === '') return;\n    const newTodo = {\n      id: Date.now(), // simple unique id\n      text: input\n    };\n    setTodos([...todos, newTodo]);\n    setInput('');\n  };\n\n  const removeTodo = (id) => {\n    setTodos(todos.filter(todo => todo.id !== id));\n  };\n\n  return (\n    <div>\n      <input value={input} onChange={e => setInput(e.target.value)} />\n      <button onClick={addTodo}>Add</button>\n      <ul>\n        {todos.map(todo => (\n          <li key={todo.id}>\n            {todo.text} <button onClick={() => removeTodo(todo.id)}>❌</button>\n          </li>\n        ))}\n      </ul>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "true_false",
+                "question": "Using `Date.now()` as a key is a good practice for production apps.",
+                "correctAnswer": false,
+                "explanation": "It's acceptable for simple demos, but in production you'd want a more robust unique ID generator (like `uuid`) to avoid collisions and ensure stability."
+            }
+        }
+    ]
+}

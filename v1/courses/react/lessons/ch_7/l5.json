@@ -1,0 +1,61 @@
+{
+    "id": "l5",
+    "chapterId": "ch_7",
+    "title": "Uncontrolled Components and Refs",
+    "description": "Access form values directly from the DOM (brief intro).",
+    "xpReward": 20,
+    "estimatedMinutes": 4,
+    "section": "Alternatives",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "When You Don't Want to Control 🎛️",
+            "content": "# Uncontrolled Components\n\nSometimes you don't need to control the input on every keystroke. You can let the DOM manage the input state and read the value only when needed (e.g., on submit). This is an **uncontrolled component**.\n\nYou use a `ref` to access the DOM node directly.\n\n```jsx\nimport { useRef } from 'react';\n\nfunction UncontrolledForm() {\n  const inputRef = useRef(null);\n\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    alert('Name: ' + inputRef.current.value);\n  };\n\n  return (\n    <form onSubmit={handleSubmit}>\n      <input ref={inputRef} type=\"text\" defaultValue=\"Bob\" />\n      <button type=\"submit\">Submit</button>\n    </form>\n  );\n}\n```\n\nNotice `defaultValue` instead of `value`. This sets the initial value but does not control subsequent changes.\n\nUncontrolled components are useful for simple forms or when integrating with non-React code."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Uncontrolled vs Controlled",
+            "content": "Comparison:",
+            "codeSnippet": "// Controlled – React drives the value\n<input value={state} onChange={handleChange} />\n\n// Uncontrolled – DOM drives the value, React reads via ref\n<input ref={inputRef} defaultValue=\"initial\" />",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What attribute do you use to set an initial value in an uncontrolled input?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "value",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "defaultValue",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "initValue",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "initial",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`defaultValue` sets the initial value but does not make the input controlled.",
+                "xpReward": 5
+            }
+        }
+    ]
+}
