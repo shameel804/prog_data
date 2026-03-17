@@ -1,0 +1,61 @@
+{
+    "id": "l4",
+    "chapterId": "ch_10",
+    "title": "Refs as Mutable Values (Without Re-renders)",
+    "description": "Store values that persist across renders but don't trigger updates.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Beyond the DOM: Mutable Values 🔄",
+            "content": "# Refs for Any Mutable Value\n\n`useRef` isn't just for DOM nodes. You can use it to hold any value that you want to persist across renders without causing a re-render when it changes.\n\nThis is useful for:\n\n* Storing timers or interval IDs.\n* Keeping a reference to a previous value.\n* Holding data that shouldn't trigger UI updates.\n\n```jsx\nconst timerRef = useRef(null);\n\nconst startTimer = () => {\n  timerRef.current = setInterval(() => console.log('tick'), 1000);\n};\n\nconst stopTimer = () => {\n  clearInterval(timerRef.current);\n};\n```\n\nChanging `timerRef.current` does **not** cause the component to re-render."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Example: Stopwatch with Ref",
+            "content": "Using a ref to store interval ID:",
+            "codeSnippet": "function Stopwatch() {\n  const [time, setTime] = useState(0);\n  const intervalRef = useRef(null);\n\n  const start = () => {\n    if (intervalRef.current !== null) return;\n    intervalRef.current = setInterval(() => {\n      setTime(t => t + 1);\n    }, 1000);\n  };\n\n  const stop = () => {\n    clearInterval(intervalRef.current);\n    intervalRef.current = null;\n  };\n\n  return (\n    <div>\n      <p>Time: {time}s</p>\n      <button onClick={start}>Start</button>\n      <button onClick={stop}>Stop</button>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Check Your Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What happens when you change the `.current` property of a ref?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The component re-renders",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Nothing – the value is updated but no re-render occurs",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "React throws an error",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The DOM updates automatically",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Changing a ref's `.current` does not trigger a re-render; it's a mutable container.",
+                "xpReward": 5
+            }
+        }
+    ]
+}

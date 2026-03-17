@@ -1,0 +1,39 @@
+{
+    "id": "l4",
+    "chapterId": "ch_8",
+    "title": "Cleanup Function",
+    "description": "Prevent memory leaks and cancel subscriptions.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Cleanup",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Cleaning Up After Effects 🧹",
+            "content": "# Why Cleanup?\n\nSome effects create ongoing resources: event listeners, timers, WebSocket connections. If you don't clean them up when the component unmounts or before the effect runs again, you'll get memory leaks and bugs.\n\nYou can return a **cleanup function** from your effect. React will call it:\n\n* Before the component unmounts.\n* Before re-running the effect (if dependencies changed).\n\n```jsx\nuseEffect(() => {\n  const timer = setInterval(() => {\n    console.log('Tick');\n  }, 1000);\n\n  // Cleanup\n  return () => clearInterval(timer);\n}, []);\n```"
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Event Listener Example",
+            "content": "Adding and removing a resize listener:",
+            "codeSnippet": "useEffect(() => {\n  const handleResize = () => {\n    console.log('Window resized');\n  };\n  window.addEventListener('resize', handleResize);\n\n  // Cleanup\n  return () => {\n    window.removeEventListener('resize', handleResize);\n  };\n}, []); // Only on mount/unmount",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Check Your Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "true_false",
+                "question": "The cleanup function in useEffect runs only when the component unmounts.",
+                "correctAnswer": false,
+                "explanation": "It also runs before the effect re-runs (if dependencies change) to clean up the previous effect."
+            }
+        }
+    ]
+}

@@ -1,0 +1,61 @@
+{
+    "id": "l3",
+    "chapterId": "ch_9",
+    "title": "Consuming Context with useContext",
+    "description": "Access context values in any component.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Core Concepts",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "useContext Hook 🎣",
+            "content": "# Reading Context Value\n\nThe easiest way to consume context in a functional component is the `useContext` hook.\n\n```jsx\nimport { useContext } from 'react';\nimport { UserContext } from './UserContext';\n\nfunction Profile() {\n  const user = useContext(UserContext);\n  return <p>{user.name}</p>;\n}\n```\n\nThis component will re-render whenever the context value changes.\n\n## Without Hooks (Class Components)\n\nYou can also use `Context.Consumer` with a render prop, but `useContext` is much cleaner."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Complete Example",
+            "content": "Putting it all together:",
+            "codeSnippet": "// UserContext.js\nimport { createContext } from 'react';\nexport const UserContext = createContext();\n\n// App.js\nimport { UserContext } from './UserContext';\nimport Profile from './Profile';\n\nfunction App() {\n  const user = { name: 'Alice' };\n  return (\n    <UserContext.Provider value={user}>\n      <Profile />\n    </UserContext.Provider>\n  );\n}\n\n// Profile.js\nimport { useContext } from 'react';\nimport { UserContext } from './UserContext';\n\nexport default function Profile() {\n  const user = useContext(UserContext);\n  return <h1>Hello, {user.name}!</h1>;\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What does `useContext(UserContext)` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The current context value",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A function to update the context",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The Provider component",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The default value only",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`useContext` returns the current context value from the nearest Provider above the component.",
+                "xpReward": 5
+            }
+        }
+    ]
+}

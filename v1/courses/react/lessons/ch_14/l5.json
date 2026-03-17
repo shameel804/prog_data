@@ -1,0 +1,61 @@
+{
+    "id": "l5",
+    "chapterId": "ch_14",
+    "title": "Optimizing Context Performance",
+    "description": "Techniques to avoid widespread re‑renders with Context.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Context Re‑renders 🔄",
+            "content": "# The Context Problem\n\nWhen a context value changes, **all** components that consume that context re‑render, even if they only use a part of the value. This can be expensive.\n\n## Solutions\n\n1. **Split contexts** – separate unrelated values into different contexts.\n2. **Memoize the context value** with `useMemo` to avoid unnecessary changes.\n3. **Use state selectors** – create custom hooks that return only the needed part, but this doesn't prevent re‑renders; you still need to split.\n4. **Use libraries** like `use-context-selector` (advanced).\n\n## Example: Splitting\n\n```jsx\nconst UserContext = React.createContext();\nconst ThemeContext = React.createContext();\n\nfunction App() {\n  const [user, setUser] = useState({ name: 'Alice' });\n  const [theme, setTheme] = useState('light');\n\n  return (\n    <UserContext.Provider value={user}>\n      <ThemeContext.Provider value={theme}>\n        <Main />\n      </ThemeContext.Provider>\n    </UserContext.Provider>\n  );\n}\n```\n\nNow changing theme won't re‑render components that only consume user."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Memoizing Context Value",
+            "content": "Prevent the context value from changing on every render of the provider.",
+            "codeSnippet": "function UserProvider({ children }) {\n  const [user, setUser] = useState({ name: 'Alice' });\n\n  const value = useMemo(() => ({ user, setUser }), [user]);\n\n  return (\n    <UserContext.Provider value={value}>\n      {children}\n    </UserContext.Provider>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What happens to all consumers when a context value changes?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Nothing – they are smart",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They all re‑render",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only the first consumer re‑renders",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "React optimizes and only updates changed parts",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "All components that use `useContext` on that context re‑render, which is why splitting is important.",
+                "xpReward": 5
+            }
+        }
+    ]
+}

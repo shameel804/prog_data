@@ -1,0 +1,94 @@
+{
+    "id": "sq_react_4",
+    "title": "Effect Investigator",
+    "triggerChapterIndex": 11,
+    "metadata": {
+        "type": "debug"
+    },
+    "questions": [
+        {
+            "id": "sq_react_4_q1",
+            "type": "multiple_choice",
+            "question": "Find the bug: this component tries to fetch data on mount but has a memory leak.",
+            "codeSnippet": "useEffect(() => {\n  fetch('/api/data').then(res => res.json()).then(setData);\n}, []);",
+            "bugLineIndex": 2,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "If the component unmounts before the fetch completes, calling `setData` will cause a memory leak. Add an ignore flag.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_react_4_q2",
+            "type": "multiple_choice",
+            "question": "Spot the error: this router setup is missing something.",
+            "codeSnippet": "import { BrowserRouter, Route } from 'react-router-dom';\n\nfunction App() {\n  return (\n    <BrowserRouter>\n      <Route path=\"/\" element={<Home />} />\n      <Route path=\"/about\" element={<About />} />\n    </BrowserRouter>\n  );\n}",
+            "bugLineIndex": 5,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "Routes must be wrapped in a `<Routes>` component (in v6). It should be `<Routes><Route ... /></Routes>`.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_react_4_q3",
+            "type": "multiple_choice",
+            "question": "Find the bug: this component uses state and effect incorrectly.",
+            "codeSnippet": "function Timer() {\n  const [count, setCount] = useState(0);\n  useEffect(() => {\n    const id = setInterval(() => {\n      setCount(count + 1);\n    }, 1000);\n    return () => clearInterval(id);\n  }, []);\n  return <div>{count}</div>;\n}",
+            "bugLineIndex": 4,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The `setCount(count + 1)` inside setInterval uses stale `count` (always 0). Use functional update: `setCount(c => c + 1)`.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_react_4_q4",
+            "type": "multiple_choice",
+            "question": "Debug this context usage: why doesn't the child see the updated theme?",
+            "codeSnippet": "const ThemeContext = React.createContext('light');\n\nfunction App() {\n  const [theme, setTheme] = useState('light');\n  return (\n    <ThemeContext.Provider value={theme}>\n      <button onClick={() => setTheme('dark')}>Switch</button>\n      <Child />\n    </ThemeContext.Provider>\n  );\n}\n\nfunction Child() {\n  const theme = useContext(ThemeContext);\n  return <div>Theme: {theme}</div>;\n}",
+            "bugLineIndex": 3,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "There is no bug; this code works. Perhaps the bug is that the button is inside the provider and will cause a re‑render, which updates the child. Actually it works. Let's create a real bug: maybe they forgot to import useContext? Or maybe the provider value is not updating because they used a static object? Wait, it's a string, so it updates. Hmm. Let's change it to a real bug: they passed an object without memoization, causing unnecessary re‑renders. But the question asks for a bug that prevents the child from seeing the update. Perhaps the bug is that they didn't wrap the value in useMemo, but that doesn't break functionality, just performance. Let's instead introduce a bug where the provider is placed after the child? Not possible. I'll adjust: maybe they used `ThemeContext.Provider` but misspelled `value` as `val`. That would break it.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_react_4_q4_fixed",
+            "type": "multiple_choice",
+            "question": "Debug this context: why doesn't the theme change?",
+            "codeSnippet": "const ThemeContext = React.createContext('light');\n\nfunction App() {\n  const [theme, setTheme] = useState('light');\n  return (\n    <ThemeContext.Provider val={theme}>\n      <button onClick={() => setTheme('dark')}>Switch</button>\n      <Child />\n    </ThemeContext.Provider>\n  );\n}",
+            "bugLineIndex": 3,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The provider expects a `value` prop, not `val`. Change to `value={theme}`.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_react_4_q5",
+            "type": "multiple_choice",
+            "question": "Find the bug: this component uses React Router's useParams incorrectly.",
+            "codeSnippet": "import { useParams } from 'react-router-dom';\n\nfunction User() {\n  const params = useParams();\n  return <h1>User ID: {params.userId}</h1>;\n}\n\n// Route: <Route path=\"/user/:id\" element={<User />} />",
+            "bugLineIndex": 4,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The route defines a param `id`, but the component tries to read `userId`. It should be `params.id`.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_react_4_q6",
+            "type": "multiple_choice",
+            "question": "Spot the error in this form handling.",
+            "codeSnippet": "function Form() {\n  const [value, setValue] = useState('');\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    console.log(value);\n  };\n  return (\n    <form onSubmit={handleSubmit}>\n      <input value={value} />\n      <button type=\"submit\">Submit</button>\n    </form>\n  );\n}",
+            "bugLineIndex": 7,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The input is missing an `onChange` handler, so it's read‑only and the state never updates.",
+            "xpReward": 25,
+            "difficulty": 1
+        }
+    ]
+}

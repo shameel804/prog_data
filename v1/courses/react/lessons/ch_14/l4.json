@@ -1,0 +1,39 @@
+{
+    "id": "l4",
+    "chapterId": "ch_14",
+    "title": "useCallback – Stable Function References",
+    "description": "Prevent unnecessary re‑creation of functions.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Memoizing Functions 🎣",
+            "content": "# useCallback\n\n`useCallback` returns a memoized version of the callback function that only changes if dependencies change. It's essentially `useMemo` for functions.\n\n## Syntax\n\n```jsx\nconst memoizedCallback = useCallback(() => {\n  doSomething(a, b);\n}, [a, b]);\n```\n\n## Why?\n\nFunctions are recreated on every render. If you pass a new function to a memoized child component, the child will re‑render (because the prop changed). `useCallback` keeps the same function reference between renders as long as dependencies don't change.\n\n## Example\n\n```jsx\nfunction Parent({ id }) {\n  const handleClick = useCallback(() => {\n    console.log('Clicked', id);\n  }, [id]);\n\n  return <Child onClick={handleClick} />;\n}\n\nconst Child = memo(({ onClick }) => {\n  // Only re‑renders if onClick changes\n});\n```"
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Without useCallback",
+            "content": "This child will re‑render every time because `handleClick` is new.",
+            "codeSnippet": "function Parent() {\n  const [count, setCount] = useState(0);\n\n  // New function every render\n  const handleClick = () => {\n    console.log('clicked');\n  };\n\n  return <Child onClick={handleClick} />;\n}\n\nconst Child = memo(({ onClick }) => {\n  console.log('Child rendered');\n  return <button onClick={onClick}>Click</button>;\n});",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Check Your Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "true_false",
+                "question": "useCallback is exactly the same as useMemo, but specialized for functions.",
+                "correctAnswer": true,
+                "explanation": "Yes, useCallback(fn, deps) is equivalent to useMemo(() => fn, deps)."
+            }
+        }
+    ]
+}

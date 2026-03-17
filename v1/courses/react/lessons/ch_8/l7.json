@@ -1,0 +1,61 @@
+{
+    "id": "l7",
+    "chapterId": "ch_8",
+    "title": "Common Pitfalls and Rules of useEffect",
+    "description": "Avoid infinite loops and stale closures.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Pitfalls",
+    "slides": [
+        {
+            "id": "s_l7_1",
+            "type": "text",
+            "title": "Infinite Loops and Stale Closures 🔁",
+            "content": "# Common Mistakes\n\n## 1. Missing Dependencies\nIf your effect uses a prop or state variable but you omit it from the dependency array, you'll have a **stale closure** – the effect will always see the initial value.\n\n## 2. Infinite Loops\nIf you update state inside an effect and that state is also a dependency, you can create an infinite loop.\n\n```jsx\n// ❌ Infinite loop\nuseEffect(() => {\n  setCount(count + 1); // count changes, effect re-runs\n}, [count]);\n```\n\n## 3. Object/Function Dependencies\nIf you use an object or function as a dependency, it changes every render, causing the effect to run every time. Use `useCallback` or `useMemo` to stabilize them."
+        },
+        {
+            "id": "s_l7_2",
+            "type": "code",
+            "title": "Stale Closure Example",
+            "content": "Missing dependency leads to stale value:",
+            "codeSnippet": "function Counter() {\n  const [count, setCount] = useState(0);\n\n  useEffect(() => {\n    const timer = setInterval(() => {\n      console.log(count); // Always logs 0 (stale)\n    }, 1000);\n    return () => clearInterval(timer);\n  }, []); // Missing `count` dependency\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_1",
+                "type": "multiple_choice",
+                "question": "What happens if you update state inside useEffect and include that state in the dependency array?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The effect runs once",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It creates an infinite loop",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "React ignores the update",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It works fine",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The effect updates state, which triggers a re-render, then the effect runs again because the dependency changed, leading to an infinite loop.",
+                "xpReward": 5
+            }
+        }
+    ]
+}

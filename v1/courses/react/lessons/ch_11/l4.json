@@ -1,0 +1,61 @@
+{
+    "id": "l4",
+    "chapterId": "ch_11",
+    "title": "Practical Custom Hook Examples",
+    "description": "Build useToggle, usePrevious, useLocalStorage.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Examples",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "usePrevious – Track Previous Value 📅",
+            "content": "# usePrevious Hook\n\nSometimes you need to know the previous value of a state or prop. You can store it in a ref.\n\n```jsx\nfunction usePrevious(value) {\n  const ref = useRef();\n  useEffect(() => {\n    ref.current = value;\n  }, [value]);\n  return ref.current;\n}\n```\n\nUsage:\n```jsx\nfunction Counter() {\n  const [count, setCount] = useState(0);\n  const prevCount = usePrevious(count);\n  return <p>Now: {count}, before: {prevCount}</p>;\n}\n```"
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "useLocalStorage – Sync with localStorage 💾",
+            "content": "Persist state in localStorage:",
+            "codeSnippet": "function useLocalStorage(key, initialValue) {\n  const [storedValue, setStoredValue] = useState(() => {\n    try {\n      const item = window.localStorage.getItem(key);\n      return item ? JSON.parse(item) : initialValue;\n    } catch (error) {\n      console.log(error);\n      return initialValue;\n    }\n  });\n\n  const setValue = (value) => {\n    try {\n      const valueToStore = value instanceof Function ? value(storedValue) : value;\n      setStoredValue(valueToStore);\n      window.localStorage.setItem(key, JSON.stringify(valueToStore));\n    } catch (error) {\n      console.log(error);\n    }\n  };\n\n  return [storedValue, setValue];\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Check Your Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Why does `usePrevious` use a ref instead of state?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Because refs are faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Because updating a ref doesn't cause a re-render, which is perfect for storing previous value",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Because you can't use state inside custom hooks",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Because refs are easier to use",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "We want to store the previous value without triggering a re-render; refs are ideal for that.",
+                "xpReward": 5
+            }
+        }
+    ]
+}

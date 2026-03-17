@@ -1,0 +1,61 @@
+{
+    "id": "l3",
+    "chapterId": "ch_13",
+    "title": "useReducer Syntax and Basics",
+    "description": "Write your first reducer and dispatch actions.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Core Concepts",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "useReducer Hook 🎣",
+            "content": "# Syntax\n\n```jsx\nconst [state, dispatch] = useReducer(reducer, initialState);\n```\n\n* `reducer` – the reducer function (state, action) => newState.\n* `initialState` – the starting state.\n* `state` – current state.\n* `dispatch` – a function to send actions to the reducer.\n\n## Example: Counter with useReducer\n\n```jsx\nimport { useReducer } from 'react';\n\nconst initialState = 0;\n\nfunction reducer(state, action) {\n  switch (action.type) {\n    case 'increment':\n      return state + 1;\n    case 'decrement':\n      return state - 1;\n    default:\n      return state;\n  }\n}\n\nfunction Counter() {\n  const [count, dispatch] = useReducer(reducer, initialState);\n\n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={() => dispatch({ type: 'increment' })}>+</button>\n      <button onClick={() => dispatch({ type: 'decrement' })}>-</button>\n    </div>\n  );\n}\n```"
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Using Payload",
+            "content": "You can also pass additional data in the action:",
+            "codeSnippet": "function reducer(state, action) {\n  switch (action.type) {\n    case 'add':\n      return state + action.payload;\n    default:\n      return state;\n  }\n}\n\ndispatch({ type: 'add', payload: 5 });",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What does the `dispatch` function do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It directly updates the state",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It sends an action to the reducer",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It returns the new state",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It replaces the reducer",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`dispatch` sends an action object to the reducer, which then computes the new state.",
+                "xpReward": 5
+            }
+        }
+    ]
+}

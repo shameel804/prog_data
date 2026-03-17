@@ -1,0 +1,61 @@
+{
+    "id": "l3",
+    "chapterId": "ch_14",
+    "title": "useMemo – Memoizing Expensive Calculations",
+    "description": "Cache the result of expensive functions.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Memoize Values, Not Just Components 🧮",
+            "content": "# useMemo\n\n`useMemo` caches the result of a function between renders. It only recomputes when dependencies change.\n\n## Syntax\n\n```jsx\nconst memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);\n```\n\nThe function runs during rendering, so it should be pure and not too slow (or it will block rendering).\n\n## When to Use\n\n* Expensive calculations (e.g., filtering large lists, complex math).\n* Stabilizing an object/array that is passed as a prop to memoized children.\n\n## Example\n\n```jsx\nfunction ExpensiveComponent({ list, filter }) {\n  const filteredList = useMemo(() => {\n    return list.filter(item => item.includes(filter));\n  }, [list, filter]);\n\n  return <List data={filteredList} />;\n}\n```\n\nWithout `useMemo`, `filteredList` would be recalculated on every render, even if `list` and `filter` haven't changed."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "useMemo for Object Stability",
+            "content": "Even if an object is created with the same values, it's a new reference, causing memoized children to re‑render. `useMemo` stabilizes the reference.",
+            "codeSnippet": "function Parent({ name, age }) {\n  // Without useMemo, this object is new every render\n  const user = useMemo(() => ({ name, age }), [name, age]);\n\n  return <Child user={user} />;\n}\n\nconst Child = memo(({ user }) => {\n  // Only re‑renders when user reference changes\n});",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "When does useMemo recompute the cached value?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "On every render",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Only when dependencies change",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Never",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only on initial render",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "useMemo recomputes when any dependency in the array changes.",
+                "xpReward": 5
+            }
+        }
+    ]
+}

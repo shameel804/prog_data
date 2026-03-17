@@ -1,0 +1,61 @@
+{
+    "id": "l2",
+    "chapterId": "ch_11",
+    "title": "Creating Your First Custom Hook",
+    "description": "Step-by-step guide to building a hook.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Basics",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Building a useToggle Hook 🔄",
+            "content": "# Step-by-Step\n\nLet's create a hook that manages a boolean toggle. This is a common pattern for modals, dropdowns, etc.\n\n## 1. Start with the logic in a component\n\n```jsx\nfunction Component() {\n  const [isOpen, setIsOpen] = useState(false);\n  const toggle = () => setIsOpen(prev => !prev);\n  // ...\n}\n```\n\n## 2. Extract to a function\n\n```jsx\nfunction useToggle(initialValue = false) {\n  const [value, setValue] = useState(initialValue);\n  const toggle = () => setValue(prev => !prev);\n  return [value, toggle]; // like useState\n}\n```\n\n## 3. Use it in components\n\n```jsx\nfunction Modal() {\n  const [isOpen, toggleIsOpen] = useToggle(false);\n  return (\n    <>\n      <button onClick={toggleIsOpen}>Open</button>\n      {isOpen && <div>Modal content</div>}\n    </>\n  );\n}\n```"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Full useToggle Implementation",
+            "content": "Here's the complete hook with TypeScript-like comments:",
+            "codeSnippet": "import { useState } from 'react';\n\nfunction useToggle(initialValue = false) {\n  const [value, setValue] = useState(initialValue);\n\n  const toggle = () => setValue(prev => !prev);\n  const setTrue = () => setValue(true);\n  const setFalse = () => setValue(false);\n\n  return { value, toggle, setTrue, setFalse };\n}\n\nexport default useToggle;",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Check Your Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What does the `useToggle` custom hook return in the example above?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A boolean value",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "An object with `value`, `toggle`, `setTrue`, `setFalse`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "An array `[value, toggle]`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Just the toggle function",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The hook returns an object containing the current value and functions to manipulate it.",
+                "xpReward": 5
+            }
+        }
+    ]
+}

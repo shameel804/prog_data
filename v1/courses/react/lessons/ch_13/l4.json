@@ -1,0 +1,39 @@
+{
+    "id": "l4",
+    "chapterId": "ch_13",
+    "title": "Complex State with useReducer",
+    "description": "Manage objects and multiple values with a reducer.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "State as an Object 📦",
+            "content": "# Managing Complex State\n\nOften your state is an object with multiple fields. useReducer handles this elegantly.\n\n## Example: Form State\n\n```jsx\nconst initialState = {\n  username: '',\n  email: '',\n  password: '',\n  isSubmitting: false,\n  error: null\n};\n\nfunction formReducer(state, action) {\n  switch (action.type) {\n    case 'field':\n      return {\n        ...state,\n        [action.field]: action.value\n      };\n    case 'submit':\n      return {\n        ...state,\n        isSubmitting: true,\n        error: null\n      };\n    case 'success':\n      return {\n        ...initialState\n      };\n    case 'error':\n      return {\n        ...state,\n        isSubmitting: false,\n        error: action.error\n      };\n    default:\n      return state;\n  }\n}\n```"
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Using the Form Reducer",
+            "content": "Here's how you'd use it in a component:",
+            "codeSnippet": "function SignupForm() {\n  const [state, dispatch] = useReducer(formReducer, initialState);\n\n  const handleChange = (e) => {\n    dispatch({\n      type: 'field',\n      field: e.target.name,\n      value: e.target.value\n    });\n  };\n\n  const handleSubmit = async (e) => {\n    e.preventDefault();\n    dispatch({ type: 'submit' });\n    try {\n      await api.signup(state);\n      dispatch({ type: 'success' });\n    } catch (err) {\n      dispatch({ type: 'error', error: err.message });\n    }\n  };\n\n  return (\n    <form onSubmit={handleSubmit}>\n      <input name=\"username\" value={state.username} onChange={handleChange} />\n      <input name=\"email\" value={state.email} onChange={handleChange} />\n      <input type=\"password\" name=\"password\" value={state.password} onChange={handleChange} />\n      {state.error && <p>{state.error}</p>}\n      <button type=\"submit\" disabled={state.isSubmitting}>Sign up</button>\n    </form>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Check Your Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "true_false",
+                "question": "With useReducer, you must always return a new object when state is an object; mutating the state object directly will cause bugs.",
+                "correctAnswer": true,
+                "explanation": "Yes, just like with useState, you must treat state as immutable."
+            }
+        }
+    ]
+}

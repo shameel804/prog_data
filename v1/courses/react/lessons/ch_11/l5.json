@@ -1,0 +1,39 @@
+{
+    "id": "l5",
+    "chapterId": "ch_11",
+    "title": "Data Fetching Hook (useFetch)",
+    "description": "Abstract API calls into a reusable hook.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "useFetch – Reusable Data Fetching 🌐",
+            "content": "# Building a Fetch Hook\n\nA custom hook can encapsulate the entire data fetching lifecycle: loading, error, data, and aborting requests.\n\n```jsx\nfunction useFetch(url) {\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);\n\n  useEffect(() => {\n    const abortController = new AbortController();\n    setLoading(true);\n\n    fetch(url, { signal: abortController.signal })\n      .then(res => {\n        if (!res.ok) throw new Error('Network error');\n        return res.json();\n      })\n      .then(data => {\n        setData(data);\n        setError(null);\n      })\n      .catch(err => {\n        if (err.name !== 'AbortError') {\n          setError(err.message);\n          setData(null);\n        }\n      })\n      .finally(() => setLoading(false));\n\n    return () => abortController.abort();\n  }, [url]);\n\n  return { data, loading, error };\n}\n```\n\nUsage is simple:\n```jsx\nconst { data, loading, error } = useFetch('https://api.example.com/users');\n```"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "useFetch with Dependencies",
+            "content": "Sometimes you need to refetch when a parameter changes. The hook already does that if you include the parameter in the URL, or you can pass dependencies:",
+            "codeSnippet": "function useFetch(url, options = {}) {\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);\n\n  useEffect(() => {\n    const abortController = new AbortController();\n    setLoading(true);\n\n    const fetchData = async () => {\n      try {\n        const res = await fetch(url, { ...options, signal: abortController.signal });\n        if (!res.ok) throw new Error(res.statusText);\n        const json = await res.json();\n        setData(json);\n        setError(null);\n      } catch (err) {\n        if (err.name !== 'AbortError') {\n          setError(err.message);\n          setData(null);\n        }\n      } finally {\n        setLoading(false);\n      }\n    };\n\n    fetchData();\n\n    return () => abortController.abort();\n  }, [url, JSON.stringify(options)]); // careful with objects as dependencies\n\n  return { data, loading, error };\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "true_false",
+                "question": "In the useFetch hook, returning a cleanup function that aborts the fetch prevents memory leaks and race conditions.",
+                "correctAnswer": true,
+                "explanation": "Yes, aborting the fetch if the component unmounts or the URL changes prevents setting state on an unmounted component and cancels the request."
+            }
+        }
+    ]
+}

@@ -1,0 +1,61 @@
+{
+    "id": "l3",
+    "chapterId": "ch_15",
+    "title": "Step 2: Build a Static Version",
+    "description": "Create a version with no interactivity, using props.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Process",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Static First, Interactive Later 🖼️",
+            "content": "# Build a Static Version\n\nNow you build a version that takes the data model and renders the UI but has no interactivity. You'll use **props** to pass data down.\n\n* Do **not** use state at this stage – state is for interactivity.\n* Build components that are reusable and accept props.\n* The top‑level component will receive the data model as a prop.\n\n## Why?\n\n* Separates the logic (state) from the presentation.\n* Easier to reason about the UI structure without the complexity of events.\n\n## Example\n\nFor the product list, you might have:\n\n```jsx\n<ProductTable products={products} />\n```\n\nAnd inside `ProductTable`, you map over products and render `ProductRow` or `ProductCategoryRow`."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Static Version Snippet",
+            "content": "A simplified static version:",
+            "codeSnippet": "function ProductTable({ products }) {\n  const rows = [];\n  let lastCategory = null;\n\n  products.forEach(product => {\n    if (product.category !== lastCategory) {\n      rows.push(\n        <ProductCategoryRow key={product.category} category={product.category} />\n      );\n    }\n    rows.push(\n      <ProductRow key={product.name} product={product} />\n    );\n    lastCategory = product.category;\n  });\n\n  return <table>{rows}</table>;\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Should you use state when building a static version?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Yes, it's the only way to show data",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "No, static version uses only props",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only if the data changes",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It doesn't matter",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A static version has no interactivity, so you don't need state – data is passed via props.",
+                "xpReward": 5
+            }
+        }
+    ]
+}

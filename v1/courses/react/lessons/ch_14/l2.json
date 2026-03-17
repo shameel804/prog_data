@@ -1,0 +1,39 @@
+{
+    "id": "l2",
+    "chapterId": "ch_14",
+    "title": "React.memo – Memoizing Components",
+    "description": "Prevent re‑renders when props haven't changed.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Memoization for Components 📦",
+            "content": "# React.memo\n\n`React.memo` is a higher‑order component that memoizes the result. If a component renders the same result given the same props, wrapping it in `React.memo` tells React to skip re‑rendering if its props haven't changed.\n\n## Syntax\n\n```jsx\nconst MemoizedComponent = React.memo(MyComponent);\n```\n\nNow, `MemoizedComponent` will only re‑render when its props change.\n\n## When to Use\n\n* Pure functional components that render often with the same props.\n* Components that are expensive to render.\n\n## Shallow Comparison\n\n`React.memo` does a shallow comparison of props. For complex objects, you can provide a custom comparison function as the second argument.\n\n```jsx\nfunction areEqual(prevProps, nextProps) {\n  // return true if props are equal (skip re‑render)\n}\n```"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "React.memo in Action",
+            "content": "Without memo, the child re‑renders every time the parent re‑renders. With memo, it re‑renders only when its specific props change.",
+            "codeSnippet": "import { useState, memo } from 'react';\n\nconst Child = memo(function Child({ count }) {\n  console.log('Child rendered');\n  return <div>Count: {count}</div>;\n});\n\nfunction Parent() {\n  const [count, setCount] = useState(0);\n  const [text, setText] = useState('');\n\n  return (\n    <div>\n      <Child count={count} />\n      <button onClick={() => setCount(c => c + 1)}>Increment</button>\n      <input value={text} onChange={e => setText(e.target.value)} />\n    </div>\n  );\n}\n\n// Child re‑renders only when count changes, not when text changes.",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Check Your Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "true_false",
+                "question": "React.memo performs a deep comparison of props by default.",
+                "correctAnswer": false,
+                "explanation": "False, it performs a shallow comparison. For deep equality, you need to provide a custom comparison function."
+            }
+        }
+    ]
+}

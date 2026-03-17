@@ -1,0 +1,45 @@
+{
+    "id": "l5",
+    "chapterId": "ch_10",
+    "title": "Forwarding Refs",
+    "description": "Pass refs through to child components.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Ref Forwarding 📦➡️",
+            "content": "# The Problem\n\nRefs are not passed as props by default. If you try to put a `ref` prop on a custom component, it won't work – React reserves `ref` for its own use.\n\nTo expose a DOM node inside a child component to a parent, you need to **forward the ref** using `React.forwardRef`.\n\n## Syntax\n\n```jsx\nconst MyInput = React.forwardRef((props, ref) => {\n  return <input ref={ref} {...props} />;\n});\n\n// Parent can now use:\n<MyInput ref={inputRef} />\n```\n\n`forwardRef` takes a render function that receives `props` and `ref`, and returns JSX."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Example: Custom Input with Ref",
+            "content": "Here's a reusable input component that forwards its ref:",
+            "codeSnippet": "import { forwardRef, useRef } from 'react';\n\nconst FancyInput = forwardRef((props, ref) => {\n  return (\n    <div className=\"fancy\">\n      <label>{props.label}</label>\n      <input ref={ref} {...props} />\n    </div>\n  );\n});\n\nfunction Parent() {\n  const inputRef = useRef(null);\n\n  const focusInput = () => {\n    inputRef.current.focus();\n  };\n\n  return (\n    <>\n      <FancyInput ref={inputRef} label=\"Name\" />\n      <button onClick={focusInput}>Focus Input</button>\n    </>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "true_false",
+                "question": "You can pass a ref to a custom component using the `ref` prop without any extra work.",
+                "correctAnswer": false,
+                "explanation": "False. You must use `React.forwardRef` to forward the ref to a DOM element inside the component."
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Naming Convention\n\nIn function components, you can also use a different prop name (like `innerRef`) to pass refs without `forwardRef`, but `forwardRef` is the standard and works with all APIs."
+        }
+    ]
+}

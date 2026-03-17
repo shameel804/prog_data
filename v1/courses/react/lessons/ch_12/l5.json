@@ -1,0 +1,61 @@
+{
+    "id": "l5",
+    "chapterId": "ch_12",
+    "title": "Dynamic Routes with useParams",
+    "description": "Handle URLs with parameters like /users/:id.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Dynamic Routes",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "URL Parameters 🔢",
+            "content": "# Dynamic Segments\n\nOften you need routes that match a pattern but have variable parts, like `/users/123` or `/products/abc`.\n\nYou define a dynamic segment with a colon: `:paramName`.\n\n```jsx\n<Route path=\"/users/:userId\" element={<UserProfile />} />\n```\n\nThen, inside the `UserProfile` component, you can read the parameter using the `useParams` hook.\n\n```jsx\nimport { useParams } from 'react-router-dom';\n\nfunction UserProfile() {\n  const { userId } = useParams();\n  return <h1>User ID: {userId}</h1>;\n}\n```\n\nNow, navigating to `/users/42` will display \"User ID: 42\"."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Fetching Data Based on Params",
+            "content": "Combine with useEffect to load user data:",
+            "codeSnippet": "import { useParams } from 'react-router-dom';\nimport { useEffect, useState } from 'react';\n\nfunction UserProfile() {\n  const { userId } = useParams();\n  const [user, setUser] = useState(null);\n\n  useEffect(() => {\n    fetch(`/api/users/${userId}`)\n      .then(res => res.json())\n      .then(data => setUser(data));\n  }, [userId]);\n\n  if (!user) return <p>Loading...</p>;\n  return <h1>{user.name}</h1>;\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which hook do you use to access URL parameters?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "useLocation",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "useParams",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "useNavigate",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "useRouteMatch",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`useParams` returns an object of key/value pairs from the dynamic segments.",
+                "xpReward": 5
+            }
+        }
+    ]
+}

@@ -1,0 +1,39 @@
+{
+    "id": "l6",
+    "chapterId": "ch_12",
+    "title": "Nested Routes and Layouts",
+    "description": "Create shared layouts and nested UI.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Nesting Routes 🪆",
+            "content": "# Shared Layouts\n\nOften you want a common layout (header, sidebar) that persists across multiple pages. React Router lets you nest routes, so a parent route can render a layout and then an `<Outlet />` where child routes render.\n\n## Example\n\n```jsx\nimport { Routes, Route, Outlet } from 'react-router-dom';\n\nfunction Layout() {\n  return (\n    <div>\n      <header>My Site</header>\n      <Outlet />  {/* Child routes render here */}\n    </div>\n  );\n}\n\nfunction App() {\n  return (\n    <Routes>\n      <Route path=\"/\" element={<Layout />}>\n        <Route index element={<Home />} />\n        <Route path=\"about\" element={<About />} />\n        <Route path=\"contact\" element={<Contact />} />\n      </Route>\n    </Routes>\n  );\n}\n```\n\nThe `index` route means the default child when the parent path matches exactly."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Nested Routes Example",
+            "content": "A more complex nested setup:",
+            "codeSnippet": "function App() {\n  return (\n    <Routes>\n      <Route path=\"/\" element={<Layout />}>\n        <Route index element={<Home />} />\n        <Route path=\"users\" element={<UsersLayout />}>\n          <Route index element={<UserList />} />\n          <Route path=\":userId\" element={<UserDetail />} />\n        </Route>\n      </Route>\n    </Routes>\n  );\n}\n\nfunction UsersLayout() {\n  return (\n    <div>\n      <aside>Users navigation</aside>\n      <Outlet />\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "Check Your Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "true_false",
+                "question": "The `<Outlet />` component is used to render child routes in a nested route setup.",
+                "correctAnswer": true,
+                "explanation": "Yes, `<Outlet />` acts as a placeholder where nested routes are rendered."
+            }
+        }
+    ]
+}

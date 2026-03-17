@@ -1,0 +1,234 @@
+{
+    "id": "quiz_ch_8",
+    "chapterId": "ch_8",
+    "title": "Chapter 8 Quiz",
+    "description": "Test your knowledge of useEffect and side effects!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is a side effect in React?",
+            "options": [
+                "Returning JSX from a component",
+                "Any operation that affects something outside the component's render",
+                "Using state variables",
+                "Destructuring props"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Side effects are interactions with the outside world, like fetching data, timers, or manual DOM changes."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "useEffect always runs after the browser paints the screen.",
+            "correctAnswer": true,
+            "explanation": "Yes, effects run after layout and paint, ensuring they don't block visual updates."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "Which dependency array causes useEffect to run only once after the initial render?",
+            "options": [
+                "No array",
+                "[]",
+                "[dependency]",
+                "null"
+            ],
+            "correctAnswer": 1,
+            "explanation": "An empty array `[]` means no dependencies, so the effect runs only on mount."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "When does the cleanup function in useEffect run?",
+            "options": [
+                "Only when the component unmounts",
+                "Before the effect runs again and when the component unmounts",
+                "After every render",
+                "Only when dependencies change"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Cleanup runs before the effect re-runs (if dependencies change) and on unmount."
+        },
+        {
+            "id": "q5",
+            "type": "true_false",
+            "question": "You can make the useEffect callback async directly.",
+            "correctAnswer": false,
+            "explanation": "No, useEffect expects a synchronous function or a cleanup function. You define an async function inside."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "What problem does the 'ignore' flag solve in data fetching with useEffect?",
+            "options": [
+                "Prevents duplicate requests",
+                "Prevents setting state on an unmounted component",
+                "Makes the fetch faster",
+                "Caches the response"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It avoids memory leaks by ignoring the fetch result if the component unmounted."
+        },
+        {
+            "id": "q7",
+            "type": "fill_blank",
+            "question": "If you omit a variable from the dependency array that is used inside useEffect, you may have a _____ closure.",
+            "options": [
+                "stale",
+                "fresh",
+                "closed",
+                "memory"
+            ],
+            "correctAnswer": "stale",
+            "explanation": "Stale closure means the effect sees an old value of the variable."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "What will happen in this code?\n\n```jsx\nuseEffect(() => {\n  setCount(count + 1);\n}, [count]);\n```",
+            "options": [
+                "It updates count once",
+                "It creates an infinite loop",
+                "It does nothing",
+                "It throws an error"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Updating `count` inside the effect triggers a re-render, and because `count` is a dependency, the effect runs again, causing an infinite loop."
+        },
+        {
+            "id": "q9",
+            "type": "true_false",
+            "question": "It's recommended to have multiple useEffect calls for unrelated logic.",
+            "correctAnswer": true,
+            "explanation": "Yes, separating concerns makes the code easier to understand and maintain."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "How many times will the following effect run if the component re-renders 5 times?\n\n```jsx\nuseEffect(() => {\n  console.log('effect');\n});\n```",
+            "options": [
+                "1",
+                "5",
+                "6",
+                "0"
+            ],
+            "correctAnswer": 1,
+            "explanation": "With no dependency array, the effect runs after every render, so it runs 5 times (once after each render)."
+        },
+        {
+            "id": "q11",
+            "type": "fill_blank",
+            "question": "The function returned from useEffect is called the _____ function.",
+            "options": [
+                "cleanup",
+                "destroy",
+                "teardown",
+                "unmount"
+            ],
+            "correctAnswer": "cleanup",
+            "explanation": "It's commonly called the cleanup function."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "What is the correct way to set up an interval that updates state every second?",
+            "options": [
+                "useEffect(() => { setInterval(() => setCount(count + 1), 1000); }, []);",
+                "useEffect(() => { const id = setInterval(() => setCount(c => c + 1), 1000); return () => clearInterval(id); }, []);",
+                "useEffect(() => { setInterval(() => setCount(count + 1), 1000); });",
+                "useEffect(() => { const id = setInterval(() => setCount(count + 1), 1000); }, [count]);"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Option 2 uses a functional update to avoid stale closure and includes cleanup. Option 1 and 3 have stale closure issues. Option 4 creates an infinite loop."
+        },
+        {
+            "id": "q13",
+            "type": "true_false",
+            "question": "If you pass an object literal as a dependency, the effect will run on every render.",
+            "correctAnswer": true,
+            "explanation": "Yes, because object literals are recreated on each render, so they are always different."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "What does the following cleanup function prevent?\n\n```jsx\nuseEffect(() => {\n  window.addEventListener('resize', handleResize);\n  return () => window.removeEventListener('resize', handleResize);\n}, []);\n```",
+            "options": [
+                "Memory leak by removing the listener on unmount",
+                "Duplicate listeners",
+                "Infinite loop",
+                "All of the above"
+            ],
+            "correctAnswer": 3,
+            "explanation": "It prevents memory leaks and ensures the listener is removed, avoiding duplicate listeners if the effect ran again (but with [] it won't)."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "When does React run the cleanup function for an effect with dependencies [a, b]?",
+            "options": [
+                "Only when the component unmounts",
+                "Before the effect runs again if a or b changed",
+                "After the effect runs again",
+                "Both A and B"
+            ],
+            "correctAnswer": 3,
+            "explanation": "Cleanup runs before the effect re-runs on dependency change and also on unmount."
+        },
+        {
+            "id": "q16",
+            "type": "true_false",
+            "question": "You can use async/await directly inside useEffect by marking the callback as async.",
+            "correctAnswer": false,
+            "explanation": "No, because an async function returns a promise, but useEffect expects either nothing or a cleanup function. You must define an async function inside and call it."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "Which of the following is NOT a side effect?",
+            "options": [
+                "Setting document title",
+                "Making an HTTP request",
+                "Calculating a value from props",
+                "Subscribing to a WebSocket"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Calculating a value from props is pure and part of rendering, not a side effect."
+        },
+        {
+            "id": "q18",
+            "type": "fill_blank",
+            "question": "To run an effect only when a specific value changes, you put that value in the _____ array.",
+            "options": [
+                "dependency",
+                "effect",
+                "state",
+                "props"
+            ],
+            "correctAnswer": "dependency",
+            "explanation": "The dependency array controls when the effect re-runs."
+        },
+        {
+            "id": "q19",
+            "type": "true_false",
+            "question": "Effects run in the order they are defined, and cleanup runs in reverse order.",
+            "correctAnswer": true,
+            "explanation": "Yes, React guarantees this order."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "What is a common solution to avoid stale closures in setInterval?",
+            "options": [
+                "Use a ref to store the latest state",
+                "Use the functional update form of setState",
+                "Move the interval outside the component",
+                "Both A and B"
+            ],
+            "correctAnswer": 3,
+            "explanation": "Functional updates (setCount(c => c+1)) avoid stale state, or you can use a ref to keep the latest callback."
+        }
+    ]
+}

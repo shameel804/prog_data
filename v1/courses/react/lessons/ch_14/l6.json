@@ -1,0 +1,39 @@
+{
+    "id": "l6",
+    "chapterId": "ch_14",
+    "title": "Code Splitting with lazy and Suspense",
+    "description": "Load components only when needed to reduce bundle size.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Split Your Bundle ✂️",
+            "content": "# Code Splitting\n\nLarge bundles make initial load slow. Code splitting lets you split your app into smaller chunks that are loaded on demand.\n\nReact provides `React.lazy` for component‑level code splitting, and `<Suspense>` to show a fallback while loading.\n\n## Syntax\n\n```jsx\nconst OtherComponent = React.lazy(() => import('./OtherComponent'));\n\nfunction MyComponent() {\n  return (\n    <Suspense fallback={<div>Loading...</div>}>\n      <OtherComponent />\n    </Suspense>\n  );\n}\n```\n\n`React.lazy` takes a function that returns a dynamic `import()`, which returns a promise. The component is only loaded when it's rendered.\n\n## Route‑Based Splitting\n\nA common pattern is to split at the route level:\n\n```jsx\nimport { Suspense, lazy } from 'react';\nimport { Routes, Route } from 'react-router-dom';\n\nconst Home = lazy(() => import('./routes/Home'));\nconst About = lazy(() => import('./routes/About'));\n\nfunction App() {\n  return (\n    <Suspense fallback={<div>Loading...</div>}>\n      <Routes>\n        <Route path=\"/\" element={<Home />} />\n        <Route path=\"/about\" element={<About />} />\n      </Routes>\n    </Suspense>\n  );\n}\n```"
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Error Handling with Error Boundaries",
+            "content": "If the dynamic import fails (network error), you can catch it with an error boundary.",
+            "codeSnippet": "import { ErrorBoundary } from 'react-error-boundary';\n\nfunction App() {\n  return (\n    <ErrorBoundary fallback={<div>Something went wrong</div>}>\n      <Suspense fallback={<div>Loading...</div>}>\n        <LazyComponent />\n      </Suspense>\n    </ErrorBoundary>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "Check Your Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "true_false",
+                "question": "React.lazy only works with default exports.",
+                "correctAnswer": true,
+                "explanation": "Yes, `React.lazy` currently only supports default exports. If you have a named export, you can re‑export it as default in an intermediate module."
+            }
+        }
+    ]
+}

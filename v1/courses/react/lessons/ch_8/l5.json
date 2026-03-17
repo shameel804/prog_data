@@ -1,0 +1,67 @@
+{
+    "id": "l5",
+    "chapterId": "ch_8",
+    "title": "Fetching Data with useEffect",
+    "description": "Make API calls and handle loading/error states.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Data Fetching",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Fetching Data Pattern 📡",
+            "content": "# The Classic Data Fetching Pattern\n\n1. Use state for data, loading, and error.\n2. Use `useEffect` with an empty dependency array (or with a fetch trigger like an ID).\n3. Inside the effect, use an async function (or `.then`).\n4. Handle cleanup to prevent setting state on unmounted component.\n\n## Basic Example\n\n```jsx\nfunction UserList() {\n  const [users, setUsers] = useState([]);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);\n\n  useEffect(() => {\n    fetch('https://jsonplaceholder.typicode.com/users')\n      .then(res => {\n        if (!res.ok) throw new Error('Network error');\n        return res.json();\n      })\n      .then(data => {\n        setUsers(data);\n        setLoading(false);\n      })\n      .catch(err => {\n        setError(err.message);\n        setLoading(false);\n      });\n  }, []);\n\n  if (loading) return <p>Loading...</p>;\n  if (error) return <p>Error: {error}</p>;\n  return (\n    <ul>\n      {users.map(user => <li key={user.id}>{user.name}</li>)}\n    </ul>\n  );\n}\n```"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Using async/await",
+            "content": "You can't make the effect function itself `async`, but you can define an inner function:",
+            "codeSnippet": "useEffect(() => {\n  const fetchData = async () => {\n    try {\n      const res = await fetch(url);\n      if (!res.ok) throw new Error('Error');\n      const data = await res.json();\n      setData(data);\n    } catch (err) {\n      setError(err.message);\n    } finally {\n      setLoading(false);\n    }\n  };\n\n  fetchData();\n}, [url]);",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "warning",
+            "title": "Important ⚠️",
+            "content": "## Prevent Memory Leaks\n\nIf the component unmounts before the fetch completes, setting state will cause a memory leak. Use a flag to ignore the result if unmounted:\n\n```jsx\nuseEffect(() => {\n  let ignore = false;\n  fetchData().then(data => {\n    if (!ignore) setData(data);\n  });\n  return () => { ignore = true; };\n}, [deps]);\n```"
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Why do we need a cleanup flag (like `ignore`) when fetching data in useEffect?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To cancel the fetch request",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To avoid setting state on an unmounted component",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To prevent multiple fetches",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To make the fetch run only once",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "If the component unmounts before the fetch resolves, setting state would cause a warning and potential memory leak. The flag prevents that.",
+                "xpReward": 5
+            }
+        }
+    ]
+}

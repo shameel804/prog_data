@@ -1,0 +1,61 @@
+{
+    "id": "l5",
+    "chapterId": "ch_13",
+    "title": "Combining useReducer with Context",
+    "description": "Create a mini Redux-like store using useReducer and Context.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Integration",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Global State with useReducer + Context 🌍",
+            "content": "# A Simple Store\n\nWhen you need to share complex state across many components, you can combine useReducer with Context.\n\n## Pattern\n\n1. Create a context.\n2. Create a provider component that holds the reducer state and dispatch.\n3. Provide the state and dispatch via context.\n4. Consume them in child components."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Todo App Example",
+            "content": "Let's build a global todo list:",
+            "codeSnippet": "// TodoContext.js\nimport { createContext, useReducer } from 'react';\n\nconst TodoContext = createContext();\n\nconst initialState = {\n  todos: []\n};\n\nfunction todoReducer(state, action) {\n  switch (action.type) {\n    case 'ADD':\n      return { todos: [...state.todos, action.payload] };\n    case 'REMOVE':\n      return { todos: state.todos.filter(todo => todo.id !== action.id) };\n    case 'TOGGLE':\n      return {\n        todos: state.todos.map(todo =>\n          todo.id === action.id ? { ...todo, done: !todo.done } : todo\n        )\n      };\n    default:\n      return state;\n  }\n}\n\nexport function TodoProvider({ children }) {\n  const [state, dispatch] = useReducer(todoReducer, initialState);\n\n  return (\n    <TodoContext.Provider value={{ state, dispatch }}>\n      {children}\n    </TodoContext.Provider>\n  );\n}\n\nexport function useTodo() {\n  const context = useContext(TodoContext);\n  if (!context) throw new Error('useTodo must be used within TodoProvider');\n  return context;\n}\n\n// In App.js\nfunction App() {\n  return (\n    <TodoProvider>\n      <TodoList />\n    </TodoProvider>\n  );\n}\n\n// TodoList.js\nimport { useTodo } from './TodoContext';\n\nfunction TodoList() {\n  const { state, dispatch } = useTodo();\n  // ... render todos and dispatch actions\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Why would you combine useReducer with Context?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To make the reducer faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To share state and dispatch across many components without prop drilling",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To replace useState entirely",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To use Redux instead",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Context makes the state and dispatch available to any component in the tree, avoiding prop drilling.",
+                "xpReward": 5
+            }
+        }
+    ]
+}

@@ -1,0 +1,39 @@
+{
+    "id": "l6",
+    "chapterId": "ch_8",
+    "title": "Multiple Effects and Separation of Concerns",
+    "description": "Use multiple effects for unrelated logic.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Best Practices",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "One Effect, One Responsibility 🧩",
+            "content": "# Separate Unrelated Logic\n\nDon't put everything in one giant `useEffect`. If you have multiple unrelated side effects, split them into separate `useEffect` calls.\n\nThis makes your code easier to understand and maintain.\n\n```jsx\n// ✅ Good: separate concerns\nuseEffect(() => {\n  document.title = `You clicked ${count} times`;\n}, [count]);\n\nuseEffect(() => {\n  const subscription = subscribeToSomething();\n  return () => subscription.unsubscribe();\n}, []);\n```\n\nReact guarantees that effects will run in the order they are written, and cleanup will run in reverse order."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Example",
+            "content": "Separating a subscription from a data fetch:",
+            "codeSnippet": "useEffect(() => {\n  // Fetch user data\n}, [userId]);\n\nuseEffect(() => {\n  // Subscribe to user's online status\n}, [userId]);\n\n// Each effect deals with one thing.",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "Check Your Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "true_false",
+                "question": "It's a good practice to put all side effects into a single useEffect to keep the code concise.",
+                "correctAnswer": false,
+                "explanation": "No, separating unrelated side effects improves readability and maintainability."
+            }
+        }
+    ]
+}

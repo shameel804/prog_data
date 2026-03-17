@@ -1,0 +1,61 @@
+{
+    "id": "l5",
+    "chapterId": "ch_9",
+    "title": "Context Performance and Best Practices",
+    "description": "Avoid unnecessary re-renders and structure context wisely.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Best Practices",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Performance Considerations ⚡",
+            "content": "# Context Re‑renders\n\nWhen the context value changes, **all** components that consume that context will re‑render, even if they only use part of the value.\n\n## Optimization Strategies\n\n1. **Split contexts** – separate unrelated data into different contexts.\n2. **Memoize the context value** – use `useMemo` to avoid unnecessary re‑creations.\n3. **Use state selectors** – custom hooks that return only needed parts.\n\n## Example: Splitting Contexts\n\nInstead of one giant context for user + theme + settings, create separate contexts: `UserContext`, `ThemeContext`, `SettingsContext`.\n\nThis way, changing the theme won't re‑render components that only consume user data."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Memoizing Context Value",
+            "content": "Prevent value from changing on every render of the provider:",
+            "codeSnippet": "function ThemeProvider({ children }) {\n  const [theme, setTheme] = useState('light');\n\n  const value = useMemo(() => ({\n    theme,\n    toggleTheme: () => setTheme(prev => prev === 'light' ? 'dark' : 'light')\n  }), [theme]); // Only recreate when theme changes\n\n  return (\n    <ThemeContext.Provider value={value}>\n      {children}\n    </ThemeContext.Provider>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What happens to all consumers when a context value changes?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Nothing",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They all re-render",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only the first consumer re-renders",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "React optimizes and only updates changed parts",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "All components that use `useContext` on that context will re-render when the value changes, regardless of which part they use.",
+                "xpReward": 5
+            }
+        }
+    ]
+}

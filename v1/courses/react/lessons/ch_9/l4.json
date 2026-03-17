@@ -1,0 +1,39 @@
+{
+    "id": "l4",
+    "chapterId": "ch_9",
+    "title": "Updating Context",
+    "description": "Combine context with state to provide dynamic values and updaters.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Making Context Dynamic 🔄",
+            "content": "# Context + State = Reactive Data\n\nContext itself doesn't manage state; it just passes values. To make context updatable, you can pass both the value and a setter function (or an object with methods) as the context value.\n\n## Pattern\n\n1. Create a context that holds an object with `value` and `setValue` (or multiple fields).\n2. In the Provider component, use `useState` and pass both state and setter.\n3. Consumers can then read and update the shared state."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Example: Theme Toggler",
+            "content": "A theme context that can be updated:",
+            "codeSnippet": "// ThemeContext.js\nimport { createContext, useState } from 'react';\n\nexport const ThemeContext = createContext();\n\nexport function ThemeProvider({ children }) {\n  const [theme, setTheme] = useState('light');\n\n  const toggleTheme = () => {\n    setTheme(prev => prev === 'light' ? 'dark' : 'light');\n  };\n\n  return (\n    <ThemeContext.Provider value={{ theme, toggleTheme }}>\n      {children}\n    </ThemeContext.Provider>\n  );\n}\n\n// App.js\nfunction App() {\n  return (\n    <ThemeProvider>\n      <Toolbar />\n    </ThemeProvider>\n  );\n}\n\n// Toolbar.js\nimport { useContext } from 'react';\nimport { ThemeContext } from './ThemeContext';\n\nfunction Toolbar() {\n  const { theme, toggleTheme } = useContext(ThemeContext);\n  return (\n    <div style={{ background: theme === 'light' ? '#fff' : '#333' }}>\n      <button onClick={toggleTheme}>Toggle Theme</button>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Check Your Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "true_false",
+                "question": "You can pass functions through context to allow components to update the shared state.",
+                "correctAnswer": true,
+                "explanation": "Yes, context can hold any value, including functions, so you can pass updaters down."
+            }
+        }
+    ]
+}
