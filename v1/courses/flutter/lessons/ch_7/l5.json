@@ -1,0 +1,67 @@
+{
+    "id": "l5",
+    "chapterId": "ch_7",
+    "title": "Provider Introduction",
+    "description": "Simple state management with Provider.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Provider",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Provider 📦",
+            "content": "# Provider Package\n\nProvider is a popular state management solution built on `InheritedWidget`. It simplifies exposing and consuming state.\n\n* Add `provider: ^6.0.0` to pubspec.yaml.\n* `ChangeNotifier` + `ChangeNotifierProvider` is a common pattern.\n* `Consumer` rebuilds only specific parts."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which class is often used with Provider to notify listeners of changes?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "ValueNotifier",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "ChangeNotifier",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Stream",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Future",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "ChangeNotifier provides notifyListeners() to update consumers.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Using Provider",
+            "content": "A counter with ChangeNotifier and Provider:",
+            "codeSnippet": "class Counter extends ChangeNotifier {\n  int _count = 0;\n  int get count => _count;\n\n  void increment() {\n    _count++;\n    notifyListeners();\n  }\n}\n\nvoid main() {\n  runApp(\n    ChangeNotifierProvider(\n      create: (context) => Counter(),\n      child: MyApp(),\n    ),\n  );\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        body: Center(\n          child: Consumer<Counter>(\n            builder: (context, counter, child) {\n              return Text('Count: ${counter.count}');\n            },\n          ),\n        ),\n        floatingActionButton: FloatingActionButton(\n          onPressed: () => context.read<Counter>().increment(),\n          child: Icon(Icons.add),\n        ),\n      ),\n    );\n  }\n}",
+            "codeLanguage": "dart",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_4",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `context.read` for events\n\nWhen you don't need to rebuild the widget (e.g., button press), use `context.read` to access the provider without listening."
+        }
+    ]
+}

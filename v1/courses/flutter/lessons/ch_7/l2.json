@@ -1,0 +1,67 @@
+{
+    "id": "l2",
+    "chapterId": "ch_7",
+    "title": "setState in Depth",
+    "description": "Managing state within a StatefulWidget.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Basics",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "How setState Works 🔄",
+            "content": "# setState\n\n`setState` is a method in `State` class that notifies Flutter that the internal state has changed, triggering a rebuild of the widget.\n\n* Call `setState(() { ... })` with the code that modifies state.\n* Only the widget and its descendants rebuild.\n* Keep the callback synchronous and quick."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What happens when you call setState?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The entire app rebuilds",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The widget's build method is scheduled to run",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The widget is removed from the tree",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Nothing",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "setState marks the widget as dirty and requests a rebuild.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Using setState Correctly",
+            "content": "A counter example:",
+            "codeSnippet": "class CounterWidget extends StatefulWidget {\n  @override\n  _CounterWidgetState createState() => _CounterWidgetState();\n}\n\nclass _CounterWidgetState extends State<CounterWidget> {\n  int _count = 0;\n\n  void _increment() {\n    setState(() {\n      _count++; // modify state inside setState\n    });\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      children: [\n        Text('Count: $_count'),\n        ElevatedButton(onPressed: _increment, child: Text('+')),\n      ],\n    );\n  }\n}",
+            "codeLanguage": "dart",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_4",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Don't call setState after disposal\n\nAlways check `mounted` before calling setState in asynchronous callbacks to avoid errors."
+        }
+    ]
+}

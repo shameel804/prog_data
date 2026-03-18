@@ -1,0 +1,67 @@
+{
+    "id": "l6",
+    "chapterId": "ch_2",
+    "title": "Type Inference and Dynamic",
+    "description": "How Dart infers types and when to use dynamic.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Type Inference 🔍",
+            "content": "# var vs dynamic\n\n**`var`** – Dart infers the type from the initial value. Once inferred, the type is fixed.\n\n**`dynamic`** – Turns off type checking; can hold any type and change type at runtime.\n\n**`Object?`** – Also can hold anything, but requires casting to call specific methods.\n\nBest practice: Use `var` or explicit types; avoid `dynamic` unless interoperating with dynamic data (e.g., JSON)."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What happens if you declare `var x = 'hello';` and later try `x = 42;`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It works, because var is dynamic.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Compile error: can't assign int to String.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It prints '42' without error.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "x becomes 42 but loses type.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`var` infers the type from the initializer; here `x` is inferred as `String`, so assigning an `int` causes a compile error.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "See it in Action",
+            "content": "Compare var and dynamic:",
+            "codeSnippet": "void main() {\n  var name = 'Alice';\n  // name = 42;   // Error: A value of type 'int' can't be assigned to a variable of type 'String'.\n  \n  dynamic anything = 'Alice';\n  anything = 42;      // OK\n  anything = true;    // OK\n  print(anything);    // true\n  \n  Object? obj = 'Bob';\n  // obj.length;      // Error: The getter 'length' isn't defined for type 'Object?'.\n  String str = obj as String; // need cast\n}",
+            "codeLanguage": "dart",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l6_4",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Prefer `Object?` over `dynamic` if you need flexibility but want some type safety\n\n`Object?` at least reminds you to cast, while `dynamic` disables all checks."
+        }
+    ]
+}

@@ -1,0 +1,67 @@
+{
+    "id": "l6",
+    "chapterId": "ch_7",
+    "title": "Consumer and Selector",
+    "description": "Efficiently rebuilding parts of the UI.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Provider",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Consumer and Selector 🎯",
+            "content": "# Optimizing Rebuilds\n\n* `Consumer` – rebuilds its builder whenever the listened object changes.\n* `Selector` – rebuilds only when a selected part of the state changes, preventing unnecessary rebuilds.\n\nUse `Selector` to filter which changes trigger a rebuild."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "When would you use Selector instead of Consumer?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "When you need to rebuild the entire widget tree",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "When you want to rebuild only when a specific property changes",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "When you have no state",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Selector is deprecated",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Selector allows you to listen to only part of the state, avoiding unnecessary rebuilds.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Using Selector",
+            "content": "Suppose a model has two fields, but we only care about one:",
+            "codeSnippet": "class UserModel extends ChangeNotifier {\n  String _name = '';\n  int _age = 0;\n\n  String get name => _name;\n  int get age => _age;\n\n  void updateName(String name) {\n    _name = name;\n    notifyListeners();\n  }\n\n  void updateAge(int age) {\n    _age = age;\n    notifyListeners();\n  }\n}\n\n// Only rebuild when age changes\nSelector<UserModel, int>(\n  selector: (context, model) => model.age,\n  builder: (context, age, child) {\n    return Text('Age: $age');\n  },\n);",
+            "codeLanguage": "dart",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l6_4",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `child` parameter in Consumer/Selector\n\nPass a child widget that doesn't depend on the state to avoid rebuilding it unnecessarily."
+        }
+    ]
+}

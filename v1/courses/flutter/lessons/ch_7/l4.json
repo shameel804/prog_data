@@ -1,0 +1,67 @@
+{
+    "id": "l4",
+    "chapterId": "ch_7",
+    "title": "InheritedWidget",
+    "description": "Propagating state down the tree.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "InheritedWidget 🌳",
+            "content": "# InheritedWidget\n\n`InheritedWidget` is a base class that allows efficiently propagating information down the widget tree.\n\n* Widgets can access the inherited widget using `context.dependOnInheritedWidgetOfExactType`.\n* When the inherited widget changes, dependent widgets rebuild.\n* Often used as the foundation for state management solutions (Provider is built on it)."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is the main purpose of InheritedWidget?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To manage animations",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To pass data down the tree efficiently",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To handle user input",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To style text",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "InheritedWidget allows descendants to access data without passing it through constructors.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Creating an InheritedWidget",
+            "content": "A simple counter inherited widget:",
+            "codeSnippet": "class CounterProvider extends InheritedWidget {\n  final int counter;\n  final Widget child;\n\n  CounterProvider({required this.counter, required this.child}) : super(child: child);\n\n  static CounterProvider? of(BuildContext context) {\n    return context.dependOnInheritedWidgetOfExactType<CounterProvider>();\n  }\n\n  @override\n  bool updateShouldNotify(CounterProvider oldWidget) {\n    return oldWidget.counter != counter;\n  }\n}\n\n// Usage\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return CounterProvider(\n      counter: 42,\n      child: MaterialApp(home: SomeWidget()),\n    );\n  }\n}\n\n// In a descendant\nText('Counter: ${CounterProvider.of(context)?.counter}');",
+            "codeLanguage": "dart",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_4",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `of` method convention\n\nIt's common to provide a static `of` method to conveniently access the inherited widget."
+        }
+    ]
+}

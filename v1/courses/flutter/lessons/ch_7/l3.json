@@ -1,0 +1,67 @@
+{
+    "id": "l3",
+    "chapterId": "ch_7",
+    "title": "Lifting State Up",
+    "description": "Sharing state between widgets.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Intermediate",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Lifting State Up ⬆️",
+            "content": "# Sharing State\n\nWhen two widgets need to share state, **lift the state up** to their common ancestor.\n\n* Move the state to a parent widget.\n* Pass data down via constructor parameters.\n* Pass callbacks to modify the state."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Why lift state up?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To make the code shorter",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To share state between sibling widgets",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To improve performance",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To use less memory",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Lifting state up allows multiple widgets to access and modify the same state.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Lifting State Example",
+            "content": "Two widgets share a boolean value:",
+            "codeSnippet": "class ParentWidget extends StatefulWidget {\n  @override\n  _ParentWidgetState createState() => _ParentWidgetState();\n}\n\nclass _ParentWidgetState extends State<ParentWidget> {\n  bool _isActive = false;\n\n  void _toggleActive() {\n    setState(() {\n      _isActive = !_isActive;\n    });\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      children: [\n        ChildA(isActive: _isActive),\n        ChildB(onToggle: _toggleActive),\n      ],\n    );\n  }\n}\n\nclass ChildA extends StatelessWidget {\n  final bool isActive;\n  ChildA({required this.isActive});\n  @override\n  Widget build(BuildContext context) {\n    return Text(isActive ? 'Active' : 'Inactive');\n  }\n}\n\nclass ChildB extends StatelessWidget {\n  final VoidCallback onToggle;\n  ChildB({required this.onToggle});\n  @override\n  Widget build(BuildContext context) {\n    return ElevatedButton(onPressed: onToggle, child: Text('Toggle'));\n  }\n}",
+            "codeLanguage": "dart",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_4",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `VoidCallback` or custom function types\n\nFor simple callbacks, `VoidCallback` is sufficient. For passing data back, define a function type like `ValueChanged<String>`."
+        }
+    ]
+}
