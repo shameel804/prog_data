@@ -1,0 +1,67 @@
+{
+    "id": "l1",
+    "chapterId": "ch_11",
+    "title": "SharedPreferences",
+    "description": "Storing simple key-value data.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Basics",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "SharedPreferences 🗃️",
+            "content": "# SharedPreferences\n\n`SharedPreferences` is used to store small amounts of primitive data (ints, bools, strings, etc.) as key-value pairs.\n\n* Data persists across app restarts.\n* Internally uses XML on Android and NSUserDefaults on iOS.\n* Add `shared_preferences` package to pubspec.yaml."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What type of data is NOT suitable for SharedPreferences?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "User settings",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "High scores",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Large images",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Boolean flags",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "SharedPreferences is for small key-value data, not large binary blobs.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "code",
+            "title": "Using SharedPreferences",
+            "content": "Read and write data:",
+            "codeSnippet": "import 'package:shared_preferences/shared_preferences.dart';\n\nFuture<void> saveCounter(int value) async {\n  final prefs = await SharedPreferences.getInstance();\n  await prefs.setInt('counter', value);\n}\n\nFuture<int> loadCounter() async {\n  final prefs = await SharedPreferences.getInstance();\n  return prefs.getInt('counter') ?? 0;\n}\n\n// Usage\nawait saveCounter(5);\nint count = await loadCounter();",
+            "codeLanguage": "dart",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_4",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use await only when needed\n\nAccessing SharedPreferences is asynchronous, so always await or use then(). Cache the instance if you use it frequently."
+        }
+    ]
+}

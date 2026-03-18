@@ -1,0 +1,67 @@
+{
+    "id": "l2",
+    "chapterId": "ch_12",
+    "title": "Explicit Animations",
+    "description": "Full control with AnimationController and Tweens.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Animations",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Explicit Animations 🎛️",
+            "content": "# Explicit Animations\n\nFor complex or custom animations, use `AnimationController` and `Tween`.\n\n* `AnimationController` controls the animation (duration, direction, etc.)\n* `Tween` defines the range of values.\n* You must dispose the controller.\n* Use `AnimatedBuilder` or `AnimatedWidget` to rebuild during animation."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What must you always do with an AnimationController?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Pause it",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Dispose it",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Repeat it",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Reverse it",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Controllers must be disposed to prevent memory leaks.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Explicit Animation Example",
+            "content": "A fading square that repeats:",
+            "codeSnippet": "class FadeInOut extends StatefulWidget {\n  @override\n  _FadeInOutState createState() => _FadeInOutState();\n}\n\nclass _FadeInOutState extends State<FadeInOut> with SingleTickerProviderStateMixin {\n  late AnimationController _controller;\n  late Animation<double> _animation;\n\n  @override\n  void initState() {\n    super.initState();\n    _controller = AnimationController(\n      vsync: this,\n      duration: Duration(seconds: 2),\n    )..repeat(reverse: true);\n    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);\n  }\n\n  @override\n  void dispose() {\n    _controller.dispose();\n    super.dispose();\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return AnimatedBuilder(\n      animation: _animation,\n      builder: (context, child) {\n        return Opacity(\n          opacity: _animation.value,\n          child: Container(width: 100, height: 100, color: Colors.blue),\n        );\n      },\n    );\n  }\n}",
+            "codeLanguage": "dart",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_4",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `vsync` to improve performance\n\n`SingleTickerProviderStateMixin` provides a vsync that prevents off-screen animations from consuming resources."
+        }
+    ]
+}

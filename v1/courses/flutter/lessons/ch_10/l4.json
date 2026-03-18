@@ -1,0 +1,67 @@
+{
+    "id": "l4",
+    "chapterId": "ch_10",
+    "title": "Displaying Data in ListView",
+    "description": "Showing fetched data in a scrollable list.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Intermediate",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "FutureBuilder and ListView 📃",
+            "content": "# Displaying Async Data\n\n`FutureBuilder` is a widget that builds itself based on the latest snapshot of a Future.\n\n* Provide the `future` and a `builder`.\n* The builder receives a `AsyncSnapshot` with connection state and data/error.\n* Use `ListView.builder` for efficient long lists."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does AsyncSnapshot.connectionState indicate?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Whether data is available",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The status of the asynchronous operation",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The error message",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The type of data",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "connectionState can be none, waiting, active, or done.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "FutureBuilder with ListView",
+            "content": "Display a list of posts:",
+            "codeSnippet": "Future<List<Post>> fetchPosts() async { ... }\n\n@override\nWidget build(BuildContext context) {\n  return Scaffold(\n    body: FutureBuilder<List<Post>>(\n      future: fetchPosts(),\n      builder: (context, snapshot) {\n        if (snapshot.connectionState == ConnectionState.waiting) {\n          return Center(child: CircularProgressIndicator());\n        } else if (snapshot.hasError) {\n          return Center(child: Text('Error: ${snapshot.error}'));\n        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {\n          return Center(child: Text('No posts'));\n        }\n        return ListView.builder(\n          itemCount: snapshot.data!.length,\n          itemBuilder: (context, index) {\n            final post = snapshot.data![index];\n            return ListTile(\n              title: Text(post.title),\n              subtitle: Text(post.body),\n            );\n          },\n        );\n      },\n    ),\n  );\n}",
+            "codeLanguage": "dart",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_4",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `snapshot.hasData` and `snapshot.hasError`\n\nThese booleans make your code cleaner than checking snapshot.data directly."
+        }
+    ]
+}

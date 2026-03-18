@@ -1,0 +1,67 @@
+{
+    "id": "l5",
+    "chapterId": "ch_10",
+    "title": "Error Handling",
+    "description": "Handling network errors and timeouts.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Graceful Error Handling 🛡️",
+            "content": "# Handling Errors\n\nNetwork requests can fail for many reasons: no internet, server down, timeouts.\n\n* Use try-catch around await calls.\n* Check status code and throw custom exceptions.\n* Show user-friendly error messages.\n* Consider retry logic or fallback data."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What HTTP status code indicates a successful request?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "404",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "500",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "200",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "301",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "200 OK means the request succeeded.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Error Handling with Timeout",
+            "content": "Add timeout to prevent hanging:",
+            "codeSnippet": "Future<Post> fetchPostWithTimeout() async {\n  try {\n    final response = await http\n        .get(Uri.parse('https://jsonplaceholder.typicode.com/posts/1'))\n        .timeout(Duration(seconds: 5));\n    if (response.statusCode == 200) {\n      return Post.fromJson(jsonDecode(response.body));\n    } else {\n      throw HttpException('Failed to load post', uri: Uri.base);\n    }\n  } on TimeoutException catch (_) {\n    throw Exception('Request timed out');\n  } on SocketException catch (_) {\n    throw Exception('No internet connection');\n  } catch (e) {\n    throw Exception('Unexpected error: $e');\n  }\n}",
+            "codeLanguage": "dart",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_4",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Differentiate error types\n\nCatch specific exceptions (TimeoutException, SocketException) to give precise feedback."
+        }
+    ]
+}

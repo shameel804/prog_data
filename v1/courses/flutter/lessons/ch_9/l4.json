@@ -1,0 +1,67 @@
+{
+    "id": "l4",
+    "chapterId": "ch_9",
+    "title": "Saving and Resetting",
+    "description": "Handling form submission and resetting fields.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Intermediate",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Save and Reset 💾",
+            "content": "# Form Submission and Reset\n\n* `_formKey.currentState!.save()` – calls the `onSaved` callback for each form field.\n* `_formKey.currentState!.reset()` – resets all fields to their initial value.\n\nUse `onSaved` to collect the final validated data."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "When is the onSaved callback of a form field called?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "When the field loses focus",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "When form.validate() is called",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "When form.save() is called",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "When the user submits",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "onSaved is triggered by calling save() on the FormState.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Save and Reset Example",
+            "content": "Collect data and reset form:",
+            "codeSnippet": "class _MyFormState extends State<MyForm> {\n  final _formKey = GlobalKey<FormState>();\n  String _name = '';\n  String _email = '';\n\n  void _submit() {\n    if (_formKey.currentState!.validate()) {\n      _formKey.currentState!.save();\n      // Use _name and _email\n      print('Name: $_name, Email: $_email');\n    }\n  }\n\n  void _reset() {\n    _formKey.currentState!.reset();\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Form(\n      key: _formKey,\n      child: Column(\n        children: [\n          TextFormField(\n            decoration: InputDecoration(labelText: 'Name'),\n            validator: (value) => value!.isEmpty ? 'Required' : null,\n            onSaved: (value) => _name = value!,\n          ),\n          TextFormField(\n            decoration: InputDecoration(labelText: 'Email'),\n            validator: (value) => value!.contains('@') ? null : 'Invalid email',\n            onSaved: (value) => _email = value!,\n          ),\n          Row(\n            children: [\n              ElevatedButton(onPressed: _submit, child: Text('Submit')),\n              TextButton(onPressed: _reset, child: Text('Reset')),\n            ],\n          ),\n        ],\n      ),\n    );\n  }\n}",
+            "codeLanguage": "dart",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_4",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use onSaved for final data collection\n\nonSaved is called only after validation passes, so it's safe to store the data there."
+        }
+    ]
+}

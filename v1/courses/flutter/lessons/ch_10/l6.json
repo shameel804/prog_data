@@ -1,0 +1,67 @@
+{
+    "id": "l6",
+    "chapterId": "ch_10",
+    "title": "REST API Example",
+    "description": "Building a complete example with JSONPlaceholder.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Project",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Complete Project: Posts Viewer 📱",
+            "content": "# Let's Build a Posts App\n\nWe'll fetch posts from JSONPlaceholder, display them in a list, and add a detail screen.\n\nSteps:\n1. Create model (Post).\n2. Create API service class.\n3. Display list with FutureBuilder.\n4. Navigate to detail on tap."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What is JSONPlaceholder?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A real database",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A fake online REST API for testing",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A JSON validator",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A Flutter package",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "JSONPlaceholder is a free fake API for prototyping.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "API Service and UI",
+            "content": "Complete implementation (simplified):",
+            "codeSnippet": "// post.dart\nclass Post {\n  final int id;\n  final String title;\n  final String body;\n  Post({required this.id, required this.title, required this.body});\n  factory Post.fromJson(Map<String, dynamic> json) => Post(\n        id: json['id'],\n        title: json['title'],\n        body: json['body'],\n      );\n}\n\n// api_service.dart\nclass ApiService {\n  static const String baseUrl = 'https://jsonplaceholder.typicode.com';\n\n  static Future<List<Post>> fetchPosts() async {\n    final response = await http.get(Uri.parse('$baseUrl/posts'));\n    if (response.statusCode == 200) {\n      final List<dynamic> jsonList = jsonDecode(response.body);\n      return jsonList.map((json) => Post.fromJson(json)).toList();\n    } else {\n      throw Exception('Failed to load posts');\n    }\n  }\n\n  static Future<Post> fetchPost(int id) async { ... }\n}\n\n// posts_list.dart\nclass PostsList extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Posts')),\n      body: FutureBuilder<List<Post>>(\n        future: ApiService.fetchPosts(),\n        builder: (context, snapshot) {\n          if (snapshot.connectionState == ConnectionState.waiting) {\n            return Center(child: CircularProgressIndicator());\n          } else if (snapshot.hasError) {\n            return Center(child: Text('Error: ${snapshot.error}'));\n          }\n          return ListView.builder(\n            itemCount: snapshot.data!.length,\n            itemBuilder: (context, index) {\n              final post = snapshot.data![index];\n              return ListTile(\n                title: Text(post.title),\n                onTap: () => Navigator.push(\n                  context,\n                  MaterialPageRoute(\n                    builder: (_) => PostDetail(postId: post.id),\n                  ),\n                ),\n              );\n            },\n          );\n        },\n      ),\n    );\n  }\n}",
+            "codeLanguage": "dart",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l6_4",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Separate concerns\n\nKeep your API calls in a separate service class for better organization and testability."
+        }
+    ]
+}

@@ -1,0 +1,67 @@
+{
+    "id": "l3",
+    "chapterId": "ch_11",
+    "title": "SQLite with sqflite",
+    "description": "Local database with sqflite.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "SQLite Database 🗄️",
+            "content": "# SQLite with sqflite\n\nFor structured data, relational queries, and large datasets, use SQLite via the `sqflite` package.\n\n* Add `sqflite` and `path` to pubspec.yaml.\n* Create a database helper class.\n* Define tables, perform CRUD operations.\n* Use `path` to locate the database file."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is SQLite?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A cloud database",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A lightweight relational database engine",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A NoSQL database",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A file format",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "SQLite is a self-contained, serverless, zero-configuration SQL database engine.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Basic sqflite Setup",
+            "content": "A simple database helper for a 'dogs' table:",
+            "codeSnippet": "import 'package:sqflite/sqflite.dart';\nimport 'package:path/path.dart';\n\nclass DatabaseHelper {\n  static final DatabaseHelper _instance = DatabaseHelper._internal();\n  factory DatabaseHelper() => _instance;\n  DatabaseHelper._internal();\n\n  static Database? _database;\n\n  Future<Database> get database async {\n    if (_database != null) return _database!;\n    _database = await _initDatabase();\n    return _database!;\n  }\n\n  Future<Database> _initDatabase() async {\n    String path = join(await getDatabasesPath(), 'dogs.db');\n    return await openDatabase(\n      path,\n      version: 1,\n      onCreate: (db, version) {\n        return db.execute(\n          'CREATE TABLE dogs(id INTEGER PRIMARY KEY, name TEXT, age INTEGER)',\n        );\n      },\n    );\n  }\n\n  Future<int> insertDog(Dog dog) async {\n    Database db = await database;\n    return await db.insert('dogs', dog.toMap());\n  }\n\n  Future<List<Dog>> dogs() async {\n    Database db = await database;\n    final List<Map<String, dynamic>> maps = await db.query('dogs');\n    return List.generate(maps.length, (i) => Dog.fromMap(maps[i]));\n  }\n}",
+            "codeLanguage": "dart",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_4",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use a single instance\n\nImplement the singleton pattern for your database helper to avoid multiple connections."
+        }
+    ]
+}
