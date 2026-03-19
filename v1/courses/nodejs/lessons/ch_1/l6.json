@@ -1,0 +1,85 @@
+{
+    "id": "l6",
+    "chapterId": "ch_1",
+    "title": "Modules and require",
+    "description": "Organize code with CommonJS modules – export and import.",
+    "xpReward": 20,
+    "estimatedMinutes": 8,
+    "section": "Modularity",
+    "slides": [
+        {
+            "id": "l6_s1",
+            "type": "text",
+            "title": "Why Modules? 🧩",
+            "content": "# The Need for Modules\n\nAs programs grow, keeping all code in one file becomes messy. Modules help you:\n* **Encapsulate** code (keep related functions together)\n* **Reuse** code across files\n* **Avoid naming conflicts**\n* **Manage dependencies**\n\nNode.js uses the **CommonJS** module system by default (though ES modules are also supported)."
+        },
+        {
+            "id": "l6_s2",
+            "type": "text",
+            "title": "Exporting with `module.exports` 📤",
+            "content": "## Creating a Module\n\nCreate a file `math.js`:\n```javascript\n// math.js\nconst add = (a, b) => a + b;\nconst subtract = (a, b) => a - b;\n\nmodule.exports = { add, subtract };\n```\n\n`module.exports` is an object that will be returned when another file `require`s this file. You can export anything – functions, objects, primitives."
+        },
+        {
+            "id": "l6_s3",
+            "type": "code",
+            "title": "Example: math.js",
+            "content": "Here's a simple module:",
+            "codeSnippet": "// calculator.js\nfunction multiply(a, b) {\n  return a * b;\n}\n\nfunction divide(a, b) {\n  if (b === 0) throw new Error('Cannot divide by zero');\n  return a / b;\n}\n\nmodule.exports = { multiply, divide };",
+            "codeLanguage": "javascript",
+            "canRunCode": true
+        },
+        {
+            "id": "l6_s4",
+            "type": "text",
+            "title": "Importing with `require` 📥",
+            "content": "## Using a Module\n\nIn another file, say `app.js`, you can import the module:\n```javascript\n// app.js\nconst math = require('./math.js'); // .js extension is optional\n\nconsole.log(math.add(5, 3));      // 8\nconsole.log(math.subtract(10, 4)); // 6\n```\n\n`require()` returns whatever was assigned to `module.exports`. Here it's an object containing `add` and `subtract`."
+        },
+        {
+            "id": "l6_s5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch1_l6_q1",
+                "type": "multiple_choice",
+                "question": "Which function is used to include a module in Node.js?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "include",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "require",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "import",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "module.include",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Node's CommonJS uses `require()`. ES modules use `import`, but that's a different syntax.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "l6_s6",
+            "type": "text",
+            "title": "Module Resolution Rules 🔍",
+            "content": "## How Node Finds a Module\n\nWhen you `require('something')`, Node looks in this order:\n\n1. **Core modules** (like `fs`, `http`) – if the string matches a core module, it uses that.\n2. **File modules** – if the path starts with `./`, `../`, or `/`, it resolves the file.\n3. **node_modules folders** – if it's a bare identifier (like `lodash`), Node walks up the directory tree looking for a `node_modules` folder containing that package.\n\nExample:\n```javascript\nrequire('fs')          // core module\nrequire('./myFile')    // relative file\nrequire('express')     // package from node_modules\n```"
+        },
+        {
+            "id": "l6_s7",
+            "type": "tip",
+            "title": "`exports` shortcut 🏷️",
+            "content": "## `module.exports` vs `exports`\n\nYou may see code using `exports.add = add`. That's because `exports` is an alias for `module.exports` initially. But be careful:\n```javascript\nexports = { add }; // ❌ breaks the alias, doesn't export anything\nmodule.exports = { add }; // ✅ correct\n```\n\nRule of thumb: use `module.exports` to be safe, or attach properties to `exports` but never reassign it."
+        }
+    ]
+}
