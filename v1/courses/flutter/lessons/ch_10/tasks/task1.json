@@ -1,0 +1,13 @@
+{
+    "id": "task1",
+    "chapterId": "ch_10",
+    "title": "FutureBuilder Usage",
+    "description": "Display a loading spinner while waiting for a network request using FutureBuilder.",
+    "estimatedMinutes": 10,
+    "problemStatement": "Handle async UI! Use a `FutureBuilder` with a dummy future `Future.delayed(Duration(seconds: 2), () => 'Done')`. \n\n**Requirement:** Show a `CircularProgressIndicator` while the state is `waiting`, and show a `Text` with the data when the state is `done`.",
+    "hints": [
+        "Check `snapshot.connectionState == ConnectionState.waiting`."
+    ],
+    "expectedOutput": "A spinner that turns into the text 'Done' after 2 seconds.",
+    "solutionCode": "import 'package:flutter/material.dart';\n\nclass AsyncDataView extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return FutureBuilder<String>(\n      future: Future.delayed(const Duration(seconds: 2), () => 'Done'),\n      builder: (context, snapshot) {\n        if (snapshot.connectionState == ConnectionState.waiting) {\n          return const CircularProgressIndicator();\n        }\n        return Text(snapshot.data ?? 'Error');\n      },\n    );\n  }\n}"
+}

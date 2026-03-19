@@ -1,0 +1,13 @@
+{
+    "id": "task2",
+    "chapterId": "ch_9",
+    "title": "Form GlobalKey",
+    "description": "Use a GlobalKey to validate and save all fields in a form.",
+    "estimatedMinutes": 10,
+    "problemStatement": "To trigger validation, you need a key. Create a `final _formKey = GlobalKey<FormState>();` and attach it to a `Form` widget. Add an `ElevatedButton` that calls `_formKey.currentState!.validate()` when pressed.\n\n**Requirement:** Print `\"Form is valid!\"` if the validation passes.",
+    "hints": [
+        "The `validate()` method runs all validators in the form."
+    ],
+    "expectedOutput": "The validation logic triggers when the button is clicked.",
+    "solutionCode": "import 'package:flutter/material.dart';\n\nclass MyForm extends StatefulWidget {\n  @override\n  State<MyForm> createState() => _MyFormState();\n}\n\nclass _MyFormState extends State<MyForm> {\n  final _formKey = GlobalKey<FormState>();\n\n  @override\n  Widget build(BuildContext context) {\n    return Form(\n      key: _formKey,\n      child: Column(\n        children: [\n          TextFormField(validator: (v) => v!.isEmpty ? 'Error' : null),\n          ElevatedButton(\n            onPressed: () {\n              if (_formKey.currentState!.validate()) print('Form is valid!');\n            },\n            child: const Text('Submit'),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+}

@@ -1,0 +1,13 @@
+{
+    "id": "task1",
+    "chapterId": "ch_11",
+    "title": "useLocalStorage",
+    "description": "Create a custom hook that syncs a value with the browser's local storage.",
+    "estimatedMinutes": 5,
+    "problemStatement": "Reusable persistence! Create a custom hook `useLocalStorage(key, initialValue)`. It should return a stateful value and a function to update it, both of which are synced with `localStorage`.\n\n**Requirement:** Name the hook starting with `use`.",
+    "hints": [
+        "A custom hook is just a JavaScript function that can call other Hooks."
+    ],
+    "expectedOutput": "A custom hook that returns [value, setValue]",
+    "solutionCode": "import { useState, useEffect } from 'react';\n\nconst useLocalStorage = (key, initialValue) => {\n  const [value, setValue] = useState(() => {\n    const saved = localStorage.getItem(key);\n    return saved !== null ? JSON.parse(saved) : initialValue;\n  });\n\n  useEffect(() => {\n    localStorage.setItem(key, JSON.stringify(value));\n  }, [key, value]);\n\n  return [value, setValue];\n};"
+}

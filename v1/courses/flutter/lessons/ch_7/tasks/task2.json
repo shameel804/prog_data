@@ -1,0 +1,13 @@
+{
+    "id": "task2",
+    "chapterId": "ch_7",
+    "title": "Lifting State",
+    "description": "Pass a callback function to a child widget to trigger state changes in the parent.",
+    "estimatedMinutes": 10,
+    "problemStatement": "Communication between widgets! Create a parent widget that holds a `String status`. Create a child widget `StatusButton` that takes a `VoidCallback onToggle` as a constructor parameter.\n\n**Requirement:** When the child button is pressed, the parent should update its status to `\"Active\"`.",
+    "hints": [
+        "Pass the function from parent to child: `StatusButton(onToggle: () => setState(...))`."
+    ],
+    "expectedOutput": "The parent's text changes when the child's button is clicked.",
+    "solutionCode": "import 'package:flutter/material.dart';\n\nclass ParentWidget extends StatefulWidget {\n  @override\n  State<ParentWidget> createState() => _ParentWidgetState();\n}\n\nclass _ParentWidgetState extends State<ParentWidget> {\n  String status = 'Inactive';\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      children: [\n        Text(status),\n        ChildButton(onToggle: () => setState(() => status = 'Active')),\n      ],\n    );\n  }\n}\n\nclass ChildButton extends StatelessWidget {\n  final VoidCallback onToggle;\n  const ChildButton({required this.onToggle});\n  @override\n  Widget build(BuildContext context) => ElevatedButton(onPressed: onToggle, child: const Text('Change'));\n}"
+}

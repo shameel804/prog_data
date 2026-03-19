@@ -1,0 +1,21 @@
+{
+    "id": "project3",
+    "title": "Multi-threaded Web Server",
+    "description": "Create a high-performance web server from scratch that handles multiple concurrent TCP connections using a custom thread pool.",
+    "difficulty": "Advanced",
+    "estimatedHours": "15-20",
+    "problemStatement": "# Multi-threaded Web Server\n\nGo low-level! Implement a web server using Rust's standard network library that can serve static HTML files and handle heavy traffic with a thread pool.\n\n## Core Features\n\n1. **TCP Listener**\n   - Listen for incoming connections on a specific port (e.g., 7878).\n\n2. **HTTP Parsing**\n   - Read the raw request bytes and parse the HTTP method and path.\n\n3. **Thread Pool**\n   - Implement a custom thread pool to avoid spawning a new thread for every single request.\n\n4. **Static File Serving**\n   - If the user requests `/`, return `index.html`. If the page is missing, return a `404.html`.\n\n## Requirements\n\n- Use `std::net::TcpListener` and `std::net::TcpStream`.\n- Implement a `Worker` struct for the thread pool logic.\n- Handle graceful shutdown and resource cleanup.\n\n## Example Flow\n\n```rust\nuse std::net::TcpListener;\n\nlet listener = TcpListener::bind(\"127.0.0.1:7878\").unwrap();\nfor stream in listener.incoming() {\n    let stream = stream.unwrap();\n    // Handle connection via thread pool\n}\n```",
+    "requirements": [
+        "Low-level networking concepts (TCP/IP).",
+        "Building custom thread pool architectures.",
+        "Handling raw byte streams and string conversion.",
+        "Graceful shutdown and thread coordination using channels.",
+        "Building a performant system-level application."
+    ],
+    "hints": [
+        "The `mio` or `tokio` crates are popular for production, but build this using only `std` to understand the fundamentals.",
+        "Use a channel (`std::sync::mpsc`) to send tasks from the server to the worker threads.",
+        "Carefully read the HTTP spec for basic 'GET' requests!"
+    ],
+    "expectedOutput": "A fully functional web server that can serve files to your browser and handle multiple users at once."
+}
