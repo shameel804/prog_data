@@ -1,0 +1,79 @@
+{
+    "id": "l2",
+    "chapterId": "ch_5",
+    "title": "Stack Navigator",
+    "description": "Navigate between screens with push/pop transitions.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Stack",
+    "slides": [
+        {
+            "id": "s_ch5_l2_1",
+            "type": "text",
+            "title": "Stack Navigator Basics 📚",
+            "content": "# What is a Stack?\n\nA stack navigator manages a stack of screens. When you navigate to a new screen, it's pushed on top. Pressing the back button pops it off.\n\nThink of a deck of cards – you can only see the top card.\n\n## Creating a Stack\n\nFirst, import the necessary functions:\n\n```jsx\nimport { createStackNavigator } from '@react-navigation/stack';\nconst Stack = createStackNavigator();\n```"
+        },
+        {
+            "id": "s_ch5_l2_2",
+            "type": "code",
+            "title": "Basic Stack Setup",
+            "content": "Here's a simple app with two screens:",
+            "codeSnippet": "import * as React from 'react';\nimport { View, Text, Button } from 'react-native';\nimport { NavigationContainer } from '@react-navigation/native';\nimport { createStackNavigator } from '@react-navigation/stack';\n\nfunction HomeScreen({ navigation }) {\n  return (\n    <View>\n      <Text>Home Screen</Text>\n      <Button\n        title=\"Go to Details\"\n        onPress={() => navigation.navigate('Details')}\n      />\n    </View>\n  );\n}\n\nfunction DetailsScreen() {\n  return (\n    <View>\n      <Text>Details Screen</Text>\n    </View>\n  );\n}\n\nconst Stack = createStackNavigator();\n\nexport default function App() {\n  return (\n    <NavigationContainer>\n      <Stack.Navigator>\n        <Stack.Screen name=\"Home\" component={HomeScreen} />\n        <Stack.Screen name=\"Details\" component={DetailsScreen} />\n      </Stack.Navigator>\n    </NavigationContainer>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_ch5_l2_3",
+            "type": "text",
+            "title": "The `navigation` Prop",
+            "content": "## Navigating\n\nEvery screen component receives a `navigation` prop (if it's registered as a screen). It has methods like:\n\n* `navigation.navigate('RouteName')` – go to a screen, pushing if not already in stack, or going back if it exists.\n* `navigation.push('RouteName')` – always push a new instance.\n* `navigation.goBack()` – pop the current screen.\n* `navigation.popToTop()` – go back to the first screen in the stack.\n\nTry them out!"
+        },
+        {
+            "id": "s_ch5_l2_4",
+            "type": "quiz",
+            "title": "Stack Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch5_l2_1",
+                "type": "multiple_choice",
+                "question": "What does `navigation.navigate('Details')` do if 'Details' is already in the stack?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It pushes a new Details screen",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It goes back to the existing Details screen",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It does nothing",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It crashes the app",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`navigate` tries to go to an existing instance; `push` always adds a new one.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch5_l2_5",
+            "type": "text",
+            "title": "Header Configuration 🎨",
+            "content": "## Customising the Header\n\nYou can set options per screen:\n\n```jsx\n<Stack.Screen\n  name=\"Home\"\n  component={HomeScreen}\n  options={{ title: 'My Home' }}\n/>\n```\n\nOr dynamically in the component:\n```jsx\nuseLayoutEffect(() => {\n  navigation.setOptions({ title: 'Updated!' });\n}, [navigation]);\n```"
+        },
+        {
+            "id": "s_ch5_l2_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Wrap your app in `<NavigationContainer>` only once, at the root. It manages the navigation state and deep links."
+        }
+    ]
+}

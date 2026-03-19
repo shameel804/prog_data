@@ -1,0 +1,70 @@
+{
+    "id": "l3",
+    "chapterId": "ch_8",
+    "title": "Loading States and Displaying Data",
+    "description": "Manage loading indicators and render fetched data in components.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Data Display",
+    "slides": [
+        {
+            "id": "s_ch8_l3_1",
+            "type": "text",
+            "title": "User Experience Matters ⏳",
+            "content": "# Don't Leave Users Guessing\n\nWhen fetching data, there's a delay. Show a **loading indicator** so users know something is happening. Also handle empty states and errors gracefully.\n\nCommon states:\n- `loading`: true while fetching\n- `data`: the fetched data (or null)\n- `error`: error message if any"
+        },
+        {
+            "id": "s_ch8_l3_2",
+            "type": "code",
+            "title": "Loading State Implementation",
+            "content": "Add `loading` and `error` to state:\n\n```jsx\nconst [data, setData] = useState(null);\nconst [loading, setLoading] = useState(true);\nconst [error, setError] = useState(null);\n\nuseEffect(() => {\n  const fetchData = async () => {\n    try {\n      setLoading(true);\n      const response = await fetch('https://api.example.com/data');\n      if (!response.ok) throw new Error('Failed to fetch');\n      const json = await response.json();\n      setData(json);\n      setError(null);\n    } catch (err) {\n      setError(err.message);\n    } finally {\n      setLoading(false);\n    }\n  };\n  fetchData();\n}, []);\n\nif (loading) return <Text>Loading...</Text>;\nif (error) return <Text>Error: {error}</Text>;\nif (!data) return null;\n\n// render data\n```"
+        },
+        {
+            "id": "s_ch8_l3_3",
+            "type": "text",
+            "title": "Displaying Data in Lists",
+            "content": "## Using FlatList with Fetched Data\n\nOnce data arrives, pass it to `FlatList`:\n\n```jsx\n<FlatList\n  data={data}\n  keyExtractor={(item) => item.id.toString()}\n  renderItem={({ item }) => <Text>{item.title}</Text>}\n/>\n```\n\nRemember to provide a `keyExtractor` (data from API usually has an `id`)."
+        },
+        {
+            "id": "s_ch8_l3_4",
+            "type": "quiz",
+            "title": "Loading States 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch8_l3_1",
+                "type": "multiple_choice",
+                "question": "Why do we need a loading state?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To make the app slower",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To inform users that data is being fetched",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To hide errors",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's optional, not needed",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Loading states improve UX by showing that work is in progress, preventing blank screens.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch8_l3_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Use `ActivityIndicator` for a spinner. You can also use skeleton placeholders for a more polished look."
+        }
+    ]
+}

@@ -1,0 +1,64 @@
+{
+    "id": "l3",
+    "chapterId": "ch_10",
+    "title": "AsyncStorage – Local Persistence",
+    "description": "Store simple data locally on the device.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Storage",
+    "slides": [
+        {
+            "id": "s_ch10_l3_1",
+            "type": "text",
+            "title": "What is AsyncStorage? 💾",
+            "content": "# Simple, Unencrypted, Asynchronous\n\nAsyncStorage is a key‑value storage system that is global and persistent. It's similar to `localStorage` on the web but asynchronous.\n\nUse cases:\n- Storing user preferences\n- Caching small data\n- Offline data\n\n⚠️ Not suitable for sensitive data (no encryption). For secure storage, use `expo-secure-store` or `react-native-keychain`."
+        },
+        {
+            "id": "s_ch10_l3_2",
+            "type": "code",
+            "title": "Installation and Basic Usage",
+            "content": "In Expo, AsyncStorage comes with `@react-native-async-storage/async-storage`. Install:\n```bash\nexpo install @react-native-async-storage/async-storage\n```\n\n```jsx\nimport AsyncStorage from '@react-native-async-storage/async-storage';\n\n// Store data\nconst storeData = async (key, value) => {\n  try {\n    await AsyncStorage.setItem(key, JSON.stringify(value));\n  } catch (e) {\n    console.error('Failed to save', e);\n  }\n};\n\n// Retrieve data\nconst getData = async (key) => {\n  try {\n    const value = await AsyncStorage.getItem(key);\n    return value != null ? JSON.parse(value) : null;\n  } catch (e) {\n    console.error('Failed to fetch', e);\n  }\n};\n\n// Remove data\nconst removeData = async (key) => {\n  try {\n    await AsyncStorage.removeItem(key);\n  } catch (e) {\n    console.error('Failed to remove', e);\n  }\n};\n```"
+        },
+        {
+            "id": "s_ch10_l3_3",
+            "type": "quiz",
+            "title": "AsyncStorage Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch10_l3_1",
+                "type": "multiple_choice",
+                "question": "Why should you `JSON.stringify` objects before storing them in AsyncStorage?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Because AsyncStorage only accepts strings",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To encrypt the data",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To compress the data",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's optional",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "AsyncStorage stores strings only; for objects you need to serialise them with JSON.stringify.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch10_l3_4",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Wrap AsyncStorage calls in a helper module to handle serialisation and errors consistently. Also consider using `useAsyncStorage` hook from the library for easier integration."
+        }
+    ]
+}

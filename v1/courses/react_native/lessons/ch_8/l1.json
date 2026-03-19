@@ -1,0 +1,76 @@
+{
+    "id": "l1",
+    "chapterId": "ch_8",
+    "title": "Fetch API and Promises",
+    "description": "Learn how to make network requests using the Fetch API and understand Promises.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Basics",
+    "slides": [
+        {
+            "id": "s_ch8_l1_1",
+            "type": "text",
+            "title": "Why Network Requests? 🌐",
+            "content": "# Connecting to the World\n\nMost apps need to fetch data from a server – user profiles, posts, weather, etc. React Native provides the **Fetch API**, a modern interface for making network requests, just like in the browser.\n\nFetch is **promise‑based**, so we need to understand Promises first."
+        },
+        {
+            "id": "s_ch8_l1_2",
+            "type": "text",
+            "title": "Promises in a Nutshell 🤝",
+            "content": "## What is a Promise?\n\nA Promise is an object representing the eventual completion (or failure) of an asynchronous operation.\n\nIt has three states:\n- **Pending** – initial state, not yet fulfilled or rejected.\n- **Fulfilled** – operation completed successfully.\n- **Rejected** – operation failed.\n\nYou attach callbacks with `.then()` for success and `.catch()` for failure.\n\n```js\nconst promise = fetch('https://api.example.com/data');\npromise\n  .then(response => response.json())\n  .then(data => console.log(data))\n  .catch(error => console.error(error));\n```"
+        },
+        {
+            "id": "s_ch8_l1_3",
+            "type": "code",
+            "title": "Basic Fetch Example",
+            "content": "Here's a simple fetch to a public API (JSONPlaceholder):\n\n```jsx\nimport React, { useEffect, useState } from 'react';\nimport { View, Text } from 'react-native';\n\nexport default function Posts() {\n  const [posts, setPosts] = useState([]);\n\n  useEffect(() => {\n    fetch('https://jsonplaceholder.typicode.com/posts')\n      .then(response => response.json())\n      .then(data => setPosts(data))\n      .catch(error => console.error(error));\n  }, []);\n\n  return (\n    <View>\n      {posts.map(post => (\n        <Text key={post.id}>{post.title}</Text>\n      ))}\n    </View>\n  );\n}\n```\n\nWe'll break this down."
+        },
+        {
+            "id": "s_ch8_l1_4",
+            "type": "quiz",
+            "title": "Promises Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch8_l1_1",
+                "type": "multiple_choice",
+                "question": "What are the three states of a Promise?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Start, Progress, End",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Pending, Resolved, Rejected",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Open, Closed, Error",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Sent, Received, Failed",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A Promise can be pending, fulfilled (resolved), or rejected.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch8_l1_5",
+            "type": "text",
+            "title": "Response Object",
+            "content": "## Working with the Response\n\n`fetch()` returns a Promise that resolves to a **Response** object. It contains status, headers, and methods to extract the body:\n\n- `response.json()` – parse as JSON\n- `response.text()` – get as raw text\n- `response.blob()` – for binary data\n\nThese methods also return Promises, so you need another `.then()`.\n\nAlways check `response.ok` (true if status 200‑299) to handle HTTP errors."
+        },
+        {
+            "id": "s_ch8_l1_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Use `console.log` inside `.then()` to see what you're getting. Network tab in Chrome DevTools (with remote debugging) is also your friend."
+        }
+    ]
+}

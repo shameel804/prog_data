@@ -1,0 +1,78 @@
+{
+    "id": "l5",
+    "chapterId": "ch_4",
+    "title": "Advanced List Techniques",
+    "description": "Implement pull‑to‑refresh, infinite scrolling, and handle empty states.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Advanced Lists",
+    "slides": [
+        {
+            "id": "s_ch4_l5_1",
+            "type": "text",
+            "title": "Pull to Refresh 🔄",
+            "content": "# Adding Refresh Control\n\nFlatList (and SectionList) have built‑in pull‑to‑refresh support via two props:\n\n* `refreshing` – a boolean indicating if a refresh is in progress.\n* `onRefresh` – a function called when the user pulls down.\n\n```jsx\nconst [refreshing, setRefreshing] = useState(false);\n\nconst handleRefresh = async () => {\n  setRefreshing(true);\n  await fetchNewData();\n  setRefreshing(false);\n};\n\n<FlatList\n  data={data}\n  renderItem={...}\n  refreshing={refreshing}\n  onRefresh={handleRefresh}\n/>\n```"
+        },
+        {
+            "id": "s_ch4_l5_2",
+            "type": "code",
+            "title": "Infinite Scrolling (End reached)",
+            "content": "Load more data when the user scrolls near the end using `onEndReached`.\n\n```jsx\nconst [data, setData] = useState([]);\nconst [loading, setLoading] = useState(false);\nconst [page, setPage] = useState(1);\n\nconst loadMore = async () => {\n  if (loading) return;\n  setLoading(true);\n  const newData = await fetchPage(page);\n  setData(prev => [...prev, ...newData]);\n  setPage(p => p + 1);\n  setLoading(false);\n};\n\n<FlatList\n  data={data}\n  renderItem={...}\n  onEndReached={loadMore}\n  onEndReachedThreshold={0.5} // when 50% from the bottom\n  ListFooterComponent={loading && <Text>Loading...</Text>}\n/>\n```",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_ch4_l5_3",
+            "type": "quiz",
+            "title": "Advanced Features 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch4_l5_1",
+                "type": "multiple_choice",
+                "question": "Which prop would you use to detect when the user scrolls near the end of a FlatList?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "onScrollEnd",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "onEndReached",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "onEndThreshold",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "onReachedEnd",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`onEndReached` is called when the scroll position is within `onEndReachedThreshold` of the end.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch4_l5_4",
+            "type": "text",
+            "title": "Empty States 📭",
+            "content": "## Showing a Message When Data is Empty\n\nUse `ListEmptyComponent` to render a component when the data array is empty.\n\n```jsx\n<FlatList\n  data={[]}\n  renderItem={...}\n  ListEmptyComponent={\n    <View style={{ alignItems: 'center', padding: 20 }}>\n      <Text>No items found.</Text>\n    </View>\n  }\n/>\n```\n\nThis is a great place to show an illustration or a friendly message."
+        },
+        {
+            "id": "s_ch4_l5_5",
+            "type": "warning",
+            "title": "Common Pitfall ⚠️",
+            "content": "When using `onEndReached` for pagination, make sure you don't call it repeatedly. Use a `loading` flag to prevent multiple requests. Also, reset the page number when refreshing."
+        },
+        {
+            "id": "s_ch4_l5_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "For a truly smooth infinite scroll, consider using `getItemLayout` if your items have fixed heights. This allows the list to jump to the right offset when new items are added without flickering."
+        }
+    ]
+}

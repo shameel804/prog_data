@@ -1,0 +1,70 @@
+{
+    "id": "l6",
+    "chapterId": "ch_5",
+    "title": "Nesting Navigators and Lifecycle",
+    "description": "Combine navigators and understand screen focus events.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_ch5_l6_1",
+            "type": "text",
+            "title": "Combining Navigators 🧩",
+            "content": "# Real‑world Navigation\n\nMost apps combine multiple navigators: a bottom tab bar, with each tab having its own stack.\n\nYou can nest navigators just like any component:\n\n```jsx\nfunction HomeStack() {\n  return (\n    <Stack.Navigator>\n      <Stack.Screen name=\"Home\" component={Home} />\n      <Stack.Screen name=\"Details\" component={Details} />\n    </Stack.Navigator>\n  );\n}\n\nfunction SettingsStack() {\n  return (\n    <Stack.Navigator>\n      <Stack.Screen name=\"Settings\" component={Settings} />\n      <Stack.Screen name=\"Profile\" component={Profile} />\n    </Stack.Navigator>\n  );\n}\n\n// In the root\n<Tab.Navigator>\n  <Tab.Screen name=\"HomeTab\" component={HomeStack} />\n  <Tab.Screen name=\"SettingsTab\" component={SettingsStack} />\n</Tab.Navigator>\n```"
+        },
+        {
+            "id": "s_ch5_l6_2",
+            "type": "text",
+            "title": "Navigation Lifecycle ⏱️",
+            "content": "## When is a Screen Focused?\n\nIn a stack, screens are not unmounted when you go back; they stay mounted. In tabs, screens are mounted when first visited and stay mounted.\n\nTo know when a screen comes into focus (e.g., to refresh data), use the `useFocusEffect` hook or the `useIsFocused` hook.\n\n```jsx\nimport { useFocusEffect } from '@react-navigation/native';\n\nuseFocusEffect(\n  React.useCallback(() => {\n    // Do something when screen is focused\n    return () => {\n      // Do something when screen is unfocused (cleanup)\n    };\n  }, [])\n);\n```"
+        },
+        {
+            "id": "s_ch5_l6_3",
+            "type": "code",
+            "title": "useIsFocused Example",
+            "content": "You can conditionally render based on focus:\n\n```jsx\nimport { useIsFocused } from '@react-navigation/native';\n\nfunction MyScreen() {\n  const isFocused = useIsFocused();\n\n  return (\n    <View>\n      {isFocused ? <Text>Screen is focused</Text> : <Text>Not focused</Text>}\n    </View>\n  );\n}\n```\n\nThis is useful for starting/stopping animations or live data."
+        },
+        {
+            "id": "s_ch5_l6_4",
+            "type": "quiz",
+            "title": "Lifecycle 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch5_l6_1",
+                "type": "multiple_choice",
+                "question": "Which hook runs an effect when the screen comes into focus?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "useEffect",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "useFocusEffect",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "useNavigationFocus",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "useOnFocus",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`useFocusEffect` from React Navigation runs when the screen is focused and cleans up on blur.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch5_l6_5",
+            "type": "warning",
+            "title": "Important ⚠️",
+            "content": "`useFocusEffect` should be wrapped in `React.useCallback` to avoid running on every render. The cleanup function is optional but important for subscriptions."
+        }
+    ]
+}

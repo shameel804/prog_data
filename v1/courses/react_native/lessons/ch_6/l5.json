@@ -1,0 +1,76 @@
+{
+    "id": "l5",
+    "chapterId": "ch_6",
+    "title": "Styling Patterns and Theming",
+    "description": "Organise styles, create themes, and use styled components.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Patterns",
+    "slides": [
+        {
+            "id": "s_ch6_l5_1",
+            "type": "text",
+            "title": "Organising Styles 🗂️",
+            "content": "# Keep Styles Manageable\n\nAs apps grow, styles can become messy. Common patterns:\n\n- **Separate StyleSheets** – keep styles in the same file but grouped.\n- **Dedicated style files** – e.g., `HomeScreen.styles.js`.\n- **Global constants** – define colours, spacing, typography in one place.\n- **Theming** – support light/dark modes."
+        },
+        {
+            "id": "s_ch6_l5_2",
+            "type": "code",
+            "title": "Creating a Theme",
+            "content": "Define a theme object:\n\n```jsx\n// theme.js\nexport const lightTheme = {\n  colors: {\n    primary: '#6200ee',\n    background: '#ffffff',\n    text: '#000000',\n  },\n  spacing: {\n    small: 8,\n    medium: 16,\n    large: 24,\n  },\n};\n\nexport const darkTheme = {\n  colors: {\n    primary: '#bb86fc',\n    background: '#121212',\n    text: '#ffffff',\n  },\n  spacing: { ... },\n};\n```\n\nThen use React Context to provide the theme to components."
+        },
+        {
+            "id": "s_ch6_l5_3",
+            "type": "text",
+            "title": "Using the Theme",
+            "content": "## Consuming Theme\n\nCreate a `ThemeContext` and a `ThemeProvider`. Then in components:\n\n```jsx\nimport { ThemeContext } from './ThemeContext';\n\nfunction MyComponent() {\n  const theme = useContext(ThemeContext);\n\n  return (\n    <View style={{ backgroundColor: theme.colors.background }}>\n      <Text style={{ color: theme.colors.text }}>Hello</Text>\n    </View>\n  );\n}\n```\n\nThis allows dynamic theming (e.g., switching light/dark mode)."
+        },
+        {
+            "id": "s_ch6_l5_4",
+            "type": "quiz",
+            "title": "Theming 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch6_l5_1",
+                "type": "multiple_choice",
+                "question": "What is a benefit of using a theme system?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Faster rendering",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Consistent styling and easy dark mode",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Automatic responsive design",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Smaller bundle size",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Theming centralises style constants, making it easy to maintain consistency and support multiple themes.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch6_l5_5",
+            "type": "text",
+            "title": "Styled Components (Optional)",
+            "content": "## CSS‑in‑JS Libraries\n\nLibraries like `styled-components` or `emotion` allow you to write actual CSS syntax in your components:\n\n```jsx\nimport styled from 'styled-components/native';\n\nconst Container = styled.View`\n  flex: 1;\n  background-color: ${props => props.theme.background};\n`;\n\nconst Title = styled.Text`\n  font-size: 24px;\n  color: palevioletred;\n`;\n\nfunction App() {\n  return (\n    <Container>\n      <Title>Hello</Title>\n    </Container>\n  );\n}\n```\n\nThis is a personal preference; StyleSheet works perfectly well."
+        },
+        {
+            "id": "s_ch6_l5_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "For large apps, consider using `StyleSheet.flatten` or `Array` of styles for conditional styling. E.g., `style={[styles.base, isActive && styles.active]}`."
+        }
+    ]
+}

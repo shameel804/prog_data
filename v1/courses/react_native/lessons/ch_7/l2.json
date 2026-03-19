@@ -1,0 +1,70 @@
+{
+    "id": "l2",
+    "chapterId": "ch_7",
+    "title": "Handling Form State",
+    "description": "Manage multiple inputs with useState and reduce boilerplate.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Forms",
+    "slides": [
+        {
+            "id": "s_ch7_l2_1",
+            "type": "text",
+            "title": "Multiple Inputs Challenge 🤹",
+            "content": "# The Problem\n\nA form often has many fields (name, email, password). Managing each with a separate `useState` can be repetitive.\n\n```jsx\nconst [name, setName] = useState('');\nconst [email, setEmail] = useState('');\nconst [password, setPassword] = useState('');\n```\n\nThis is fine for small forms, but for larger forms, consider using a single state object."
+        },
+        {
+            "id": "s_ch7_l2_2",
+            "type": "code",
+            "title": "Using a Single State Object",
+            "content": "Store all form values in one object:\n\n```jsx\nconst [form, setForm] = useState({\n  name: '',\n  email: '',\n  password: '',\n});\n\nconst handleChange = (field, value) => {\n  setForm({ ...form, [field]: value });\n};\n\n// In render\n<TextInput\n  value={form.name}\n  onChangeText={text => handleChange('name', text)}\n/>\n```\n\nThis pattern reduces repetition and makes it easy to add new fields."
+        },
+        {
+            "id": "s_ch7_l2_3",
+            "type": "quiz",
+            "title": "Form State 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch7_l2_1",
+                "type": "multiple_choice",
+                "question": "Why might you use a single state object instead of multiple useState calls?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's required by React",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It reduces repetition and makes it easier to manage many fields",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It improves performance",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It enables form validation",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A single object groups related state, reducing boilerplate and making updates more systematic.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch7_l2_4",
+            "type": "text",
+            "title": "Handling Submit",
+            "content": "## Form Submission\n\nWhen the user submits the form (e.g., presses a button), gather the data and process it.\n\n```jsx\nconst handleSubmit = () => {\n  // Validate, then send to API\n  console.log(form);\n};\n\n<Button title=\"Submit\" onPress={handleSubmit} />\n```\n\nYou can also trigger submit from the last input using `onSubmitEditing` and blurring."
+        },
+        {
+            "id": "s_ch7_l2_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Consider using a library like `react-hook-form` for complex forms, but for most apps, managing state manually is sufficient and keeps dependencies low."
+        }
+    ]
+}

@@ -1,0 +1,87 @@
+{
+    "id": "l3",
+    "chapterId": "ch_4",
+    "title": "FlatList Props and Performance",
+    "description": "Customise your list with headers, footers, separators, and optimise rendering.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "FlatList",
+    "slides": [
+        {
+            "id": "s_ch4_l3_1",
+            "type": "text",
+            "title": "Enhancing Your List ✨",
+            "content": "# Useful FlatList Props\n\n* `ListHeaderComponent` – a component rendered at the top of the list.\n* `ListFooterComponent` – at the bottom.\n* `ItemSeparatorComponent` – rendered between items.\n* `horizontal` – make the list scroll horizontally.\n* `numColumns` – display items in a grid (multiple columns).\n\nAll these props accept either a React component or a function returning an element."
+        },
+        {
+            "id": "s_ch4_l3_2",
+            "type": "code",
+            "title": "Header, Footer, and Separators",
+            "content": "A FlatList with a header, footer, and separators:",
+            "codeSnippet": "<FlatList\n  data={DATA}\n  keyExtractor={(item) => item.id}\n  renderItem={({ item }) => <Text>{item.title}</Text>}\n  ListHeaderComponent={<Text style={{ fontSize: 24 }}>My List</Text>}\n  ListFooterComponent={<Text>End of list</Text>}\n  ItemSeparatorComponent={() => <View style={{ height: 1, backgroundColor: '#ccc' }} />}\n/>",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_ch4_l3_3",
+            "type": "text",
+            "title": "Grid Layout 🧩",
+            "content": "## Multiple Columns\n\nSet `numColumns` to display items in a grid. When using `numColumns`, `renderItem` receives the item as usual, but the items are arranged in columns.\n\n```jsx\n<FlatList\n  data={DATA}\n  keyExtractor={(item) => item.id}\n  numColumns={2}\n  renderItem={({ item }) => (\n    <View style={{ flex: 1, margin: 5, backgroundColor: 'lightblue' }}>\n      <Text>{item.name}</Text>\n    </View>\n  )}\n/>\n```\n\n⚠️ You must ensure each item's container has `flex: 1` or a fixed width to share the space evenly."
+        },
+        {
+            "id": "s_ch4_l3_4",
+            "type": "quiz",
+            "title": "FlatList Props 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch4_l3_1",
+                "type": "multiple_choice",
+                "question": "Which prop would you use to render something between every item in a FlatList?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "ListHeaderComponent",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "ListFooterComponent",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "ItemSeparatorComponent",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "renderSeparator",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`ItemSeparatorComponent` renders a component between each item.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch4_l3_5",
+            "type": "text",
+            "title": "Performance Optimisation 🚀",
+            "content": "## Making FlatList Even Faster\n\nFor very long lists, you can provide hints to improve performance:\n\n* `initialNumToRender` – how many items to render initially (default 10). Increase if you want to see more items immediately.\n* `maxToRenderPerBatch` – how many items to render per batch when scrolling (default 10).\n* `windowSize` – number of screen heights worth of items to render (default 21). Higher values keep more off‑screen items mounted, which can help with smooth scrolling but uses more memory.\n* `removeClippedSubviews` – set to `true` to detach off‑screen views (may improve memory, but can cause issues with absolute positioning).\n* `getItemLayout` – if you know the size of each item, provide it to skip measuring."
+        },
+        {
+            "id": "s_ch4_l3_6",
+            "type": "code",
+            "title": "Using getItemLayout",
+            "content": "When all items have the same height, `getItemLayout` eliminates the need to measure them, greatly improving performance.\n\n```jsx\nconst ITEM_HEIGHT = 50;\n\n<FlatList\n  data={DATA}\n  keyExtractor={(item) => item.id}\n  renderItem={({ item }) => <Text style={{ height: ITEM_HEIGHT }}>{item.title}</Text>}\n  getItemLayout={(data, index) => ({\n    length: ITEM_HEIGHT,\n    offset: ITEM_HEIGHT * index,\n    index,\n  })}\n/>\n```",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_ch4_l3_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "If your list items have dynamic heights, consider using `onLayout` to measure them and store the layout info. But for most cases, the default settings are sufficient."
+        }
+    ]
+}

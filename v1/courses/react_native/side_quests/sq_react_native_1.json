@@ -1,0 +1,82 @@
+{
+    "id": "sq_react_native_1",
+    "title": "Bug Hunt: Props & State",
+    "triggerChapterIndex": 2,
+    "metadata": {
+        "type": "debug"
+    },
+    "questions": [
+        {
+            "id": "sq_react_native_1_q1",
+            "type": "multiple_choice",
+            "question": "Find the bug in this code that prevents the counter from updating.",
+            "codeSnippet": "import React, { useState } from 'react';\nimport { View, Text, Button } from 'react-native';\n\nexport default function Counter() {\n  let count = 0;\n  const increment = () => {\n    count = count + 1;\n    console.log(count);\n  };\n  return (\n    <View>\n      <Text>Count: {count}</Text>\n      <Button title=\"Press\" onPress={increment} />\n    </View>\n  );\n}",
+            "bugLineIndex": 5,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The bug is using a local variable instead of `useState`. Line 5 should be `const [count, setCount] = useState(0);` and `increment` should call `setCount(count + 1)`. Without state, React doesn't re‑render.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_react_native_1_q2",
+            "type": "multiple_choice",
+            "question": "This component should display the user's name passed via props, but it's not working. Find the bug.",
+            "codeSnippet": "function Greeting(props) {\n  return <Text>Hello, {props.name}</Text>;\n}\n\n// Usage in App\n<Greeting name=\"Alice\" />",
+            "bugLineIndex": 1,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "There is no bug – this code works correctly. The question tests if the learner can identify that there is no error. (We'll still include it as a trick.)",
+            "xpReward": 15,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_react_native_1_q3",
+            "type": "multiple_choice",
+            "question": "Why does this component not re‑render when the text input changes?",
+            "codeSnippet": "import React from 'react';\nimport { TextInput } from 'react-native';\n\nexport default function MyInput() {\n  let text = '';\n  return (\n    <TextInput\n      value={text}\n      onChangeText={(newText) => { text = newText; }}\n    />\n  );\n}",
+            "bugLineIndex": 4,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The component doesn't use state. `text` is a local variable that doesn't trigger re‑renders. Use `const [text, setText] = useState('');` and `onChangeText={setText}`.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_react_native_1_q4",
+            "type": "multiple_choice",
+            "question": "This FlatList is supposed to show a list of names, but nothing appears. Find the bug.",
+            "codeSnippet": "const data = [{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }];\n\n<FlatList\n  data={data}\n  renderItem={({ item }) => <Text>{item.name}</Text>}\n/>",
+            "bugLineIndex": 1,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "Missing import for FlatList. Add `import { FlatList, Text } from 'react-native';` at the top.",
+            "xpReward": 15,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_react_native_1_q5",
+            "type": "multiple_choice",
+            "question": "Why does the button always show 'Count: 0' even after pressing?",
+            "codeSnippet": "const [count, setCount] = useState(0);\n\nconst increment = () => {\n  setCount(count + 1);\n  setCount(count + 1);\n};\n\nreturn <Button title={`Count: ${count}`} onPress={increment} />;",
+            "bugLineIndex": 3,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "Both `setCount` calls use the same stale `count` value. Use functional update: `setCount(prev => prev + 1)` twice to correctly increment by 2.",
+            "xpReward": 25,
+            "difficulty": 3
+        },
+        {
+            "id": "sq_react_native_1_q6",
+            "type": "multiple_choice",
+            "question": "This component tries to render a list using ScrollView, but it's very slow with 1000 items. What's the main issue?",
+            "codeSnippet": "<ScrollView>\n  {bigArray.map(item => <Text key={item.id}>{item.text}</Text>)}\n</ScrollView>",
+            "bugLineIndex": 0,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "ScrollView renders all items at once. For long lists, use FlatList for lazy rendering.",
+            "xpReward": 20,
+            "difficulty": 2
+        }
+    ]
+}

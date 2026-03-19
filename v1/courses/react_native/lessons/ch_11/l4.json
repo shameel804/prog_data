@@ -1,0 +1,64 @@
+{
+    "id": "l4",
+    "chapterId": "ch_11",
+    "title": "Optimising Lists and Images",
+    "description": "Improve list performance and handle images efficiently.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Optimisation",
+    "slides": [
+        {
+            "id": "s_ch11_l4_1",
+            "type": "text",
+            "title": "List Performance Recap",
+            "content": "# Use FlatList or SectionList\n\nFor long lists, always use `FlatList` – it virtualises content. But even `FlatList` can be optimised:\n- Provide `getItemLayout` if items have fixed size\n- Use `initialNumToRender` wisely\n- Avoid anonymous functions in `renderItem` (use `useCallback`)\n- Set `maxToRenderPerBatch` and `windowSize` appropriately"
+        },
+        {
+            "id": "s_ch11_l4_2",
+            "type": "code",
+            "title": "Optimised FlatList Example",
+            "content": "```jsx\nconst renderItem = useCallback(({ item }) => (\n  <ItemComponent item={item} />\n), []);\n\n<FlatList\n  data={data}\n  renderItem={renderItem}\n  keyExtractor={item => item.id}\n  getItemLayout={(data, index) => ({\n    length: ITEM_HEIGHT,\n    offset: ITEM_HEIGHT * index,\n    index,\n  })}\n  initialNumToRender={10}\n  maxToRenderPerBatch={10}\n  windowSize={21}\n/>\n```"
+        },
+        {
+            "id": "s_ch11_l4_3",
+            "type": "text",
+            "title": "Image Optimisation",
+            "content": "## Images Are Heavy\n\n- Resize images to the display size – don't download 4K images for a thumbnail.\n- Use `resizeMode` appropriately.\n- Cache images with libraries like `expo-image` or `react-native-fast-image`.\n- For remote images, set `width` and `height` to avoid layout shifts.\n\nExample with `react-native-fast-image` (not Expo‑friendly, but popular):\n```jsx\nimport FastImage from 'react-native-fast-image';\n\n<FastImage\n  style={{ width: 200, height: 200 }}\n  source={{ uri: 'https://example.com/image.jpg', priority: FastImage.priority.normal }}\n  resizeMode={FastImage.resizeMode.contain}\n/>\n```"
+        },
+        {
+            "id": "s_ch11_l4_4",
+            "type": "quiz",
+            "title": "List/Image Optimisation 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch11_l4_1",
+                "type": "multiple_choice",
+                "question": "What does `getItemLayout` do for FlatList?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It sets the layout direction",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It provides fixed item dimensions to skip measurement",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It arranges items in a grid",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It animates item insertion",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`getItemLayout` tells FlatList the exact size and position of each item, avoiding measurement overhead.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

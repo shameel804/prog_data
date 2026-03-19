@@ -1,0 +1,79 @@
+{
+    "id": "l1",
+    "chapterId": "ch_4",
+    "title": "ScrollView Deep Dive",
+    "description": "Explore advanced ScrollView features: paging, horizontal scrolling, scroll events, and programmatic control.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "ScrollView",
+    "slides": [
+        {
+            "id": "s_ch4_l1_1",
+            "type": "text",
+            "title": "ScrollView Recap 📜",
+            "content": "# Review: The Scrollable Container\n\nWe've used `ScrollView` before – it's a component that makes its content scrollable. But it has many powerful props we haven't explored.\n\n* **Renders all children at once** – good for small or fixed content.\n* **Can scroll vertically or horizontally**.\n* **Supports paging** and scroll events."
+        },
+        {
+            "id": "s_ch4_l1_2",
+            "type": "text",
+            "title": "Paging and Horizontal Scrolling 📄",
+            "content": "## Paging Enabled\n\nSet `pagingEnabled={true}` to make the scroll view stop at multiples of its own size – perfect for carousels or on boarding screens.\n\n```jsx\n<ScrollView pagingEnabled horizontal>\n  <View style={{ width: 300, height: 200, backgroundColor: 'red' }} />\n  <View style={{ width: 300, height: 200, backgroundColor: 'green' }} />\n  <View style={{ width: 300, height: 200, backgroundColor: 'blue' }} />\n</ScrollView>\n```\n\nNote: You must give each child a width if using horizontal paging, or a height for vertical paging."
+        },
+        {
+            "id": "s_ch4_l1_3",
+            "type": "code",
+            "title": "Scroll Events",
+            "content": "Listen to scroll position with `onScroll`:",
+            "codeSnippet": "<ScrollView\n  onScroll={(event) => {\n    const offsetY = event.nativeEvent.contentOffset.y;\n    console.log('Scrolled to:', offsetY);\n  }}\n  scrollEventThrottle={16} // fire every ~16ms (60fps)\n>\n  {/* content */}\n</ScrollView>",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_ch4_l1_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch4_l1_1",
+                "type": "multiple_choice",
+                "question": "What does `pagingEnabled` do on a ScrollView?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It adds page numbers",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It makes scrolling snap to multiples of the view's size",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It enables infinite scrolling",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It disables scrolling",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`pagingEnabled` makes the scroll view stop at page boundaries, like a pager.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch4_l1_5",
+            "type": "text",
+            "title": "Programmatic Scrolling 🎮",
+            "content": "## Scroll to a Specific Position\n\nYou can control scrolling using a **ref** and methods like `scrollTo`.\n\n```jsx\nconst scrollViewRef = useRef(null);\n\nconst scrollToTop = () => {\n  scrollViewRef.current?.scrollTo({ y: 0, animated: true });\n};\n\nreturn (\n  <>\n    <Button title=\"Scroll to Top\" onPress={scrollToTop} />\n    <ScrollView ref={scrollViewRef}>\n      {/* content */}\n    </ScrollView>\n  </>\n);\n```\n\nAlso available: `scrollToEnd`."
+        },
+        {
+            "id": "s_ch4_l1_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "For `onScroll`, always set `scrollEventThrottle` to control how often the event fires. A value of 16 gives you roughly 60 events per second, which is smooth for most animations."
+        }
+    ]
+}

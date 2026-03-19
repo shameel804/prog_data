@@ -1,0 +1,72 @@
+{
+    "id": "l3",
+    "chapterId": "ch_6",
+    "title": "Platform-Specific Styles",
+    "description": "Tailor your UI for iOS and Android using Platform.select and file extensions.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Platform",
+    "slides": [
+        {
+            "id": "s_ch6_l3_1",
+            "type": "text",
+            "title": "Why Platform-Specific? 🍏🤖",
+            "content": "# Different Platforms, Different Looks\n\niOS and Android have different design guidelines. Sometimes you need to adjust:\n- Shadows (iOS prefers shadow props, Android uses elevation)\n- Fonts\n- Navigation appearance\n- Touch feedback\n\nReact Native provides two main ways to handle platform differences: `Platform` module and platform‑specific file extensions."
+        },
+        {
+            "id": "s_ch6_l3_2",
+            "type": "code",
+            "title": "Using Platform.select",
+            "content": "The `Platform` module exports `Platform.OS` ('ios' or 'android') and a `select` method.\n\n```jsx\nimport { Platform, StyleSheet } from 'react-native';\n\nconst styles = StyleSheet.create({\n  container: {\n    ...Platform.select({\n      ios: {\n        shadowColor: '#000',\n        shadowOffset: { width: 0, height: 2 },\n        shadowOpacity: 0.3,\n      },\n      android: {\n        elevation: 5,\n      },\n    }),\n  },\n});\n```\n\nYou can also use `Platform.OS` directly:\n```jsx\nconst padding = Platform.OS === 'ios' ? 20 : 10;\n```",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_ch6_l3_3",
+            "type": "text",
+            "title": "Platform-Specific File Extensions",
+            "content": "## .ios.js and .android.js\n\nYou can create separate files for each platform. For example:\n- `Header.ios.js`\n- `Header.android.js`\n\nThen import `Header` normally; React Native will pick the correct file.\n\nThis is useful when the entire component implementation differs significantly.\n\n```jsx\n// In App.js\nimport Header from './Header'; // loads the right one automatically\n```"
+        },
+        {
+            "id": "s_ch6_l3_4",
+            "type": "quiz",
+            "title": "Platform Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch6_l3_1",
+                "type": "multiple_choice",
+                "question": "Which method allows you to define platform-specific values in a style object?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Platform.OS",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Platform.select",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "StyleSheet.platform",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Device.select",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`Platform.select` takes an object with `ios` and `android` keys and returns the value for the current platform.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch6_l3_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "For shadows, use `shadow*` props on iOS and `elevation` on Android. Remember that `elevation` also affects z‑order and touch feedback."
+        }
+    ]
+}

@@ -1,0 +1,79 @@
+{
+    "id": "l2",
+    "chapterId": "ch_4",
+    "title": "Introducing FlatList",
+    "description": "The performant way to render long lists of data.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "FlatList",
+    "slides": [
+        {
+            "id": "s_ch4_l2_1",
+            "type": "text",
+            "title": "Why FlatList? 🤔",
+            "content": "# The Problem with ScrollView\n\nIf you have a list with hundreds or thousands of items, `ScrollView` renders them all at once. That's memory‑intensive and can make your app sluggish.\n\n**Enter FlatList** – it renders items **lazily**: only the ones currently visible on screen, plus a few offscreen. As you scroll, it reuses views and discards off‑screen items.\n\n* `FlatList` is a **virtualized list**.\n* It's the go‑to component for long, dynamic lists."
+        },
+        {
+            "id": "s_ch4_l2_2",
+            "type": "text",
+            "title": "FlatList Basics 📋",
+            "content": "## Required Props\n\n* `data` – an array of items.\n* `renderItem` – a function that returns a component for each item.\n\n```jsx\nimport { FlatList, Text } from 'react-native';\n\nconst DATA = [\n  { id: '1', title: 'First Item' },\n  { id: '2', title: 'Second Item' },\n];\n\n<FlatList\n  data={DATA}\n  renderItem={({ item }) => <Text>{item.title}</Text>}\n/>\n```\n\n`renderItem` receives an object with `{ item, index, separators }`."
+        },
+        {
+            "id": "s_ch4_l2_3",
+            "type": "code",
+            "title": "FlatList Example",
+            "content": "A simple list of names:",
+            "codeSnippet": "import React from 'react';\nimport { FlatList, Text, View } from 'react-native';\n\nconst names = ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve'];\n\nexport default function NameList() {\n  return (\n    <FlatList\n      data={names}\n      renderItem={({ item, index }) => (\n        <View style={{ padding: 10, borderBottomWidth: 1 }}>\n          <Text>{index + 1}. {item}</Text>\n        </View>\n      )}\n    />\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_ch4_l2_4",
+            "type": "quiz",
+            "title": "FlatList Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch4_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the main advantage of FlatList over ScrollView for long lists?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It supports horizontal scrolling",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It renders only visible items, saving memory",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It automatically adds pull‑to‑refresh",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It is easier to style",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "FlatList virtualizes its content, rendering only what's on screen, which improves performance for large lists.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch4_l2_5",
+            "type": "text",
+            "title": "The `keyExtractor` Prop 🔑",
+            "content": "## Providing Stable Keys\n\nBy default, FlatList uses the item's index as the key. This can cause issues if the list order changes (e.g., sorting).\n\nIt's best to provide a `keyExtractor` that returns a unique identifier for each item.\n\n```jsx\n<FlatList\n  data={DATA}\n  keyExtractor={(item) => item.id}\n  renderItem={({ item }) => <Text>{item.title}</Text>}\n/>\n```\n\nNow React can track each item even if the list is reordered."
+        },
+        {
+            "id": "s_ch4_l2_6",
+            "type": "warning",
+            "title": "Important ⚠️",
+            "content": "Always provide a `keyExtractor` if your data has unique IDs. If you don't, and the list changes, you might see strange behaviour (e.g., incorrect text in items after reordering)."
+        }
+    ]
+}

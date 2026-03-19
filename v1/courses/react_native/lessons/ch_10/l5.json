@@ -1,0 +1,58 @@
+{
+    "id": "l5",
+    "chapterId": "ch_10",
+    "title": "Sharing and Deep Linking",
+    "description": "Share content with other apps and handle incoming links.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Integration",
+    "slides": [
+        {
+            "id": "s_ch10_l5_1",
+            "type": "text",
+            "title": "Sharing Content 📤",
+            "content": "# Share API\n\nReact Native provides a built‑in `Share` module to open the native share dialog.\n\n```jsx\nimport { Share, View, Button } from 'react-native';\n\nconst onShare = async () => {\n  try {\n    const result = await Share.share({\n      message: 'Check out this awesome app!',\n      url: 'https://example.com', // iOS only\n      title: 'App Share', // Android only\n    });\n    if (result.action === Share.sharedAction) {\n      // shared\n    } else if (result.action === Share.dismissedAction) {\n      // dismissed\n    }\n  } catch (error) {\n    alert(error.message);\n  }\n};\n\n<Button title=\"Share\" onPress={onShare} />\n```"
+        },
+        {
+            "id": "s_ch10_l5_2",
+            "type": "text",
+            "title": "Deep Linking 🔗",
+            "content": "# Handling Incoming Links\n\nDeep linking allows your app to respond to URLs (e.g., `myapp://profile/123`). With Expo, you use `Linking` API.\n\nFirst, configure the scheme in `app.json`:\n```json\n{\n  \"expo\": {\n    \"scheme\": \"myapp\"\n  }\n}\n```\n\nThen listen for links:\n```jsx\nimport React, { useEffect } from 'react';\nimport { Linking, Text } from 'react-native';\n\nexport default function App() {\n  useEffect(() => {\n    const handleDeepLink = (event) => {\n      console.log('Deep link:', event.url);\n    };\n\n    // Listen for incoming links\n    const subscription = Linking.addEventListener('url', handleDeepLink);\n\n    // Check if app was opened from a link\n    Linking.getInitialURL().then((url) => {\n      if (url) {\n        console.log('Initial URL:', url);\n      }\n    });\n\n    return () => subscription.remove();\n  }, []);\n\n  return <Text>App</Text>;\n}\n```"
+        },
+        {
+            "id": "s_ch10_l5_3",
+            "type": "quiz",
+            "title": "Sharing and Linking 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch10_l5_1",
+                "type": "multiple_choice",
+                "question": "Which module is used to open the native share dialog?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "ShareDialog",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Share",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Intent",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Linking",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `Share` module from React Native opens the share sheet.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

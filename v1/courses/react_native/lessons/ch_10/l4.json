@@ -1,0 +1,64 @@
+{
+    "id": "l4",
+    "chapterId": "ch_10",
+    "title": "Device Sensors (Accelerometer, Gyroscope)",
+    "description": "Read data from motion sensors for interactive experiences.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Sensors",
+    "slides": [
+        {
+            "id": "s_ch10_l4_1",
+            "type": "text",
+            "title": "Motion Sensors 🎮",
+            "content": "# Accelerometer and Gyroscope\n\nModern phones have sensors that detect motion and orientation. You can use them to create games, step counters, or tilt‑controlled UI.\n\nExpo provides `expo-sensors` for accessing these.\n\n- **Accelerometer**: measures acceleration in m/s² (including gravity).\n- **Gyroscope**: measures rotation rate in rad/s.\n- Also: Magnetometer, Pedometer, etc."
+        },
+        {
+            "id": "s_ch10_l4_2",
+            "type": "code",
+            "title": "Installation and Subscription",
+            "content": "```bash\nexpo install expo-sensors\n```\n\n```jsx\nimport React, { useState, useEffect } from 'react';\nimport { View, Text } from 'react-native';\nimport { Accelerometer } from 'expo-sensors';\n\nexport default function AccelerometerExample() {\n  const [data, setData] = useState({ x: 0, y: 0, z: 0 });\n\n  useEffect(() => {\n    const subscription = Accelerometer.addListener(accelerometerData => {\n      setData(accelerometerData);\n    });\n    Accelerometer.setUpdateInterval(100); // 100ms\n\n    return () => subscription.remove();\n  }, []);\n\n  return (\n    <View>\n      <Text>x: {data.x.toFixed(2)}</Text>\n      <Text>y: {data.y.toFixed(2)}</Text>\n      <Text>z: {data.z.toFixed(2)}</Text>\n    </View>\n  );\n}\n```"
+        },
+        {
+            "id": "s_ch10_l4_3",
+            "type": "quiz",
+            "title": "Sensors Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch10_l4_1",
+                "type": "multiple_choice",
+                "question": "What method sets how often the accelerometer updates?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Accelerometer.setInterval()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Accelerometer.setUpdateInterval()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Accelerometer.setFrequency()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Accelerometer.setRate()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`setUpdateInterval` accepts milliseconds.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch10_l4_4",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Don't set the update interval too low (e.g., < 16ms) as it may drain battery. For UI animations, 100ms is usually sufficient."
+        }
+    ]
+}

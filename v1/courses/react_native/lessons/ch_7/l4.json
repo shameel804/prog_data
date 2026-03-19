@@ -1,0 +1,76 @@
+{
+    "id": "l4",
+    "chapterId": "ch_7",
+    "title": "Keyboard Avoiding and Dismissal",
+    "description": "Handle the on‑screen keyboard gracefully.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "UX",
+    "slides": [
+        {
+            "id": "s_ch7_l4_1",
+            "type": "text",
+            "title": "The Keyboard Challenge ⌨️",
+            "content": "# Keyboard Covers Inputs\n\nOn mobile, the keyboard can cover the input you're typing into, especially if it's at the bottom of the screen.\n\nReact Native provides components to handle this: `KeyboardAvoidingView` and `ScrollView` with keyboard handling."
+        },
+        {
+            "id": "s_ch7_l4_2",
+            "type": "code",
+            "title": "KeyboardAvoidingView",
+            "content": "Wrap your form in `KeyboardAvoidingView`:\n\n```jsx\nimport { KeyboardAvoidingView, Platform } from 'react-native';\n\n<KeyboardAvoidingView\n  style={{ flex: 1 }}\n  behavior={Platform.OS === 'ios' ? 'padding' : 'height'}\n>\n  {/* form content */}\n</KeyboardAvoidingView>\n```\n\n- `behavior` determines how the view adjusts: `'padding'` adds padding, `'position'` moves the view, `'height'` (Android) adjusts height.\n- Often used inside a `ScrollView` for forms."
+        },
+        {
+            "id": "s_ch7_l4_3",
+            "type": "text",
+            "title": "ScrollView with Keyboard",
+            "content": "## Automatically Adjusting Scroll\n\nIf your form is in a `ScrollView`, you can use:\n\n```jsx\n<ScrollView\n  contentContainerStyle={{ flexGrow: 1 }}\n  keyboardShouldPersistTaps=\"handled\"\n  keyboardDismissMode=\"on-drag\"\n>\n  {/* form */}\n</ScrollView>\n```\n\n- `keyboardShouldPersistTaps` – whether taps should dismiss the keyboard (`'never'`, `'always'`, `'handled'`).\n- `keyboardDismissMode` – `'none'`, `'on-drag'` (dismiss when you start scrolling)."
+        },
+        {
+            "id": "s_ch7_l4_4",
+            "type": "quiz",
+            "title": "Keyboard Handling 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch7_l4_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of `KeyboardAvoidingView`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To prevent the keyboard from opening",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To adjust the layout so inputs aren't hidden by the keyboard",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To dismiss the keyboard automatically",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To change keyboard type",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`KeyboardAvoidingView` moves its children to avoid the on‑screen keyboard.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch7_l4_5",
+            "type": "text",
+            "title": "Dismissing the Keyboard",
+            "content": "## Programmatic Dismissal\n\nYou can dismiss the keyboard anywhere with `Keyboard.dismiss()`.\n\n```jsx\nimport { Keyboard } from 'react-native';\n\n// Dismiss on button press\n<Button title=\"Done\" onPress={() => Keyboard.dismiss()} />\n\n// Dismiss when tapping outside inputs – wrap your screen in a\n// TouchableWithoutFeedback that calls Keyboard.dismiss.\n```\n\nExample:\n```jsx\n<TouchableWithoutFeedback onPress={Keyboard.dismiss}>\n  <View style={{ flex: 1 }}>\n    {/* inputs */}\n  </View>\n</TouchableWithoutFeedback>\n```"
+        },
+        {
+            "id": "s_ch7_l4_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Use `Keyboard.dismiss` in the `onSubmitEditing` of the last field to dismiss after submit, improving UX."
+        }
+    ]
+}

@@ -1,0 +1,73 @@
+{
+    "id": "l4",
+    "chapterId": "ch_4",
+    "title": "SectionList – Grouped Data",
+    "description": "Display data in sections with headers, like a contacts list.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Advanced Lists",
+    "slides": [
+        {
+            "id": "s_ch4_l4_1",
+            "type": "text",
+            "title": "What is SectionList? 📂",
+            "content": "# Lists with Sections\n\nSometimes your data is naturally grouped, e.g., contacts by first letter, or tasks by date. `SectionList` is designed for this.\n\nIt works similarly to `FlatList`, but its `data` prop is replaced by `sections`, an array of objects with:\n\n* `title` (optional) – the section header text.\n* `data` – an array of items in that section.\n* `renderItem` (optional) – can override the list‑level `renderItem`.\n\n## Basic Structure\n\n```jsx\nconst sections = [\n  {\n    title: 'Fruits',\n    data: ['Apple', 'Banana'],\n  },\n  {\n    title: 'Vegetables',\n    data: ['Carrot', 'Lettuce'],\n  },\n];\n```"
+        },
+        {
+            "id": "s_ch4_l4_2",
+            "type": "code",
+            "title": "SectionList Example",
+            "content": "A simple contacts list grouped by first letter:",
+            "codeSnippet": "import React from 'react';\nimport { SectionList, Text, View } from 'react-native';\n\nconst contacts = [\n  { name: 'Alice' },\n  { name: 'Bob' },\n  { name: 'Charlie' },\n  { name: 'David' },\n];\n\n// Group by first letter\nconst sections = [\n  { title: 'A', data: contacts.filter(c => c.name.startsWith('A')) },\n  { title: 'B', data: contacts.filter(c => c.name.startsWith('B')) },\n  { title: 'C', data: contacts.filter(c => c.name.startsWith('C')) },\n  { title: 'D', data: contacts.filter(c => c.name.startsWith('D')) },\n];\n\nexport default function ContactsList() {\n  return (\n    <SectionList\n      sections={sections}\n      keyExtractor={(item, index) => item.name + index}\n      renderItem={({ item }) => <Text>{item.name}</Text>}\n      renderSectionHeader={({ section: { title } }) => (\n        <View style={{ backgroundColor: '#f0f0f0', padding: 5 }}>\n          <Text style={{ fontWeight: 'bold' }}>{title}</Text>\n        </View>\n      )}\n    />\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_ch4_l4_3",
+            "type": "quiz",
+            "title": "SectionList 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch4_l4_1",
+                "type": "multiple_choice",
+                "question": "What prop does SectionList use instead of `data`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "sections",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "groups",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "items",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "dataSections",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "SectionList uses the `sections` prop, an array of section objects.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch4_l4_4",
+            "type": "text",
+            "title": "SectionList Props",
+            "content": "## Additional Props\n\n* `renderSectionHeader` – renders a header for each section.\n* `renderSectionFooter` – footer for each section.\n* `stickySectionHeadersEnabled` – if true, section headers stick to the top while scrolling (default on iOS, can be enabled on Android).\n* `SectionList` also supports all the performance props from `FlatList` (`initialNumToRender`, etc.)."
+        },
+        {
+            "id": "s_ch4_l4_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Use `SectionList` for any grouped data. It's perfect for settings screens, contact lists, or any UI with category headers."
+        }
+    ]
+}

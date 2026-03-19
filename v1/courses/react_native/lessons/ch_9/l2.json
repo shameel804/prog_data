@@ -1,0 +1,64 @@
+{
+    "id": "l2",
+    "chapterId": "ch_9",
+    "title": "Creating Context and Provider",
+    "description": "Learn to create a Context object and provide values to children.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Context API",
+    "slides": [
+        {
+            "id": "s_ch9_l2_1",
+            "type": "text",
+            "title": "The Context API 🎁",
+            "content": "# Context = Global (ish) Data\n\nContext provides a way to share values between components without explicitly passing a prop through every level.\n\n## Steps:\n1. Create a context with `createContext`.\n2. Provide a value using a `Provider` component.\n3. Consume the value in any descendant."
+        },
+        {
+            "id": "s_ch9_l2_2",
+            "type": "code",
+            "title": "Creating a Context",
+            "content": "```jsx\nimport React, { createContext, useState } from 'react';\n\n// Create context with a default value (optional)\nexport const UserContext = createContext(null);\n\n// Create a provider component\nexport const UserProvider = ({ children }) => {\n  const [user, setUser] = useState(null);\n\n  return (\n    <UserContext.Provider value={{ user, setUser }}>\n      {children}\n    </UserContext.Provider>\n  );\n};\n```\n\n- The `Provider` accepts a `value` prop (any data, often an object with state and updater).\n- It must wrap the components that need access."
+        },
+        {
+            "id": "s_ch9_l2_3",
+            "type": "code",
+            "title": "Using the Provider",
+            "content": "In your root component (e.g., App.js):\n\n```jsx\nimport { UserProvider } from './context/UserContext';\n\nexport default function App() {\n  return (\n    <UserProvider>\n      <MainApp />\n    </UserProvider>\n  );\n}\n```\n\nNow any component inside `MainApp` can access the user context."
+        },
+        {
+            "id": "s_ch9_l2_4",
+            "type": "quiz",
+            "title": "Context Creation 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch9_l2_1",
+                "type": "multiple_choice",
+                "question": "What does `createContext()` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A Provider component only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "An object containing Provider and Consumer",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The current context value",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A hook",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "createContext returns an object with `Provider` and `Consumer` (though we usually use `useContext` instead of `Consumer`).",
+                "xpReward": 10
+            }
+        }
+    ]
+}

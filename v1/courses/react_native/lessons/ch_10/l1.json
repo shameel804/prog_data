@@ -1,0 +1,70 @@
+{
+    "id": "l1",
+    "chapterId": "ch_10",
+    "title": "Camera and Image Picker",
+    "description": "Access the device camera and pick images from the gallery.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Media",
+    "slides": [
+        {
+            "id": "s_ch10_l1_1",
+            "type": "text",
+            "title": "Why Device Features? 📱",
+            "content": "# Making Apps Feel Native\n\nAccessing device hardware (camera, location, sensors) is what makes mobile apps powerful. In React Native, we use community libraries or Expo modules to interact with these features.\n\nFor camera and image picking, the most popular library is `expo-image-picker` (for Expo) or `react-native-image-picker` (for bare React Native).\n\nWe'll use Expo modules in this course for simplicity."
+        },
+        {
+            "id": "s_ch10_l1_2",
+            "type": "code",
+            "title": "Installing and Permissions",
+            "content": "```bash\nexpo install expo-image-picker\n```\n\nYou also need to configure permissions in `app.json`:\n\n```json\n{\n  \"expo\": {\n    \"plugins\": [\n      [\n        \"expo-image-picker\",\n        {\n          \"photosPermission\": \"The app accesses your photos to let you share them.\",\n          \"cameraPermission\": \"The app accesses your camera to let you take photos.\"\n        }\n      ]\n    ]\n  }\n}\n```\n\nOn iOS, you also need to add usage descriptions in `Info.plist` (Expo handles this via plugins)."
+        },
+        {
+            "id": "s_ch10_l1_3",
+            "type": "code",
+            "title": "Using ImagePicker",
+            "content": "```jsx\nimport React, { useState } from 'react';\nimport { View, Image, Button, Alert } from 'react-native';\nimport * as ImagePicker from 'expo-image-picker';\n\nexport default function CameraExample() {\n  const [image, setImage] = useState(null);\n\n  const pickImage = async () => {\n    // No permissions request is necessary for launching the image library\n    let result = await ImagePicker.launchImageLibraryAsync({\n      mediaTypes: ImagePicker.MediaTypeOptions.All,\n      allowsEditing: true,\n      aspect: [4, 3],\n      quality: 1,\n    });\n\n    if (!result.canceled) {\n      setImage(result.assets[0].uri);\n    }\n  };\n\n  const takePhoto = async () => {\n    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();\n    if (permissionResult.granted === false) {\n      Alert.alert('Permission to access camera is required!');\n      return;\n    }\n    let result = await ImagePicker.launchCameraAsync({\n      allowsEditing: true,\n      aspect: [4, 3],\n      quality: 1,\n    });\n    if (!result.canceled) {\n      setImage(result.assets[0].uri);\n    }\n  };\n\n  return (\n    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>\n      <Button title=\"Pick an image from gallery\" onPress={pickImage} />\n      <Button title=\"Take a photo\" onPress={takePhoto} />\n      {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}\n    </View>\n  );\n}\n```"
+        },
+        {
+            "id": "s_ch10_l1_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch10_l1_1",
+                "type": "multiple_choice",
+                "question": "Which function requests camera permissions in expo-image-picker?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "ImagePicker.requestCameraPermissionsAsync()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "ImagePicker.askForPermissions()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Permissions.askAsync(Permissions.CAMERA)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Camera.requestPermissions()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`requestCameraPermissionsAsync()` is the correct method from expo-image-picker.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch10_l1_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Always handle the case where the user cancels (`result.canceled` is true). Also check permissions before launching the camera."
+        }
+    ]
+}

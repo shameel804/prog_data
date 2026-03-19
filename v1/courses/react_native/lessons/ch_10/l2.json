@@ -1,0 +1,70 @@
+{
+    "id": "l2",
+    "chapterId": "ch_10",
+    "title": "Location Services",
+    "description": "Get the user's current location and watch for changes.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Sensors",
+    "slides": [
+        {
+            "id": "s_ch10_l2_1",
+            "type": "text",
+            "title": "Geolocation in React Native",
+            "content": "# Accessing Location\n\nReact Native provides a polyfill of the [Geolocation API](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation) via `navigator.geolocation`. However, it's deprecated in recent versions; the recommended approach is to use `expo-location` (Expo) or `@react-native-community/geolocation` (bare).\n\nWe'll use `expo-location`."
+        },
+        {
+            "id": "s_ch10_l2_2",
+            "type": "code",
+            "title": "Installing and Permissions",
+            "content": "```bash\nexpo install expo-location\n```\n\nIn `app.json`:\n```json\n{\n  \"expo\": {\n    \"plugins\": [\n      [\n        \"expo-location\",\n        {\n          \"locationAlwaysAndWhenInUsePermission\": \"Allow $(PRODUCT_NAME) to use your location.\"\n        }\n      ]\n    ]\n  }\n}\n```"
+        },
+        {
+            "id": "s_ch10_l2_3",
+            "type": "code",
+            "title": "Getting Current Location",
+            "content": "```jsx\nimport React, { useState, useEffect } from 'react';\nimport { View, Text, Button } from 'react-native';\nimport * as Location from 'expo-location';\n\nexport default function LocationExample() {\n  const [location, setLocation] = useState(null);\n  const [errorMsg, setErrorMsg] = useState(null);\n\n  const getLocation = async () => {\n    let { status } = await Location.requestForegroundPermissionsAsync();\n    if (status !== 'granted') {\n      setErrorMsg('Permission to access location was denied');\n      return;\n    }\n\n    let loc = await Location.getCurrentPositionAsync({});\n    setLocation(loc);\n  };\n\n  useEffect(() => {\n    getLocation();\n  }, []);\n\n  let text = 'Waiting..';\n  if (errorMsg) {\n    text = errorMsg;\n  } else if (location) {\n    text = `Latitude: ${location.coords.latitude}, Longitude: ${location.coords.longitude}`;\n  }\n\n  return (\n    <View>\n      <Text>{text}</Text>\n      <Button title=\"Refresh Location\" onPress={getLocation} />\n    </View>\n  );\n}\n```"
+        },
+        {
+            "id": "s_ch10_l2_4",
+            "type": "text",
+            "title": "Watching Position",
+            "content": "## Continuous Updates\n\nYou can subscribe to location updates with `Location.watchPositionAsync`. Remember to clean up the subscription.\n\n```jsx\nuseEffect(() => {\n  let subscription;\n  (async () => {\n    let { status } = await Location.requestForegroundPermissionsAsync();\n    if (status === 'granted') {\n      subscription = await Location.watchPositionAsync(\n        { accuracy: Location.Accuracy.High, timeInterval: 5000 },\n        (newLocation) => {\n          setLocation(newLocation);\n        }\n      );\n    }\n  })();\n\n  return () => subscription?.remove();\n}, []);\n```"
+        },
+        {
+            "id": "s_ch10_l2_5",
+            "type": "quiz",
+            "title": "Location Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch10_l2_1",
+                "type": "multiple_choice",
+                "question": "What method do you call to request foreground location permission with expo-location?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Location.requestPermissionsAsync()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Location.requestForegroundPermissionsAsync()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Permissions.askAsync(Permissions.LOCATION)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Location.askForPermissions()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`requestForegroundPermissionsAsync()` is the correct method for foreground location access.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,70 @@
+{
+    "id": "l5",
+    "chapterId": "ch_9",
+    "title": "Best Practices and When to Use Context",
+    "description": "Learn when Context is appropriate and how to organise it.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Best Practices",
+    "slides": [
+        {
+            "id": "s_ch9_l5_1",
+            "type": "text",
+            "title": "When to Use Context? 🤔",
+            "content": "# Context is Not for Everything\n\nContext is great for **global data** that many components need:\n- Theme (light/dark mode)\n- User authentication status\n- Language/locale\n- Notifications\n\nBut avoid using Context for every piece of state – it can lead to unnecessary re‑renders and complexity. For component‑specific state, stick to local `useState`."
+        },
+        {
+            "id": "s_ch9_l5_2",
+            "type": "text",
+            "title": "Organising Context",
+            "content": "## Best Practices\n\n- **Separate contexts for different domains** – e.g., `AuthContext`, `ThemeContext`, `TodoContext`. Don't put everything in one giant context.\n- **Place providers near the root**, but not necessarily at the very top if not needed everywhere.\n- **Memoise context values** to prevent unnecessary re‑renders. Use `useMemo` when the value object changes often.\n- **Create custom hooks** for each context to encapsulate usage and provide helpful errors."
+        },
+        {
+            "id": "s_ch9_l5_3",
+            "type": "code",
+            "title": "Custom Hook Example",
+            "content": "```jsx\n// hooks/useAuth.js\nimport { useContext } from 'react';\nimport { AuthContext } from '../context/AuthContext';\n\nexport const useAuth = () => {\n  const context = useContext(AuthContext);\n  if (!context) {\n    throw new Error('useAuth must be used within an AuthProvider');\n  }\n  return context;\n};\n```\n\nNow components can do `const { user } = useAuth();` – cleaner and safer."
+        },
+        {
+            "id": "s_ch9_l5_4",
+            "type": "quiz",
+            "title": "Best Practices 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch9_l5_1",
+                "type": "multiple_choice",
+                "question": "When is Context most appropriate?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "For all state to avoid prop drilling",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "For truly global data like theme or user",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only for class components",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "When you have less than three components",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Context is best for data that many components need, not for every piece of local state.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch9_l5_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "If you find yourself passing props through many levels, consider if Context is appropriate. If not, component composition (passing components as props) can also reduce prop drilling."
+        }
+    ]
+}

@@ -1,0 +1,76 @@
+{
+    "id": "l4",
+    "chapterId": "ch_6",
+    "title": "Responsive Design and Dimensions",
+    "description": "Create layouts that adapt to different screen sizes and orientations.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Responsive",
+    "slides": [
+        {
+            "id": "s_ch6_l4_1",
+            "type": "text",
+            "title": "Screen Dimensions 📏",
+            "content": "# Getting Screen Size\n\nUse the `Dimensions` API to get the window or screen dimensions.\n\n```jsx\nimport { Dimensions } from 'react-native';\n\nconst { width, height } = Dimensions.get('window');\n```\n\n- `window` – returns the size of the application window (excluding status bar on iOS? Actually includes full screen).\n- `screen` – returns the size of the entire screen.\n\n⚠️ Dimensions do not update on orientation change by default. You need to listen to changes."
+        },
+        {
+            "id": "s_ch6_l4_2",
+            "type": "code",
+            "title": "Listening to Dimension Changes",
+            "content": "Use the `useWindowDimensions` hook to get live updates:\n\n```jsx\nimport { useWindowDimensions } from 'react-native';\n\nfunction MyComponent() {\n  const { width, height } = useWindowDimensions();\n  // automatically updates on rotation\n\n  return <Text>Width: {width}, Height: {height}</Text>;\n}\n```\n\nOr with class components, use `Dimensions.addEventListener`.\n\nThis is essential for responsive layouts."
+        },
+        {
+            "id": "s_ch6_l4_3",
+            "type": "text",
+            "title": "Responsive Units",
+            "content": "## Common Patterns\n\n- **Percentage widths**: Use `width: '50%'` – works fine.\n- **Fixed sizes**: Use `Dimensions` to calculate sizes based on screen width, e.g., `width: width * 0.8`.\n- **Aspect ratio**: Use `aspectRatio` style to maintain proportions.\n\n```jsx\n<View style={{ aspectRatio: 16/9, width: '100%' }} />\n```\n\n- **Flexbox** often eliminates the need for absolute dimensions."
+        },
+        {
+            "id": "s_ch6_l4_4",
+            "type": "quiz",
+            "title": "Responsive Design 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch6_l4_1",
+                "type": "multiple_choice",
+                "question": "Which hook gives you the latest window dimensions?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "useDimensions",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "useWindowDimensions",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "useScreenSize",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "useOrientation",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`useWindowDimensions` is a hook that returns the current window dimensions and updates on changes.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch6_l4_5",
+            "type": "text",
+            "title": "Orientation Changes",
+            "content": "## Handling Orientation\n\nIn addition to dimensions, you might want to know if the device is in landscape or portrait:\n\n```jsx\nconst { width, height } = useWindowDimensions();\nconst isLandscape = width > height;\n```\n\nYou can conditionally render different layouts."
+        },
+        {
+            "id": "s_ch6_l4_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Avoid hard‑coded pixel values. Use `PixelRatio` to adapt to different screen densities, but often Flexbox and percentages suffice. For fonts, consider using `RFValue` from `react-native-responsive-fontsize` to scale text."
+        }
+    ]
+}

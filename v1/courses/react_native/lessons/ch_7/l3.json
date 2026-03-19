@@ -1,0 +1,76 @@
+{
+    "id": "l3",
+    "chapterId": "ch_7",
+    "title": "Form Validation",
+    "description": "Validate user input and show error messages.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Forms",
+    "slides": [
+        {
+            "id": "s_ch7_l3_1",
+            "type": "text",
+            "title": "Why Validate? ✅",
+            "content": "# Ensuring Correct Data\n\nValidation ensures that the data meets requirements before submission. Types:\n\n- **Presence** (required fields)\n- **Format** (email, phone number)\n- **Length** (min/max characters)\n- **Match** (password confirmation)\n\nWe'll implement client‑side validation and display error messages."
+        },
+        {
+            "id": "s_ch7_l3_2",
+            "type": "code",
+            "title": "Validation State",
+            "content": "Add an `errors` object to your state:\n\n```jsx\nconst [form, setForm] = useState({ email: '', password: '' });\nconst [errors, setErrors] = useState({});\n\nconst validate = () => {\n  const newErrors = {};\n  if (!form.email.includes('@')) {\n    newErrors.email = 'Email must contain @';\n  }\n  if (form.password.length < 6) {\n    newErrors.password = 'Password must be at least 6 characters';\n  }\n  setErrors(newErrors);\n  return Object.keys(newErrors).length === 0; // true if valid\n};\n\nconst handleSubmit = () => {\n  if (validate()) {\n    // submit\n  }\n};\n```"
+        },
+        {
+            "id": "s_ch7_l3_3",
+            "type": "code",
+            "title": "Displaying Errors",
+            "content": "Show errors near the input:\n\n```jsx\n<View>\n  <TextInput\n    value={form.email}\n    onChangeText={text => setForm({ ...form, email: text })}\n    style={[styles.input, errors.email && styles.errorInput]}\n  />\n  {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}\n</View>\n```\n\nStyle the input border red when error exists, and show a message."
+        },
+        {
+            "id": "s_ch7_l3_4",
+            "type": "quiz",
+            "title": "Validation 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch7_l3_1",
+                "type": "multiple_choice",
+                "question": "Where should validation typically occur in a form?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Only on submit",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "On submit and optionally on blur or change",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only on change",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Never, only on server",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "You can validate on submit, but also on blur (when the user leaves a field) for immediate feedback.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch7_l3_5",
+            "type": "text",
+            "title": "Real‑time Validation",
+            "content": "## Validate on Blur or Change\n\nYou might want to clear an error as soon as the user fixes it. Use `onBlur` to trigger validation for that field only.\n\n```jsx\nconst validateField = (field, value) => {\n  // perform specific validation\n  if (field === 'email' && !value.includes('@')) {\n    setErrors(prev => ({ ...prev, email: 'Invalid email' }));\n  } else {\n    setErrors(prev => ({ ...prev, email: undefined }));\n  }\n};\n\n<TextInput\n  value={form.email}\n  onChangeText={text => {\n    setForm({ ...form, email: text });\n    // optionally validate on change (be careful with performance)\n  }}\n  onBlur={() => validateField('email', form.email)}\n/>\n```"
+        },
+        {
+            "id": "s_ch7_l3_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Always validate on the server as well – client validation is for user experience, not security."
+        }
+    ]
+}

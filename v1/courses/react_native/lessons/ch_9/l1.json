@@ -1,0 +1,58 @@
+{
+    "id": "l1",
+    "chapterId": "ch_9",
+    "title": "Prop Drilling Problem",
+    "description": "Understand the challenge of passing props through many layers.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Problem",
+    "slides": [
+        {
+            "id": "s_ch9_l1_1",
+            "type": "text",
+            "title": "What is Prop Drilling? 🕳️",
+            "content": "# Passing Props Down the Tree\n\nIn React, data flows down from parent to child via props. This works well for shallow component trees. But when many components need the same data, you end up passing it through intermediate components that don't use it themselves – just to get it deeper.\n\nThis is called **prop drilling**.\n\nExample:\n```jsx\nfunction App() {\n  const [user, setUser] = useState(null);\n  return <Header user={user} />;\n}\n\nfunction Header({ user }) {\n  return <Avatar user={user} />; // Header doesn't need user, just passes it\n}\n\nfunction Avatar({ user }) {\n  return <Image source={{ uri: user.avatar }} />;\n}\n```"
+        },
+        {
+            "id": "s_ch9_l1_2",
+            "type": "text",
+            "title": "Problems with Prop Drilling",
+            "content": "## Why It's Bad\n\n- **Clutter** – intermediate components receive props they don't care about.\n- **Refactoring pain** – if you need to add a prop, you must add it to every component in the chain.\n- **Reduces reusability** – components become coupled to the data structure.\n\nContext API solves this by letting you broadcast data to many components without passing through every level."
+        },
+        {
+            "id": "s_ch9_l1_3",
+            "type": "quiz",
+            "title": "Prop Drilling Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch9_l1_1",
+                "type": "multiple_choice",
+                "question": "What is prop drilling?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Passing props from parent to direct child",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Passing props through intermediate components that don't need them",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Using too many props in one component",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A performance optimisation technique",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Prop drilling is the process of passing data through components that don't need it, just to reach deeper components.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

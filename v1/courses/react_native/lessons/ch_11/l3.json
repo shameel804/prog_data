@@ -1,0 +1,70 @@
+{
+    "id": "l3",
+    "chapterId": "ch_11",
+    "title": "Optimising Renders (memo, useCallback, useMemo)",
+    "description": "Prevent unnecessary re‑renders with React.memo and hooks.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Optimisation",
+    "slides": [
+        {
+            "id": "s_ch11_l3_1",
+            "type": "text",
+            "title": "When Do Components Re‑render?",
+            "content": "# Re‑render Triggers\n\nA component re‑renders when:\n- Its state changes\n- Its parent re‑renders (by default, all children re‑render)\n- Context value changes\n\nOften, children re‑render even if their props haven't changed. This is wasted work."
+        },
+        {
+            "id": "s_ch11_l3_2",
+            "type": "text",
+            "title": "React.memo",
+            "content": "## Preventing Child Re‑renders\n\n`React.memo` is a higher‑order component that memoises the result. It only re‑renders if props change (shallow comparison).\n\n```jsx\nconst MyComponent = React.memo(function MyComponent(props) {\n  // render\n});\n```\n\nUse it for components that render often with the same props."
+        },
+        {
+            "id": "s_ch11_l3_3",
+            "type": "code",
+            "title": "useCallback and useMemo",
+            "content": "## Memoising Functions and Values\n\nWhen you pass callbacks to memoised children, the function identity changes on every render, breaking memoisation. Use `useCallback` to preserve the function reference.\n\n```jsx\nconst handlePress = useCallback(() => {\n  // do something\n}, [dependencies]);\n```\n\nSimilarly, `useMemo` memoises expensive computations:\n\n```jsx\nconst computedValue = useMemo(() => {\n  return heavyCalculation(a, b);\n}, [a, b]);\n```"
+        },
+        {
+            "id": "s_ch11_l3_4",
+            "type": "quiz",
+            "title": "Optimisation Hooks 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch11_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of `React.memo`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To memoise expensive calculations",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To prevent a component from re‑rendering if props haven't changed",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To cache function references",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To optimise images",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`React.memo` memoises the component output based on props.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch11_l3_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Don't over‑optimise. Start with clean code, then profile to find actual bottlenecks before adding memoisation."
+        }
+    ]
+}

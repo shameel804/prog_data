@@ -1,0 +1,64 @@
+{
+    "id": "l5",
+    "chapterId": "ch_11",
+    "title": "Profiling and Memory Management",
+    "description": "Use the Profiler to find bottlenecks and avoid memory leaks.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_ch11_l5_1",
+            "type": "text",
+            "title": "React Profiler",
+            "content": "# Finding Slow Renders\n\nReact DevTools includes a Profiler tab. You can record interactions and see which components took long to render.\n\n- Start profiling, perform an action, stop.\n- Look at the flame graph – red means slow.\n- Identify components that re‑render unnecessarily.\n\nUse this data to target your optimisation efforts."
+        },
+        {
+            "id": "s_ch11_l5_2",
+            "type": "text",
+            "title": "Memory Leaks in React Native",
+            "content": "## Common Causes\n\n- Subscriptions not cleaned up (e.g., sensors, listeners).\n- Timers not cleared (`setInterval`, `setTimeout`).\n- Large objects retained in state or refs.\n- Improper use of `useEffect` without cleanup.\n\nAlways return a cleanup function in `useEffect` for subscriptions.\n\n```jsx\nuseEffect(() => {\n  const subscription = someAPI.subscribe(handleData);\n  return () => subscription.unsubscribe();\n}, []);\n```"
+        },
+        {
+            "id": "s_ch11_l5_3",
+            "type": "code",
+            "title": "Using `useRef` for Timers",
+            "content": "Timers need cleanup too:\n\n```jsx\nconst timerRef = useRef();\n\nuseEffect(() => {\n  timerRef.current = setInterval(() => {\n    // do something\n  }, 1000);\n\n  return () => clearInterval(timerRef.current);\n}, []);\n```"
+        },
+        {
+            "id": "s_ch11_l5_4",
+            "type": "quiz",
+            "title": "Profiling Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch11_l5_1",
+                "type": "multiple_choice",
+                "question": "What is a common cause of memory leaks in React Native?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Using too many components",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Not cleaning up subscriptions in useEffect",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Using functional components",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Using inline styles",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Leaving subscriptions, timers, or event listeners active after a component unmounts causes memory leaks.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,64 @@
+{
+    "id": "l4",
+    "chapterId": "ch_9",
+    "title": "Combining Reducers with Context",
+    "description": "Manage complex state with useReducer and provide it via Context.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_ch9_l4_1",
+            "type": "text",
+            "title": "Why Reducer + Context? 🔄",
+            "content": "# Scaling State Logic\n\nWhen state becomes complex (multiple sub‑values, complex transitions), `useReducer` can be cleaner than multiple `useState` calls. Combine it with Context to provide both state and dispatch to deep components.\n\nThis pattern is a lightweight alternative to Redux."
+        },
+        {
+            "id": "s_ch9_l4_2",
+            "type": "code",
+            "title": "Creating a Reducer Context",
+            "content": "```jsx\n// context/TodoContext.js\nimport React, { createContext, useReducer } from 'react';\n\nconst initialState = { todos: [] };\n\nfunction todoReducer(state, action) {\n  switch (action.type) {\n    case 'ADD_TODO':\n      return { todos: [...state.todos, action.payload] };\n    case 'TOGGLE_TODO':\n      return {\n        todos: state.todos.map(todo =>\n          todo.id === action.payload ? { ...todo, completed: !todo.completed } : todo\n        ),\n      };\n    default:\n      return state;\n  }\n}\n\nexport const TodoContext = createContext(null);\n\nexport const TodoProvider = ({ children }) => {\n  const [state, dispatch] = useReducer(todoReducer, initialState);\n\n  return (\n    <TodoContext.Provider value={{ state, dispatch }}>\n      {children}\n    </TodoContext.Provider>\n  );\n};\n```"
+        },
+        {
+            "id": "s_ch9_l4_3",
+            "type": "code",
+            "title": "Consuming the Reducer Context",
+            "content": "```jsx\nfunction TodoList() {\n  const { state, dispatch } = useContext(TodoContext);\n\n  const addTodo = (text) => {\n    dispatch({ type: 'ADD_TODO', payload: { id: Date.now(), text, completed: false } });\n  };\n\n  return (\n    <View>\n      {state.todos.map(todo => (\n        <TodoItem key={todo.id} todo={todo} />\n      ))}\n    </View>\n  );\n}\n\n// TodoItem can also dispatch actions\n```"
+        },
+        {
+            "id": "s_ch9_l4_4",
+            "type": "quiz",
+            "title": "Reducer + Context 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch9_l4_1",
+                "type": "multiple_choice",
+                "question": "What is a benefit of combining useReducer with Context?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It makes the app faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It centralises state logic and provides dispatch to deep components",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It replaces all useState calls",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It automatically persists state",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "This pattern centralises state transitions (reducer) and makes dispatch available anywhere via Context.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

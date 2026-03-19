@@ -1,0 +1,64 @@
+{
+    "id": "l3",
+    "chapterId": "ch_9",
+    "title": "useContext Hook",
+    "description": "Consume context values in function components with useContext.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Consumption",
+    "slides": [
+        {
+            "id": "s_ch9_l3_1",
+            "type": "text",
+            "title": "Consuming Context 🍽️",
+            "content": "# The Easy Way: useContext\n\nIn function components, the `useContext` hook gives you the current context value.\n\n```jsx\nimport React, { useContext } from 'react';\nimport { UserContext } from './context/UserContext';\n\nfunction Profile() {\n  const { user, setUser } = useContext(UserContext);\n\n  if (!user) return <Text>Not logged in</Text>;\n  return <Text>Welcome, {user.name}</Text>;\n}\n```\n\n- `useContext` accepts a context object (returned from `createContext`).\n- It returns the current value from the nearest matching `Provider` above in the tree.\n- If no provider is found, it returns the default value passed to `createContext`."
+        },
+        {
+            "id": "s_ch9_l3_2",
+            "type": "code",
+            "title": "Updating Context",
+            "content": "Because we passed `setUser` in the value, we can update it from anywhere:\n\n```jsx\nfunction LoginButton() {\n  const { setUser } = useContext(UserContext);\n\n  const login = () => {\n    setUser({ name: 'Alice' });\n  };\n\n  return <Button title=\"Login\" onPress={login} />;\n}\n```\n\nWhen `setUser` is called, all components consuming that context re‑render."
+        },
+        {
+            "id": "s_ch9_l3_3",
+            "type": "quiz",
+            "title": "useContext Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch9_l3_1",
+                "type": "multiple_choice",
+                "question": "What does `useContext(MyContext)` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The Provider component",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The current context value",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "An object with Provider and Consumer",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A function to update context",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "useContext returns the current value from the nearest Provider.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch9_l3_4",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "You can create custom hooks like `useUser` that encapsulate `useContext(UserContext)` for cleaner code."
+        }
+    ]
+}

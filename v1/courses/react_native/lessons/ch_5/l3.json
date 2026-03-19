@@ -1,0 +1,70 @@
+{
+    "id": "l3",
+    "chapterId": "ch_5",
+    "title": "Passing Parameters",
+    "description": "Send data between screens via route params.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Stack",
+    "slides": [
+        {
+            "id": "s_ch5_l3_1",
+            "type": "text",
+            "title": "Why Params? 📦",
+            "content": "# Sending Data to a Screen\n\nOften you need to pass data from one screen to another – e.g., an item ID to a details screen.\n\nIn React Navigation, you pass parameters as a second argument to `navigate`:\n\n```jsx\nnavigation.navigate('Details', { itemId: 86, otherParam: 'something' });\n```"
+        },
+        {
+            "id": "s_ch5_l3_2",
+            "type": "code",
+            "title": "Receiving Params",
+            "content": "The target screen receives the params via its `route` prop:\n\n```jsx\nfunction DetailsScreen({ route }) {\n  const { itemId, otherParam } = route.params;\n\n  return (\n    <View>\n      <Text>Item ID: {itemId}</Text>\n      <Text>Other: {otherParam}</Text>\n    </View>\n  );\n}\n```\n\nIf no params are passed, `route.params` is `undefined`. You can provide default values:\n\n```jsx\nconst { itemId = 0 } = route.params ?? {};\n```"
+        },
+        {
+            "id": "s_ch5_l3_3",
+            "type": "quiz",
+            "title": "Params Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch5_l3_1",
+                "type": "multiple_choice",
+                "question": "How do you access parameters passed to a screen?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "props.params",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "navigation.params",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "route.params",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "screen.params",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The screen receives a `route` prop, and params are inside `route.params`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch5_l3_4",
+            "type": "text",
+            "title": "Updating Params",
+            "content": "## Changing Params from the Screen\n\nYou can also update the params of the current screen using `navigation.setParams`:\n\n```jsx\nnavigation.setParams({ otherParam: 'updated!' });\n```\n\nThis is useful for things like toggling favourite status."
+        },
+        {
+            "id": "s_ch5_l3_5",
+            "type": "warning",
+            "title": "Important ⚠️",
+            "content": "Params should be simple JSON‑serializable data (strings, numbers, booleans, arrays, objects). Avoid passing functions or non‑serializable values, as they can break navigation state persistence."
+        }
+    ]
+}

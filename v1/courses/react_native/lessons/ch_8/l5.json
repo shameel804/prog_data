@@ -1,0 +1,76 @@
+{
+    "id": "l5",
+    "chapterId": "ch_8",
+    "title": "Using Axios and Advanced Patterns",
+    "description": "Explore the Axios library for more features and request/response interceptors.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_ch8_l5_1",
+            "type": "text",
+            "title": "Why Axios? 🤔",
+            "content": "# A Popular Alternative\n\nAxios is a promise‑based HTTP client that works in the browser and Node.js (and React Native). It offers:\n- Automatic JSON transformation\n- Interceptors (modify requests/responses globally)\n- Cancellation\n- Timeout handling\n- Better error handling (HTTP errors reject the promise)\n\nInstallation:\n```bash\nnpm install axios\n```"
+        },
+        {
+            "id": "s_ch8_l5_2",
+            "type": "code",
+            "title": "Axios GET Example",
+            "content": "Same request with Axios:\n\n```jsx\nimport axios from 'axios';\n\nconst fetchPosts = async () => {\n  try {\n    const response = await axios.get('https://jsonplaceholder.typicode.com/posts');\n    setPosts(response.data); // data is already parsed\n  } catch (error) {\n    console.error('Error:', error.message);\n  }\n};\n```\n\nNotice:\n- No need to check `response.ok` – Axios rejects on HTTP errors (status outside 200‑299).\n- `response.data` contains the parsed JSON."
+        },
+        {
+            "id": "s_ch8_l5_3",
+            "type": "code",
+            "title": "Axios POST",
+            "content": "```jsx\nconst response = await axios.post(\n  'https://jsonplaceholder.typicode.com/posts',\n  { title: 'foo', body: 'bar', userId: 1 },\n  { headers: { 'Content-Type': 'application/json' } }\n);\n```\n\nSecond argument is the data, automatically stringified."
+        },
+        {
+            "id": "s_ch8_l5_4",
+            "type": "text",
+            "title": "Interceptors",
+            "content": "## Global Request/Response Handling\n\nInterceptors let you run code before a request is sent or after a response is received.\n\n```jsx\n// Add a request interceptor\naxios.interceptors.request.use(\n  config => {\n    // Add auth token to every request\n    config.headers.Authorization = `Bearer ${getToken()}`;\n    return config;\n  },\n  error => Promise.reject(error)\n);\n\n// Add a response interceptor\naxios.interceptors.response.use(\n  response => response,\n  error => {\n    // Handle global errors (e.g., 401 redirect to login)\n    return Promise.reject(error);\n  }\n);\n```"
+        },
+        {
+            "id": "s_ch8_l5_5",
+            "type": "quiz",
+            "title": "Axios 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch8_l5_1",
+                "type": "multiple_choice",
+                "question": "How does Axios handle HTTP error statuses (like 404) compared to fetch?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It resolves the promise, you must check status",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It rejects the promise",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It throws a synchronous error",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It ignores them",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Axios rejects the promise for any HTTP status outside 200‑299, making error handling simpler.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch8_l5_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Create an Axios instance with default configuration (baseURL, headers) and export it. Then use that instance throughout your app."
+        }
+    ]
+}
