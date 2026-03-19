@@ -1,0 +1,64 @@
+{
+    "id": "l5",
+    "chapterId": "ch_10",
+    "title": "JWT Authentication in Express",
+    "description": "Protect routes using JWT tokens and middleware.",
+    "xpReward": 20,
+    "estimatedMinutes": 7,
+    "section": "JWT",
+    "slides": [
+        {
+            "id": "l10_l5_s1",
+            "type": "text",
+            "title": "Login Endpoint – Return JWT",
+            "content": "```javascript\napp.post('/login', async (req, res) => {\n  const { username, password } = req.body;\n  // find user and verify password (using bcrypt)\n  const user = await User.findOne({ username });\n  if (!user || !(await bcrypt.compare(password, user.passwordHash))) {\n    return res.status(401).json({ error: 'Invalid credentials' });\n  }\n  const token = jwt.sign(\n    { userId: user.id, role: user.role },\n    process.env.JWT_SECRET,\n    { expiresIn: '1h' }\n  );\n  res.json({ token });\n});\n```"
+        },
+        {
+            "id": "l10_l5_s2",
+            "type": "text",
+            "title": "Authentication Middleware 🔒",
+            "content": "```javascript\nfunction authenticateToken(req, res, next) {\n  const authHeader = req.headers['authorization'];\n  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN\n\n  if (!token) return res.status(401).json({ error: 'Access token required' });\n\n  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {\n    if (err) return res.status(403).json({ error: 'Invalid or expired token' });\n    req.user = user; // attach user info to request\n    next();\n  });\n}\n```"
+        },
+        {
+            "id": "l10_l5_s3",
+            "type": "code",
+            "title": "Protecting Routes",
+            "content": "```javascript\napp.get('/profile', authenticateToken, (req, res) => {\n  // req.user is available from middleware\n  res.json({ message: `Hello user ${req.user.userId}`, user: req.user });\n});\n\napp.get('/admin', authenticateToken, (req, res) => {\n  if (req.user.role !== 'admin') {\n    return res.status(403).json({ error: 'Admin access required' });\n  }\n  res.send('Admin panel');\n});\n```"
+        },
+        {
+            "id": "l10_l5_s4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch10_l5_q1",
+                "type": "multiple_choice",
+                "question": "How is a JWT typically sent from client to server?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "In a cookie",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "In the Authorization header as Bearer token",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "In the request body",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "As a query parameter",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The common practice is to send the JWT in the `Authorization: Bearer <token>` header.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

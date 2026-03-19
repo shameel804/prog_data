@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_11",
+    "title": "Custom Error Class and Centralized Handling",
+    "description": "Create an Express app with custom errors and a centralized error handler.",
+    "estimatedMinutes": 10,
+    "problemStatement": "Build an Express app with the following:\n- Define a custom `AppError` class extending Error, taking `message` and `statusCode`.\n- Create a route `GET /user/:id` that simulates finding a user. If id is not a number, throw an `AppError` with 400 and 'Invalid user ID'.\n- If the user is not found (e.g., id > 10), throw an `AppError` with 404 and 'User not found'.\n- For successful requests, return a mock user object.\n- Add a middleware that catches 404 for unmatched routes and throws an `AppError` with 404.\n- Add a centralized error-handling middleware that formats errors as JSON: `{ error: { message, status } }`.\n- Test with various inputs.",
+    "hints": [
+        "Use `next(err)` to pass errors to Express error handler.",
+        "Error-handling middleware has four parameters.",
+        "In routes, you can `throw` errors if using async handlers with a wrapper, or call `next(new AppError(...))`."
+    ],
+    "expectedOutput": "Proper error responses for invalid ID, not found, and valid user.",
+    "solutionCode": "const express = require('express');\nconst app = express();\n\nclass AppError extends Error {\n  constructor(message, statusCode) {\n    super(message);\n    this.statusCode = statusCode;\n  }\n}\n\n// Mock user data\nconst users = {\n  1: { name: 'Alice' },\n  2: { name: 'Bob' }\n};\n\n// Async wrapper to catch errors\nconst asyncHandler = fn => (req, res, next) =>\n  Promise.resolve(fn(req, res, next)).catch(next);\n\napp.get('/user/:id', asyncHandler(async (req, res, next) => {\n  const id = parseInt(req.params.id);\n  if (isNaN(id)) {\n    throw new AppError('Invalid user ID', 400);\n  }\n  const user = users[id];\n  if (!user) {\n    throw new AppError('User not found', 404);\n  }\n  res.json({ id, ...user });\n}));\n\n// 404 handler for unmatched routes\napp.use((req, res, next) => {\n  next(new AppError('Route not found', 404));\n});\n\n// Central error handler\napp.use((err, req, res, next) => {\n  const status = err.statusCode || 500;\n  const message = err.message || 'Internal Server Error';\n  res.status(status).json({ error: { message, status } });\n});\n\napp.listen(3000, () => console.log('Server running on port 3000'));"
+}

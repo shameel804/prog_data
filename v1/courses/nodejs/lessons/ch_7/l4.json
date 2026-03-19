@@ -1,0 +1,73 @@
+{
+    "id": "l4",
+    "chapterId": "ch_7",
+    "title": "Middleware – Concept and Built-in Middleware",
+    "description": "Understand middleware and use built-in middleware like express.json().",
+    "xpReward": 20,
+    "estimatedMinutes": 7,
+    "section": "Middleware",
+    "slides": [
+        {
+            "id": "l7_l4_s1",
+            "type": "text",
+            "title": "What is Middleware? 🔗",
+            "content": "# Middleware\n\nMiddleware functions are functions that have access to the request and response objects, and the next middleware function in the application's request-response cycle.\n\nThey can:\n- Execute any code.\n- Modify the request and response objects.\n- End the request-response cycle.\n- Call the next middleware with `next()`.\n\nIf a middleware does not end the cycle, it must call `next()` to pass control to the next middleware, otherwise the request hangs."
+        },
+        {
+            "id": "l7_l4_s2",
+            "type": "text",
+            "title": "Writing a Simple Middleware ✍️",
+            "content": "## Example: Logger Middleware\n\n```javascript\napp.use((req, res, next) => {\n  console.log(`${req.method} ${req.url} - ${new Date().toISOString()}`);\n  next(); // pass to next middleware/route\n});\n```\n\n`app.use()` mounts middleware for all routes. You can also mount for specific paths: `app.use('/api', middleware)`."
+        },
+        {
+            "id": "l7_l4_s3",
+            "type": "text",
+            "title": "Built-in Middleware 🛠️",
+            "content": "## Express Built-in Middleware\n\nExpress provides several built-in middleware functions:\n\n- `express.json()` – parses incoming JSON requests and puts the parsed data in `req.body`.\n- `express.urlencoded({ extended: true })` – parses URL-encoded bodies (form submissions).\n- `express.static()` – serves static files.\n\n```javascript\napp.use(express.json()); // for parsing application/json\napp.use(express.urlencoded({ extended: true })); // for forms\n```\n\nAfter using `express.json()`, you can access `req.body` in your route handlers."
+        },
+        {
+            "id": "l7_l4_s4",
+            "type": "code",
+            "title": "Using express.json()",
+            "content": "Example POST route that accepts JSON:",
+            "codeSnippet": "app.use(express.json());\n\napp.post('/api/users', (req, res) => {\n  console.log(req.body); // parsed JSON\n  res.json({ received: true, data: req.body });\n});",
+            "codeLanguage": "javascript",
+            "canRunCode": false
+        },
+        {
+            "id": "l7_l4_s5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch7_l4_q1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of `express.json()` middleware?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To serve JSON files",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To parse JSON request bodies and populate req.body",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To stringify JSON responses",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To validate JSON",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`express.json()` parses incoming requests with JSON payloads.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

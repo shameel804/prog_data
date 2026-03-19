@@ -1,0 +1,70 @@
+{
+    "id": "l5",
+    "chapterId": "ch_12",
+    "title": "Production Security Best Practices",
+    "description": "Secure your app with Helmet, CORS, rate limiting, and HTTPS.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Security",
+    "slides": [
+        {
+            "id": "l12_l5_s1",
+            "type": "text",
+            "title": "Security Headers with Helmet 🛡️",
+            "content": "# Helmet\n\nHelmet helps secure Express apps by setting various HTTP headers (like X-Frame-Options, X-XSS-Protection, etc.).\n\n```bash\nnpm install helmet\n```\n\n```javascript\nconst helmet = require('helmet');\napp.use(helmet());\n```\n\nIt's a collection of 14 smaller middleware functions; you can configure them individually."
+        },
+        {
+            "id": "l12_l5_s2",
+            "type": "text",
+            "title": "CORS (Cross-Origin Resource Sharing) 🌍",
+            "content": "If your API is called from a different domain, you need to enable CORS.\n\n```bash\nnpm install cors\n```\n\n```javascript\nconst cors = require('cors');\napp.use(cors()); // allow all origins – careful!\n\n// Restrict to specific origin\napp.use(cors({ origin: 'https://myfrontend.com' }));\n```"
+        },
+        {
+            "id": "l12_l5_s3",
+            "type": "text",
+            "title": "Rate Limiting 🚦",
+            "content": "Prevent brute-force attacks and DDoS by limiting request frequency.\n\n```bash\nnpm install express-rate-limit\n```\n\n```javascript\nconst rateLimit = require('express-rate-limit');\n\nconst limiter = rateLimit({\n  windowMs: 15 * 60 * 1000, // 15 minutes\n  max: 100 // limit each IP to 100 requests per window\n});\n\napp.use('/api', limiter);\n```"
+        },
+        {
+            "id": "l12_l5_s4",
+            "type": "text",
+            "title": "HTTPS – Encrypt Traffic 🔒",
+            "content": "Never send sensitive data over HTTP. In production:\n- Use a reverse proxy (Nginx) to handle SSL/TLS certificates.\n- Or use a service like Heroku that manages SSL automatically.\n- For local HTTPS development, use `https` module with self-signed certs or packages like `mkcert`.\n\nAlways redirect HTTP to HTTPS:\n```javascript\napp.use((req, res, next) => {\n  if (req.headers['x-forwarded-proto'] !== 'https' && process.env.NODE_ENV === 'production') {\n    return res.redirect('https://' + req.headers.host + req.url);\n  }\n  next();\n});\n```"
+        },
+        {
+            "id": "l12_l5_s5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch12_l5_q1",
+                "type": "multiple_choice",
+                "question": "Which package sets various security headers in Express?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "cors",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "helmet",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "express-rate-limit",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "morgan",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Helmet sets security-related HTTP headers.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

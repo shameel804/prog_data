@@ -1,0 +1,70 @@
+{
+    "id": "l2",
+    "chapterId": "ch_10",
+    "title": "Password Hashing with bcrypt",
+    "description": "Store passwords securely using hashing and salting.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Hashing",
+    "slides": [
+        {
+            "id": "l10_l2_s1",
+            "type": "text",
+            "title": "Why Hash Passwords? 🔒",
+            "content": "# Never Store Plain Text Passwords\n\nIf a database is breached, plain text passwords are immediately exposed. Users often reuse passwords across sites – a disaster.\n\n**Solution:** Hash the password before storing. Hashing is a one-way function; you cannot reverse it to get the original password.\n\nBut simple hashing (like SHA-256) is vulnerable to **rainbow table attacks**. That's where **salting** comes in."
+        },
+        {
+            "id": "l10_l2_s2",
+            "type": "text",
+            "title": "Salting and bcrypt 🧂",
+            "content": "## bcrypt\n\nbcrypt is a password-hashing function designed to be slow (to resist brute force) and includes a salt automatically.\n\n- **Salt**: a random string added to the password before hashing, making identical passwords produce different hashes.\n- bcrypt stores the salt within the hash string, so you don't need a separate column.\n\nInstall:\n```bash\nnpm install bcrypt\n```"
+        },
+        {
+            "id": "l10_l2_s3",
+            "type": "code",
+            "title": "Hashing a Password",
+            "content": "```javascript\nconst bcrypt = require('bcrypt');\nconst saltRounds = 10; // higher = more secure but slower\n\nasync function hashPassword(plainPassword) {\n  const hash = await bcrypt.hash(plainPassword, saltRounds);\n  console.log(hash); // e.g., $2b$10$N9qo8uLOickgx2ZMRZoMy.Mr/.x1x5l5L8X6y1d9zXqWq7yX5u7qW\n  return hash;\n}\n```\n\nThe hash contains the algorithm version, cost factor, salt, and the actual hash."
+        },
+        {
+            "id": "l10_l2_s4",
+            "type": "code",
+            "title": "Comparing a Password",
+            "content": "When a user logs in, you hash the provided password and compare it with the stored hash.\n\n```javascript\nasync function checkPassword(plainPassword, hash) {\n  const match = await bcrypt.compare(plainPassword, hash);\n  if (match) {\n    console.log('Password correct');\n  } else {\n    console.log('Wrong password');\n  }\n}\n```\n\n`bcrypt.compare()` extracts the salt from the hash, hashes the input, and compares."
+        },
+        {
+            "id": "l10_l2_s5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch10_l2_q1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of a salt in password hashing?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To make the hash reversible",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To ensure two identical passwords have different hashes",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To speed up the hashing process",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To encrypt the password",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Salts prevent rainbow table attacks and make identical passwords produce different hashes.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

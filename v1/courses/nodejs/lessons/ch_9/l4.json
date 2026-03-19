@@ -1,0 +1,70 @@
+{
+    "id": "l4",
+    "chapterId": "ch_9",
+    "title": "Request Validation and Error Handling",
+    "description": "Validate incoming data and send proper error responses.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Validation",
+    "slides": [
+        {
+            "id": "l9_l4_s1",
+            "type": "text",
+            "title": "Why Validate? 🛡️",
+            "content": "# Input Validation\n\nNever trust user input. Validation ensures:\n- Data integrity (required fields, correct types).\n- Security (prevent injection, malformed data).\n- Consistent error messages.\n\nWe can validate manually or use libraries like `express-validator`."
+        },
+        {
+            "id": "l9_l4_s2",
+            "type": "text",
+            "title": "Manual Validation Example",
+            "content": "## Simple Checks\n\n```javascript\napp.post('/books', (req, res) => {\n  const { title, author, year } = req.body;\n\n  if (!title || typeof title !== 'string') {\n    return res.status(400).json({ error: 'Title is required and must be a string' });\n  }\n  if (!author || typeof author !== 'string') {\n    return res.status(400).json({ error: 'Author is required and must be a string' });\n  }\n  if (year && (typeof year !== 'number' || year < 0 || year > new Date().getFullYear())) {\n    return res.status(400).json({ error: 'Year must be a valid number' });\n  }\n\n  // proceed\n});\n```\n\nThis quickly becomes repetitive. Libraries help."
+        },
+        {
+            "id": "l9_l4_s3",
+            "type": "text",
+            "title": "Using express-validator 📋",
+            "content": "## express-validator\n\nInstall: `npm install express-validator`\n\n```javascript\nconst { body, validationResult } = require('express-validator');\n\napp.post('/books',\n  body('title').notEmpty().isString(),\n  body('author').notEmpty().isString(),\n  body('year').optional().isInt({ min: 1000, max: new Date().getFullYear() }),\n  (req, res) => {\n    const errors = validationResult(req);\n    if (!errors.isEmpty()) {\n      return res.status(400).json({ errors: errors.array() });\n    }\n    // create book\n  }\n);\n```\n\nIt provides a clean way to define validation rules and collect errors."
+        },
+        {
+            "id": "l9_l4_s4",
+            "type": "text",
+            "title": "Centralized Error Handling 🎯",
+            "content": "## Consistent Error Responses\n\nDefine an error-handling middleware to format all errors uniformly.\n\n```javascript\n// Custom error class\nclass AppError extends Error {\n  constructor(message, statusCode) {\n    super(message);\n    this.statusCode = statusCode;\n  }\n}\n\n// In routes, throw new AppError('Not found', 404);\n\n// Error handler middleware\napp.use((err, req, res, next) => {\n  const { statusCode = 500, message } = err;\n  res.status(statusCode).json({\n    error: {\n      message,\n      status: statusCode\n    }\n  });\n});\n```"
+        },
+        {
+            "id": "l9_l4_s5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch9_l4_q1",
+                "type": "multiple_choice",
+                "question": "Which package is commonly used for request validation in Express?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "express-validator",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "joi",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "validator",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "express-validation",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`express-validator` is a popular middleware for validating request data.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

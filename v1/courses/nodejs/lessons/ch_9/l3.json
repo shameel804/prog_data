@@ -1,0 +1,76 @@
+{
+    "id": "l3",
+    "chapterId": "ch_9",
+    "title": "Implementing a RESTful API with Express",
+    "description": "Build a CRUD API for a resource using Express.",
+    "xpReward": 20,
+    "estimatedMinutes": 8,
+    "section": "Implementation",
+    "slides": [
+        {
+            "id": "l9_l3_s1",
+            "type": "text",
+            "title": "Setting Up the Project 🚀",
+            "content": "# Building an API\n\nWe'll create a simple API for a `books` resource using Express and an in-memory array (database later).\n\n```bash\nnpm init -y\nnpm install express\n```\n\nCreate `app.js`:"
+        },
+        {
+            "id": "l9_l3_s2",
+            "type": "code",
+            "title": "GET All and GET One",
+            "content": "```javascript\nconst express = require('express');\nconst app = express();\napp.use(express.json()); // to parse JSON bodies\n\nlet books = [\n  { id: 1, title: '1984', author: 'George Orwell' },\n  { id: 2, title: 'Brave New World', author: 'Aldous Huxley' }\n];\n\n// GET all books\napp.get('/books', (req, res) => {\n  res.json(books);\n});\n\n// GET a single book by id\napp.get('/books/:id', (req, res) => {\n  const id = parseInt(req.params.id);\n  const book = books.find(b => b.id === id);\n  if (book) {\n    res.json(book);\n  } else {\n    res.status(404).json({ message: 'Book not found' });\n  }\n});\n```"
+        },
+        {
+            "id": "l9_l3_s3",
+            "type": "code",
+            "title": "POST – Create a New Book",
+            "content": "```javascript\n// POST a new book\napp.post('/books', (req, res) => {\n  const { title, author } = req.body;\n  if (!title || !author) {\n    return res.status(400).json({ message: 'Title and author required' });\n  }\n  const newBook = {\n    id: books.length + 1,\n    title,\n    author\n  };\n  books.push(newBook);\n  res.status(201).json(newBook);\n});\n```"
+        },
+        {
+            "id": "l9_l3_s4",
+            "type": "code",
+            "title": "PUT – Update (Replace) a Book",
+            "content": "```javascript\n// PUT – replace entire book\napp.put('/books/:id', (req, res) => {\n  const id = parseInt(req.params.id);\n  const { title, author } = req.body;\n  const book = books.find(b => b.id === id);\n  if (!book) {\n    return res.status(404).json({ message: 'Book not found' });\n  }\n  if (!title || !author) {\n    return res.status(400).json({ message: 'Title and author required' });\n  }\n  book.title = title;\n  book.author = author;\n  res.json(book);\n});\n```"
+        },
+        {
+            "id": "l9_l3_s5",
+            "type": "code",
+            "title": "PATCH – Partial Update and DELETE",
+            "content": "```javascript\n// PATCH – partial update\napp.patch('/books/:id', (req, res) => {\n  const id = parseInt(req.params.id);\n  const book = books.find(b => b.id === id);\n  if (!book) {\n    return res.status(404).json({ message: 'Book not found' });\n  }\n  const { title, author } = req.body;\n  if (title) book.title = title;\n  if (author) book.author = author;\n  res.json(book);\n});\n\n// DELETE\napp.delete('/books/:id', (req, res) => {\n  const id = parseInt(req.params.id);\n  const index = books.findIndex(b => b.id === id);\n  if (index === -1) {\n    return res.status(404).json({ message: 'Book not found' });\n  }\n  books.splice(index, 1);\n  res.status(204).send(); // No content\n});\n```"
+        },
+        {
+            "id": "l9_l3_s6",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch9_l3_q1",
+                "type": "multiple_choice",
+                "question": "What status code should be returned after successfully creating a resource with POST?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "200 OK",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "201 Created",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "204 No Content",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "202 Accepted",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "201 Created is the standard response for successful resource creation.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

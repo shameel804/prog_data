@@ -1,0 +1,76 @@
+{
+    "id": "l5",
+    "chapterId": "ch_8",
+    "title": "Introduction to ORMs – Sequelize",
+    "description": "Simplify SQL with an ORM: define models and query with Sequelize.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "SQL",
+    "slides": [
+        {
+            "id": "l8_l5_s1",
+            "type": "text",
+            "title": "What is an ORM? 🔄",
+            "content": "# Object‑Relational Mapping\n\nAn ORM maps database tables to JavaScript objects, allowing you to work with data using OOP instead of writing raw SQL.\n\nBenefits:\n- Write queries in JavaScript.\n- Automatic escaping prevents SQL injection.\n- Model relationships (associations).\n- Migrations and schema sync.\n\nPopular ORMs for Node: **Sequelize**, TypeORM, Prisma."
+        },
+        {
+            "id": "l8_l5_s2",
+            "type": "text",
+            "title": "Installing Sequelize and a Driver 📦",
+            "content": "## Setup\n\nFor SQLite:\n```bash\nnpm install sequelize sqlite3\n```\n\nFor PostgreSQL: `pg pg-hstore`\nFor MySQL: `mysql2`\n\nConnect to SQLite:\n```javascript\nconst { Sequelize } = require('sequelize');\nconst sequelize = new Sequelize({\n  dialect: 'sqlite',\n  storage: './database.sqlite'\n});\n```"
+        },
+        {
+            "id": "l8_l5_s3",
+            "type": "text",
+            "title": "Defining a Model 🏗️",
+            "content": "## Model Definition\n\n```javascript\nconst { DataTypes } = require('sequelize');\n\nconst User = sequelize.define('User', {\n  name: {\n    type: DataTypes.STRING,\n    allowNull: false\n  },\n  email: {\n    type: DataTypes.STRING,\n    allowNull: false,\n    unique: true\n  },\n  age: DataTypes.INTEGER\n});\n```\n\nSequelize will automatically add `id`, `createdAt`, `updatedAt` fields."
+        },
+        {
+            "id": "l8_l5_s4",
+            "type": "text",
+            "title": "Synchronizing the Model 🔄",
+            "content": "## Sync with Database\n\n```javascript\n(async () => {\n  await sequelize.sync({ force: true }); // drops and re-creates tables – use with caution!\n  console.log('Database synced');\n})();\n```\n\nIn production, use migrations instead of `force: true`."
+        },
+        {
+            "id": "l8_l5_s5",
+            "type": "text",
+            "title": "CRUD with Sequelize 📝",
+            "content": "## Create\n```javascript\nconst user = await User.create({ name: 'Alice', email: 'alice@example.com', age: 30 });\n```\n\n## Read\n```javascript\nconst users = await User.findAll();\nconst user = await User.findOne({ where: { email: 'alice@example.com' } });\nconst userById = await User.findByPk(1);\n```\n\n## Update\n```javascript\nawait User.update({ age: 31 }, { where: { email: 'alice@example.com' } });\n// or\nconst user = await User.findByPk(1);\nuser.age = 31;\nawait user.save();\n```\n\n## Delete\n```javascript\nawait User.destroy({ where: { email: 'alice@example.com' } });\n```"
+        },
+        {
+            "id": "l8_l5_s6",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch8_l5_q1",
+                "type": "multiple_choice",
+                "question": "In Sequelize, which method finds all records matching a condition?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Model.findAll()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Model.find()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Model.all()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Model.select()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`Model.findAll()` returns an array of instances matching the query.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

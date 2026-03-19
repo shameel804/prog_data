@@ -1,0 +1,64 @@
+{
+    "id": "l1",
+    "chapterId": "ch_12",
+    "title": "Environment Variables and Configuration",
+    "description": "Manage configuration securely using environment variables and dotenv.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Configuration",
+    "slides": [
+        {
+            "id": "l12_l1_s1",
+            "type": "text",
+            "title": "Why Environment Variables? 🔐",
+            "content": "# Twelve-Factor App – Config\n\nIn production, configuration (database passwords, API keys, ports) should be **separated from code**. Storing secrets in code is a security risk and makes it hard to change config per environment.\n\nEnvironment variables are the standard solution. They are set outside the application and accessed via `process.env`.\n\nExample:\n```javascript\nconst port = process.env.PORT || 3000;\n```"
+        },
+        {
+            "id": "l12_l1_s2",
+            "type": "text",
+            "title": "Using dotenv for Local Development 📝",
+            "content": "## dotenv\n\nDuring development, you can store environment variables in a `.env` file and load them using the `dotenv` package.\n\nInstall:\n```bash\nnpm install dotenv\n```\n\nAt the top of your main file:\n```javascript\nrequire('dotenv').config();\n```\n\nCreate a `.env` file (never commit it!):\n```\nPORT=3000\nDB_URL=mongodb://localhost:27017/myapp\nJWT_SECRET=mysecret\n```\n\nNow `process.env.PORT` etc. are available."
+        },
+        {
+            "id": "l12_l1_s3",
+            "type": "warning",
+            "title": "⚠️ Never Commit .env",
+            "content": "## Keep Secrets Secret\n\nAlways add `.env` to your `.gitignore` file. Instead, provide a `.env.example` file with dummy values so other developers know which variables are needed.\n\nFor production, set environment variables directly in your hosting platform (Heroku config vars, AWS Secrets Manager, etc.)."
+        },
+        {
+            "id": "l12_l1_s4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch12_l1_q1",
+                "type": "multiple_choice",
+                "question": "How do you access an environment variable named `DB_PASSWORD` in Node.js?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "process.env.DB_PASSWORD",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "env.DB_PASSWORD",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "process.DB_PASSWORD",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "DB_PASSWORD",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Environment variables are stored in `process.env`.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

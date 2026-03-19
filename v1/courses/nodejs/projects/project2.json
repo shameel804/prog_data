@@ -1,0 +1,28 @@
+{
+    "id": "nodejs_project_2",
+    "title": "Personal Blog Platform",
+    "description": "A full-featured blog API with posts, comments, and user roles.",
+    "difficulty": "Advanced",
+    "estimatedHours": "5-7",
+    "problemStatement": "# Personal Blog Platform API\n\nBuild an API for a personal blog where authors can write posts and readers can comment. The platform should support multiple users with different roles: `admin`, `author`, and `reader`. Admin can manage everything; authors can create, edit, and delete their own posts; readers can view posts and add comments.\n\n## Core Features\n\n1. **User Roles & Authentication**\n   - Register with email and password (role defaults to `reader`).\n   - Login returns JWT containing user id and role.\n   - Admin can promote users to `author` or `admin` (special endpoint).\n\n2. **Posts**\n   - Anyone (even unauthenticated) can view published posts.\n   - Authors can create, update, delete their own posts (draft/published status).\n   - Posts have title, content, author, tags, publication date, and status (draft/published).\n   - Only published posts are visible to readers/unauthenticated users.\n\n3. **Comments**\n   - Authenticated users can comment on any published post.\n   - Authors can delete comments on their own posts.\n   - Admin can delete any comment.\n   - Comments have content, author, timestamp.\n\n4. **Data Persistence**\n   - Use MongoDB with Mongoose (or PostgreSQL with Sequelize).\n   - Define relationships: User has many Posts, Post has many Comments.\n\n5. **Validation & Error Handling**\n   - Validate input (e.g., post title required, comment not empty).\n   - Proper error status codes and messages.\n\n6. **Security & Logging**\n   - Helmet, CORS, rate limiting.\n   - Environment variables for config.\n   - Logging with Morgan and Winston.\n\n## Requirements\n\n- RESTful endpoints for users (admin only for role updates), posts, and comments.\n- Authentication middleware that attaches user to `req.user`.\n- Authorization middleware to check roles (e.g., `authorize('admin')`).\n- Posts should be filterable by author, tag, status (admin/author only), and paginated.\n- Comments should be nested under posts (e.g., `GET /posts/:postId/comments`).\n- Use query parameters for filtering and pagination.\n- Write a seed script to create initial admin user.\n\n## Bonus (Optional)\n\n- Add search functionality (text search in posts).\n- Implement soft delete for posts.\n- Use a caching layer (Redis) for popular posts.\n- Add unit/integration tests.",
+    "requirements": [
+        "User registration and login with JWT.",
+        "Role-based authorization (admin, author, reader).",
+        "CRUD for posts with draft/published status and ownership rules.",
+        "Comment system under posts with proper access control.",
+        "MongoDB/Mongoose or SQL/Sequelize with relations.",
+        "Input validation for all endpoints.",
+        "Environment variables and security best practices.",
+        "Logging and centralized error handling."
+    ],
+    "hints": [
+        "Start with User and Post models, then add Comment. Decide on relationships.",
+        "For roles, include a `role` field in the User model and JWT payload.",
+        "Create middleware `authorize(roles)` that checks `req.user.role`.",
+        "In post routes, check if the authenticated user is the author (or admin) for modifications.",
+        "For filtering posts by status, remember that authors/admins can see drafts they own, others only see published.",
+        "Use `express.Router` to group post and comment routes.",
+        "Consider using query parameters like `?author=...` and `?tag=...` and `?page=1&limit=10`."
+    ],
+    "expectedOutput": "A complete blog API with roles, posts, and comments, thoroughly tested via Postman."
+}

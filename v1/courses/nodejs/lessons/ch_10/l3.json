@@ -1,0 +1,70 @@
+{
+    "id": "l3",
+    "chapterId": "ch_10",
+    "title": "Session-Based Authentication",
+    "description": "Implement login sessions using express-session.",
+    "xpReward": 20,
+    "estimatedMinutes": 7,
+    "section": "Sessions",
+    "slides": [
+        {
+            "id": "l10_l3_s1",
+            "type": "text",
+            "title": "How Sessions Work 🍪",
+            "content": "# Session Authentication\n\n1. User logs in with credentials.\n2. Server verifies credentials, creates a **session** (stored in memory or database), and sends a **session ID** cookie to the browser.\n3. Browser automatically includes the cookie in subsequent requests.\n4. Server looks up the session by ID to identify the user.\n\nSessions are **stateful** – the server stores session data."
+        },
+        {
+            "id": "l10_l3_s2",
+            "type": "text",
+            "title": "Setting Up express-session 🛠️",
+            "content": "## Installation\n\n```bash\nnpm install express-session\n```\n\nBasic setup:\n```javascript\nconst session = require('express-session');\n\napp.use(session({\n  secret: 'your-secret-key', // used to sign the session ID cookie\n  resave: false,             // don't save session if unmodified\n  saveUninitialized: false,  // don't create session until something stored\n  cookie: { secure: false, httpOnly: true, maxAge: 1000 * 60 * 60 } // 1 hour\n}));\n```\n\nIn production, use a strong secret and set `secure: true` (HTTPS only)."
+        },
+        {
+            "id": "l10_l3_s3",
+            "type": "code",
+            "title": "Login Route with Session",
+            "content": "```javascript\napp.post('/login', async (req, res) => {\n  const { username, password } = req.body;\n  // Find user in database (pseudo-code)\n  const user = await User.findOne({ username });\n  if (!user) return res.status(401).send('Invalid credentials');\n\n  const valid = await bcrypt.compare(password, user.passwordHash);\n  if (!valid) return res.status(401).send('Invalid credentials');\n\n  // Store user info in session\n  req.session.userId = user.id;\n  req.session.isAdmin = user.isAdmin;\n  res.send('Logged in');\n});\n```"
+        },
+        {
+            "id": "l10_l3_s4",
+            "type": "code",
+            "title": "Protecting Routes with Session",
+            "content": "```javascript\n// Middleware to check authentication\nfunction requireAuth(req, res, next) {\n  if (req.session.userId) {\n    next(); // user is logged in\n  } else {\n    res.status(401).send('Unauthorized');\n  }\n}\n\napp.get('/profile', requireAuth, (req, res) => {\n  res.send(`Welcome user ${req.session.userId}`);\n});\n\n// Logout\napp.post('/logout', (req, res) => {\n  req.session.destroy((err) => {\n    if (err) return res.status(500).send('Could not log out');\n    res.clearCookie('connect.sid'); // clear the session cookie\n    res.send('Logged out');\n  });\n});\n```"
+        },
+        {
+            "id": "l10_l3_s5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch10_l3_q1",
+                "type": "multiple_choice",
+                "question": "In session-based authentication, where is session data stored?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "On the client (browser)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "On the server",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "In a JWT token",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "In the database only",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Session data is stored server-side (memory, database, or Redis); the client only holds the session ID cookie.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

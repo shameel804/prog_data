@@ -1,0 +1,67 @@
+{
+    "id": "l5",
+    "chapterId": "ch_3",
+    "title": "Combining Modules: A Practical Example",
+    "description": "Use fs, path, and os together to build a simple system info logger.",
+    "xpReward": 20,
+    "estimatedMinutes": 7,
+    "section": "Integration",
+    "slides": [
+        {
+            "id": "l3_l5_s1",
+            "type": "text",
+            "title": "Project: System Info Logger 📝",
+            "content": "# Putting It All Together\n\nLet's build a small script that collects system information using `os`, formats it, and writes it to a log file using `fs` and `path`.\n\n**Steps:**\n1. Get system info (platform, arch, CPUs, memory).\n2. Create a timestamped log message.\n3. Use `path` to create a file path inside a `logs` directory.\n4. Write the info to that file (append each run).\n5. Ensure the `logs` directory exists."
+        },
+        {
+            "id": "l3_l5_s2",
+            "type": "code",
+            "title": "Complete Example",
+            "content": "Create a file `system-info.js` with:",
+            "codeSnippet": "const os = require('os');\nconst fs = require('fs');\nconst path = require('path');\n\n// Create logs directory if it doesn't exist\nconst logsDir = path.join(__dirname, 'logs');\nif (!fs.existsSync(logsDir)) {\n  fs.mkdirSync(logsDir);\n}\n\n// Prepare log entry\nconst timestamp = new Date().toISOString();\nconst info = `\n--- ${timestamp} ---\nPlatform: ${os.platform()}\nArch: ${os.arch()}\nCPUs: ${os.cpus().length}\nTotal Memory: ${(os.totalmem() / 1e9).toFixed(2)} GB\nFree Memory: ${(os.freemem() / 1e9).toFixed(2)} GB\n`;\n\n// Append to log file\nconst logFile = path.join(logsDir, 'system.log');\nfs.appendFile(logFile, info, (err) => {\n  if (err) console.error('Error writing log:', err);\n  else console.log('System info logged');\n});",
+            "codeLanguage": "javascript",
+            "canRunCode": false
+        },
+        {
+            "id": "l3_l5_s3",
+            "type": "text",
+            "title": "Explanation 📖",
+            "content": "## How It Works\n\n- `path.join(__dirname, 'logs')` creates a path to a `logs` folder in the same directory as the script.\n- `fs.existsSync` checks if the directory exists; if not, `fs.mkdirSync` creates it.\n- We build a multi-line string using template literals.\n- `fs.appendFile` adds this info to `system.log` (creates it if needed).\n\nEvery time you run the script, a new entry is appended."
+        },
+        {
+            "id": "l3_l5_s4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch3_l5_q1",
+                "type": "multiple_choice",
+                "question": "Why do we use `fs.existsSync` and `fs.mkdirSync` before appending?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To ensure the logs directory exists, otherwise append would fail.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To check if the log file already exists.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To delete old logs.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's not necessary.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "If the directory doesn't exist, `fs.appendFile` would throw an error. We create it upfront.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

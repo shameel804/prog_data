@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_7",
+    "title": "Express Route with Parameters",
+    "description": "Create an Express app with routes that use parameters and query strings.",
+    "estimatedMinutes": 8,
+    "problemStatement": "Create an Express app that has the following routes:\n- `GET /` → responds with 'Home Page'\n- `GET /users/:id` → responds with 'User ID: [id]' (the captured id)\n- `GET /search` → responds with 'Searching for [term]' where `term` is a query parameter `?q=...`. If `q` is missing, respond with 'No search term provided.'\n- `GET /greet` → responds with 'Hello [name]' where `name` is a query parameter. If no name, default to 'Guest'.\n\nTest all routes with different inputs.",
+    "hints": [
+        "Use `req.params.id` for the parameter.",
+        "Use `req.query.q` and `req.query.name` for query parameters.",
+        "Set default values with the `||` operator or ternary."
+    ],
+    "expectedOutput": "Varies by request.",
+    "solutionCode": "const express = require('express');\nconst app = express();\n\napp.get('/', (req, res) => {\n  res.send('Home Page');\n});\n\napp.get('/users/:id', (req, res) => {\n  res.send(`User ID: ${req.params.id}`);\n});\n\napp.get('/search', (req, res) => {\n  const term = req.query.q;\n  if (term) {\n    res.send(`Searching for ${term}`);\n  } else {\n    res.send('No search term provided.');\n  }\n});\n\napp.get('/greet', (req, res) => {\n  const name = req.query.name || 'Guest';\n  res.send(`Hello ${name}`);\n});\n\napp.listen(3000, () => console.log('Server running on port 3000'));"
+}

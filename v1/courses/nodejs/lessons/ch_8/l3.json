@@ -1,0 +1,79 @@
+{
+    "id": "l3",
+    "chapterId": "ch_8",
+    "title": "CRUD Operations with Mongoose",
+    "description": "Perform Create, Read, Update, Delete operations using Mongoose models.",
+    "xpReward": 20,
+    "estimatedMinutes": 7,
+    "section": "MongoDB",
+    "slides": [
+        {
+            "id": "l8_l3_s1",
+            "type": "text",
+            "title": "Create – Adding Documents ✨",
+            "content": "# Create\n\nTwo main ways:\n\n1. `new Model(doc)` + `save()`\n   ```javascript\n   const user = new User({ name: 'Bob', email: 'bob@example.com' });\n   await user.save();\n   ```\n\n2. `Model.create(doc)`\n   ```javascript\n   const user = await User.create({ name: 'Bob', email: 'bob@example.com' });\n   ```\n\nBoth return the saved document."
+        },
+        {
+            "id": "l8_l3_s2",
+            "type": "text",
+            "title": "Read – Querying Documents 🔍",
+            "content": "## Read Operations\n\n- `Model.find(filter)` – returns array of matching documents.\n- `Model.findOne(filter)` – returns the first match or `null`.\n- `Model.findById(id)` – shortcut for `findOne({ _id: id })`.\n\nExamples:\n```javascript\nconst users = await User.find({ age: { $gte: 18 } }); // age >= 18\nconst user = await User.findOne({ email: 'alice@example.com' });\nconst userById = await User.findById('5f8d0d55b5b9c6a1c8b4567');\n```\n\nMongoose supports MongoDB query operators like `$gt`, `$lt`, `$in`, etc."
+        },
+        {
+            "id": "l8_l3_s3",
+            "type": "text",
+            "title": "Update – Modifying Documents ✏️",
+            "content": "## Update Operations\n\n- `Model.updateOne(filter, update)` – updates first matching document.\n- `Model.updateMany(filter, update)` – updates all matches.\n- `Model.findByIdAndUpdate(id, update, options)` – finds by id and updates.\n\nOptions like `{ new: true }` return the updated document.\n\n```javascript\nawait User.updateOne({ email: 'bob@example.com' }, { age: 31 });\nconst updated = await User.findByIdAndUpdate(id, { age: 32 }, { new: true });\n```"
+        },
+        {
+            "id": "l8_l3_s4",
+            "type": "text",
+            "title": "Delete – Removing Documents ❌",
+            "content": "## Delete Operations\n\n- `Model.deleteOne(filter)` – deletes first matching document.\n- `Model.deleteMany(filter)` – deletes all matches.\n- `Model.findByIdAndDelete(id)` – finds by id and deletes.\n\n```javascript\nawait User.deleteOne({ email: 'bob@example.com' });\nawait User.findByIdAndDelete('5f8d0d55b5b9c6a1c8b4567');\n```"
+        },
+        {
+            "id": "l8_l3_s5",
+            "type": "code",
+            "title": "CRUD Example",
+            "content": "Async/await style:",
+            "codeSnippet": "const mongoose = require('mongoose');\nconst User = require('./models/User'); // assume model defined\n\nasync function crudDemo() {\n  // Create\n  const user = await User.create({ name: 'Charlie', email: 'charlie@example.com' });\n  console.log('Created:', user);\n\n  // Read\n  const found = await User.findById(user._id);\n  console.log('Found:', found);\n\n  // Update\n  found.age = 25;\n  await found.save(); // or use updateOne\n  console.log('Updated:', found);\n\n  // Delete\n  await User.deleteOne({ _id: user._id });\n  console.log('Deleted');\n}\n\ncrudDemo();",
+            "codeLanguage": "javascript",
+            "canRunCode": false
+        },
+        {
+            "id": "l8_l3_s6",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch8_l3_q1",
+                "type": "multiple_choice",
+                "question": "Which Mongoose method finds a single document by its `_id`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Model.findOne()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Model.findById()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Model.find()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Model.get()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`Model.findById(id)` is a convenience wrapper for `findOne({ _id: id })`.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

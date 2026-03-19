@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_3",
+    "title": "File Copy Utility",
+    "description": "Write a script that copies the content of one file to another.",
+    "estimatedMinutes": 8,
+    "problemStatement": "Create a script `copy.js` that takes two command-line arguments: source file and destination file. It should read the source file asynchronously and write its content to the destination file. If the destination file already exists, it should be overwritten. Handle errors gracefully (e.g., source not found) and print appropriate messages.\n\nExample usage:\n```\nnode copy.js source.txt destination.txt\n```",
+    "hints": [
+        "Use `process.argv` to get the file names.",
+        "Use `fs.readFile` and `fs.writeFile` (async).",
+        "Check for errors in each callback.",
+        "Remember to specify encoding to get a string (or you can work with buffers)."
+    ],
+    "expectedOutput": "If source.txt exists: 'File copied successfully.'\nIf source.txt missing: 'Error: source.txt not found.'",
+    "solutionCode": "const fs = require('fs');\nconst args = process.argv.slice(2);\nif (args.length < 2) {\n  console.error('Usage: node copy.js <source> <destination>');\n  process.exit(1);\n}\nconst [source, dest] = args;\n\nfs.readFile(source, 'utf8', (err, data) => {\n  if (err) {\n    console.error(`Error reading ${source}:`, err.message);\n    return;\n  }\n  fs.writeFile(dest, data, 'utf8', (err) => {\n    if (err) {\n      console.error(`Error writing to ${dest}:`, err.message);\n    } else {\n      console.log('File copied successfully.');\n    }\n  });\n});"
+}

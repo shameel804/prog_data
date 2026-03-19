@@ -1,0 +1,70 @@
+{
+    "id": "l1",
+    "chapterId": "ch_2",
+    "title": "Variables: let, const, and var",
+    "description": "Understand the differences between variable declarations in modern JavaScript.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Variables",
+    "slides": [
+        {
+            "id": "l2_l1_s1",
+            "type": "text",
+            "title": "The Old Way: `var` 📜",
+            "content": "# Variable Declaration in JavaScript\n\nIn the beginning, there was only `var`. It has some quirks:\n\n* **Function‑scoped** (not block‑scoped)\n* Can be **redeclared** in the same scope\n* **Hoisted** (moved to top of scope) and initialized with `undefined`\n\nExample:\n```javascript\nconsole.log(x); // undefined (hoisted, but not yet assigned)\nvar x = 5;\nvar x = 10;    // no error – redeclaration allowed\n```\n\nThese behaviors often lead to bugs, so modern JavaScript introduced `let` and `const`."
+        },
+        {
+            "id": "l2_l1_s2",
+            "type": "text",
+            "title": "The Modern Way: `let` 🆕",
+            "content": "## `let` – block‑scoped and mutable\n\n`let` was introduced in ES6 (2015).\n\n* **Block‑scoped** – exists only inside `{ }`\n* Cannot be redeclared in the same scope\n* Hoisted but **not initialized** (Temporal Dead Zone)\n\n```javascript\nlet age = 25;\nlet age = 30; // ❌ SyntaxError: Identifier 'age' has already been declared\n\nif (true) {\n  let message = 'Hello';\n  console.log(message); // 'Hello'\n}\nconsole.log(message); // ❌ ReferenceError: message is not defined\n```"
+        },
+        {
+            "id": "l2_l1_s3",
+            "type": "text",
+            "title": "`const` – block‑scoped and immutable 🔒",
+            "content": "## `const` for constants\n\n* Also block‑scoped\n* Must be **initialized** at declaration\n* Cannot be **reassigned**\n* For objects/arrays, the reference is constant, but properties can be modified!\n\n```javascript\nconst PI = 3.14159;\nPI = 3.14; // ❌ TypeError: Assignment to constant variable.\n\nconst person = { name: 'Alice' };\nperson.name = 'Bob'; // ✅ allowed – object properties can change\nperson = {};         // ❌ reassigning the variable itself is not allowed\n```"
+        },
+        {
+            "id": "l2_l1_s4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch2_l1_q1",
+                "type": "multiple_choice",
+                "question": "What will be the output?\n```javascript\nlet x = 10;\nif (true) {\n  let x = 20;\n  console.log(x);\n}\nconsole.log(x);\n```",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "20, 10",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "10, 20",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "20, 20",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "ReferenceError",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`let` is block‑scoped, so the inner `x` is a different variable. Inside the block, it's 20; outside, it's still 10.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "l2_l1_s5",
+            "type": "tip",
+            "title": "Best Practice 🌟",
+            "content": "## When to use what?\n\n* **Use `const` by default** – it signals that the variable won't be reassigned and prevents accidental changes.\n* **Use `let` when you need to reassign** (e.g., loop counters, accumulating values).\n* **Avoid `var`** in modern code – it's outdated and can cause confusion.\n\nThis makes your code more predictable and easier to reason about."
+        }
+    ]
+}

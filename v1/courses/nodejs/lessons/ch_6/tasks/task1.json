@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_6",
+    "title": "Basic HTTP Server with Routes",
+    "description": "Create an HTTP server that responds differently based on URL.",
+    "estimatedMinutes": 8,
+    "problemStatement": "Create a file `server.js` that starts an HTTP server on port 3000. Implement the following routes:\n- `GET /` → respond with HTML: `<h1>Home Page</h1>`\n- `GET /about` → respond with HTML: `<h1>About Us</h1><p>We are learning Node.js</p>`\n- Any other path → respond with status 404 and plain text '404 Not Found'\n\nMake sure to set the correct Content-Type headers. Test by visiting the URLs in your browser.",
+    "hints": [
+        "Use `req.url` to get the path.",
+        "Use `if/else` to check the URL.",
+        "Remember to call `res.end()` after writing the response.",
+        "Set status code with `res.writeHead()` or `res.statusCode`."
+    ],
+    "expectedOutput": "Home page at /, about page at /about, 404 for others.",
+    "solutionCode": "const http = require('http');\n\nconst server = http.createServer((req, res) => {\n  const url = req.url;\n\n  if (url === '/') {\n    res.writeHead(200, { 'Content-Type': 'text/html' });\n    res.end('<h1>Home Page</h1>');\n  } else if (url === '/about') {\n    res.writeHead(200, { 'Content-Type': 'text/html' });\n    res.end('<h1>About Us</h1><p>We are learning Node.js</p>');\n  } else {\n    res.writeHead(404, { 'Content-Type': 'text/plain' });\n    res.end('404 Not Found');\n  }\n});\n\nserver.listen(3000, () => {\n  console.log('Server running at http://localhost:3000');\n});"
+}

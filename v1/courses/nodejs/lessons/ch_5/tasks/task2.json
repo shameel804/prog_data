@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_5",
+    "title": "Sequential vs Parallel",
+    "description": "Read multiple files using async/await, first sequentially then in parallel.",
+    "estimatedMinutes": 10,
+    "problemStatement": "You have three files: `a.txt`, `b.txt`, `c.txt`. Each contains a line of text. Write an async function `readSequential` that reads them one after another (using `await`) and logs the combined content. Then write another async function `readParallel` that reads them in parallel using `Promise.all` and logs the combined content. Measure the time difference (you can use `console.time` and `console.timeEnd`).\n\nAssume you have `fs.promises` available.\n\nCreate the files manually or simulate with `setTimeout` if you prefer.",
+    "hints": [
+        "For sequential: `const a = await fs.readFile('a.txt');` etc.",
+        "For parallel: `const [a, b, c] = await Promise.all([fs.readFile('a.txt'), ...])`.",
+        "Use `console.time('label')` and `console.timeEnd('label')` to measure."
+    ],
+    "expectedOutput": "Combined content of all files (order may vary for parallel but you can sort).",
+    "solutionCode": "const fs = require('fs').promises;\n\nasync function readSequential() {\n  console.time('sequential');\n  const a = await fs.readFile('a.txt', 'utf8');\n  const b = await fs.readFile('b.txt', 'utf8');\n  const c = await fs.readFile('c.txt', 'utf8');\n  console.log(a + b + c);\n  console.timeEnd('sequential');\n}\n\nasync function readParallel() {\n  console.time('parallel');\n  const [a, b, c] = await Promise.all([\n    fs.readFile('a.txt', 'utf8'),\n    fs.readFile('b.txt', 'utf8'),\n    fs.readFile('c.txt', 'utf8')\n  ]);\n  console.log(a + b + c);\n  console.timeEnd('parallel');\n}\n\n// Assume files exist\nreadSequential();\nreadParallel();"
+}

@@ -1,0 +1,17 @@
+{
+    "id": "task2",
+    "chapterId": "ch_8",
+    "title": "SQLite Task Manager",
+    "description": "Build a simple task manager using SQLite.",
+    "estimatedMinutes": 10,
+    "problemStatement": "Create a script that manages tasks using SQLite. The database should have a `tasks` table with columns: `id` (integer primary key autoincrement), `title` (text not null), `completed` (integer default 0, where 0=false, 1=true).\n\nImplement functions (using async/await style via `util.promisify` or callbacks) to:\n- `addTask(title)` – inserts a new task.\n- `listTasks()` – shows all tasks.\n- `completeTask(id)` – sets completed=1 for a task.\n- `deleteTask(id)` – removes a task.\n\nWrite a small CLI that accepts commands (e.g., `node task.js add \"Buy milk\"`, `node task.js list`, `node task.js complete 1`, `node task.js delete 1`). Use `process.argv` to parse commands.",
+    "hints": [
+        "Install sqlite3: `npm install sqlite3`.",
+        "Use `new sqlite3.Database('./tasks.db')`.",
+        "Create table if not exists using `db.run`.",
+        "For async/await, you can promisify `db.run`, `db.all`, `db.get` using `util.promisify` or wrap in promises.",
+        "Parse command and arguments from `process.argv`."
+    ],
+    "expectedOutput": "Database operations based on commands.",
+    "solutionCode": "const sqlite3 = require('sqlite3').verbose();\nconst { promisify } = require('util');\n\nconst db = new sqlite3.Database('./tasks.db');\n\n// Promisify db methods\nconst dbRun = promisify(db.run.bind(db));\nconst dbAll = promisify(db.all.bind(db));\nconst dbGet = promisify(db.get.bind(db));\n\nasync function init() {\n  await dbRun(`CREATE TABLE IF NOT EXISTS tasks (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    title TEXT NOT NULL,\n    completed INTEGER DEFAULT 0\n  )`);\n}\n\nasync function addTask(title) {\n  const result = await dbRun('INSERT INTO tasks (title) VALUES (?)', title);\n  console.log(`Task added with ID: ${result.lastID}`);\n}\n\nasync function listTasks() {\n  const rows = await dbAll('SELECT * FROM tasks');\n  console.log('Tasks:');\n  rows.forEach(row => {\n    console.log(`${row.id}: [${row.completed ? 'x' : ' '}] ${row.title}`);\n  });\n}\n\nasync function completeTask(id) {\n  await dbRun('UPDATE tasks SET completed = 1 WHERE id = ?', id);\n  console.log(`Task ${id} marked completed.`);\n}\n\nasync function deleteTask(id) {\n  await dbRun('DELETE FROM tasks WHERE id = ?', id);\n  console.log(`Task ${id} deleted.`);\n}\n\n// CLI parsing\n(async () => {\n  await init();\n  const args = process.argv.slice(2);\n  const command = args[0];\n\n  switch (command) {\n    case 'add':\n      await addTask(args[1]);\n      break;\n    case 'list':\n      await listTasks();\n      break;\n    case 'complete':\n      await completeTask(args[1]);\n      break;\n    case 'delete':\n      await deleteTask(args[1]);\n      break;\n    default:\n      console.log('Commands: add <title>, list, complete <id>, delete <id>');\n  }\n  db.close();\n})();"
+}

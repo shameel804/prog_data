@@ -1,0 +1,67 @@
+{
+    "id": "l2",
+    "chapterId": "ch_5",
+    "title": "Callbacks and Callback Hell",
+    "description": "Learn about callback functions and the pyramid of doom.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Callbacks",
+    "slides": [
+        {
+            "id": "l5_l2_s1",
+            "type": "text",
+            "title": "What is a Callback? 📞",
+            "content": "# Callbacks\n\nA **callback** is a function passed as an argument to another function, to be executed later when an asynchronous operation completes.\n\nNode.js APIs heavily use callbacks, with the convention `(err, result) => {}`.\n\nExample with `fs.readFile`:\n```javascript\nconst fs = require('fs');\n\nfs.readFile('file.txt', 'utf8', (err, data) => {\n  if (err) {\n    console.error('Error:', err);\n  } else {\n    console.log('Data:', data);\n  }\n});\n```\n\nThe callback runs after the file is read (or fails)."
+        },
+        {
+            "id": "l5_l2_s2",
+            "type": "code",
+            "title": "Callback Example",
+            "content": "Simulate an async operation with `setTimeout`:",
+            "codeSnippet": "function fetchData(callback) {\n  setTimeout(() => {\n    callback(null, 'Data received');\n  }, 1000);\n}\n\nfetchData((err, data) => {\n  if (err) console.error(err);\n  else console.log(data);\n});",
+            "codeLanguage": "javascript",
+            "canRunCode": true
+        },
+        {
+            "id": "l5_l2_s3",
+            "type": "text",
+            "title": "Callback Hell – The Pyramid of Doom 😈",
+            "content": "## The Problem with Nested Callbacks\n\nWhen you have multiple asynchronous operations that depend on each other, you end up nesting callbacks, leading to hard‑to‑read and maintain code.\n\n```javascript\nfs.readFile('a.txt', 'utf8', (err, dataA) => {\n  if (err) handle(err);\n  else {\n    fs.readFile('b.txt', 'utf8', (err, dataB) => {\n      if (err) handle(err);\n      else {\n        fs.writeFile('c.txt', dataA + dataB, (err) => {\n          if (err) handle(err);\n          else console.log('Done');\n        });\n      }\n    });\n  }\n});\n```\n\nThis triangular shape is called **callback hell**. It's hard to debug, error‑prone, and violates the DRY principle."
+        },
+        {
+            "id": "l5_l2_s4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch5_l2_q1",
+                "type": "multiple_choice",
+                "question": "What is the main problem with deeply nested callbacks?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They are slow",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They lead to unreadable code (callback hell)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They don't work in Node",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They cause memory leaks",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Deep nesting makes code hard to read, maintain, and debug – known as callback hell.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

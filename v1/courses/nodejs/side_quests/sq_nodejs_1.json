@@ -1,0 +1,70 @@
+{
+    "id": "sq_nodejs_1",
+    "title": "Bug Hunt: File Reader",
+    "triggerChapterIndex": 2,
+    "metadata": {
+        "type": "debug"
+    },
+    "questions": [
+        {
+            "id": "sq_nodejs_1_q1",
+            "type": "multiple_choice",
+            "question": "The code below tries to read a file and print its content. However, it contains a bug. Identify the line with the error.",
+            "codeSnippet": "1  const fs = require('fs');\n2  \n3  fs.readFile('data.txt', 'utf8', (data, err) => {\n4    if (err) {\n5      console.log('Error:', err);\n6    } else {\n7      console.log('Content:', data);\n8    }\n9  });",
+            "bugLineIndex": 2,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The callback parameters are in the wrong order. Node.js error-first callbacks expect `(err, data)`, not `(data, err)`. Line 3 should be `(err, data) => {`.",
+            "xpReward": 20,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_nodejs_1_q2",
+            "type": "multiple_choice",
+            "question": "This code attempts to create a simple HTTP server, but it won't start. Find the bug.",
+            "codeSnippet": "1  const http = require('http');\n2  \n3  const server = http.createServer((req, res) => {\n4    res.writeHead(200, { 'Content-Type': 'text/plain' });\n5    res.end('Hello World\\n');\n6  });\n7  \n8  server.listen();",
+            "bugLineIndex": 7,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The `server.listen()` method requires a port number. Without it, the server will not bind to any port. Fix by adding a port, e.g., `server.listen(3000)`.",
+            "xpReward": 20,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_nodejs_1_q3",
+            "type": "multiple_choice",
+            "question": "This code tries to use path.join but has a mistake. Identify the line that causes an error.",
+            "codeSnippet": "1  const path = require('path');\n2  \n3  const fullPath = path.join('/users', 'alice', 'docs', '/file.txt');\n4  console.log(fullPath);",
+            "bugLineIndex": 2,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The code is actually correct; there is no bug. This is a trick question to test if the learner knows that `path.join` handles absolute paths correctly (the last absolute path resets).",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_nodejs_1_q4",
+            "type": "multiple_choice",
+            "question": "The following function is meant to return the sum of two numbers, but it fails. Where is the error?",
+            "codeSnippet": "1  function add(a, b) {\n2    return a + b;\n3  }\n4  \n5  console.log(add(5, '10'));",
+            "bugLineIndex": 4,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "There's no syntax error, but the function returns a string concatenation because one argument is a string. The bug is in the usage (line 5) – passing a string instead of a number. The function itself is correct; the bug is at the call site.",
+            "xpReward": 20,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_nodejs_1_q5",
+            "type": "multiple_choice",
+            "question": "This code uses `os.cpus()` but has a problem. Find the line that causes an error.",
+            "codeSnippet": "1  const os = require('os');\n2  \n3  const cpus = os.cpus;\n4  console.log(`You have ${cpus().length} CPU cores.`);",
+            "bugLineIndex": 2,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "On line 3, `os.cpus` is assigned without parentheses, so `cpus` becomes the function itself, not the result. Then on line 4, `cpus()` is called, which works (it calls the function), but the variable name is misleading. The code actually runs correctly. There is no bug. This tests attention to detail.",
+            "xpReward": 20,
+            "difficulty": 2
+        }
+    ]
+}

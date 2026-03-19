@@ -1,0 +1,73 @@
+{
+    "id": "l1",
+    "chapterId": "ch_3",
+    "title": "Introduction to Core Modules & The fs Module (Reading)",
+    "description": "Learn what core modules are and how to read files with `fs`.",
+    "xpReward": 20,
+    "estimatedMinutes": 7,
+    "section": "File System",
+    "slides": [
+        {
+            "id": "l3_l1_s1",
+            "type": "text",
+            "title": "What are Core Modules? 📦",
+            "content": "# Node.js Core Modules\n\nNode.js comes with a set of built-in modules that you can use without installing any external packages. These are called **core modules**.\n\nExamples:\n- `fs` – file system\n- `path` – file paths\n- `os` – operating system\n- `http` – HTTP server/client\n- `crypto` – cryptography\n\nTo use a core module, you simply `require` it:\n```javascript\nconst fs = require('fs');\n```"
+        },
+        {
+            "id": "l3_l1_s2",
+            "type": "text",
+            "title": "The fs Module: Reading Files 📖",
+            "content": "## Reading Files with `fs`\n\nThe `fs` module provides both **synchronous** and **asynchronous** methods. In Node, we prefer asynchronous to avoid blocking the event loop.\n\n### `fs.readFile` (asynchronous)\n```javascript\nconst fs = require('fs');\n\nfs.readFile('example.txt', 'utf8', (err, data) => {\n  if (err) {\n    console.error('Error reading file:', err);\n    return;\n  }\n  console.log('File content:', data);\n});\n```\n\n- First argument: file path\n- Second: encoding (if you want a string, otherwise you get a Buffer)\n- Third: callback – `err` first (Node convention), then `data`."
+        },
+        {
+            "id": "l3_l1_s3",
+            "type": "code",
+            "title": "Asynchronous Read Example",
+            "content": "Create a file `hello.txt` with some text, then run this:",
+            "codeSnippet": "const fs = require('fs');\n\nfs.readFile('hello.txt', 'utf8', (err, data) => {\n  if (err) {\n    console.log('File not found!');\n  } else {\n    console.log('Content:', data);\n  }\n});\nconsole.log('Reading file...');",
+            "codeLanguage": "javascript",
+            "canRunCode": false
+        },
+        {
+            "id": "l3_l1_s4",
+            "type": "text",
+            "title": "Synchronous Version (use sparingly) ⚠️",
+            "content": "## `fs.readFileSync`\n\nSynchronous methods block the thread until the operation completes. They're simpler but can hurt performance in servers.\n\n```javascript\nconst fs = require('fs');\n\ntry {\n  const data = fs.readFileSync('example.txt', 'utf8');\n  console.log('File content:', data);\n} catch (err) {\n  console.error('Error:', err);\n}\n```\n\nUse synchronous versions mainly in startup code or scripts, not in request handlers."
+        },
+        {
+            "id": "l3_l1_s5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch3_l1_q1",
+                "type": "multiple_choice",
+                "question": "What does `fs.readFile` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A string",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A Buffer if no encoding provided",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A Promise",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "undefined",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Without encoding, `data` is a Buffer. With encoding like 'utf8', it returns a string.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

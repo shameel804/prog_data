@@ -1,0 +1,64 @@
+{
+    "id": "l6",
+    "chapterId": "ch_10",
+    "title": "Role-Based Authorization",
+    "description": "Restrict access based on user roles (admin, user).",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Authorization",
+    "slides": [
+        {
+            "id": "l10_l6_s1",
+            "type": "text",
+            "title": "Adding Roles to Tokens/Sessions",
+            "content": "# Roles\n\nA **role** is a category of users with specific permissions. Common roles: `admin`, `user`, `moderator`, `guest`.\n\nIn JWT, include role in payload:\n```javascript\nconst token = jwt.sign({ userId, role: user.role }, secret);\n```\n\nIn sessions, store role in `req.session`.\n\nThen you can create middleware that checks the role."
+        },
+        {
+            "id": "l10_l6_s2",
+            "type": "code",
+            "title": "Authorization Middleware by Role",
+            "content": "```javascript\n// Middleware factory – returns a middleware that checks for required role(s)\nfunction authorize(roles = []) {\n  if (typeof roles === 'string') roles = [roles];\n  return (req, res, next) => {\n    if (!req.user) {\n      return res.status(401).json({ error: 'Unauthorized' });\n    }\n    if (roles.length && !roles.includes(req.user.role)) {\n      return res.status(403).json({ error: 'Forbidden: insufficient permissions' });\n    }\n    next();\n  };\n}\n\n// Usage:\napp.get('/admin', authenticateToken, authorize('admin'), (req, res) => {\n  res.send('Admin only');\n});\n\napp.get('/profile', authenticateToken, authorize(['user', 'admin']), (req, res) => {\n  res.send('User profile');\n});\n```"
+        },
+        {
+            "id": "l10_l6_s3",
+            "type": "text",
+            "title": "Resource-Based Authorization",
+            "content": "Sometimes you need to check if a user owns a resource. For example, a user can only edit their own post.\n\nThis requires checking the user ID from the token/session against the resource's owner ID.\n\n```javascript\napp.delete('/posts/:id', authenticateToken, async (req, res) => {\n  const post = await Post.findById(req.params.id);\n  if (!post) return res.status(404).json({ error: 'Post not found' });\n  if (post.userId !== req.user.userId && req.user.role !== 'admin') {\n    return res.status(403).json({ error: 'You can only delete your own posts' });\n  }\n  await post.remove();\n  res.sendStatus(204);\n});\n```"
+        },
+        {
+            "id": "l10_l6_s4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch10_l6_q1",
+                "type": "multiple_choice",
+                "question": "What HTTP status code is typically returned when an authenticated user lacks permission?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "401 Unauthorized",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "403 Forbidden",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "404 Not Found",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "400 Bad Request",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "403 Forbidden indicates the server understood the request but refuses to authorize it.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

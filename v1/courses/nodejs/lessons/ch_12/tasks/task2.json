@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_12",
+    "title": "Add Security Middleware (Helmet, CORS, Rate Limit)",
+    "description": "Enhance an Express app with production security best practices.",
+    "estimatedMinutes": 8,
+    "problemStatement": "Take a basic Express API (you can reuse from previous tasks or create a new one) and add the following security middleware:\n- `helmet` to set secure headers.\n- `cors` configured to allow only a specific origin (e.g., `http://localhost:3001` for development).\n- `express-rate-limit` to limit each IP to 100 requests per 15 minutes on all routes.\n- Add a global error handler that returns 500 errors as JSON.\n\nTest that:\n- The `X-Frame-Options` header is present (check with browser dev tools or curl).\n- Requests from disallowed origins are blocked (you can use a tool like Postman with different Origin headers).\n- Making many requests quickly triggers the rate limiter (returns 429).\n\nWrite a short explanation of each middleware in comments.",
+    "hints": [
+        "Install packages: `npm install helmet cors express-rate-limit`.",
+        "Order matters: apply rate limiter before routes, helmet early.",
+        "For testing CORS, you can use `curl -H \"Origin: http://evil.com\" -I http://localhost:3000` and check `Access-Control-Allow-Origin` header."
+    ],
+    "expectedOutput": "Secure Express app with headers, CORS, and rate limiting.",
+    "solutionCode": "const express = require('express');\nconst helmet = require('helmet');\nconst cors = require('cors');\nconst rateLimit = require('express-rate-limit');\n\nconst app = express();\n\n// 1. Helmet sets security headers\napp.use(helmet());\n\n// 2. CORS – restrict to specific origin\nconst corsOptions = {\n  origin: 'http://localhost:3001', // allow only this origin\n  optionsSuccessStatus: 200\n};\napp.use(cors(corsOptions));\n\n// 3. Rate limiting – apply to all requests\nconst limiter = rateLimit({\n  windowMs: 15 * 60 * 1000, // 15 minutes\n  max: 100, // limit each IP to 100 requests per windowMs\n  message: 'Too many requests from this IP, please try again later.'\n});\napp.use(limiter);\n\n// Routes\napp.get('/', (req, res) => {\n  res.json({ message: 'Hello World' });\n});\n\n// Error handler\napp.use((err, req, res, next) => {\n  console.error(err.stack);\n  res.status(500).json({ error: 'Something went wrong!' });\n});\n\nconst PORT = process.env.PORT || 3000;\napp.listen(PORT, () => console.log(`Server running on port ${PORT}`));"
+}

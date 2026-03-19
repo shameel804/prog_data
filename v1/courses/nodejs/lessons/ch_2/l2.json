@@ -1,0 +1,79 @@
+{
+    "id": "l2",
+    "chapterId": "ch_2",
+    "title": "Arrow Functions",
+    "description": "Write concise functions with arrow syntax and understand `this` binding.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Functions",
+    "slides": [
+        {
+            "id": "l2_l2_s1",
+            "type": "text",
+            "title": "Function Declarations vs Expressions",
+            "content": "# Traditional Functions\n\nBefore ES6, we wrote functions like this:\n\n```javascript\n// Function declaration\nfunction add(a, b) {\n  return a + b;\n}\n\n// Function expression\nconst multiply = function(a, b) {\n  return a * b;\n};\n```\n\nBoth work, but they have different behaviors (hoisting, `this` binding). Arrow functions provide a shorter syntax and lexical `this`."
+        },
+        {
+            "id": "l2_l2_s2",
+            "type": "text",
+            "title": "Arrow Function Syntax 🏹",
+            "content": "## Basic Syntax\n\n```javascript\nconst add = (a, b) => {\n  return a + b;\n};\n```\n\nIf there's only one parameter, parentheses are optional:\n```javascript\nconst square = x => {\n  return x * x;\n};\n```\n\nIf the function body is a single expression, you can omit the braces and `return` (implicit return):\n```javascript\nconst add = (a, b) => a + b;\nconst square = x => x * x;\n```"
+        },
+        {
+            "id": "l2_l2_s3",
+            "type": "code",
+            "title": "Implicit Return Example",
+            "content": "Notice no `return` keyword needed:",
+            "codeSnippet": "const greet = name => `Hello, ${name}!`;\nconsole.log(greet('Node')); // Hello, Node!",
+            "codeLanguage": "javascript",
+            "canRunCode": true
+        },
+        {
+            "id": "l2_l2_s4",
+            "type": "text",
+            "title": "Lexical `this` 🔍",
+            "content": "## The Big Difference: `this` Binding\n\nTraditional functions have their own `this` based on how they're called. Arrow functions **do not** have their own `this`; they inherit `this` from the surrounding scope.\n\nThis is especially useful in callbacks and event handlers.\n\n```javascript\nconst person = {\n  name: 'Alice',\n  greet: function() {\n    setTimeout(() => {\n      console.log(`Hi, I'm ${this.name}`); // `this` refers to person\n    }, 1000);\n  }\n};\n\nperson.greet(); // after 1 sec: Hi, I'm Alice\n```\n\nIf we used a regular function inside `setTimeout`, `this` would be the global object (or `undefined` in strict mode)."
+        },
+        {
+            "id": "l2_l2_s5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch2_l2_q1",
+                "type": "multiple_choice",
+                "question": "What does this arrow function return?\n```javascript\nconst fn = () => { x: 5 };\nconsole.log(fn());\n```",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "undefined",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "{ x: 5 }",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "5",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "SyntaxError",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The braces `{}` after arrow are interpreted as the function body, not an object literal. To return an object, wrap it in parentheses: `() => ({ x: 5 })`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "l2_l2_s6",
+            "type": "tip",
+            "title": "When NOT to use arrow functions 🚫",
+            "content": "## Situations where arrow functions can cause trouble\n\n* **Object methods** that need to access the object via `this` – use regular functions.\n* **Constructors** – arrow functions cannot be used with `new`.\n* **Event handlers** where you need dynamic `this` binding.\n\nOtherwise, arrow functions are a great default for callbacks and short functions."
+        }
+    ]
+}

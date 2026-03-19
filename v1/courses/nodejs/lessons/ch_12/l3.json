@@ -1,0 +1,70 @@
+{
+    "id": "l3",
+    "chapterId": "ch_12",
+    "title": "Deployment Platforms (Heroku, DigitalOcean, etc.)",
+    "description": "Deploy your Node app to popular cloud platforms.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Deployment",
+    "slides": [
+        {
+            "id": "l12_l3_s1",
+            "type": "text",
+            "title": "Deployment Options 🚀",
+            "content": "# Where to Deploy\n\n- **PaaS (Platform as a Service)** – Heroku, Railway, Render. Easy, handles infrastructure.\n- **VPS (Virtual Private Server)** – DigitalOcean Droplets, AWS EC2, Linode. Full control, more setup.\n- **Serverless** – AWS Lambda, Vercel. Functions as a service, auto-scaling.\n\nWe'll cover Heroku (PaaS) and a basic VPS setup with Nginx as reverse proxy."
+        },
+        {
+            "id": "l12_l3_s2",
+            "type": "text",
+            "title": "Deploying to Heroku 🌊",
+            "content": "## Heroku Steps\n\n1. Create a Heroku account and install CLI.\n2. In your project, ensure you have a `package.json` and specify a start script: `\"start\": \"node app.js\"`.\n3. Create a `Procfile` (optional but recommended): `web: node app.js`.\n4. Set environment variables: `heroku config:set JWT_SECRET=...`.\n5. Create a Heroku app: `heroku create`.\n6. Deploy: `git push heroku main`.\n7. Open: `heroku open`.\n\nHeroku automatically sets the `PORT` environment variable – your app should listen on `process.env.PORT`."
+        },
+        {
+            "id": "l12_l3_s3",
+            "type": "text",
+            "title": "Deploying to a VPS (e.g., DigitalOcean) 🖥️",
+            "content": "## Manual VPS Deployment\n\n1. Provision a droplet (Ubuntu).\n2. SSH into the server.\n3. Install Node.js, npm, and git.\n4. Clone your repository.\n5. Install dependencies: `npm install --production`.\n6. Set environment variables (e.g., in `.bashrc` or use a `.env` file).\n7. Use PM2 to run your app: `pm2 start app.js`.\n8. (Optional) Set up Nginx as a reverse proxy to handle SSL and serve static files.\n9. Configure firewall (ufw) and enable HTTPS with Let's Encrypt."
+        },
+        {
+            "id": "l12_l3_s4",
+            "type": "code",
+            "title": "Nginx Reverse Proxy Example",
+            "content": "```nginx\nserver {\n    listen 80;\n    server_name example.com;\n\n    location / {\n        proxy_pass http://localhost:3000;\n        proxy_http_version 1.1;\n        proxy_set_header Upgrade $http_upgrade;\n        proxy_set_header Connection 'upgrade';\n        proxy_set_header Host $host;\n        proxy_cache_bypass $http_upgrade;\n    }\n}\n```"
+        },
+        {
+            "id": "l12_l3_s5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch12_l3_q1",
+                "type": "multiple_choice",
+                "question": "On Heroku, which environment variable must your app use for the port?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "process.env.PORT",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "process.env.HTTP_PORT",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "process.env.NODE_PORT",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "process.env.PORT_NUMBER",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Heroku dynamically assigns a port and provides it via `process.env.PORT`.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

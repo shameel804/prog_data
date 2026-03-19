@@ -1,0 +1,17 @@
+{
+    "id": "task2",
+    "chapterId": "ch_3",
+    "title": "System Info Report",
+    "description": "Enhance the system info logger to include more details and save in a structured format.",
+    "estimatedMinutes": 10,
+    "problemStatement": "Enhance the system info logger from Lesson 5. Instead of appending plain text, create a JSON file `system-info.json` that stores an array of reports. Each report should be an object with `timestamp`, `platform`, `arch`, `cpuCount`, `totalMemoryGB`, `freeMemoryGB`, and `uptime` (in hours). Each time you run the script, it should read the existing JSON (if any), append the new report, and write it back. If the file doesn't exist, start with an empty array.\n\n**Bonus:** Use `fs.readFile` and `fs.writeFile` asynchronously, and handle errors properly.",
+    "hints": [
+        "Use `fs.readFile` to read the existing JSON. If file not found, treat as empty array.",
+        "Parse the JSON with `JSON.parse`.",
+        "Push the new report object.",
+        "Use `JSON.stringify` with pretty formatting (2 spaces) before writing.",
+        "Make sure to handle errors in each step."
+    ],
+    "expectedOutput": "A file `system-info.json` with an array of reports.",
+    "solutionCode": "const os = require('os');\nconst fs = require('fs');\nconst path = require('path');\n\nconst filePath = path.join(__dirname, 'system-info.json');\n\nconst newReport = {\n  timestamp: new Date().toISOString(),\n  platform: os.platform(),\n  arch: os.arch(),\n  cpuCount: os.cpus().length,\n  totalMemoryGB: (os.totalmem() / 1e9).toFixed(2),\n  freeMemoryGB: (os.freemem() / 1e9).toFixed(2),\n  uptimeHours: (os.uptime() / 3600).toFixed(2)\n};\n\nfs.readFile(filePath, 'utf8', (err, data) => {\n  let reports = [];\n  if (!err && data) {\n    try {\n      reports = JSON.parse(data);\n    } catch (e) {\n      console.error('Invalid JSON, starting fresh.');\n    }\n  }\n  reports.push(newReport);\n  fs.writeFile(filePath, JSON.stringify(reports, null, 2), (err) => {\n    if (err) console.error('Error writing file:', err);\n    else console.log('Report added.');\n  });\n});"
+}

@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_10",
+    "title": "Password Hashing and Verification",
+    "description": "Write functions to hash and verify passwords using bcrypt.",
+    "estimatedMinutes": 8,
+    "problemStatement": "Create a script that demonstrates password hashing and verification using `bcrypt`.\n\n1. Write an `async` function `hashPassword(plainText)` that takes a plain password and returns a hash.\n2. Write an `async` function `verifyPassword(plainText, hash)` that returns `true` if the password matches the hash, `false` otherwise.\n3. In the main function, hash a sample password, then verify it with the correct and an incorrect password. Log the results.\n4. Also demonstrate that hashing the same password twice produces different hashes, but both verify correctly.\n\nInstall `bcrypt` first.",
+    "hints": [
+        "Use `bcrypt.hash(password, saltRounds)` where saltRounds = 10.",
+        "Use `bcrypt.compare(password, hash)` for verification.",
+        "Wrap in async/await."
+    ],
+    "expectedOutput": "Hashes and verification results printed to console.",
+    "solutionCode": "const bcrypt = require('bcrypt');\nconst saltRounds = 10;\n\nasync function hashPassword(plainText) {\n  return await bcrypt.hash(plainText, saltRounds);\n}\n\nasync function verifyPassword(plainText, hash) {\n  return await bcrypt.compare(plainText, hash);\n}\n\nasync function main() {\n  const password = 'mySecret123';\n  const hash1 = await hashPassword(password);\n  const hash2 = await hashPassword(password);\n  console.log('Hash1:', hash1);\n  console.log('Hash2:', hash2);\n  console.log('Same password?', hash1 === hash2); // false\n\n  const correct = await verifyPassword(password, hash1);\n  console.log('Correct password matches hash1:', correct); // true\n\n  const wrong = await verifyPassword('wrong', hash1);\n  console.log('Wrong password matches hash1:', wrong); // false\n}\n\nmain().catch(console.error);"
+}

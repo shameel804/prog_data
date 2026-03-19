@@ -1,0 +1,79 @@
+{
+    "id": "l2",
+    "chapterId": "ch_8",
+    "title": "MongoDB and Mongoose – Connecting and Modeling",
+    "description": "Connect to MongoDB, define schemas, and create models with Mongoose.",
+    "xpReward": 20,
+    "estimatedMinutes": 8,
+    "section": "MongoDB",
+    "slides": [
+        {
+            "id": "l8_l2_s1",
+            "type": "text",
+            "title": "What is Mongoose? 🐶",
+            "content": "# Mongoose ODM\n\nMongoose is an **Object Document Mapper (ODM)** for MongoDB and Node.js. It provides:\n- A schema-based solution to model data.\n- Built-in type casting, validation, and query building.\n- Middleware (hooks) for business logic.\n\nInstall:\n```bash\nnpm install mongoose\n```"
+        },
+        {
+            "id": "l8_l2_s2",
+            "type": "text",
+            "title": "Connecting to MongoDB 🔌",
+            "content": "## Establishing a Connection\n\n```javascript\nconst mongoose = require('mongoose');\n\nmongoose.connect('mongodb://localhost:27017/myapp', {\n  useNewUrlParser: true,\n  useUnifiedTopology: true\n})\n.then(() => console.log('Connected to MongoDB'))\n.catch(err => console.error('Connection error:', err));\n```\n\n- `mongodb://localhost:27017` is the default local MongoDB instance.\n- `myapp` is the database name (will be created if it doesn't exist).\n- The options avoid deprecation warnings."
+        },
+        {
+            "id": "l8_l2_s3",
+            "type": "text",
+            "title": "Defining a Schema 📐",
+            "content": "## Schemas\n\nA schema defines the structure of documents within a collection.\n\n```javascript\nconst userSchema = new mongoose.Schema({\n  name: { type: String, required: true },\n  email: { type: String, required: true, unique: true },\n  age: Number,\n  createdAt: { type: Date, default: Date.now }\n});\n```\n\nField types: `String`, `Number`, `Date`, `Boolean`, `Array`, `ObjectId`, etc."
+        },
+        {
+            "id": "l8_l2_s4",
+            "type": "text",
+            "title": "Creating a Model 🏭",
+            "content": "## Models\n\nA model is a compiled version of the schema – it provides an interface to the database collection.\n\n```javascript\nconst User = mongoose.model('User', userSchema);\n// MongoDB collection will be named 'users' (lowercase, plural)\n```\n\nNow you can use `User` to perform CRUD operations on the `users` collection."
+        },
+        {
+            "id": "l8_l2_s5",
+            "type": "code",
+            "title": "Complete Example",
+            "content": "Putting it together:",
+            "codeSnippet": "const mongoose = require('mongoose');\n\nmongoose.connect('mongodb://localhost:27017/testdb')\n  .then(() => console.log('Connected'));\n\nconst userSchema = new mongoose.Schema({\n  name: String,\n  email: { type: String, required: true },\n  age: Number\n});\n\nconst User = mongoose.model('User', userSchema);\n\n// Now you can create and save documents\nconst newUser = new User({ name: 'Alice', email: 'alice@example.com', age: 30 });\nnewUser.save()\n  .then(user => console.log('User saved:', user))\n  .catch(err => console.error(err));",
+            "codeLanguage": "javascript",
+            "canRunCode": false
+        },
+        {
+            "id": "l8_l2_s6",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch8_l2_q1",
+                "type": "multiple_choice",
+                "question": "In Mongoose, what does a model represent?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A single document",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A collection and provides an interface to it",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The database connection",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A schema definition",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A model is a compiled schema that gives you methods to query and manipulate a specific collection.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

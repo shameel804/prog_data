@@ -1,0 +1,70 @@
+{
+    "id": "l4",
+    "chapterId": "ch_10",
+    "title": "JWT (JSON Web Tokens) Basics",
+    "description": "Learn what JWTs are and how to create and verify them.",
+    "xpReward": 20,
+    "estimatedMinutes": 7,
+    "section": "JWT",
+    "slides": [
+        {
+            "id": "l10_l4_s1",
+            "type": "text",
+            "title": "What is a JWT? 🪙",
+            "content": "# JSON Web Token\n\nA JWT is an open standard (RFC 7519) for securely transmitting information between parties as a JSON object. It is **stateless** – all user data is stored in the token itself, signed by the server.\n\nStructure: `header.payload.signature`\n- **Header**: algorithm and token type.\n- **Payload**: claims (user data, expiration).\n- **Signature**: verifies that the sender is who it says and the message wasn't changed."
+        },
+        {
+            "id": "l10_l4_s2",
+            "type": "text",
+            "title": "JWT Flow 🔄",
+            "content": "1. User logs in with credentials.\n2. Server verifies credentials and creates a JWT (signing with a secret).\n3. Server sends the JWT to the client (usually in response body or HTTP-only cookie).\n4. Client stores the token (localStorage, sessionStorage, or cookie).\n5. For subsequent requests, client sends the token in the `Authorization` header (`Bearer <token>`).\n6. Server verifies the token on each request; if valid, it processes the request."
+        },
+        {
+            "id": "l10_l4_s3",
+            "type": "code",
+            "title": "Creating a JWT with jsonwebtoken",
+            "content": "Install:\n```bash\nnpm install jsonwebtoken\n```\n\n```javascript\nconst jwt = require('jsonwebtoken');\nconst secret = 'your-secret-key';\n\nconst payload = { userId: 123, role: 'user' };\nconst token = jwt.sign(payload, secret, { expiresIn: '1h' });\nconsole.log(token);\n```"
+        },
+        {
+            "id": "l10_l4_s4",
+            "type": "code",
+            "title": "Verifying a JWT",
+            "content": "```javascript\ntry {\n  const decoded = jwt.verify(token, secret);\n  console.log('Valid token:', decoded);\n} catch (err) {\n  console.error('Invalid token:', err.message);\n}\n```\n\nIf the token is expired or tampered with, `verify()` throws an error."
+        },
+        {
+            "id": "l10_l4_s5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch10_l4_q1",
+                "type": "multiple_choice",
+                "question": "Where is the user data stored in a JWT-based authentication?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "In a server-side session",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "In the token itself (payload)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "In a database",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "In a cookie only",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "JWTs are self-contained; the payload holds the user claims.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

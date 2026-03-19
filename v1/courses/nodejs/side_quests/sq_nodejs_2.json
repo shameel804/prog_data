@@ -1,0 +1,60 @@
+{
+    "id": "sq_nodejs_2",
+    "title": "Predict the Output: Async & HTTP",
+    "triggerChapterIndex": 5,
+    "metadata": {
+        "type": "prediction"
+    },
+    "questions": [
+        {
+            "id": "sq_nodejs_2_q1",
+            "type": "code_output",
+            "question": "What will be the output of the following code? (Assume no errors, and the file exists.)",
+            "codeSnippet": "const fs = require('fs').promises;\n\nasync function readFiles() {\n  console.log('Start');\n  const data1 = await fs.readFile('a.txt', 'utf8');\n  console.log('Read a');\n  const data2 = await fs.readFile('b.txt', 'utf8');\n  console.log('Read b');\n  return data1 + data2;\n}\n\nreadFiles().then(result => console.log('Result:', result));\nconsole.log('Scheduled');",
+            "correctOutput": "Start\nScheduled\nRead a\nRead b\nResult: (contents of a and b combined)",
+            "explanation": "The async function starts synchronously, logging 'Start'. Then it hits the first await, which schedules the rest. So 'Scheduled' logs next. After the first file read completes, 'Read a' logs, then second read, then 'Result'.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_nodejs_2_q2",
+            "type": "code_output",
+            "question": "What is logged by this HTTP server request handler? (Assume a GET request to '/')",
+            "codeSnippet": "const http = require('http');\nconst server = http.createServer((req, res) => {\n  res.writeHead(200, { 'Content-Type': 'text/plain' });\n  res.write('Hello ');\n  res.write('World');\n  res.end();\n  console.log('Response sent');\n});\nserver.listen(3000);",
+            "correctOutput": "Response sent",
+            "explanation": "The server logs 'Response sent' after calling `res.end()`. The client receives 'Hello World'. The question asks what is logged, not what the client sees.",
+            "xpReward": 20,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_nodejs_2_q3",
+            "type": "code_output",
+            "question": "What will this promise chain output?",
+            "codeSnippet": "Promise.resolve('A')\n  .then(val => { throw new Error('B'); })\n  .catch(err => err.message)\n  .then(msg => console.log(msg));",
+            "correctOutput": "B",
+            "explanation": "The first `then` throws an error, which is caught by the `catch`. The `catch` returns the error's message, which is then logged by the final `then`.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_nodejs_2_q4",
+            "type": "code_output",
+            "question": "What is the output of this code?",
+            "codeSnippet": "const p = new Promise((resolve, reject) => {\n  console.log('Executor');\n  resolve('Resolved');\n});\n\np.then(console.log);\nconsole.log('After');",
+            "correctOutput": "Executor\nAfter\nResolved",
+            "explanation": "The executor runs synchronously when the promise is created, logging 'Executor'. Then 'After' logs. The `.then` callback is microtask, so it runs after the current script, logging 'Resolved'.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_nodejs_2_q5",
+            "type": "code_output",
+            "question": "What will be the output of this async/await code?",
+            "codeSnippet": "async function test() {\n  console.log('1');\n  await null;\n  console.log('2');\n}\n\ntest();\nconsole.log('3');",
+            "correctOutput": "1\n3\n2",
+            "explanation": "`test()` logs '1', then `await null` (which is like `Promise.resolve(null)`) causes the rest to be scheduled as a microtask. So '3' logs next, then '2'.",
+            "xpReward": 25,
+            "difficulty": 2
+        }
+    ]
+}

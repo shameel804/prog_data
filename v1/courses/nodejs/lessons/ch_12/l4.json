@@ -1,0 +1,70 @@
+{
+    "id": "l4",
+    "chapterId": "ch_12",
+    "title": "Logging and Monitoring",
+    "description": "Implement structured logging and monitor application health.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Operations",
+    "slides": [
+        {
+            "id": "l12_l4_s1",
+            "type": "text",
+            "title": "Why Logging Matters 📋",
+            "content": "# Observability\n\nIn production, you need to know what your app is doing. Logs help with debugging, auditing, and monitoring.\n\nAvoid `console.log` in production – use a proper logging library that supports log levels, structured output (JSON), and transports (file, network)."
+        },
+        {
+            "id": "l12_l4_s2",
+            "type": "text",
+            "title": "Winston – A Popular Logger 📝",
+            "content": "## Winston\n\nInstall: `npm install winston`\n\n```javascript\nconst winston = require('winston');\n\nconst logger = winston.createLogger({\n  level: 'info',\n  format: winston.format.json(),\n  transports: [\n    new winston.transports.File({ filename: 'error.log', level: 'error' }),\n    new winston.transports.File({ filename: 'combined.log' })\n  ]\n});\n\nif (process.env.NODE_ENV !== 'production') {\n  logger.add(new winston.transports.Console({ format: winston.format.simple() }));\n}\n\nlogger.info('Server started on port 3000');\n```\n\nYou can also use **Morgan** for HTTP request logging."
+        },
+        {
+            "id": "l12_l4_s3",
+            "type": "text",
+            "title": "Morgan for HTTP Logs 🌐",
+            "content": "Morgan is an HTTP request logger middleware for Express.\n\n```bash\nnpm install morgan\n```\n\n```javascript\nconst morgan = require('morgan');\nconst express = require('express');\nconst app = express();\n\napp.use(morgan('combined')); // Apache combined format\n```\n\nCombine with Winston by creating a custom stream."
+        },
+        {
+            "id": "l12_l4_s4",
+            "type": "text",
+            "title": "Monitoring and Alerting 🚨",
+            "content": "## Keeping an Eye on Your App\n\n- **Health checks**: expose a `/health` endpoint returning 200.\n- **Application Performance Monitoring (APM)** tools: New Relic, Datadog, AppSignal.\n- **Error tracking**: Sentry, Bugsnag to capture and notify on exceptions.\n\nExample health check:\n```javascript\napp.get('/health', (req, res) => {\n  res.status(200).json({ status: 'ok', timestamp: Date.now() });\n});\n```\n\nLoad balancers can ping this endpoint to know if your app is alive."
+        },
+        {
+            "id": "l12_l4_s5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch12_l4_q1",
+                "type": "multiple_choice",
+                "question": "Which npm package is commonly used for HTTP request logging in Express?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "winston",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "morgan",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "pino",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "log4js",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Morgan is specifically for HTTP request logging.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

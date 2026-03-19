@@ -1,0 +1,70 @@
+{
+    "id": "l2",
+    "chapterId": "ch_12",
+    "title": "Process Management with PM2",
+    "description": "Keep your app running forever and manage multiple processes with PM2.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Process Management",
+    "slides": [
+        {
+            "id": "l12_l2_s1",
+            "type": "text",
+            "title": "Why a Process Manager? 🔄",
+            "content": "# Keeping Apps Alive\n\nIf your Node app crashes, it stops serving requests. A process manager restarts it automatically, manages logs, and can run multiple instances (clustering).\n\nPopular process managers:\n- **PM2** (most common)\n- Forever\n- systemd (Linux built-in)\n\nWe'll focus on PM2."
+        },
+        {
+            "id": "l12_l2_s2",
+            "type": "text",
+            "title": "Installing and Using PM2 📦",
+            "content": "## PM2 Basics\n\nInstall globally:\n```bash\nnpm install -g pm2\n```\n\nStart your app:\n```bash\npm2 start app.js --name my-app\n```\n\nOther commands:\n- `pm2 list` – list all processes\n- `pm2 logs` – show logs\n- `pm2 restart my-app` – restart\n- `pm2 stop my-app` – stop\n- `pm2 delete my-app` – remove from PM2\n- `pm2 save` – save current process list to be restored on reboot\n- `pm2 startup` – generate startup script to auto-start PM2 on system boot"
+        },
+        {
+            "id": "l12_l2_s3",
+            "type": "text",
+            "title": "Clustering with PM2 🌐",
+            "content": "## Multi-Core Utilization\n\nNode runs in a single thread. To use all CPU cores, you can run multiple instances (clustering). PM2 makes this easy:\n\n```bash\npm2 start app.js -i max  # -i max starts one instance per CPU core\n```\n\nPM2 will load-balance requests across instances. Great for performance."
+        },
+        {
+            "id": "l12_l2_s4",
+            "type": "text",
+            "title": "Ecosystem File (ecosystem.config.js) 📄",
+            "content": "For advanced configuration, PM2 uses an ecosystem file:\n\n```javascript\nmodule.exports = {\n  apps : [{\n    name: 'my-app',\n    script: 'app.js',\n    instances: 'max',\n    exec_mode: 'cluster',\n    env: {\n      NODE_ENV: 'production',\n      PORT: 3000\n    },\n    log_file: 'logs/app.log',\n    error_file: 'logs/err.log',\n    out_file: 'logs/out.log'\n  }]\n};\n```\n\nRun with: `pm2 start ecosystem.config.js`."
+        },
+        {
+            "id": "l12_l2_s5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch12_l2_q1",
+                "type": "multiple_choice",
+                "question": "What PM2 flag starts one instance per CPU core?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "-i max",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "--cluster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "--all",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "-c",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`-i max` tells PM2 to run as many instances as CPU cores.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

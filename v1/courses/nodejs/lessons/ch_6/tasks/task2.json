@@ -1,0 +1,16 @@
+{
+    "id": "task2",
+    "chapterId": "ch_6",
+    "title": "JSON API Endpoint",
+    "description": "Build a simple API that returns JSON data.",
+    "estimatedMinutes": 7,
+    "problemStatement": "Create an HTTP server on port 3000 that responds to `GET /api/users` with a JSON array of user objects. Each user object should have `id` and `name` properties. For example:\n```json\n[\n  { \"id\": 1, \"name\": \"Alice\" },\n  { \"id\": 2, \"name\": \"Bob\" }\n]\n```\nAlso, handle `GET /api/users/:id` (where `:id` is a number) and return the single user object with that id, or 404 if not found. For simplicity, you can hardcode a small array of users.\n\nSet the correct `Content-Type` header.",
+    "hints": [
+        "Parse the URL to get the path and possible id. Use `req.url` and maybe split the string.",
+        "For the parameter, you can check if the URL starts with '/api/users/' and extract the part after.",
+        "Use `JSON.stringify()` to convert the object to a string.",
+        "Set `Content-Type` to `application/json`."
+    ],
+    "expectedOutput": "JSON array or single object, with 404 for invalid id.",
+    "solutionCode": "const http = require('http');\n\nconst users = [\n  { id: 1, name: 'Alice' },\n  { id: 2, name: 'Bob' },\n  { id: 3, name: 'Charlie' }\n];\n\nconst server = http.createServer((req, res) => {\n  const { method, url } = req;\n\n  if (method === 'GET' && url === '/api/users') {\n    res.writeHead(200, { 'Content-Type': 'application/json' });\n    res.end(JSON.stringify(users));\n  } else if (method === 'GET' && url.startsWith('/api/users/')) {\n    const id = parseInt(url.split('/')[3]);\n    const user = users.find(u => u.id === id);\n    if (user) {\n      res.writeHead(200, { 'Content-Type': 'application/json' });\n      res.end(JSON.stringify(user));\n    } else {\n      res.writeHead(404, { 'Content-Type': 'application/json' });\n      res.end(JSON.stringify({ error: 'User not found' }));\n    }\n  } else {\n    res.writeHead(404, { 'Content-Type': 'text/plain' });\n    res.end('Not found');\n  }\n});\n\nserver.listen(3000);"
+}

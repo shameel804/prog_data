@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_12",
+    "title": "Configure dotenv and Environment Variables",
+    "description": "Set up environment variables in a simple Express app using dotenv.",
+    "estimatedMinutes": 6,
+    "problemStatement": "Create a small Express app that:\n1. Uses `dotenv` to load configuration from a `.env` file.\n2. Defines the following variables in `.env`:\n   - `PORT` (e.g., 3000)\n   - `MESSAGE` (e.g., 'Hello from env!')\n3. The app should listen on the port from `process.env.PORT` (with a fallback to 3000).\n4. Create a route `GET /` that responds with the value of `MESSAGE`.\n5. Create a route `GET /config` that returns a JSON object with all environment variables (but exclude sensitive ones; for this exercise, just return `{ port, message }`).\n6. Ensure `.env` is ignored by git (add a `.gitignore` entry).\n\nTest locally and verify that changing `.env` changes the behavior.",
+    "hints": [
+        "Install `dotenv` and `express`.",
+        "Require and configure dotenv at the top: `require('dotenv').config()`.",
+        "Access `process.env.PORT` and `process.env.MESSAGE`.",
+        "Create a `.gitignore` file and add `.env`."
+    ],
+    "expectedOutput": "App responds with message from env and returns config JSON.",
+    "solutionCode": "// app.js\nrequire('dotenv').config();\nconst express = require('express');\nconst app = express();\n\nconst port = process.env.PORT || 3000;\nconst message = process.env.MESSAGE || 'Default message';\n\napp.get('/', (req, res) => {\n  res.send(message);\n});\n\napp.get('/config', (req, res) => {\n  res.json({\n    port,\n    message\n  });\n});\n\napp.listen(port, () => {\n  console.log(`Server running on port ${port}`);\n});\n\n// .env example:\n// PORT=4000\n// MESSAGE=Hello from .env!\n\n// .gitignore:\n// .env\n// node_modules/"
+}

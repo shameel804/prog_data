@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_7",
+    "title": "Static Files and Custom 404",
+    "description": "Serve static files and add a 404 handler.",
+    "estimatedMinutes": 7,
+    "problemStatement": "Create an Express app that:\n- Serves static files from a directory named `public`. In that directory, create an `index.html` with a simple welcome message and a `style.css` that styles the page.\n- Has a route `GET /about` that sends 'About Us'.\n- Any other route should return a 404 page with the message '404 - Page Not Found' (as plain text or HTML).\n\nMake sure the static files are accessible (e.g., `/style.css` should serve the CSS).",
+    "hints": [
+        "Use `app.use(express.static('public'))`.\nPlace the 404 handler after all routes.",
+        "For 404, use `res.status(404).send(...)`."
+    ],
+    "expectedOutput": "Home page from index.html, about page, and 404 for other paths.",
+    "solutionCode": "const express = require('express');\nconst app = express();\nconst path = require('path');\n\napp.use(express.static('public'));\n\napp.get('/about', (req, res) => {\n  res.send('About Us');\n});\n\n// 404 handler\napp.use((req, res) => {\n  res.status(404).send('404 - Page Not Found');\n});\n\napp.listen(3000, () => console.log('Server running'));"
+}

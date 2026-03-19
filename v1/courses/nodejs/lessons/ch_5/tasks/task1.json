@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_5",
+    "title": "Callback to Promise",
+    "description": "Convert a callback-based function to return a promise.",
+    "estimatedMinutes": 8,
+    "problemStatement": "You are given a function `readFileCallback` that uses a callback. Your task is to create a promisified version `readFilePromise` that returns a promise. Then use both to read a file and log its content.\n\n```javascript\n// Callback version (simulated)\nfunction readFileCallback(path, cb) {\n  // Simulate async file read\n  setTimeout(() => {\n    if (path === 'data.txt') {\n      cb(null, 'file content');\n    } else {\n      cb('File not found');\n    }\n  }, 500);\n}\n```\n\nWrite `readFilePromise` that wraps this. Then call it with `'data.txt'` and handle the result with `.then` and `.catch`. Also try with a non-existent file to test error handling.",
+    "hints": [
+        "Create a new Promise that calls the callback-based function inside.",
+        "In the executor, call `readFileCallback` and use `resolve` on success, `reject` on error.",
+        "Remember that the callback receives error first."
+    ],
+    "expectedOutput": "For 'data.txt': 'file content'\nFor 'missing.txt': error message",
+    "solutionCode": "function readFilePromise(path) {\n  return new Promise((resolve, reject) => {\n    readFileCallback(path, (err, data) => {\n      if (err) reject(err);\n      else resolve(data);\n    });\n  });\n}\n\nreadFilePromise('data.txt')\n  .then(data => console.log(data))\n  .catch(err => console.error('Error:', err));\n\nreadFilePromise('missing.txt')\n  .then(data => console.log(data))\n  .catch(err => console.error('Error:', err));"
+}

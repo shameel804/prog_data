@@ -1,0 +1,58 @@
+{
+    "id": "l1",
+    "chapterId": "ch_5",
+    "title": "Synchronous vs Asynchronous",
+    "description": "Understand the difference between blocking and non-blocking code.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Concepts",
+    "slides": [
+        {
+            "id": "l5_l1_s1",
+            "type": "text",
+            "title": "Synchronous Code – One at a Time ⏱️",
+            "content": "# Synchronous (Blocking) Code\n\nIn synchronous programming, tasks are executed **one after another**. Each task must complete before the next starts.\n\n```javascript\nconsole.log('First');\nconsole.log('Second');\nconsole.log('Third');\n// Output: First, Second, Third\n```\n\nIf a task takes time (like reading a file), the entire program **blocks** until it finishes. This is inefficient, especially in servers handling many requests."
+        },
+        {
+            "id": "l5_l1_s2",
+            "type": "text",
+            "title": "Asynchronous Code – Non‑blocking ⚡",
+            "content": "# Asynchronous (Non‑blocking) Code\n\nAsynchronous code allows multiple tasks to be in progress at the same time. When an async operation starts, the program continues running other code. When the operation completes, a callback (or promise) handles the result.\n\nNode.js is designed to be asynchronous. Its APIs (like `fs.readFile`) are non‑blocking by default.\n\nExample:\n```javascript\nconsole.log('Start');\nsetTimeout(() => console.log('Inside timeout'), 2000);\nconsole.log('End');\n// Output: Start, End, Inside timeout (after 2 sec)\n```\n\nNotice that 'End' logs before the timeout finishes – the program didn't wait."
+        },
+        {
+            "id": "l5_l1_s3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch5_l1_q1",
+                "type": "multiple_choice",
+                "question": "What will be the output?\n```javascript\nconsole.log('A');\nsetTimeout(() => console.log('B'), 0);\nconsole.log('C');\n```",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A, B, C",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A, C, B",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "B, A, C",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A, C, then maybe B",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Even with 0ms delay, `setTimeout` schedules the callback to run after the current stack clears. So 'A', then 'C', then 'B'.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

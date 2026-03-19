@@ -1,0 +1,70 @@
+{
+    "id": "l3",
+    "chapterId": "ch_11",
+    "title": "Handling Asynchronous Errors",
+    "description": "Catch errors in async code and avoid unhandled rejections.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Error Handling",
+    "slides": [
+        {
+            "id": "l11_l3_s1",
+            "type": "text",
+            "title": "Error-First Callbacks 📞",
+            "content": "In Node.js, many core modules use error-first callbacks:\n```javascript\nconst fs = require('fs');\nfs.readFile('file.txt', (err, data) => {\n  if (err) {\n    console.error('Error reading file:', err);\n    return;\n  }\n  console.log(data);\n});\n```\nAlways check `err` first; if it's truthy, handle it."
+        },
+        {
+            "id": "l11_l3_s2",
+            "type": "text",
+            "title": "Promises and .catch() 🤝",
+            "content": "With promises, use `.catch()`:\n```javascript\nfs.promises.readFile('file.txt')\n  .then(data => console.log(data))\n  .catch(err => console.error('Error:', err));\n```\n\nIf you don't attach a `.catch()`, you'll get an **unhandled rejection** (which can crash future Node versions)."
+        },
+        {
+            "id": "l11_l3_s3",
+            "type": "text",
+            "title": "Async/Await with try/catch 🥅",
+            "content": "With `async/await`, you can use `try/catch` again:\n```javascript\nasync function readFile() {\n  try {\n    const data = await fs.promises.readFile('file.txt');\n    console.log(data);\n  } catch (err) {\n    console.error('Error:', err);\n  }\n}\n```\n\nThis is often the cleanest way."
+        },
+        {
+            "id": "l11_l3_s4",
+            "type": "text",
+            "title": "Global Unhandled Rejections 🌍",
+            "content": "Always handle promise rejections. As a last resort, you can listen for unhandled rejections:\n```javascript\nprocess.on('unhandledRejection', (reason, promise) => {\n  console.error('Unhandled Rejection at:', promise, 'reason:', reason);\n  // Application specific logging or exit\n});\n```\n\nIn modern Node, unhandled rejections will terminate the process in the future, so always catch them."
+        },
+        {
+            "id": "l11_l3_s5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch11_l3_q1",
+                "type": "multiple_choice",
+                "question": "How do you handle errors in an async function using async/await?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "With .catch()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "With try/catch",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "With error-first callback",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Errors are automatically ignored",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`try/catch` works with `await` because it turns asynchronous code into synchronous-looking blocks.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

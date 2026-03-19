@@ -1,0 +1,17 @@
+{
+    "id": "task1",
+    "chapterId": "ch_8",
+    "title": "Mongoose CRUD for a Product Model",
+    "description": "Create a Mongoose model and perform CRUD operations.",
+    "estimatedMinutes": 10,
+    "problemStatement": "Create a new Node.js project with Mongoose. Define a `Product` schema with fields: `name` (String, required), `price` (Number, required), `description` (String), and `inStock` (Boolean, default true).\n\nWrite a script that:\n1. Connects to a MongoDB database named `shop`.\n2. Creates at least three products.\n3. Finds all products with price less than 100.\n4. Updates one product's price.\n5. Deletes a product.\n6. Logs the results at each step.\n\nUse async/await and handle errors.",
+    "hints": [
+        "Install mongoose: `npm install mongoose`.",
+        "Use `mongoose.connect('mongodb://localhost:27017/shop')`.",
+        "Define schema with mongoose.Schema.",
+        "Create model with `mongoose.model('Product', productSchema)`.",
+        "Use `Model.create()`, `Model.find()`, `Model.updateOne()`, `Model.deleteOne()`."
+    ],
+    "expectedOutput": "Console logs showing created products, filtered products, update result, and deletion confirmation.",
+    "solutionCode": "const mongoose = require('mongoose');\n\nmain().catch(err => console.error(err));\n\nasync function main() {\n  await mongoose.connect('mongodb://localhost:27017/shop');\n  console.log('Connected to MongoDB');\n\n  const productSchema = new mongoose.Schema({\n    name: { type: String, required: true },\n    price: { type: Number, required: true },\n    description: String,\n    inStock: { type: Boolean, default: true }\n  });\n\n  const Product = mongoose.model('Product', productSchema);\n\n  // Create\n  const p1 = await Product.create({ name: 'Laptop', price: 999, description: 'Gaming laptop' });\n  const p2 = await Product.create({ name: 'Mouse', price: 25, description: 'Wireless mouse' });\n  const p3 = await Product.create({ name: 'Keyboard', price: 75, description: 'Mechanical', inStock: false });\n  console.log('Created:', p1, p2, p3);\n\n  // Find cheap products\n  const cheap = await Product.find({ price: { $lt: 100 } });\n  console.log('Products under $100:', cheap);\n\n  // Update\n  await Product.updateOne({ name: 'Mouse' }, { price: 20 });\n  const updated = await Product.findOne({ name: 'Mouse' });\n  console.log('Updated mouse price:', updated);\n\n  // Delete\n  await Product.deleteOne({ name: 'Keyboard' });\n  const all = await Product.find();\n  console.log('All products after deletion:', all);\n\n  await mongoose.disconnect();\n}"
+}

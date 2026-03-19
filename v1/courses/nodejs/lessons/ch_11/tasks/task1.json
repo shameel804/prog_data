@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_11",
+    "title": "Async Error Handling with try/catch",
+    "description": "Write an async function that reads a file and handles errors gracefully.",
+    "estimatedMinutes": 8,
+    "problemStatement": "Create a script that:\n1. Uses `fs.promises` to read a file named `data.txt`.\n2. If the file exists, log its content.\n3. If the file does not exist, catch the error and log a user-friendly message (e.g., 'File not found, please create it').\n4. For any other error (e.g., permission denied), log 'An unexpected error occurred' and rethrow the error so the script exits with an error.\n5. Also demonstrate handling a JSON parsing error: read a `config.json` file, parse it, and handle both file not found and invalid JSON errors.\n\nUse async/await and try/catch.",
+    "hints": [
+        "Use `try/catch` blocks.",
+        "Check error codes like `err.code === 'ENOENT'` for file not found.",
+        "For JSON parsing, wrap `JSON.parse` in try/catch."
+    ],
+    "expectedOutput": "Appropriate messages based on file existence/content.",
+    "solutionCode": "const fs = require('fs').promises;\n\nasync function readDataFile() {\n  try {\n    const data = await fs.readFile('data.txt', 'utf8');\n    console.log('data.txt content:', data);\n  } catch (err) {\n    if (err.code === 'ENOENT') {\n      console.log('File not found, please create data.txt');\n    } else {\n      console.error('An unexpected error occurred:', err.message);\n      throw err; // rethrow to exit with error\n    }\n  }\n}\n\nasync function readConfig() {\n  try {\n    const configData = await fs.readFile('config.json', 'utf8');\n    try {\n      const config = JSON.parse(configData);\n      console.log('Config:', config);\n    } catch (parseErr) {\n      console.error('config.json contains invalid JSON');\n    }\n  } catch (err) {\n    if (err.code === 'ENOENT') {\n      console.log('config.json not found, using defaults');\n    } else {\n      console.error('Error reading config:', err.message);\n    }\n  }\n}\n\n(async () => {\n  await readDataFile();\n  await readConfig();\n})();"
+}

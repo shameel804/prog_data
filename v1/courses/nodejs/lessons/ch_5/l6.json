@@ -1,0 +1,73 @@
+{
+    "id": "l6",
+    "chapterId": "ch_5",
+    "title": "Async/Await – Syntactic Sugar",
+    "description": "Write asynchronous code that looks synchronous with async/await.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Async/Await",
+    "slides": [
+        {
+            "id": "l5_l6_s1",
+            "type": "text",
+            "title": "Async/Await – Write Async Code Like Sync ✨",
+            "content": "# Async/Await\n\n`async/await` is syntactic sugar over promises, introduced in ES2017. It makes asynchronous code look and behave more like synchronous code.\n\n- `async` function – declares that a function returns a promise.\n- `await` – pauses the execution of the async function until a promise settles, and then returns the result.\n\n```javascript\nasync function fetchData() {\n  const data = await somePromise();\n  console.log(data);\n}\n```"
+        },
+        {
+            "id": "l5_l6_s2",
+            "type": "text",
+            "title": "Using Await with try/catch 🛡️",
+            "content": "## Error Handling with try/catch\n\nSince `await` can throw if the promise rejects, we wrap it in `try/catch`.\n\n```javascript\nasync function readFiles() {\n  try {\n    const data1 = await fs.readFile('file1.txt', 'utf8');\n    const data2 = await fs.readFile('file2.txt', 'utf8');\n    console.log(data1, data2);\n  } catch (err) {\n    console.error('Error reading files:', err);\n  }\n}\n```\n\nThis is much cleaner than promise chains, especially for sequential operations."
+        },
+        {
+            "id": "l5_l6_s3",
+            "type": "code",
+            "title": "Async/Await Example",
+            "content": "Compare this to the promise chain:",
+            "codeSnippet": "const fs = require('fs').promises;\n\nasync function combineFiles() {\n  try {\n    const data1 = await fs.readFile('file1.txt', 'utf8');\n    const data2 = await fs.readFile('file2.txt', 'utf8');\n    await fs.writeFile('combined.txt', data1 + data2);\n    console.log('Done');\n  } catch (err) {\n    console.error('Error:', err);\n  }\n}\n\ncombineFiles();",
+            "codeLanguage": "javascript",
+            "canRunCode": false
+        },
+        {
+            "id": "l5_l6_s4",
+            "type": "text",
+            "title": "Parallel Operations with Promise.all ⚡",
+            "content": "## Running Promises in Parallel\n\n`await` runs sequentially. If operations don't depend on each other, you can run them in parallel using `Promise.all`.\n\n```javascript\nasync function parallelRead() {\n  const [data1, data2] = await Promise.all([\n    fs.readFile('file1.txt', 'utf8'),\n    fs.readFile('file2.txt', 'utf8')\n  ]);\n  console.log(data1, data2);\n}\n```\n\n`Promise.all` waits for all promises to resolve (or rejects if any fails)."
+        },
+        {
+            "id": "l5_l6_s5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch5_l6_q1",
+                "type": "multiple_choice",
+                "question": "What does `await` do in an async function?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It blocks the entire program",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It pauses the async function until the promise settles",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It converts a callback to a promise",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It throws an error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`await` pauses the async function, not the whole program, until the promise resolves/rejects.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

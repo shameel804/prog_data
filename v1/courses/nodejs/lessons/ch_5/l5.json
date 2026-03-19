@@ -1,0 +1,67 @@
+{
+    "id": "l5",
+    "chapterId": "ch_5",
+    "title": "Creating Your Own Promises",
+    "description": "Wrap callback-based functions with promises.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Promises",
+    "slides": [
+        {
+            "id": "l5_l5_s1",
+            "type": "text",
+            "title": "The Promise Constructor 🏗️",
+            "content": "# Creating Promises\n\nYou can create a promise using the `Promise` constructor:\n\n```javascript\nconst myPromise = new Promise((resolve, reject) => {\n  // async operation\n  if (/* success */) {\n    resolve(value);\n  } else {\n    reject(error);\n  }\n});\n```\n\n- `resolve` – function to call when the operation succeeds, passing the result.\n- `reject` – function to call when it fails, passing an error.\n\nThis is often used to **promisify** callback-based functions."
+        },
+        {
+            "id": "l5_l5_s2",
+            "type": "code",
+            "title": "Promisifying setTimeout",
+            "content": "Create a `wait` function that returns a promise:",
+            "codeSnippet": "function wait(ms) {\n  return new Promise(resolve => {\n    setTimeout(resolve, ms);\n  });\n}\n\nwait(2000).then(() => console.log('2 seconds later'));",
+            "codeLanguage": "javascript",
+            "canRunCode": true
+        },
+        {
+            "id": "l5_l5_s3",
+            "type": "text",
+            "title": "Promisifying fs.readFile (callback version) 🔄",
+            "content": "## Wrapping Callback APIs\n\nMany Node core modules still use callbacks. You can wrap them with promises:\n\n```javascript\nconst fs = require('fs');\n\nfunction readFilePromise(path, encoding) {\n  return new Promise((resolve, reject) => {\n    fs.readFile(path, encoding, (err, data) => {\n      if (err) reject(err);\n      else resolve(data);\n    });\n  });\n}\n\nreadFilePromise('file.txt', 'utf8')\n  .then(data => console.log(data))\n  .catch(err => console.error(err));\n```\n\nNode also provides `fs.promises` which does this for you."
+        },
+        {
+            "id": "l5_l5_s4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch5_l5_q1",
+                "type": "multiple_choice",
+                "question": "In the Promise constructor, what are the parameters of the executor function?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "resolve and reject",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "success and failure",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "then and catch",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "async and await",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The executor receives `resolve` and `reject` functions to settle the promise.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

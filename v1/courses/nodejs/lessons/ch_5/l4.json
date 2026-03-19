@@ -1,0 +1,67 @@
+{
+    "id": "l4",
+    "chapterId": "ch_5",
+    "title": "Chaining Promises and Error Handling",
+    "description": "Chain multiple async operations and handle errors with .catch().",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Promises",
+    "slides": [
+        {
+            "id": "l5_l4_s1",
+            "type": "text",
+            "title": "Chaining .then() Calls 🔗",
+            "content": "# Promise Chaining\n\nOne of the best features of promises is the ability to chain operations. Each `.then()` returns a new promise, allowing you to sequence asynchronous tasks.\n\n```javascript\nfs.readFile('file1.txt', 'utf8')\n  .then(data1 => {\n    console.log('File1 done');\n    return fs.readFile('file2.txt', 'utf8');\n  })\n  .then(data2 => {\n    console.log('File2 done');\n    return fs.writeFile('combined.txt', data1 + data2);\n  })\n  .then(() => {\n    console.log('All done');\n  })\n  .catch(err => {\n    console.error('Error:', err);\n  });\n```\n\nNote: `data1` is accessible only in the first `.then()`. To use it later, you could nest or use `Promise.all` (covered later)."
+        },
+        {
+            "id": "l5_l4_s2",
+            "type": "text",
+            "title": "Error Propagation with .catch() 🚨",
+            "content": "## Error Handling\n\nIf any promise in the chain rejects, the control jumps to the nearest `.catch()` down the chain. This is similar to `try/catch` in synchronous code.\n\n```javascript\ndoSomething()\n  .then(result => doSomethingElse(result))\n  .then(newResult => doThird(newResult))\n  .catch(err => {\n    // Handles errors from any of the above\n    console.error('Something went wrong:', err);\n  });\n```\n\nYou can also have multiple `.catch()` for different stages, but usually one at the end suffices."
+        },
+        {
+            "id": "l5_l4_s3",
+            "type": "code",
+            "title": "Chain with Error",
+            "content": "Run this and see the error handling:",
+            "codeSnippet": "Promise.resolve(5)\n  .then(x => {\n    console.log('x:', x);\n    return x + 2;\n  })\n  .then(y => {\n    console.log('y:', y);\n    throw new Error('Boom!');\n  })\n  .then(z => {\n    console.log('z:', z); // skipped\n  })\n  .catch(err => {\n    console.log('Caught:', err.message);\n  });",
+            "codeLanguage": "javascript",
+            "canRunCode": true
+        },
+        {
+            "id": "l5_l4_s4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch5_l4_q1",
+                "type": "multiple_choice",
+                "question": "If a promise in a chain rejects, where does the error go?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's ignored",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To the next .then()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To the nearest .catch()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It crashes the program",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Errors propagate down the chain until caught by a `.catch()`.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

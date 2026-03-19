@@ -1,0 +1,58 @@
+{
+    "id": "l2",
+    "chapterId": "ch_11",
+    "title": "Handling Synchronous Errors",
+    "description": "Use try/catch and proper error propagation.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Error Handling",
+    "slides": [
+        {
+            "id": "l11_l2_s1",
+            "type": "text",
+            "title": "try/catch for Sync Code 🛡️",
+            "content": "# Synchronous Error Handling\n\n```javascript\nfunction parseJSON(jsonString) {\n  try {\n    return JSON.parse(jsonString);\n  } catch (err) {\n    console.error('Invalid JSON:', err.message);\n    return null;\n  }\n}\n```\n\nYou can also re-throw errors after logging, or throw custom errors."
+        },
+        {
+            "id": "l11_l2_s2",
+            "type": "text",
+            "title": "Throwing Custom Errors 🎯",
+            "content": "Create custom error classes to convey more information.\n\n```javascript\nclass ValidationError extends Error {\n  constructor(message) {\n    super(message);\n    this.name = 'ValidationError';\n  }\n}\n\nfunction validateUser(user) {\n  if (!user.name) throw new ValidationError('Name is required');\n}\n\ntry {\n  validateUser({});\n} catch (err) {\n  if (err instanceof ValidationError) {\n    console.log('Validation failed:', err.message);\n  } else {\n    throw err; // rethrow unknown errors\n  }\n}\n```"
+        },
+        {
+            "id": "l11_l2_s3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch11_l2_q1",
+                "type": "multiple_choice",
+                "question": "How do you catch a synchronous error in JavaScript?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Using .catch()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Using try/catch",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Using process.on('uncaughtException')",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Errors cannot be caught",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`try/catch` is the standard way to handle synchronous exceptions.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

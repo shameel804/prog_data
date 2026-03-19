@@ -1,0 +1,76 @@
+{
+    "id": "l4",
+    "chapterId": "ch_8",
+    "title": "SQL Databases – Using SQLite3",
+    "description": "Connect to a SQLite database and run raw SQL queries.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "SQL",
+    "slides": [
+        {
+            "id": "l8_l4_s1",
+            "type": "text",
+            "title": "SQLite – A Lightweight SQL Database 🗂️",
+            "content": "# SQLite\n\nSQLite is a self-contained, serverless, zero-configuration SQL database engine. It stores the entire database as a single file – great for prototyping, small apps, or local storage.\n\nInstall the Node.js driver:\n```bash\nnpm install sqlite3\n```\n\nWe'll use the `sqlite3` package, which provides both a low-level API and a slightly higher-level one."
+        },
+        {
+            "id": "l8_l4_s2",
+            "type": "text",
+            "title": "Connecting and Creating a Table 🔌",
+            "content": "## Opening a Database\n\n```javascript\nconst sqlite3 = require('sqlite3').verbose();\nconst db = new sqlite3.Database('./mydb.sqlite');\n```\n\nIf the file doesn't exist, it will be created.\n\n### Creating a Table\n\n```javascript\ndb.run(`\n  CREATE TABLE IF NOT EXISTS users (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT NOT NULL,\n    email TEXT UNIQUE NOT NULL,\n    age INTEGER\n  )\n`);\n```\n\n`db.run()` executes SQL that doesn't return rows (e.g., CREATE, INSERT, UPDATE, DELETE)."
+        },
+        {
+            "id": "l8_l4_s3",
+            "type": "text",
+            "title": "Inserting Data 📥",
+            "content": "## INSERT\n\nUse `db.run()` with placeholders to avoid SQL injection.\n\n```javascript\nconst newUser = { name: 'Alice', email: 'alice@example.com', age: 30 };\ndb.run(\n  'INSERT INTO users (name, email, age) VALUES (?, ?, ?)',\n  [newUser.name, newUser.email, newUser.age],\n  function(err) {\n    if (err) console.error(err);\n    else console.log(`Inserted with ID: ${this.lastID}`);\n  }\n);\n```\n\nNote: `this.lastID` gives the auto-generated ID."
+        },
+        {
+            "id": "l8_l4_s4",
+            "type": "text",
+            "title": "Querying Data 📤",
+            "content": "## SELECT\n\n- `db.get()` – returns the first row.\n- `db.all()` – returns all rows.\n\n```javascript\ndb.get('SELECT * FROM users WHERE email = ?', ['alice@example.com'], (err, row) => {\n  if (err) console.error(err);\n  else console.log('User:', row);\n});\n\ndb.all('SELECT * FROM users', (err, rows) => {\n  console.log('All users:', rows);\n});\n```"
+        },
+        {
+            "id": "l8_l4_s5",
+            "type": "text",
+            "title": "Updating and Deleting ✏️❌",
+            "content": "## UPDATE / DELETE\n\nUse `db.run()` again.\n\n```javascript\n// Update\ndb.run('UPDATE users SET age = ? WHERE email = ?', [31, 'alice@example.com']);\n\n// Delete\ndb.run('DELETE FROM users WHERE email = ?', ['alice@example.com']);\n```\n\nAlways close the database when done (optional for scripts, but good practice):\n```javascript\ndb.close((err) => { ... });\n```"
+        },
+        {
+            "id": "l8_l4_s6",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch8_l4_q1",
+                "type": "multiple_choice",
+                "question": "Which method of the sqlite3 module is used to execute INSERT, UPDATE, or DELETE?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "db.get()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "db.all()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "db.run()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "db.exec()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`db.run()` is for statements that don't return rows, like INSERT, UPDATE, DELETE.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

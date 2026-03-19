@@ -1,0 +1,64 @@
+{
+    "id": "l2",
+    "chapterId": "ch_9",
+    "title": "Designing RESTful Routes",
+    "description": "Learn naming conventions and resource nesting.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Design",
+    "slides": [
+        {
+            "id": "l9_l2_s1",
+            "type": "text",
+            "title": "Resource Naming Conventions 📛",
+            "content": "# Best Practices for URLs\n\n- Use **nouns**, not verbs (`/users` not `/getUsers`).\n- Use plural for collection names (`/users`).\n- Use **kebab-case** or **snake_case** consistently (e.g., `/user-profiles`).\n- Avoid file extensions (`.json` not needed – use `Accept` header).\n\nExamples:\n- `GET /users` – list users\n- `GET /users/5` – get user with id 5\n- `POST /users` – create new user\n- `PUT /users/5` – replace user 5\n- `PATCH /users/5` – partially update user 5\n- `DELETE /users/5` – delete user 5"
+        },
+        {
+            "id": "l9_l2_s2",
+            "type": "text",
+            "title": "Nested Resources 🪆",
+            "content": "## Representing Relationships\n\nWhen a resource belongs to another, nest them:\n\n- `GET /users/5/posts` – get all posts by user 5\n- `POST /users/5/posts` – create a new post for user 5\n- `GET /users/5/posts/3` – get post 3 of user 5\n\nBut avoid deep nesting (more than 2 levels) – it can become unwieldy. Consider using query parameters for filtering instead."
+        },
+        {
+            "id": "l9_l2_s3",
+            "type": "text",
+            "title": "Query Parameters for Filtering, Sorting, Pagination 🔍",
+            "content": "## Using Query Strings\n\n- Filtering: `GET /users?role=admin`\n- Sorting: `GET /users?sort=name` or `?sort=-createdAt` (descending)\n- Pagination: `GET /users?page=2&limit=20`\n- Field selection: `GET /users?fields=id,name,email`\n\nThese are not part of the resource path but modify the representation."
+        },
+        {
+            "id": "l9_l2_s4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch9_l2_q1",
+                "type": "multiple_choice",
+                "question": "Which URL design follows RESTful conventions for getting a specific user's posts?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "/getUserPosts?id=5",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "/users/5/posts",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "/posts?userId=5",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "/users/posts/5",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Nesting resources with `/users/5/posts` is a RESTful way to show posts belonging to user 5.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

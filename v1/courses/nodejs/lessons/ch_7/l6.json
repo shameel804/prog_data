@@ -1,0 +1,67 @@
+{
+    "id": "l6",
+    "chapterId": "ch_7",
+    "title": "Error Handling and 404",
+    "description": "Handle 404 errors and create custom error handlers.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Error Handling",
+    "slides": [
+        {
+            "id": "l7_l6_s1",
+            "type": "text",
+            "title": "404 – Not Found Handler 🚫",
+            "content": "# Catching 404s\n\nIn Express, any route that doesn't match will fall through. To handle 404, add a middleware at the **end** of all routes that sends a 404 response.\n\n```javascript\n// After all your routes\napp.use((req, res, next) => {\n  res.status(404).send('Sorry, page not found');\n});\n```\n\nThis middleware only runs if no route handled the request."
+        },
+        {
+            "id": "l7_l6_s2",
+            "type": "text",
+            "title": "Error-Handling Middleware ⚠️",
+            "content": "## Custom Error Handlers\n\nError-handling middleware takes **four** parameters: `(err, req, res, next)`.\n\n```javascript\napp.use((err, req, res, next) => {\n  console.error(err.stack);\n  res.status(500).send('Something broke!');\n});\n```\n\nPlace this after all routes and other middleware. When you call `next(err)` in a route, Express jumps to error-handling middleware."
+        },
+        {
+            "id": "l7_l6_s3",
+            "type": "code",
+            "title": "Throwing Errors in Routes",
+            "content": "Example:",
+            "codeSnippet": "app.get('/broken', (req, res, next) => {\n  const err = new Error('Something went wrong');\n  next(err); // pass to error handler\n});\n\n// Error handler\napp.use((err, req, res, next) => {\n  res.status(500).json({ error: err.message });\n});",
+            "codeLanguage": "javascript",
+            "canRunCode": false
+        },
+        {
+            "id": "l7_l6_s4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "nodejs_ch7_l6_q1",
+                "type": "multiple_choice",
+                "question": "How many parameters does an Express error-handling middleware have?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "2",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "3",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "4 (err, req, res, next)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "1",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Error-handling middleware always has four parameters; Express recognizes it by the arity.",
+                "xpReward": 10
+            }
+        }
+    ]
+}
