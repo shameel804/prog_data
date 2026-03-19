@@ -1,0 +1,79 @@
+{
+    "id": "l6",
+    "chapterId": "ch_3",
+    "title": "Lifting State Up",
+    "description": "Share state between components by moving it to their closest common ancestor.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "State",
+    "slides": [
+        {
+            "id": "s_ch3_l6_1",
+            "type": "text",
+            "title": "The Need for Shared State 🤝",
+            "content": "# When Components Need to Communicate\n\nOften, two components need to reflect the same changing data. For example, a parent component might have two child components that both need to know and modify the same piece of state.\n\nThe React pattern for this is **lifting state up**: move the state to the closest common ancestor and pass it down via props, along with callbacks to update it."
+        },
+        {
+            "id": "s_ch3_l6_2",
+            "type": "text",
+            "title": "Example: Two Components, One State",
+            "content": "Consider a temperature converter that has an input in Celsius and another input in Fahrenheit. They must stay in sync.\n\n* We lift the temperature state to the parent component `TemperatureCalculator`.\n* The parent provides both `CelsiusInput` and `FahrenheitInput` with the current value and an `onChange` callback.\n* Each input, when changed, calls the parent's callback with the new value, and the parent updates the state and recalculates the other scale."
+        },
+        {
+            "id": "s_ch3_l6_3",
+            "type": "code",
+            "title": "Lifting State Up in Action",
+            "content": "Here's a simplified implementation:",
+            "codeSnippet": "import React, { useState } from 'react';\nimport { View, TextInput, Text } from 'react-native';\n\nfunction CelsiusInput({ celsius, onCelsiusChange }) {\n  return (\n    <View>\n      <Text>Celsius:</Text>\n      <TextInput\n        value={celsius}\n        onChangeText={text => onCelsiusChange(text)}\n        keyboardType=\"numeric\"\n      />\n    </View>\n  );\n}\n\nfunction FahrenheitInput({ fahrenheit, onFahrenheitChange }) {\n  return (\n    <View>\n      <Text>Fahrenheit:</Text>\n      <TextInput\n        value={fahrenheit}\n        onChangeText={text => onFahrenheitChange(text)}\n        keyboardType=\"numeric\"\n      />\n    </View>\n  );\n}\n\nexport default function TemperatureCalculator() {\n  const [celsius, setCelsius] = useState('');\n\n  const toFahrenheit = (c) => c ? (parseFloat(c) * 9/5 + 32).toFixed(1) : '';\n\n  const handleCelsiusChange = (value) => {\n    setCelsius(value);\n  };\n\n  const handleFahrenheitChange = (value) => {\n    // Convert fahrenheit to celsius\n    const c = value ? ((parseFloat(value) - 32) * 5/9).toFixed(1) : '';\n    setCelsius(c);\n  };\n\n  return (\n    <View>\n      <CelsiusInput celsius={celsius} onCelsiusChange={handleCelsiusChange} />\n      <FahrenheitInput fahrenheit={toFahrenheit(celsius)} onFahrenheitChange={handleFahrenheitChange} />\n    </View>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_ch3_l6_4",
+            "type": "quiz",
+            "title": "Lifting State Up 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch3_l6_1",
+                "type": "multiple_choice",
+                "question": "What does \"lifting state up\" mean in React?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Moving state to a higher component so multiple children can share it",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Using a state management library like Redux",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Increasing the performance of state updates",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Storing state in the global object",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Lifting state up means moving state to the nearest common ancestor of components that need to share it.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch3_l6_5",
+            "type": "text",
+            "title": "Key Takeaways 🔑",
+            "content": "* Identify the components that need to share state.\n* Find their closest common parent.\n* Move the state to that parent.\n* Pass the state down via props.\n* Pass callbacks down to allow children to update the state.\n\nThis pattern keeps your data flow predictable and unidirectional (parent → child)."
+        },
+        {
+            "id": "s_ch3_l6_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Lifting state up can sometimes lead to \"prop drilling\" – passing props through many intermediate components. For larger apps, consider using Context or a state management library, but for now, lifting state up is the perfect solution."
+        }
+    ]
+}

@@ -1,0 +1,85 @@
+{
+    "id": "l5",
+    "chapterId": "ch_2",
+    "title": "ScrollView and Lists",
+    "description": "Create scrollable content and render dynamic lists using ScrollView and mapping.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Core Components",
+    "slides": [
+        {
+            "id": "s_ch2_l5_1",
+            "type": "text",
+            "title": "ScrollView 📜",
+            "content": "# `<ScrollView>`\n\nThe ScrollView component is a generic scrolling container that can host multiple components and views. It's useful when you have a small number of items that don't change, or when you need to scroll to a specific child.\n\n```jsx\nimport { ScrollView, Text } from 'react-native';\n\n<ScrollView>\n  <Text>Item 1</Text>\n  <Text>Item 2</Text>\n  <Text>Item 3</Text>\n  {/* ... many more items */}\n</ScrollView>\n```\n\nScrollView renders all its children at once, so it's **not efficient for long lists** (use FlatList for that)."
+        },
+        {
+            "id": "s_ch2_l5_2",
+            "type": "text",
+            "title": "Rendering Dynamic Lists 🔁",
+            "content": "## Using `map()` to render an array\n\nOften you have an array of data and you want to render a list of components. Use the JavaScript `map` function:\n\n```jsx\nconst names = ['Alice', 'Bob', 'Charlie'];\n\n<ScrollView>\n  {names.map((name, index) => (\n    <Text key={index}>{name}</Text>\n  ))}\n</ScrollView>\n```\n\n⚠️ **Always provide a `key` prop** when rendering lists. It helps React identify which items have changed. Ideally use a unique ID from your data; otherwise use the index as a fallback (but this can cause issues if the list order changes)."
+        },
+        {
+            "id": "s_ch2_l5_3",
+            "type": "quiz",
+            "title": "List Rendering 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch2_l5_1",
+                "type": "multiple_choice",
+                "question": "Why is it important to provide a `key` prop when rendering a list of components?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To style each item differently",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To help React identify which items changed",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To make the list scroll faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's optional, no real benefit",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Keys give React a way to track elements for efficient updates and re-renders.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch2_l5_4",
+            "type": "text",
+            "title": "Horizontal Scrolling ↔️",
+            "content": "## Make it horizontal\n\nSet `horizontal={true}` to enable horizontal scrolling.\n\n```jsx\n<ScrollView horizontal>\n  <View style={{ width: 100, height: 100, backgroundColor: 'red' }} />\n  <View style={{ width: 100, height: 100, backgroundColor: 'green' }} />\n  <View style={{ width: 100, height: 100, backgroundColor: 'blue' }} />\n</ScrollView>\n```"
+        },
+        {
+            "id": "s_ch2_l5_5",
+            "type": "text",
+            "title": "Pagination and Scroll Events 📏",
+            "content": "## Useful Props\n\n* `pagingEnabled` – when true, the scroll view stops on multiples of its own size (like a pager).\n* `showsVerticalScrollIndicator` / `showsHorizontalScrollIndicator` – toggle scroll bars.\n* `onScroll` – event fired while scrolling (use with `scrollEventThrottle`).\n* `contentContainerStyle` – styles applied to the inner container (useful for padding).\n\nExample with onScroll:\n```jsx\n<ScrollView\n  onScroll={(event) => {\n    console.log(event.nativeEvent.contentOffset.y);\n  }}\n  scrollEventThrottle={16}\n>\n  ...\n</ScrollView>\n```"
+        },
+        {
+            "id": "s_ch2_l5_6",
+            "type": "code",
+            "title": "Complete Example",
+            "content": "A ScrollView displaying a list of numbers:",
+            "codeSnippet": "import React from 'react';\nimport { ScrollView, Text, View } from 'react-native';\n\nconst numbers = Array.from({ length: 20 }, (_, i) => i + 1);\n\nexport default function App() {\n  return (\n    <ScrollView style={{ flex: 1 }}>\n      {numbers.map(num => (\n        <View key={num} style={{ padding: 20, borderBottomWidth: 1 }}>\n          <Text>Item #{num}</Text>\n        </View>\n      ))}\n    </ScrollView>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_ch2_l5_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "If your list is very long (more than a few hundred items), switch to **FlatList** or **SectionList**. They render only the visible items, saving memory and improving performance."
+        }
+    ]
+}

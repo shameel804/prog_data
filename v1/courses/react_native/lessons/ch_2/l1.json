@@ -1,0 +1,114 @@
+{
+    "id": "l1",
+    "chapterId": "ch_2",
+    "title": "JSX Deep Dive",
+    "description": "Explore JSX beyond the basics: expressions, conditionals, and fragments.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "JSX",
+    "slides": [
+        {
+            "id": "s_ch2_l1_1",
+            "type": "text",
+            "title": "JSX Expressions 🔢",
+            "content": "# Embedding Any JavaScript\n\nInside `{}` you can put any JavaScript expression – something that produces a value.\n\n```jsx\nconst user = { name: 'Alice', isAdmin: true };\nconst element = (\n  <View>\n    <Text>Hello, {user.name.toUpperCase()}!</Text>\n    <Text>Admin: {user.isAdmin ? 'Yes' : 'No'}</Text>\n    <Text>2 + 2 = {2 + 2}</Text>\n  </View>\n);\n```\n\n⚠️ You **cannot** put statements (like `if`, `for`) inside `{}`. Use ternary operators or move logic outside JSX."
+        },
+        {
+            "id": "s_ch2_l1_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch2_l1_1",
+                "type": "multiple_choice",
+                "question": "Which of the following can be placed directly inside `{}` in JSX?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "if (x) { return 'yes' }",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "x ? 'yes' : 'no'",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "for (let i=0; i<5; i++)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "function() { return 5; }",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Ternary expressions are allowed because they are expressions. `if` and `for` are statements, not expressions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch2_l1_3",
+            "type": "text",
+            "title": "Conditional Rendering 🚦",
+            "content": "## Ways to Conditionally Render\n\n1. **Ternary operator** (inline)\n   ```jsx\n   {isLoggedIn ? <Text>Welcome</Text> : <Button title=\"Login\" />}\n   ```\n\n2. **Logical &&** (when you only want to render something if true)\n   ```jsx\n   {unreadCount > 0 && <Text>You have {unreadCount} messages</Text>}\n   ```\n\n3. **If statement outside JSX**\n   ```jsx\n   let greeting;\n   if (isLoggedIn) {\n     greeting = <Text>Welcome back</Text>;\n   } else {\n     greeting = <Text>Please sign in</Text>;\n   }\n   return <View>{greeting}</View>;\n   ```"
+        },
+        {
+            "id": "s_ch2_l1_4",
+            "type": "code",
+            "title": "Example: Conditional Rendering",
+            "content": "Here's a simple component that shows a login status:",
+            "codeSnippet": "export default function Greeting({ isLoggedIn }) {\n  return (\n    <View>\n      {isLoggedIn ? (\n        <Text>Welcome back! 👋</Text>\n      ) : (\n        <Text>Please log in. 🔒</Text>\n      )}\n    </View>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_ch2_l1_5",
+            "type": "text",
+            "title": "Fragments: Avoid Extra Views 📦",
+            "content": "## What are Fragments?\n\nSometimes you need to return multiple elements without adding an extra `<View>` to the layout. Use a **Fragment**.\n\n```jsx\nimport React from 'react';\nimport { Text } from 'react-native';\n\nexport default function MyComponent() {\n  return (\n    <>\n      <Text>Line 1</Text>\n      <Text>Line 2</Text>\n    </>\n  );\n}\n```\n\nThe empty tags `<>...</>` are shorthand for `<React.Fragment>...</React.Fragment>`. Fragments don't create any extra native views – they just group children."
+        },
+        {
+            "id": "s_ch2_l1_6",
+            "type": "quiz",
+            "title": "Fragments Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch2_l1_2",
+                "type": "multiple_choice",
+                "question": "Why would you use a Fragment (`<>...</>`) instead of a `<View>`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Fragments are faster to type",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Fragments do not add an extra native view, keeping the layout clean",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Fragments allow more styling options",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Fragments are required when returning multiple elements",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Fragments group children without introducing an additional container view, which can affect layout and performance.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch2_l1_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Use fragments when you need to return multiple elements from a component but don't want to affect the styling (e.g., inside a `<Text>` component you can't put a `<View>` anyway, but fragments can help outside)."
+        }
+    ]
+}

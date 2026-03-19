@@ -1,0 +1,82 @@
+{
+    "id": "l4",
+    "chapterId": "ch_3",
+    "title": "Handling Events",
+    "description": "Respond to user actions like button presses and text input.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "State",
+    "slides": [
+        {
+            "id": "s_ch3_l4_1",
+            "type": "text",
+            "title": "Event Handlers 🖱️",
+            "content": "# Listening to User Actions\n\nIn React Native, components like `Button`, `TouchableOpacity`, and `TextInput` accept props that are functions, called when certain events occur.\n\n## Common Events\n\n* `onPress` – for buttons and touchables.\n* `onChangeText` – for text input (gives the new text).\n* `onSubmitEditing` – when the user submits the text input (e.g., presses return).\n* `onFocus` / `onBlur` – when an input gains/loses focus.\n\nThese event handlers are just functions you define."
+        },
+        {
+            "id": "s_ch3_l4_2",
+            "type": "code",
+            "title": "Handling Text Input",
+            "content": "A controlled text input that updates state as the user types:",
+            "codeSnippet": "import React, { useState } from 'react';\nimport { View, TextInput, Text } from 'react-native';\n\nexport default function NameInput() {\n  const [name, setName] = useState('');\n\n  return (\n    <View>\n      <TextInput\n        placeholder=\"Enter your name\"\n        value={name}\n        onChangeText={text => setName(text)}\n      />\n      <Text>Hello, {name}!</Text>\n    </View>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_ch3_l4_3",
+            "type": "quiz",
+            "title": "Event Handlers 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch3_l4_1",
+                "type": "multiple_choice",
+                "question": "Which prop do you use on TextInput to get notified when the text changes?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "onPress",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "onChangeText",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "onSubmitEditing",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "onTextChange",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`onChangeText` is called with the new text string each time the user types.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch3_l4_4",
+            "type": "text",
+            "title": "Inline vs Separate Functions 🔧",
+            "content": "## Defining Handlers\n\nYou can define event handlers inline (as above) or as separate functions:\n\n```jsx\nconst handleChange = (text) => {\n  setName(text);\n};\n\n// Later\n<TextInput onChangeText={handleChange} />\n```\n\nSeparate functions are useful when the logic is complex or reused."
+        },
+        {
+            "id": "s_ch3_l4_5",
+            "type": "code",
+            "title": "Handling Button Press",
+            "content": "A simple login screen that shows an alert when submitted:",
+            "codeSnippet": "import React, { useState } from 'react';\nimport { View, TextInput, Button, Alert } from 'react-native';\n\nexport default function Login() {\n  const [email, setEmail] = useState('');\n  const [password, setPassword] = useState('');\n\n  const handleLogin = () => {\n    Alert.alert('Logged in', `Email: ${email}`);\n  };\n\n  return (\n    <View>\n      <TextInput\n        placeholder=\"Email\"\n        value={email}\n        onChangeText={setEmail}\n      />\n      <TextInput\n        placeholder=\"Password\"\n        secureTextEntry\n        value={password}\n        onChangeText={setPassword}\n      />\n      <Button title=\"Login\" onPress={handleLogin} />\n    </View>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_ch3_l4_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Notice we used `onChangeText={setEmail}` directly. This works because `setEmail` expects exactly one argument – the new value – and `onChangeText` passes that. It's a handy shorthand."
+        }
+    ]
+}

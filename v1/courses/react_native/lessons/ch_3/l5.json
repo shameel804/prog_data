@@ -1,0 +1,82 @@
+{
+    "id": "l5",
+    "chapterId": "ch_3",
+    "title": "Updating State Based on Previous State",
+    "description": "Learn the safe way to update state when the new value depends on the old one.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "State",
+    "slides": [
+        {
+            "id": "s_ch3_l5_1",
+            "type": "text",
+            "title": "The Problem with Direct Updates ⚠️",
+            "content": "# State Updates Can Be Asynchronous\n\nWhen you call a state setter, React may batch multiple updates for performance. If you read the current state and immediately set a new value, you might be using stale data.\n\n## Example of a potential bug\n\n```jsx\nconst [count, setCount] = useState(0);\n\nconst increment = () => {\n  setCount(count + 1); // might use outdated `count`\n};\n```\n\nIf `increment` is called multiple times in quick succession, each call might use the same initial `count`, leading to incorrect results."
+        },
+        {
+            "id": "s_ch3_l5_2",
+            "type": "text",
+            "title": "The Functional Update Pattern 🔄",
+            "content": "## Using a Function in setState\n\nThe setter function can also accept a **callback** that receives the previous state as an argument. This guarantees you're working with the latest state.\n\n```jsx\nsetCount(prevCount => prevCount + 1);\n```\n\nNow, if you call `increment` three times in a row, it will correctly increase by 3 because each update receives the most recent state.\n\nThis pattern is essential when the new state depends on the previous state."
+        },
+        {
+            "id": "s_ch3_l5_3",
+            "type": "code",
+            "title": "Counter with Functional Update",
+            "content": "Here's the counter using the safe pattern:",
+            "codeSnippet": "import React, { useState } from 'react';\nimport { View, Text, Button } from 'react-native';\n\nexport default function Counter() {\n  const [count, setCount] = useState(0);\n\n  const increment = () => {\n    setCount(prev => prev + 1);\n  };\n\n  const incrementThree = () => {\n    increment();\n    increment();\n    increment();\n  };\n\n  return (\n    <View>\n      <Text>Count: {count}</Text>\n      <Button title=\"Increment\" onPress={increment} />\n      <Button title=\"Increment 3 times\" onPress={incrementThree} />\n    </View>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_ch3_l5_4",
+            "type": "quiz",
+            "title": "Functional Updates 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_ch3_l5_1",
+                "type": "multiple_choice",
+                "question": "When should you use the functional update pattern (e.g., `setCount(prev => prev + 1)`)?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Always, to be safe",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Only when the new state depends on the previous state",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Never, it's unnecessary",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only for objects",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Use functional updates when the new value is computed from the previous state to avoid stale closures.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_ch3_l5_5",
+            "type": "text",
+            "title": "Updating Objects and Arrays 🧱",
+            "content": "## State with Objects\n\nWhen state is an object or array, remember that you must create a **new object/array** when updating. Never mutate the existing one.\n\n```jsx\nconst [user, setUser] = useState({ name: 'Alice', age: 25 });\n\n// ❌ Wrong\nuser.age = 26;\nsetUser(user);\n\n// ✅ Correct\nsetUser({ ...user, age: 26 });\n```\n\nThe spread operator `...` creates a shallow copy. For arrays, use `[...array]` or `array.filter`, `array.map`, etc."
+        },
+        {
+            "id": "s_ch3_l5_6",
+            "type": "code",
+            "title": "Updating an Array",
+            "content": "Adding an item to an array state:",
+            "codeSnippet": "const [items, setItems] = useState(['apple', 'banana']);\n\nconst addItem = (newItem) => {\n  setItems(prevItems => [...prevItems, newItem]);\n};\n\n// Removing an item\nconst removeItem = (index) => {\n  setItems(prevItems => prevItems.filter((_, i) => i !== index));\n};",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        }
+    ]
+}
