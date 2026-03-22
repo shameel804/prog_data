@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_3",
+    "title": "Create a Home View",
+    "description": "Write a simple view that returns a welcome message and map it to the root URL.",
+    "estimatedMinutes": 10,
+    "problemStatement": "## Your Mission\n\nIn your Django project, create a new app named `pages`. Inside it, write a view called `home` that returns an `HttpResponse` with the text \"Welcome to My Site!\".\n\nThen, configure the URLs so that when a user visits the root URL (e.g., `http://127.0.0.1:8000/`), they see that message.\n\n> **Hint**: You'll need to create a `urls.py` inside the `pages` app and include it in the project's main `urls.py`.",
+    "hints": [
+        "Don't forget to add 'pages' to INSTALLED_APPS.",
+        "In the project's `urls.py`, use `path('', include('pages.urls'))`.",
+        "In `pages/urls.py`, define a pattern for `''` that points to the view.",
+        "The view should accept a `request` parameter and return `HttpResponse(...)`."
+    ],
+    "expectedOutput": "When you visit `http://127.0.0.1:8000/`, the page displays \"Welcome to My Site!\".",
+    "solutionCode": "# pages/views.py\nfrom django.http import HttpResponse\n\ndef home(request):\n    return HttpResponse(\"Welcome to My Site!\")\n\n# pages/urls.py\nfrom django.urls import path\nfrom . import views\n\nurlpatterns = [\n    path('', views.home, name='home'),\n]\n\n# project/urls.py\nfrom django.contrib import admin\nfrom django.urls import path, include\n\nurlpatterns = [\n    path('admin/', admin.site.urls),\n    path('', include('pages.urls')),\n]\n\n# settings.py – add 'pages' to INSTALLED_APPS"
+}

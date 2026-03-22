@@ -1,0 +1,65 @@
+{
+    "id": "l5",
+    "chapterId": "ch_5",
+    "title": "Processing Form Data",
+    "description": "Handle GET and POST requests, save data, and redirect after success.",
+    "xpReward": 30,
+    "estimatedMinutes": 12,
+    "section": "Processing",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "The POST‑Redirect‑GET Pattern 🔄",
+            "content": "After a successful form submission, you should **redirect** the user to a new page (e.g., a success page or the detail page). This prevents duplicate submissions if the user refreshes the page.\n\nDjango provides `redirect()` for this purpose."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Complete Form Handling Example",
+            "content": "def contact(request):\n    if request.method == 'POST':\n        form = ContactForm(request.POST)\n        if form.is_valid():\n            # Process data (send email, etc.)\n            return redirect('contact_success')\n    else:\n        form = ContactForm()\n    return render(request, 'contact.html', {'form': form})\n\n# urls.py\npath('contact/', views.contact, name='contact'),\npath('contact/success/', views.contact_success, name='contact_success'),",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Why should you redirect after a successful POST?",
+                "options": [
+                    "To improve performance",
+                    "To prevent duplicate form submissions on refresh",
+                    "To avoid CSRF errors",
+                    "To automatically save the data"
+                ],
+                "correctAnswer": 1,
+                "explanation": "Redirecting after POST ensures that refreshing the page doesn't resubmit the form.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Handling GET Requests with Data",
+            "content": "Sometimes you want to accept GET parameters (e.g., search forms). You can bind the form to `request.GET` and validate it.\n\n```python\ndef search(request):\n    form = SearchForm(request.GET)\n    if form.is_valid():\n        query = form.cleaned_data['q']\n        results = Post.objects.filter(title__icontains=query)\n    else:\n        results = []\n    return render(request, 'search.html', {'form': form, 'results': results})\n```\n\nIn the template, set `method=\"get\"` and don't use `{% csrf_token %}` (not needed for GET).",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "File Uploads 📎",
+            "content": "To handle file uploads, set `enctype=\"multipart/form-data\"` in the form tag and use `request.FILES` in the view.\n\n```python\nclass UploadForm(forms.Form):\n    file = forms.FileField()\n\n# View\nif request.method == 'POST':\n    form = UploadForm(request.POST, request.FILES)\n    if form.is_valid():\n        uploaded_file = request.FILES['file']\n        # process file\n```\n\nModelForms with `FileField` or `ImageField` handle this automatically."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `get_object_or_404` for editing existing objects\n\nIn an update view, retrieve the object first, then pass it as `instance=obj` to the ModelForm to pre‑populate the form."
+        }
+    ]
+}

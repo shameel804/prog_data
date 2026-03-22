@@ -1,0 +1,74 @@
+{
+    "id": "l2",
+    "chapterId": "ch_4",
+    "title": "Template Variables and Filters",
+    "description": "Insert dynamic data and transform it using built‑in filters.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Template Language",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Variables: {{ ... }}",
+            "content": "In your template, use double curly braces to output a variable that you passed from the view.\n\n**Example:**\n```html\n<h1>Hello, {{ name }}!</h1>\n```\nIf the view sends `{'name': 'Alice'}`, the output becomes `<h1>Hello, Alice!</h1>`.\n\nVariables can be nested: `{{ user.profile.bio }}` (uses attribute lookup, dictionary lookup, list index)."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Using Filters |",
+            "content": "Filters modify the value of a variable. They are applied with a pipe `|`.\n\n```html\n{{ name|lower }}          # lowercase\n{{ price|floatformat:2 }} # 12.34\n{{ date|date:\"Y-m-d\" }}   # 2025-03-22\n{{ text|truncatechars:20 }}\n```",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What does `{{ user.name|upper }}` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Outputs user.name in lowercase",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Outputs user.name in uppercase",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Capitalizes the first letter",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Truncates the name",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `upper` filter converts the string to uppercase.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Passing Data from View",
+            "content": "In your view, you pass a context dictionary to `render()`:\n\n```python\nfrom django.shortcuts import render\n\ndef profile(request):\n    context = {\n        'username': 'johndoe',\n        'age': 30,\n        'posts': ['First post', 'Second post']\n    }\n    return render(request, 'profile.html', context)\n```\n\nIn the template:\n```html\n<p>Username: {{ username }}</p>\n<p>Age: {{ age }}</p>\n<ul>\n  {% for post in posts %}\n    <li>{{ post }}</li>\n  {% endfor %}\n</ul>\n```",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_5",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Use `default` filter to avoid empty output\n\n`{{ value|default:\"nothing\" }}` will show 'nothing' if `value` is missing or empty."
+        }
+    ]
+}

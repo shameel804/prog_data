@@ -1,0 +1,67 @@
+{
+    "id": "l3",
+    "chapterId": "ch_5",
+    "title": "Form Validation & Error Handling",
+    "description": "Validate user input and display error messages.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Validation",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Built‑in Validation ✅",
+            "content": "Each field type comes with its own validation. For example, `EmailField` checks for a valid email format, `CharField` checks `max_length`. You can also add custom validation methods."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Handling POST Data",
+            "content": "In your view, you check `request.method` and bind the form to the POST data.\n\n```python\ndef contact(request):\n    if request.method == 'POST':\n        form = ContactForm(request.POST)\n        if form.is_valid():\n            # Process the data\n            name = form.cleaned_data['name']\n            # ...\n            return redirect('success')\n    else:\n        form = ContactForm()\n    return render(request, 'contact.html', {'form': form})\n```\n\n- `is_valid()` runs validation and returns `True` if all fields pass.\n- `cleaned_data` contains the validated data (type‑converted).",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What does `form.is_valid()` return?",
+                "options": [
+                    "The cleaned data dictionary",
+                    "True or False depending on validation",
+                    "A list of errors",
+                    "The form HTML"
+                ],
+                "correctAnswer": 1,
+                "explanation": "`is_valid()` returns a boolean. After it returns True, you can access `form.cleaned_data`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Custom Validation",
+            "content": "You can add a `clean_<fieldname>` method to validate a single field, or a `clean()` method for cross‑field validation.\n\n```python\nfrom django.core.exceptions import ValidationError\n\nclass ContactForm(forms.Form):\n    # ... fields ...\n\n    def clean_name(self):\n        name = self.cleaned_data['name']\n        if 'spam' in name.lower():\n            raise ValidationError(\"Name cannot contain 'spam'\")\n        return name\n\n    def clean(self):\n        cleaned_data = super().clean()\n        email = cleaned_data.get('email')\n        # Additional cross‑field checks\n        return cleaned_data\n```",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Displaying Errors",
+            "content": "Errors are automatically available in `form.errors`. In the template, you can show them:\n\n```html\n{% if form.errors %}\n    <div class=\"errors\">\n        <p>Please correct the errors below:</p>\n        {{ form.non_field_errors }}\n    </div>\n{% endif %}\n\n{% for field in form %}\n    {{ field.errors }}\n    {{ field.label_tag }}\n    {{ field }}\n{% endfor %}\n```",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `form.non_field_errors` for errors not tied to a specific field (e.g., cross‑field validation errors)."
+        }
+    ]
+}

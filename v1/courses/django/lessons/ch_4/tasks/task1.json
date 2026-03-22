@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_4",
+    "title": "Create a Base Template",
+    "description": "Design a base template with header, footer, and a content block. Extend it in a home page.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Your Mission\n\nCreate a base template `base.html` that contains:\n- A `<header>` with a site title.\n- A `<footer>` with a copyright notice.\n- A `<main>` section with a `{% block content %}{% endblock %}`.\n\nThen create a child template `home.html` that extends `base.html` and fills the content block with a welcome message.\n\nRender `home.html` from a view mapped to the root URL.",
+    "hints": [
+        "Place templates in `templates/` folder inside your app, or in a global templates directory.",
+        "Use `{% extends \"base.html\" %}` at the top of `home.html`.",
+        "Remember to pass `request` to `render()` in the view."
+    ],
+    "expectedOutput": "When you visit the home page, you see the header, the welcome message, and the footer – all from the base template.",
+    "solutionCode": "# templates/base.html\n<!DOCTYPE html>\n<html>\n<head><title>{% block title %}My Site{% endblock %}</title></head>\n<body>\n    <header><h1>My Site</h1></header>\n    <main>{% block content %}{% endblock %}</main>\n    <footer>&copy; 2025</footer>\n</body>\n</html>\n\n# templates/home.html\n{% extends \"base.html\" %}\n\n{% block title %}Home{% endblock %}\n\n{% block content %}\n    <p>Welcome to my site!</p>\n{% endblock %}\n\n# views.py\ndef home(request):\n    return render(request, 'home.html')"
+}

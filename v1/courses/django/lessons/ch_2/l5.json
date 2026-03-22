@@ -1,0 +1,94 @@
+{
+    "id": "l5",
+    "chapterId": "ch_2",
+    "title": "Relationships Between Models",
+    "description": "Connect models with ForeignKey, ManyToManyField, and OneToOneField.",
+    "xpReward": 40,
+    "estimatedMinutes": 14,
+    "section": "Relationships",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Types of Relationships 🔗",
+            "content": "## Three main relationships:\n\n1. **Many‑to‑One** (Foreign Key) – A blog post has one author, an author can have many posts.\n2. **Many‑to‑Many** – A post can have many tags, a tag can be on many posts.\n3. **One‑to‑One** – A user has one profile, a profile belongs to one user.\n\nDjango provides specific fields for each."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Foreign Key (Many‑to‑One)",
+            "content": "Add a reference to another model using `models.ForeignKey`.",
+            "codeSnippet": "from django.db import models\nfrom django.contrib.auth.models import User\n\nclass Post(models.Model):\n    author = models.ForeignKey(User, on_delete=models.CASCADE)\n    title = models.CharField(max_length=200)\n\n# CASCADE means: if author deleted, delete all their posts.\n# Other options: PROTECT, SET_NULL, etc.",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which field type would you use to model a one‑to‑many relationship (e.g., a category has many products)?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "ManyToManyField",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "ForeignKey",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "OneToOneField",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "TextField",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "ForeignKey creates a many‑to‑one relationship. The model with the ForeignKey is the 'many' side.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Many‑to‑Many Relationship",
+            "content": "Use `ManyToManyField` in either model.",
+            "codeSnippet": "class Tag(models.Model):\n    name = models.CharField(max_length=50)\n\nclass Post(models.Model):\n    tags = models.ManyToManyField(Tag)\n\n# Now a post can have multiple tags, and a tag can be on multiple posts.",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "One‑to‑One Relationship",
+            "content": "Used for extending a built‑in model or for strict one‑to‑one mapping.",
+            "codeSnippet": "class Profile(models.Model):\n    user = models.OneToOneField(User, on_delete=models.CASCADE)\n    bio = models.TextField(blank=True)\n    location = models.CharField(max_length=100, blank=True)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "code",
+            "title": "Accessing Related Objects",
+            "content": "Django provides automatic reverse relations.",
+            "codeSnippet": "# Forward: post.author gives the User object\npost = Post.objects.get(id=1)\nprint(post.author.username)\n\n# Reverse: user.post_set gives a QuerySet of all posts by that user\nuser = User.objects.get(username='john')\nposts = user.post_set.all()\n\n# You can set related_name to change the default `_set` name:\nclass Post(models.Model):\n    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blog_posts')\n# Then use user.blog_posts.all()",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_7",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Always set `on_delete`\n\nDjango requires `on_delete` for ForeignKey and OneToOneField. Choose the appropriate behavior (`CASCADE`, `PROTECT`, `SET_NULL`, etc.) to maintain data integrity."
+        }
+    ]
+}

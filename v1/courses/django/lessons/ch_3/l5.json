@@ -1,0 +1,80 @@
+{
+    "id": "l5",
+    "chapterId": "ch_3",
+    "title": "Request and Response Objects",
+    "description": "Dive into HttpRequest and HttpResponse – what you can do with them.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "The HttpRequest Object 📨",
+            "content": "When Django receives a request, it creates an `HttpRequest` object that contains metadata about the request. It is passed as the first argument to your view.\n\nCommon attributes:\n- `request.method` – HTTP method (GET, POST, etc.)\n- `request.GET` – Query string parameters (dictionary‑like)\n- `request.POST` – Form data\n- `request.user` – The current user (if authenticated)\n- `request.session` – Session dictionary"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Accessing Request Data",
+            "content": "def my_view(request):\n    if request.method == 'GET':\n        name = request.GET.get('name', 'Anonymous')\n        return HttpResponse(f\"Hello, {name}\")\n    elif request.method == 'POST':\n        # Process form\n        name = request.POST.get('name')\n        ...",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Checkpoint 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "How do you access query string parameters (e.g., `?name=John`) in a Django view?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "request.QUERY",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "request.GET",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "request.POST",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "request.params",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`request.GET` is a dictionary‑like object containing all GET parameters.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "The HttpResponse Object 📤",
+            "content": "Your view must return an `HttpResponse` (or subclass). You can set content, status code, and headers.\n\nCommon subclasses:\n- `HttpResponse` – generic response\n- `JsonResponse` – returns JSON data\n- `HttpResponseRedirect` – redirects to another URL\n- `HttpResponseNotFound` – 404 (but usually you'd use `raise Http404`)"
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Creating Responses",
+            "content": "from django.http import HttpResponse, JsonResponse, HttpResponseRedirect\n\ndef my_view(request):\n    # Simple text\n    return HttpResponse(\"OK\", status=200)\n\n    # JSON\n    return JsonResponse({'key': 'value'})\n\n    # Redirect\n    return HttpResponseRedirect('/success/')\n\n    # Set headers\n    response = HttpResponse(\"Content\")\n    response['X-Custom'] = 'MyValue'\n    return response",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `shortcuts` for common tasks\n\nInstead of manually creating HttpResponse objects, use `render()` for templates, `redirect()` for redirects, and `get_object_or_404()` for database lookups."
+        }
+    ]
+}

@@ -1,0 +1,82 @@
+{
+    "id": "l3",
+    "chapterId": "ch_3",
+    "title": "URL Patterns and Routing",
+    "description": "Map URLs to views using `urlpatterns` and `path()`.",
+    "xpReward": 25,
+    "estimatedMinutes": 10,
+    "section": "URLs",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "URL Dispatcher 📍",
+            "content": "Django uses a **URL dispatcher** to match incoming requests to views. It's defined in the project's `urls.py` and optionally in app‑level `urls.py` files.\n\nThe `urlpatterns` list contains `path()` objects that specify a route and the view to call."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Basic URL Configuration",
+            "content": "In your project's main `urls.py`:",
+            "codeSnippet": "from django.contrib import admin\nfrom django.urls import path\nfrom myapp import views\n\nurlpatterns = [\n    path('admin/', admin.site.urls),\n    path('', views.home, name='home'),\n]",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "How Matching Works 🔎",
+            "content": "When a request comes in, Django goes through `urlpatterns` in order. The first pattern that matches the request URL (after stripping domain and GET parameters) is used. The matching view is called, and if no match is found, Django returns a 404 error."
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "Checkpoint 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What happens if no URL pattern matches the request?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Django returns a blank page",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Django raises an exception",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Django returns a 404 error",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Django redirects to the home page",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "If no pattern matches, Django sends a 404 (Not Found) response.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Including App URLs",
+            "content": "To keep things modular, you can include app‑level URLconfs:",
+            "codeSnippet": "# Project urls.py\nfrom django.urls import path, include\n\nurlpatterns = [\n    path('blog/', include('blog.urls')),\n]\n\n# Inside blog/urls.py\nfrom django.urls import path\nfrom . import views\n\nurlpatterns = [\n    path('', views.post_list, name='post_list'),\n    path('<int:post_id>/', views.post_detail, name='post_detail'),\n]",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Name your URLs\n\nAlways provide a `name` parameter in `path()`. It allows you to refer to URLs by name in templates and views, making your code more maintainable."
+        }
+    ]
+}

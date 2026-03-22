@@ -1,0 +1,16 @@
+{
+    "id": "task3",
+    "chapterId": "ch_3",
+    "title": "Handle Query Parameters",
+    "description": "Write a view that reads a 'search' query parameter and returns filtered results.",
+    "estimatedMinutes": 12,
+    "problemStatement": "## Your Mission\n\nCreate a view `search_posts` that accepts a `q` query parameter (e.g., `/search/?q=django`). It should:\n- Retrieve all posts from the database.\n- If `q` is provided, filter posts whose title contains the search term (case‑insensitive).\n- Return a simple HTML list of matching post titles.\n\nIf no `q` is given, return a message \"Enter a search term.\"\n\nDefine the URL pattern as `/search/` that maps to this view.",
+    "hints": [
+        "Use `request.GET.get('q')` to get the parameter.",
+        "Use `Post.objects.filter(title__icontains=q)` for case‑insensitive search.",
+        "Iterate over the QuerySet and build an HTML list.",
+        "Handle the case when the QuerySet is empty by showing \"No results\"."
+    ],
+    "expectedOutput": "When you visit `/search/?q=django`, you see a list of posts whose title contains 'django'. If no posts, see 'No results'. If no q, see 'Enter a search term'.",
+    "solutionCode": "# blog/views.py\nfrom django.http import HttpResponse\nfrom .models import Post\n\ndef search_posts(request):\n    q = request.GET.get('q')\n    if q:\n        posts = Post.objects.filter(title__icontains=q)\n        if posts.exists():\n            output = '<ul>' + ''.join(f'<li>{post.title}</li>' for post in posts) + '</ul>'\n        else:\n            output = '<p>No results found.</p>'\n    else:\n        output = '<p>Enter a search term.</p>'\n    return HttpResponse(output)\n\n# blog/urls.py – add path('search/', views.search_posts, name='search')"
+}

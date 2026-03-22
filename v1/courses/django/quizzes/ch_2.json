@@ -1,0 +1,234 @@
+{
+    "id": "quiz_ch_2",
+    "chapterId": "ch_2",
+    "title": "Chapter 2 Quiz: Models & Databases",
+    "description": "Test your knowledge of models, migrations, ORM, relationships, and model methods!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What does a Django model map to in the database?",
+            "options": [
+                "A row",
+                "A table",
+                "A column",
+                "A database"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Each model class corresponds to a database table."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "TextField is used for short strings and requires a max_length argument.",
+            "correctAnswer": false,
+            "explanation": "False. TextField is for long text and does not require max_length. CharField is for short strings and does require max_length."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "Which command creates migration files based on changes to models?",
+            "options": [
+                "python manage.py migrate",
+                "python manage.py makemigrations",
+                "python manage.py createsuperuser",
+                "python manage.py runserver"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`makemigrations` generates migration files; `migrate` applies them to the database."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "What is the result of `Post.objects.get(id=1)` if no post with id=1 exists?",
+            "options": [
+                "None",
+                "An empty QuerySet",
+                "Post.DoesNotExist exception",
+                "A new post is created"
+            ],
+            "correctAnswer": 2,
+            "explanation": "`get()` raises `DoesNotExist` when no object matches the criteria."
+        },
+        {
+            "id": "q5",
+            "type": "true_false",
+            "question": "The `on_delete` argument is optional for ForeignKey fields.",
+            "correctAnswer": false,
+            "explanation": "False. `on_delete` is required to specify what happens when the referenced object is deleted."
+        },
+        {
+            "id": "q6",
+            "type": "fill_blank",
+            "question": "To filter posts whose title contains the word 'Django' case‑insensitively, you would use `Post.objects.filter(title_____='Django')`.",
+            "options": [
+                "__icontains",
+                "__contains",
+                "__in",
+                "__startswith"
+            ],
+            "correctAnswer": "__icontains",
+            "explanation": "`__icontains` performs a case‑insensitive containment lookup."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "Which relationship would you use to model a User having a Profile (one profile per user)?",
+            "options": [
+                "ForeignKey",
+                "ManyToManyField",
+                "OneToOneField",
+                "GenericForeignKey"
+            ],
+            "correctAnswer": 2,
+            "explanation": "OneToOneField is for a strict one‑to‑one relationship, often used to extend a model."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "What does `Post.objects.filter(published_date__gte='2025-01-01')` do?",
+            "options": [
+                "Returns posts published on or after January 1, 2025",
+                "Returns posts published before January 1, 2025",
+                "Returns posts published exactly on January 1, 2025",
+                "Raises an error because the date format is wrong"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`__gte` means greater than or equal to."
+        },
+        {
+            "id": "q9",
+            "type": "true_false",
+            "question": "You can define custom methods on models, like `is_recent()`, and call them in templates.",
+            "correctAnswer": true,
+            "explanation": "Yes, any method defined on a model can be used in templates or views."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "What is the default database table name for a model `Article` inside an app named `blog`?",
+            "options": [
+                "Article",
+                "blog_article",
+                "article",
+                "blog_Article"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Django uses `appname_modelname` (lowercase). So `blog_article`."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "Which of the following is NOT a valid field option?",
+            "options": [
+                "max_length",
+                "blank",
+                "required",
+                "unique"
+            ],
+            "correctAnswer": 2,
+            "explanation": "`required` is not a field option; Django uses `blank` to control form validation and `null` for database nullability."
+        },
+        {
+            "id": "q12",
+            "type": "true_false",
+            "question": "The `migrate` command only applies pending migrations, it does not create new ones.",
+            "correctAnswer": true,
+            "explanation": "`migrate` applies existing migrations; `makemigrations` creates new ones."
+        },
+        {
+            "id": "q13",
+            "type": "fill_blank",
+            "question": "The method that returns the absolute URL for a model object, commonly used in templates, is `get________`.",
+            "options": [
+                "absolute_url",
+                "absolute",
+                "url",
+                "absolute_url"
+            ],
+            "correctAnswer": "absolute_url",
+            "explanation": "`get_absolute_url()` is a convention to return the object's URL."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "If you want to allow a field to be empty in a form but not NULL in the database, you should set:",
+            "options": [
+                "blank=True, null=False",
+                "blank=False, null=True",
+                "blank=True, null=True",
+                "blank=False, null=False"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`blank=True` allows empty input in forms; `null=False` ensures the database column is NOT NULL (default). For string fields, Django uses empty string instead of NULL."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "How would you retrieve all tags associated with a post object named `post`?",
+            "options": [
+                "post.tag_set.all()",
+                "post.tags.all()",
+                "post.tags",
+                "post.tag_set"
+            ],
+            "correctAnswer": 1,
+            "explanation": "If the ManyToManyField is named `tags`, then `post.tags.all()` returns the QuerySet of related tags."
+        },
+        {
+            "id": "q16",
+            "type": "true_false",
+            "question": "The `Meta` class inside a model is used to configure model‑level options like ordering and database table name.",
+            "correctAnswer": true,
+            "explanation": "True, Meta class is for metadata about the model."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "Which method would you use to update multiple records in one database query?",
+            "options": [
+                "save()",
+                "update()",
+                "modify()",
+                "alter()"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`update()` on a QuerySet performs a bulk update without retrieving each object."
+        },
+        {
+            "id": "q18",
+            "type": "fill_blank",
+            "question": "To order a QuerySet by the `created_at` field descending (newest first), you use `.order_by('_______')`.",
+            "options": [
+                "-created_at",
+                "created_at DESC",
+                "created_at desc",
+                "desc created_at"
+            ],
+            "correctAnswer": "-created_at",
+            "explanation": "Prefix with a minus sign for descending order."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "What does the `related_name` argument in a ForeignKey do?",
+            "options": [
+                "It sets the name of the foreign key column in the database",
+                "It defines the name to use for the reverse relation from the related model",
+                "It makes the field unique",
+                "It specifies the on_delete behavior"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`related_name` customizes the name of the reverse relation (e.g., `user.blog_posts` instead of `user.post_set`)."
+        },
+        {
+            "id": "q20",
+            "type": "true_false",
+            "question": "When you create a model with a ManyToManyField, Django automatically creates an intermediate table to handle the relationship.",
+            "correctAnswer": true,
+            "explanation": "Yes, Django creates a join table to manage the many‑to‑many relationship."
+        }
+    ]
+}

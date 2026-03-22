@@ -1,0 +1,125 @@
+{
+    "id": "l4",
+    "chapterId": "ch_2",
+    "title": "The Django ORM: Querying Data",
+    "description": "Learn how to create, retrieve, update, and delete records using Python code.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "ORM",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "What is an ORM? 🤖",
+            "content": "**Object‑Relational Mapper (ORM)** – it lets you interact with your database using Python objects, not SQL.\n\nDjango automatically translates Python method calls into SQL statements. For example, `Post.objects.all()` becomes `SELECT * FROM blog_post`."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Creating Records",
+            "content": "Use the model's `save()` method or the `create()` method:",
+            "codeSnippet": "# Option 1: Create and save\npost = Post(title=\"My First Post\", content=\"Hello world!\")\npost.save()\n\n# Option 2: Create directly\nPost.objects.create(title=\"Another Post\", content=\"More content\")",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which method would you use to get all objects from a model?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Post.objects.get()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Post.objects.all()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Post.objects.filter()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Post.objects.select()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`all()` returns a QuerySet containing all rows. `filter()` returns a subset, and `get()` returns a single object.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Retrieving Data",
+            "content": "Use the `objects` manager:",
+            "codeSnippet": "# Get all posts\nall_posts = Post.objects.all()\n\n# Get a single post by primary key (id)\npost = Post.objects.get(id=1)\n\n# Filter by field value\nrecent_posts = Post.objects.filter(published_date__year=2025)\n\n# Chain filters\nposts = Post.objects.filter(is_published=True).exclude(title__contains=\"draft\")",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Field Lookups 🔍",
+            "content": "Django provides double‑underscore lookups for field conditions:\n- `title__contains` – case‑sensitive containment\n- `title__icontains` – case‑insensitive\n- `published_date__gte` – greater than or equal\n- `published_date__lte` – less than or equal\n- `author__name__startswith` – can follow relationships"
+        },
+        {
+            "id": "s_l4_6",
+            "type": "code",
+            "title": "Updating and Deleting",
+            "content": "# Update\npost = Post.objects.get(id=1)\npost.title = \"Updated Title\"\npost.save()\n\n# Bulk update\nPost.objects.filter(is_published=False).update(is_published=True)\n\n# Delete\npost.delete()\nPost.objects.filter(title__contains=\"spam\").delete()",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "Checkpoint 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What is the correct way to delete all posts that have 'spam' in the title?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Post.objects.filter(title__contains='spam').delete()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Post.objects.delete(title__contains='spam')",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Post.objects.get(title='spam').delete()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Post.delete_all(title='spam')",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`filter()` returns a QuerySet; calling `delete()` on it deletes all matching rows.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `get()` only when you're sure one object exists\n\n`get()` raises `DoesNotExist` if no object is found and `MultipleObjectsReturned` if more than one. For safe retrieval, use `filter().first()`."
+        }
+    ]
+}

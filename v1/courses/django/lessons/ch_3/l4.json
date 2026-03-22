@@ -1,0 +1,85 @@
+{
+    "id": "l4",
+    "chapterId": "ch_3",
+    "title": "Capturing URL Parameters",
+    "description": "Pass dynamic parts of the URL to your views using converters.",
+    "xpReward": 30,
+    "estimatedMinutes": 12,
+    "section": "URLs",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Dynamic URLs 🎯",
+            "content": "Often you want URLs that contain variable parts, like `/blog/5/` where 5 is a post ID. Django's path converters allow you to capture these values and pass them to your view as arguments."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Using Converters",
+            "content": "Common converters: `int`, `str`, `slug`, `uuid`, `path`.",
+            "codeSnippet": "from django.urls import path\nfrom . import views\n\nurlpatterns = [\n    # Capture an integer\n    path('articles/<int:year>/', views.year_archive),\n    # Capture a string\n    path('articles/<str:slug>/', views.article_detail),\n    # Capture a path (including slashes)\n    path('pages/<path:page_path>/', views.page),\n]",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "View with Captured Parameters",
+            "content": "The view receives the captured values as arguments:",
+            "codeSnippet": "def year_archive(request, year):\n    # year is an integer (already converted)\n    return HttpResponse(f\"Articles from {year}\")\n\ndef article_detail(request, slug):\n    # slug is a string\n    return HttpResponse(f\"Article: {slug}\")",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "If you have a URL pattern `path('user/<int:user_id>/', views.profile)`, what type will the `user_id` parameter be in the view?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "String",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Integer",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Float",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "List",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `int` converter automatically converts the captured value to an integer before passing it to the view.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Optional Parameters",
+            "content": "You can make parts of the URL optional using regular expressions or by providing default values in the view. For example:",
+            "codeSnippet": "path('blog/<int:year>/', views.archive),\npath('blog/', views.archive, {'year': 2025}),  # default year\n\ndef archive(request, year=2025):\n    ...",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Use `slug` for SEO‑friendly URLs\n\nSlugs are strings that can contain letters, numbers, underscores, and hyphens. They're great for article titles: `my-first-post`."
+        }
+    ]
+}

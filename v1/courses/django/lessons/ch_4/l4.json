@@ -1,0 +1,82 @@
+{
+    "id": "l4",
+    "chapterId": "ch_4",
+    "title": "Template Inheritance & Reusability",
+    "description": "Create a base template and extend it to avoid repetition.",
+    "xpReward": 25,
+    "estimatedMinutes": 10,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The DRY Principle in Templates 📚",
+            "content": "Most websites have a consistent layout: header, footer, navigation. Instead of copying that HTML into every page, we create a **base template** and **extend** it.\n\n- `{% extends \"base.html\" %}` – tells Django to use the base template.\n- `{% block content %} ... {% endblock %}` – defines areas where child templates can insert content."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Base Template (base.html)",
+            "content": "<!DOCTYPE html>\n<html>\n<head>\n    <title>{% block title %}My Site{% endblock %}</title>\n</head>\n<body>\n    <header>\n        <h1>My Site</h1>\n        <nav>...</nav>\n    </header>\n\n    <main>\n        {% block content %}\n        {% endblock %}\n    </main>\n\n    <footer>\n        &copy; 2025\n    </footer>\n</body>\n</html>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Child Template (home.html)",
+            "content": "{% extends \"base.html\" %}\n\n{% block title %}Home Page{% endblock %}\n\n{% block content %}\n    <h2>Welcome to the Home Page</h2>\n    <p>This content replaces the block in base.html.</p>\n{% endblock %}",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which template tag is used to define a section that can be overridden by child templates?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "{% section %}",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "{% block %}",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "{% include %}",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "{% extends %}",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`{% block %}` defines a placeholder that child templates can fill. `{% extends %}` is used to inherit from a base template.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Using `include`",
+            "content": "For reusable components that are not layout‑wide, use `{% include \"navbar.html\" %}`. This inserts the content of another template at that point.\n\n```html\n{% include \"components/header.html\" %}\n```",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Use `block.super` to preserve parent content\n\nIn a child block, you can call `{{ block.super }}` to include the parent block's content and then add your own."
+        }
+    ]
+}

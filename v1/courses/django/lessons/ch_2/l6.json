@@ -1,0 +1,80 @@
+{
+    "id": "l6",
+    "chapterId": "ch_2",
+    "title": "Model Methods & Meta Options",
+    "description": "Add custom behavior to your models and control database structure with Meta class.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Custom Model Methods 🛠️",
+            "content": "You can define methods on your model classes to add custom logic. Common uses:\n- `__str__()`: returns a human‑readable representation\n- `get_absolute_url()`: returns the canonical URL for the object\n- Any helper method (e.g., `is_recent()`)\n\nThese methods can be called in templates or views."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Adding Methods",
+            "content": "class Post(models.Model):\n    title = models.CharField(max_length=200)\n    published_date = models.DateTimeField(auto_now_add=True)\n\n    def __str__(self):\n        return self.title\n\n    def is_recent(self):\n        from django.utils import timezone\n        return self.published_date >= timezone.now() - timezone.timedelta(days=7)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of the `__str__` method in a Django model?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To define the database table name",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To return a string representation of the object, used in admin and shell",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To validate model fields",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To handle URL routing",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`__str__` is a Python special method that returns a readable string. In Django, it's used in the admin interface, shell, and templates when you print an object.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Meta Class – Model Metadata 📋",
+            "content": "Inside a model, you can define a `class Meta` to set various options:\n\n- **`db_table`** – custom database table name (default is `appname_modelname`)\n- **`ordering`** – default ordering for queries\n- **`verbose_name`** / **`verbose_name_plural`** – human‑readable names\n- **`unique_together`** – enforce uniqueness across multiple fields\n- **`indexes`** – add database indexes"
+        },
+        {
+            "id": "s_l6_5",
+            "type": "code",
+            "title": "Using Meta Options",
+            "content": "class Post(models.Model):\n    title = models.CharField(max_length=200)\n    created_at = models.DateTimeField(auto_now_add=True)\n\n    class Meta:\n        ordering = ['-created_at']  # newest first\n        verbose_name_plural = \"Blog Posts\"\n        db_table = \"blog_article\"  # custom table name",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `ordering` to set a sensible default\n\nSetting `ordering` in `Meta` means you don't have to add `.order_by()` every time you query. But be aware it adds overhead to every query – use it when it makes sense for the model."
+        }
+    ]
+}

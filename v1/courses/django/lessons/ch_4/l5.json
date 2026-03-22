@@ -1,0 +1,80 @@
+{
+    "id": "l5",
+    "chapterId": "ch_4",
+    "title": "Static & Media Files",
+    "description": "Manage CSS, JavaScript, images, and user‑uploaded media.",
+    "xpReward": 30,
+    "estimatedMinutes": 12,
+    "section": "Static & Media",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Static Files vs. Media Files 🗂️",
+            "content": "**Static files** are part of your application (CSS, JS, images that don't change). **Media files** are user‑uploaded content (profile pictures, blog images).\n\n- Django collects static files from each app's `static/` folder and serves them in development.\n- Media files are handled separately, often stored in a `media/` folder and served by the web server in production."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Organizing Static Files",
+            "content": "Inside your app, create a `static` folder, and then a folder named after your app (to avoid conflicts):\n\n```\nmyapp/\n    static/\n        myapp/\n            css/\n                style.css\n            js/\n                script.js\n            images/\n                logo.png\n```\n\nIn templates, load the static files using the `{% static %}` tag:\n```html\n{% load static %}\n<link rel=\"stylesheet\" href=\"{% static 'myapp/css/style.css' %}\">\n<img src=\"{% static 'myapp/images/logo.png' %}\" alt=\"Logo\">\n```",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which template tag is used to generate the URL for a static file?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "{% media %}",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "{% static %}",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "{% url %}",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "{% file %}",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`{% static %}` is the correct tag, after loading `{% load static %}` at the top of the template.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Media Files (User Uploads) 📸",
+            "content": "For user‑uploaded files, you need to set `MEDIA_URL` and `MEDIA_ROOT` in `settings.py`. In development, you also add a URL pattern to serve media files.\n\n**settings.py:**\n```python\nMEDIA_URL = '/media/'\nMEDIA_ROOT = BASE_DIR / 'media'\n```\n\n**In your model:**\n```python\nclass Profile(models.Model):\n    avatar = models.ImageField(upload_to='avatars/')\n```\n\n**In template:**\n```html\n<img src=\"{{ profile.avatar.url }}\">\n```"
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Serving Media in Development",
+            "content": "Add this to your project's `urls.py` (only for development):\n\n```python\nfrom django.conf import settings\nfrom django.conf.urls.static import static\n\nurlpatterns = [\n    # ... your URLs\n]\n\nif settings.DEBUG:\n    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)\n```",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `collectstatic` for deployment\n\nIn production, run `python manage.py collectstatic` to gather all static files into a single directory (defined by `STATIC_ROOT`). Then configure your web server (like Nginx) to serve them."
+        }
+    ]
+}

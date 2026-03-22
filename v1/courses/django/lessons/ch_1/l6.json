@@ -1,0 +1,100 @@
+{
+    "id": "l6",
+    "chapterId": "ch_1",
+    "title": "Your First App: Hello World",
+    "description": "Create a Django app, write a simple view, and map a URL.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Build",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "code",
+            "title": "Create an App",
+            "content": "Inside your project folder (where `manage.py` is), run:",
+            "codeSnippet": "python manage.py startapp hello",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "What Did We Create? 📁",
+            "content": "The `startapp` command creates a new folder `hello/` with:\n\n```\nhello/\n    __init__.py\n    admin.py\n    apps.py\n    models.py\n    tests.py\n    views.py\n    migrations/\n```\n\n- **`views.py`** – Where we write functions that handle requests.\n- **`models.py`** – Database models (we’ll use later).\n- **`admin.py`** – Admin interface configuration.\n- **`migrations/`** – Database change history."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Write a Simple View",
+            "content": "Open `hello/views.py` and add:",
+            "codeSnippet": "from django.http import HttpResponse\n\ndef hello_world(request):\n    return HttpResponse(\"Hello, World! 🎉\")",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Map a URL to the View 🌍",
+            "content": "We need to tell Django to call this view when someone visits a URL. First, we’ll create a `urls.py` inside the `hello` app, then include it in the project’s main `urls.py`.\n\n**Step 1:** Create `hello/urls.py` with:\n\n```python\nfrom django.urls import path\nfrom . import views\n\nurlpatterns = [\n    path('', views.hello_world, name='hello'),\n]\n```\n\n**Step 2:** Edit the project’s `myfirstproject/urls.py` to include the app’s URLs:"
+        },
+        {
+            "id": "s_l6_5",
+            "type": "code",
+            "title": "Include App URLs",
+            "content": "Modify `myfirstproject/urls.py` to look like this:",
+            "codeSnippet": "from django.contrib import admin\nfrom django.urls import path, include\n\nurlpatterns = [\n    path('admin/', admin.site.urls),\n    path('hello/', include('hello.urls')),\n]",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_6",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "After creating the `hello` app and writing the view, which two steps are needed to make the view accessible at `/hello/`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Add 'hello' to INSTALLED_APPS and run the server",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Create an app-level urls.py and include it in the project's urls.py",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Run 'python manage.py migrate' and restart the server",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Add a new entry in settings.py under TEMPLATES",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "You need to define a URL pattern for the app (in its own urls.py) and then include that file in the project's main urls.py using `include()`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_7",
+            "type": "code",
+            "title": "See It Live!",
+            "content": "Run the development server (`python manage.py runserver`) and visit `http://127.0.0.1:8000/hello/`. You should see **Hello, World! 🎉**",
+            "codeSnippet": "python manage.py runserver",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Django’s URL resolver\n\nDjango goes through `urlpatterns` in order. The first matching pattern stops the search. Always order your patterns from most specific to most general."
+        }
+    ]
+}

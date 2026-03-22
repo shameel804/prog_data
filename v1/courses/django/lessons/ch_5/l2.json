@@ -1,0 +1,59 @@
+{
+    "id": "l2",
+    "chapterId": "ch_5",
+    "title": "Creating and Rendering Forms",
+    "description": "Define a form class and render it in a template.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Forms",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "code",
+            "title": "Defining a Simple Form",
+            "content": "Create a `forms.py` file in your app (or define forms in `views.py`).\n\n```python\nfrom django import forms\n\nclass ContactForm(forms.Form):\n    name = forms.CharField(max_length=100)\n    email = forms.EmailField()\n    message = forms.CharField(widget=forms.Textarea)\n```\n\nEach field corresponds to an HTML input. You can customize widgets (like `Textarea`) to change the rendering.",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Rendering Forms in Templates 🎨",
+            "content": "In your view, instantiate the form and pass it to the template.\n\n```python\nfrom .forms import ContactForm\n\ndef contact(request):\n    form = ContactForm()\n    return render(request, 'contact.html', {'form': form})\n```\n\nIn the template, you can render the whole form, individual fields, or manually loop.\n\n```html\n<form method=\"post\">\n    {% csrf_token %}\n    {{ form.as_p }}\n    <button type=\"submit\">Send</button>\n</form>\n```\n\n`as_p`, `as_table`, `as_ul` are shortcuts to wrap fields in paragraphs, table rows, or list items."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which method would you use to render a form as HTML table rows?",
+                "options": [
+                    "{{ form.as_p }}",
+                    "{{ form.as_table }}",
+                    "{{ form.as_ul }}",
+                    "{{ form.as_div }}"
+                ],
+                "correctAnswer": 1,
+                "explanation": "`as_table` outputs the form wrapped in `<tr>` tags. `as_p` uses `<p>`, `as_ul` uses `<li>`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Manual Rendering",
+            "content": "For full control, iterate over fields manually:\n```html\n<form method=\"post\">\n    {% csrf_token %}\n    {% for field in form %}\n        <div>\n            {{ field.label_tag }}\n            {{ field }}\n            {{ field.errors }}\n        </div>\n    {% endfor %}\n    <button type=\"submit\">Submit</button>\n</form>\n```",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_5",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Always include `{% csrf_token %}` in POST forms\n\nWithout it, Django will reject the submission with a 403 Forbidden error."
+        }
+    ]
+}

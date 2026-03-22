@@ -1,0 +1,16 @@
+{
+    "id": "task2",
+    "chapterId": "ch_1",
+    "title": "Your First Hello World App",
+    "description": "Create an app called `greetings` and make it display 'Hello, Django!' at the URL `/greet/`.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Build Your First View\n\nExtend the project you created in Task 1 (or start fresh if you prefer).\n\n1. Inside your Django project, create an app named `greetings`.\n2. In `greetings/views.py`, write a view function that returns an `HttpResponse` with the text `\"Hello, Django!\"`.\n3. Create a `urls.py` file inside the `greetings` app and define a URL pattern that maps the empty route (`''`) to your view.\n4. Include the app’s URLs in the project’s main `urls.py` so that the view is accessible at `/greet/`.\n5. Run the server and visit `http://127.0.0.1:8000/greet/` to see your message.",
+    "hints": [
+        "Don’t forget to add the app to `INSTALLED_APPS` in `settings.py`.",
+        "In the project’s main `urls.py`, use `path('greet/', include('greetings.urls'))`.",
+        "The `urls.py` inside the app should contain `path('', views.your_view_name)`.",
+        "Your view must return an `HttpResponse` object."
+    ],
+    "expectedOutput": "When you visit `http://127.0.0.1:8000/greet/`, the browser displays: Hello, Django!",
+    "solutionCode": "# greetings/views.py\nfrom django.http import HttpResponse\n\ndef hello(request):\n    return HttpResponse(\"Hello, Django!\")\n\n# greetings/urls.py\nfrom django.urls import path\nfrom . import views\n\nurlpatterns = [\n    path('', views.hello, name='hello'),\n]\n\n# project/urls.py (main)\nfrom django.contrib import admin\nfrom django.urls import path, include\n\nurlpatterns = [\n    path('admin/', admin.site.urls),\n    path('greet/', include('greetings.urls')),\n]\n\n# settings.py – add 'greetings' to INSTALLED_APPS\nINSTALLED_APPS = [\n    'django.contrib.admin',\n    'django.contrib.auth',\n    ...\n    'greetings',\n]"
+}

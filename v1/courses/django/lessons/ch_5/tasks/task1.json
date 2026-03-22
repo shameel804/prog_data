@@ -1,0 +1,17 @@
+{
+    "id": "task1",
+    "chapterId": "ch_5",
+    "title": "Create a Contact Form",
+    "description": "Build a contact form with name, email, and message fields. Handle validation and display success page.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Your Mission\n\nCreate a form that allows users to send a message. The form should have:\n- `name` (CharField, required)\n- `email` (EmailField, required)\n- `message` (CharField with textarea widget, required)\n\nIn the view:\n- If the form is valid, process the data (just print it to the console or store in session).\n- Redirect to a success page after submission.\n- If invalid, redisplay the form with errors.\n\nWrite the form class, view, and templates.",
+    "hints": [
+        "Create `forms.py` in your app and define `ContactForm`.",
+        "In the view, check `request.method` and instantiate form with `request.POST` for POST.",
+        "Use `form.is_valid()` to validate.",
+        "After success, use `redirect('success')`.",
+        "In templates, render the form with `{{ form.as_p }}` and include `{% csrf_token %}`."
+    ],
+    "expectedOutput": "When you submit the form with valid data, you are redirected to a success page. If data is invalid (e.g., missing email), the same page shows error messages.",
+    "solutionCode": "# forms.py\nfrom django import forms\n\nclass ContactForm(forms.Form):\n    name = forms.CharField(max_length=100)\n    email = forms.EmailField()\n    message = forms.CharField(widget=forms.Textarea)\n\n# views.py\nfrom django.shortcuts import render, redirect\nfrom .forms import ContactForm\n\ndef contact(request):\n    if request.method == 'POST':\n        form = ContactForm(request.POST)\n        if form.is_valid():\n            # Process data (e.g., send email)\n            print(form.cleaned_data)\n            return redirect('contact_success')\n    else:\n        form = ContactForm()\n    return render(request, 'contact.html', {'form': form})\n\ndef contact_success(request):\n    return render(request, 'success.html')\n\n# templates/contact.html\n<form method=\"post\">\n    {% csrf_token %}\n    {{ form.as_p }}\n    <button type=\"submit\">Send</button>\n</form>"
+}

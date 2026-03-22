@@ -1,0 +1,16 @@
+{
+    "id": "task3",
+    "chapterId": "ch_2",
+    "title": "Add Relationships",
+    "description": "Create an Author model and link it to Book using ForeignKey. Then add a ManyToMany relationship between Book and Genre.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Your Mission\n\nExtend the library app by adding two new models:\n\n1. **Author** with fields:\n   - `name` (CharField, max_length=100)\n   - `birth_year` (IntegerField, optional)\n\n2. **Genre** with a single field `name` (CharField, max_length=50).\n\nModify the `Book` model to:\n- Replace the `author` field (CharField) with a `ForeignKey` to `Author` (on_delete=models.CASCADE).\n- Add a `ManyToManyField` to `Genre` called `genres`.\n\nAfter making these changes, create and apply migrations. Then, in the Django shell, create at least one author, one book, and assign the book to that author and to one or two genres. Finally, query all books by a specific author.",
+    "hints": [
+        "You'll need to remove the old `author` field from Book and add the ForeignKey. This will require a migration; Django may ask for a default value – you can choose to delete the old data or provide a default.",
+        "Use `ForeignKey(Author, on_delete=models.CASCADE)`.",
+        "Use `ManyToManyField(Genre)`.",
+        "After creating objects, you can assign related objects using assignment: `book.author = author` and `book.genres.add(genre1, genre2)`."
+    ],
+    "expectedOutput": "After migrations, the database should have tables for `library_author`, `library_genre`, `library_book` (with updated columns), and a join table `library_book_genres`. When you query books by author, you should see the correct books.",
+    "solutionCode": "# library/models.py\nfrom django.db import models\n\nclass Author(models.Model):\n    name = models.CharField(max_length=100)\n    birth_year = models.IntegerField(null=True, blank=True)\n\n    def __str__(self):\n        return self.name\n\nclass Genre(models.Model):\n    name = models.CharField(max_length=50)\n\n    def __str__(self):\n        return self.name\n\nclass Book(models.Model):\n    title = models.CharField(max_length=200)\n    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='books')\n    published_year = models.IntegerField()\n    isbn = models.CharField(max_length=13, unique=True)\n    genres = models.ManyToManyField(Genre, related_name='books')\n\n    def __str__(self):\n        return self.title\n\n# Shell example:\n# from library.models import Author, Genre, Book\n# author = Author.objects.create(name='Jane Austen', birth_year=1775)\n# genre1 = Genre.objects.create(name='Fiction')\n# genre2 = Genre.objects.create(name='Romance')\n# book = Book.objects.create(title='Pride and Prejudice', author=author, published_year=1813, isbn='1234567890123')\n# book.genres.add(genre1, genre2)\n# jane_books = Book.objects.filter(author=author)"
+}

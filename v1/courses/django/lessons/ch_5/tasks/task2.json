@@ -1,0 +1,16 @@
+{
+    "id": "task2",
+    "chapterId": "ch_5",
+    "title": "Build a ModelForm for Blog Posts",
+    "description": "Create a ModelForm for a Post model and implement a view to create new posts.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Your Mission\n\nAssume you have a `Post` model with fields `title`, `content`, and `author` (ForeignKey to User). Create a ModelForm that allows users to create new posts.\n\n- The form should include only `title` and `content` (author will be set automatically from the logged‑in user).\n- In the view, if the form is valid, create a new post with the current user as author and redirect to the post detail page.\n- Use the `{% url %}` tag to generate the success URL.\n- Ensure that only authenticated users can access the form (use `@login_required` decorator).\n\nWrite the ModelForm, view, and template.",
+    "hints": [
+        "Define `PostForm` with `class Meta: model = Post; fields = ['title', 'content']`.",
+        "In the view, after `form.is_valid()`, call `form.save(commit=False)`, assign `post.author = request.user`, then `post.save()`.",
+        "Redirect to a named URL (e.g., `post_detail` with the post's id).",
+        "Use `@login_required` from `django.contrib.auth.decorators` to restrict access."
+    ],
+    "expectedOutput": "Logged‑in users can visit `/create/` to see the form. Submitting valid data creates a new post and redirects to its detail page.",
+    "solutionCode": "# models.py (already exists)\nfrom django.db import models\nfrom django.contrib.auth.models import User\n\nclass Post(models.Model):\n    title = models.CharField(max_length=200)\n    content = models.TextField()\n    author = models.ForeignKey(User, on_delete=models.CASCADE)\n\n# forms.py\nfrom django.forms import ModelForm\nfrom .models import Post\n\nclass PostForm(ModelForm):\n    class Meta:\n        model = Post\n        fields = ['title', 'content']\n\n# views.py\nfrom django.shortcuts import render, redirect, get_object_or_404\nfrom django.contrib.auth.decorators import login_required\nfrom .forms import PostForm\nfrom .models import Post\n\n@login_required\ndef create_post(request):\n    if request.method == 'POST':\n        form = PostForm(request.POST)\n        if form.is_valid():\n            post = form.save(commit=False)\n            post.author = request.user\n            post.save()\n            return redirect('post_detail', post_id=post.id)\n    else:\n        form = PostForm()\n    return render(request, 'create_post.html', {'form': form})\n\ndef post_detail(request, post_id):\n    post = get_object_or_404(Post, id=post_id)\n    return render(request, 'post_detail.html', {'post': post})\n\n# templates/create_post.html\n<form method=\"post\">\n    {% csrf_token %}\n    {{ form.as_p }}\n    <button type=\"submit\">Create Post</button>\n</form>"
+}

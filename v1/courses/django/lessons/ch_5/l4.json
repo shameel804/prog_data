@@ -1,0 +1,59 @@
+{
+    "id": "l4",
+    "chapterId": "ch_5",
+    "title": "ModelForms: Forms from Models",
+    "description": "Create forms directly from your models to save time.",
+    "xpReward": 25,
+    "estimatedMinutes": 10,
+    "section": "ModelForms",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Why ModelForm? 🤝",
+            "content": "If you have a model and want a form to create or edit instances, `ModelForm` automatically generates fields based on the model's fields. It handles validation and saving."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Creating a ModelForm",
+            "content": "Assume you have a `Post` model:\n```python\nfrom django.db import models\n\nclass Post(models.Model):\n    title = models.CharField(max_length=200)\n    content = models.TextField()\n    author = models.ForeignKey(User, on_delete=models.CASCADE)\n```\n\nDefine a ModelForm:\n```python\nfrom django.forms import ModelForm\nfrom .models import Post\n\nclass PostForm(ModelForm):\n    class Meta:\n        model = Post\n        fields = ['title', 'content']  # or '__all__'\n        # exclude = ['author']  # alternative\n```\n\nThe form will have fields `title` and `content` with appropriate widgets and validation from the model.",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is the main advantage of using a ModelForm over a regular Form?",
+                "options": [
+                    "It automatically saves the object to the database",
+                    "It automatically generates fields based on a model and handles saving",
+                    "It doesn't require a CSRF token",
+                    "It's faster to render"
+                ],
+                "correctAnswer": 1,
+                "explanation": "ModelForm saves time by inferring field definitions from a model and provides a `save()` method to create/update database records.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Using ModelForm in a View",
+            "content": "def create_post(request):\n    if request.method == 'POST':\n        form = PostForm(request.POST)\n        if form.is_valid():\n            # Save without committing to assign author later\n            post = form.save(commit=False)\n            post.author = request.user\n            post.save()\n            return redirect('post_list')\n    else:\n        form = PostForm()\n    return render(request, 'create_post.html', {'form': form})",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Use `fields = '__all__'` carefully\n\nIt includes all model fields, which may expose sensitive fields. Always specify the fields you want users to edit."
+        }
+    ]
+}
