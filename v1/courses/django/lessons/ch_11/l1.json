@@ -1,0 +1,51 @@
+{
+    "id": "l1",
+    "chapterId": "ch_11",
+    "title": "Preparing for Deployment",
+    "description": "Learn the steps to take before pushing your Django app to production.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Preparation",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "From Development to Production 🚢",
+            "content": "# Key Differences\n\nDevelopment and production environments have different requirements. Before deploying, you must:\n- **Set `DEBUG = False`** – never run with debug on in production.\n- **Choose a production database** – SQLite is fine for development, but use PostgreSQL, MySQL, etc. in production.\n- **Configure allowed hosts** – set `ALLOWED_HOSTS` to your domain(s).\n- **Use a production web server** – Django’s `runserver` is not safe for production; use Gunicorn, uWSGI, or ASGI servers.\n- **Serve static/media files** – no longer served by Django."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What is the first thing you should do when moving from development to production?",
+                "options": [
+                    "Keep DEBUG = True for debugging",
+                    "Set DEBUG = False",
+                    "Change the database to SQLite",
+                    "Remove ALLOWED_HOSTS"
+                ],
+                "correctAnswer": 1,
+                "explanation": "`DEBUG = False` is essential to avoid exposing sensitive information and to enable security features.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "code",
+            "title": "Production‑Ready Settings Snippet",
+            "content": "# settings.py\nDEBUG = False\nALLOWED_HOSTS = ['yourdomain.com', 'www.yourdomain.com']\n\n# Use a secure database\nDATABASES = {\n    'default': {\n        'ENGINE': 'django.db.backends.postgresql',\n        'NAME': 'mydb',\n        'USER': 'user',\n        'PASSWORD': 'secret',\n        'HOST': 'localhost',\n        'PORT': '5432',\n    }\n}\n\n# Static files (collected via collectstatic)\nSTATIC_ROOT = BASE_DIR / 'staticfiles'\nSTATIC_URL = '/static/'\n\n# Media files (user uploads)\nMEDIA_ROOT = BASE_DIR / 'media'\nMEDIA_URL = '/media/'",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_4",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Use separate settings files\n\nCreate `settings/base.py`, `settings/dev.py`, `settings/prod.py` and inherit from base. This keeps configurations clean."
+        }
+    ]
+}

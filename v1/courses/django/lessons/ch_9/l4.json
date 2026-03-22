@@ -1,0 +1,82 @@
+{
+    "id": "l4",
+    "chapterId": "ch_9",
+    "title": "ViewSets and Routers",
+    "description": "Organize API endpoints using ViewSets and automatically generate URLs with routers.",
+    "xpReward": 30,
+    "estimatedMinutes": 12,
+    "section": "Views",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "ViewSets: All Actions in One Class 🧩",
+            "content": "A **ViewSet** is a class that groups all CRUD actions (list, create, retrieve, update, delete) for a resource. Instead of writing multiple views, you write one ViewSet and a **router** automatically generates the URL patterns.\n\nDRF provides `ModelViewSet` which includes default implementations for standard actions."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Creating a ViewSet",
+            "content": "from rest_framework import viewsets\nfrom .models import Post\nfrom .serializers import PostSerializer\n\nclass PostViewSet(viewsets.ModelViewSet):\n    queryset = Post.objects.all()\n    serializer_class = PostSerializer",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which ViewSet includes built‑in actions for list, create, retrieve, update, and delete?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "ViewSet",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "GenericViewSet",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "ModelViewSet",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "APIViewSet",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`ModelViewSet` provides full CRUD actions. `ViewSet` is a base class, `GenericViewSet` provides base methods for custom actions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Using Routers",
+            "content": "# urls.py\nfrom django.urls import path, include\nfrom rest_framework.routers import DefaultRouter\nfrom .views import PostViewSet\n\nrouter = DefaultRouter()\nrouter.register(r'posts', PostViewSet)  # registers /posts/ endpoint\n\nurlpatterns = [\n    path('', include(router.urls)),\n]\n\n# This automatically creates:\n# GET    /posts/          → list\n# POST   /posts/          → create\n# GET    /posts/{id}/     → retrieve\n# PUT    /posts/{id}/     → update\n# DELETE /posts/{id}/     → destroy",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Custom Actions",
+            "content": "You can add custom actions using the `@action` decorator:\n\n```python\nfrom rest_framework.decorators import action\nfrom rest_framework.response import Response\n\nclass PostViewSet(viewsets.ModelViewSet):\n    # ...\n\n    @action(detail=False, methods=['get'])\n    def recent(self, request):\n        recent_posts = self.get_queryset().order_by('-created_at')[:5]\n        serializer = self.get_serializer(recent_posts, many=True)\n        return Response(serializer.data)\n```\n\nThis creates a URL `/posts/recent/`.",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Use `router` to keep your URLs DRY\n\nRouters automatically generate URLs, reducing boilerplate. You can also mix router URLs with custom URL patterns."
+        }
+    ]
+}

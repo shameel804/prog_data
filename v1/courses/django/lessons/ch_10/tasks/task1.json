@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_10",
+    "title": "Write a Test for Post Model",
+    "description": "Create a test to verify that a Post instance has a string representation and a method works.",
+    "estimatedMinutes": 10,
+    "problemStatement": "## Your Mission\n\nGiven a `Post` model with fields `title` and `content`, and a method `summary()` that returns the first 50 characters of the content, write a test class in `tests.py` that:\n- Creates a post.\n- Checks that `str(post)` returns the title.\n- Checks that `post.summary()` returns the first 50 characters (or less if content shorter).\n\nUse the `TestCase` class.",
+    "hints": [
+        "Create a test method `test_post_str_method` and `test_post_summary`.",
+        "Use `self.assertEqual()` to compare expected and actual.",
+        "Create a post using `Post.objects.create(title='...', content='...')`."
+    ],
+    "expectedOutput": "When you run `python manage.py test`, the tests should pass.",
+    "solutionCode": "# blog/tests.py\nfrom django.test import TestCase\nfrom .models import Post\n\nclass PostModelTest(TestCase):\n    def test_post_str_method(self):\n        post = Post.objects.create(title='My Post', content='Some content')\n        self.assertEqual(str(post), 'My Post')\n\n    def test_post_summary(self):\n        long_content = 'x' * 100\n        post = Post.objects.create(title='Test', content=long_content)\n        self.assertEqual(post.summary(), 'x' * 50)\n        \n        short_content = 'Short'\n        post2 = Post.objects.create(title='Test', content=short_content)\n        self.assertEqual(post2.summary(), short_content)"
+}

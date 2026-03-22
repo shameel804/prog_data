@@ -1,0 +1,65 @@
+{
+    "id": "l4",
+    "chapterId": "ch_10",
+    "title": "Debugging Tools and Techniques",
+    "description": "Use Django Debug Toolbar, logging, and PDB to find and fix bugs.",
+    "xpReward": 25,
+    "estimatedMinutes": 10,
+    "section": "Debugging",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Django Debug Toolbar 🧰",
+            "content": "The **Django Debug Toolbar** is a must‑have for development. It adds a sidebar with panels showing:\n- SQL queries executed (and their time).\n- Request/response headers.\n- Cache usage.\n- Templates used.\n- Signals.\n\nInstallation:\n```bash\npip install django-debug-toolbar\n```\n\nAdd to `INSTALLED_APPS` and configure middleware and internal IPs in `settings.py`."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Basic Debug Toolbar Setup",
+            "content": "# settings.py (development)\nINSTALLED_APPS = [\n    ...\n    'debug_toolbar',\n]\n\nMIDDLEWARE = [\n    'debug_toolbar.middleware.DebugToolbarMiddleware',\n    ...\n]\n\nINTERNAL_IPS = ['127.0.0.1']\n\n# urls.py (project)\nfrom django.conf import settings\nfrom django.urls import include, path\n\nif settings.DEBUG:\n    import debug_toolbar\n    urlpatterns += [path('__debug__/', include(debug_toolbar.urls))]",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does Django Debug Toolbar primarily help with?",
+                "options": [
+                    "Writing tests",
+                    "Inspecting SQL queries, performance, and request details",
+                    "Deploying to production",
+                    "Managing static files"
+                ],
+                "correctAnswer": 1,
+                "explanation": "Debug Toolbar provides insights into queries, cache, templates, etc., helping you find performance bottlenecks and bugs.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Logging 📝",
+            "content": "Django’s logging system lets you record messages at different levels (`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`). Configure it in `settings.py`. Example:\n\n```python\nLOGGING = {\n    'version': 1,\n    'handlers': {\n        'console': {'class': 'logging.StreamHandler'},\n    },\n    'root': {'handlers': ['console'], 'level': 'INFO'},\n}\n```\n\nIn code: `import logging; logger = logging.getLogger(__name__); logger.error('Something went wrong')`"
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Using PDB (Python Debugger)",
+            "content": "Insert a breakpoint with `import pdb; pdb.set_trace()` in your code. When execution hits that line, you'll get an interactive shell.\n\nCommon commands:\n- `n` (next) – execute next line.\n- `s` (step) – step into function.\n- `c` (continue) – continue execution.\n- `p variable` – print variable.\n- `q` (quit) – exit debugger.\n\nFrom Django 3.2+, you can also use `breakpoint()` (Python 3.7+).",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Use `ipdb` for a nicer debugger\n\nInstall `ipdb` (`pip install ipdb`) and use `import ipdb; ipdb.set_trace()`. It provides tab completion and syntax highlighting."
+        }
+    ]
+}

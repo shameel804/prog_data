@@ -1,0 +1,65 @@
+{
+    "id": "l4",
+    "chapterId": "ch_7",
+    "title": "Permissions and Groups",
+    "description": "Control access to views and models with permissions and user groups.",
+    "xpReward": 25,
+    "estimatedMinutes": 10,
+    "section": "Authorization",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Default Permissions 🛡️",
+            "content": "For every model, Django automatically creates three basic permissions:\n- `add_modelname` – can add a new instance.\n- `change_modelname` – can edit an instance.\n- `delete_modelname` – can delete an instance.\n\nThese permissions are stored in the `Permission` model and can be assigned to users or groups."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Checking Permissions in Views",
+            "content": "def edit_post(request, post_id):\n    post = get_object_or_404(Post, id=post_id)\n    if not request.user.has_perm('blog.change_post'):\n        return HttpResponseForbidden()\n    # ...\n\n# Or in template:\n{% if perms.blog.change_post %}\n    <a href=\"{% url 'edit_post' post.id %}\">Edit</a>\n{% endif %}",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What are the three default permissions Django creates for a model named `Post`?",
+                "options": [
+                    "create, read, update, delete",
+                    "add, change, delete",
+                    "view, edit, remove",
+                    "can_view, can_edit, can_delete"
+                ],
+                "correctAnswer": 1,
+                "explanation": "Django creates add, change, and delete permissions. There is no 'view' permission by default, though it can be added.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Using Groups",
+            "content": "# Create a group\nfrom django.contrib.auth.models import Group, Permission\n\neditors = Group.objects.create(name='Editors')\npermission = Permission.objects.get(codename='change_post')\neditors.permissions.add(permission)\n\n# Add user to group\nuser.groups.add(editors)\n\n# Check if user is in group\nif user.groups.filter(name='Editors').exists():\n    ...",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Using `@permission_required` Decorator",
+            "content": "Instead of manually checking permissions, you can use the decorator:\n\n```python\nfrom django.contrib.auth.decorators import permission_required\n\n@permission_required('blog.change_post')\ndef edit_post(request, post_id):\n    ...\n```\n\nThis will redirect unauthenticated users to login, and show a 403 for authenticated users without the permission."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Use `user.has_perm()` with permission codenames\n\nPermissions are formatted as `app_label.permission_codename`. For example, `blog.change_post`."
+        }
+    ]
+}

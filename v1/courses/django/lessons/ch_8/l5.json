@@ -1,0 +1,80 @@
+{
+    "id": "l5",
+    "chapterId": "ch_8",
+    "title": "Mixins and Custom Behavior",
+    "description": "Compose reusable behaviors with mixins and override methods to fine‑tune views.",
+    "xpReward": 30,
+    "estimatedMinutes": 12,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "What are Mixins? 🧬",
+            "content": "A **mixin** is a class that provides a specific piece of functionality. In Django, mixins are used to add capabilities to class‑based views (like login required, permission checks, etc.).\n\nYou can create your own mixins by subclassing `object` and adding methods. Then your view can inherit from the mixin and a generic view."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "LoginRequiredMixin Example",
+            "content": "from django.contrib.auth.mixins import LoginRequiredMixin\nfrom django.views.generic import CreateView\n\nclass PostCreateView(LoginRequiredMixin, CreateView):\n    model = Post\n    fields = ['title', 'content']\n    success_url = reverse_lazy('post_list')\n\n    # You can customize redirect URL\n    login_url = '/accounts/login/'\n    redirect_field_name = 'next'",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the correct order of inheritance when using a mixin with a generic view?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "GenericView first, then Mixin",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Mixin first, then GenericView",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Order doesn't matter",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They cannot be combined",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Mixins should come before the base view so that their methods are resolved first (Python's MRO).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Creating a Custom Mixin",
+            "content": "class UserIsAuthorMixin:\n    \"\"\"Ensure the current user is the author of the object.\"\"\"\n    def dispatch(self, request, *args, **kwargs):\n        obj = self.get_object()\n        if obj.author != request.user:\n            raise PermissionDenied\n        return super().dispatch(request, *args, **kwargs)\n\nclass PostUpdateView(UserIsAuthorMixin, UpdateView):\n    model = Post\n    fields = ['title', 'content']\n    success_url = reverse_lazy('post_list')",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Method Overriding 🛠️",
+            "content": "You can override many methods to customize behavior:\n- `get_queryset()` – change the base queryset.\n- `get_object()` – customize how the object is retrieved.\n- `get_context_data()` – add to template context.\n- `get_success_url()` – dynamic redirect after success.\n- `form_valid()` / `form_invalid()` – custom form processing.\n\nThese methods give you full control while still benefiting from generic view defaults."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Use `View` as a base for custom classes\n\nIf you need a view that doesn’t fit any generic pattern, subclass `View` and implement `get()`, `post()`, etc. It gives you full control while still being a class."
+        }
+    ]
+}

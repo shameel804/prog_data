@@ -1,0 +1,25 @@
+{
+    "id": "project2",
+    "title": "RESTful API for Blog",
+    "description": "Create a REST API for the blog using Django REST Framework, including token authentication.",
+    "difficulty": "Intermediate",
+    "estimatedHours": "3-5",
+    "problemStatement": "## Your Mission\n\nBuild a REST API for the blog application you created in Project 1 (or start fresh). The API should allow:\n\n- List all posts (GET /api/posts/).\n- Create a new post (POST /api/posts/).\n- Retrieve a single post (GET /api/posts/<id>/).\n- Update a post (PUT /api/posts/<id>/).\n- Delete a post (DELETE /api/posts/<id>/).\n- List comments for a post (GET /api/posts/<id>/comments/).\n- Add a comment (POST /api/posts/<id>/comments/).\n\nUse token authentication so that only authenticated users can create, update, or delete posts. Unauthenticated users can only read posts and comments.\n\n**Requirements:**\n- Install Django REST Framework and configure it.\n- Create serializers for Post and Comment.\n- Use `ModelViewSet` for Post and a `ModelViewSet` with a custom `get_queryset` for Comment.\n- Register the viewsets with a `DefaultRouter`.\n- Add token authentication; ensure that the token can be obtained via a built‑in view (`obtain_auth_token`).\n- Protect write operations with `IsAuthenticatedOrReadOnly` permission.\n- Ensure that when a post is created, the `author` is automatically set to the authenticated user.\n- Provide a browsable API interface.\n\n**Optional Enhancements:**\n- Add filtering (e.g., posts by a specific user).\n- Add pagination.\n- Write tests for the API endpoints.",
+    "requirements": [
+        "Install and configure DRF with token authentication.",
+        "Create serializers for Post and Comment models.",
+        "Implement ViewSets for Post and Comment with appropriate permissions.",
+        "Use a router to generate URL patterns.",
+        "Ensure that POST requests to /api/posts/ set the author from the request user.",
+        "Create a custom action on the PostViewSet to list comments (or use a separate viewset).",
+        "Test the API using the browsable interface and with curl or Postman."
+    ],
+    "hints": [
+        "In `perform_create()` of PostViewSet, set `serializer.save(author=self.request.user)`.",
+        "For comments, you might create a `CommentViewSet` with a `get_queryset` that filters by post_id from the URL.",
+        "Use `@action(detail=True, methods=['get'])` to add a custom endpoint for comments.",
+        "Add `'rest_framework.authtoken'` to INSTALLED_APPS and run `migrate` to create the token table.",
+        "Set `DEFAULT_AUTHENTICATION_CLASSES` to include `TokenAuthentication`."
+    ],
+    "expectedOutput": "A REST API that can be consumed by a frontend framework or mobile app. The browsable API should show endpoints and allow testing."
+}

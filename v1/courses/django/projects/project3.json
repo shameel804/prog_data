@@ -1,0 +1,26 @@
+{
+    "id": "project3",
+    "title": "Social Media Dashboard",
+    "description": "Build a dashboard that aggregates posts from multiple sources, uses caching, and includes async views.",
+    "difficulty": "Advanced",
+    "estimatedHours": "6-8",
+    "problemStatement": "## Your Mission\n\nCreate a dashboard that aggregates posts from a Django REST API (your own or a public one) and displays them with caching to improve performance. The dashboard should also include a real‑time activity feed using WebSockets (or polling with async views).\n\n**Features:**\n- Fetch posts from a remote API (e.g., JSONPlaceholder, or your own API from Project 2) and display them.\n- Cache the fetched posts for 5 minutes to avoid hitting the API on every request.\n- Allow users to mark posts as favorites (store favorites in a database).\n- Show a list of favorite posts with the ability to remove.\n- Implement a live activity feed that updates every 10 seconds (using JavaScript polling or WebSockets).\n- Use Django's caching framework with Redis (or memcached) to store API responses.\n- Use `select_related` and `prefetch_related` appropriately for database queries.\n- Write an async view that fetches data from an external API without blocking (using `httpx` or `aiohttp`).\n\n**Requirements:**\n- Set up a cache backend (Redis or database) and configure it in settings.\n- Create a view that fetches posts from a remote API and caches the result.\n- Implement a model to store user favorites.\n- Use class‑based views with caching decorators (`cache_page`).\n- Use `sync_to_async` in an async view to interact with the database.\n- Add a JavaScript frontend (maybe using Fetch API) to update the feed dynamically.\n\n**Optional Enhancements:**\n- Use Django Channels for WebSocket real‑time updates.\n- Add user authentication so favorites are per user.\n- Display loading indicators.\n- Use Celery to periodically update the cached feed.",
+    "requirements": [
+        "Install and configure a cache backend (e.g., Redis via `django-redis`).",
+        "Create a view that fetches posts from an external API and caches them for 5 minutes.",
+        "Implement a model `Favorite` with ForeignKey to User and Post (store post ID from external API).",
+        "Provide endpoints to add/remove favorites.",
+        "Use async view to fetch external API data (e.g., using `httpx`).",
+        "Implement a JavaScript script that polls the async endpoint every 10 seconds and updates the feed.",
+        "Optimize database queries with `select_related`/`prefetch_related` where applicable."
+    ],
+    "hints": [
+        "For caching, you can use `cache.get()` and `cache.set()` with a timeout.",
+        "Use `httpx.AsyncClient` in an async view to fetch data concurrently.",
+        "For favorites, you might create a `Favorite` model with `user` and `post_id` (CharField).",
+        "In the template, use `{% load cache %}` to cache parts of the page.",
+        "Set up `CACHES` in settings; for development you can use `django.core.cache.backends.locmem.LocMemCache`.",
+        "Use `sync_to_async` to save favorites from an async view."
+    ],
+    "expectedOutput": "A dashboard that displays posts from an external API, caches them, allows users to mark favorites, and updates the feed periodically without page reloads."
+}

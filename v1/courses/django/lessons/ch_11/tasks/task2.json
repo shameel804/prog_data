@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_11",
+    "title": "Set Up Static Files for Production",
+    "description": "Configure STATIC_ROOT, run collectstatic, and test with Whitenoise.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Your Mission\n\nPrepare your app for production static file serving:\n1. Set `STATIC_ROOT = BASE_DIR / 'staticfiles'`.\n2. Install `whitenoise` and add it to `MIDDLEWARE`.\n3. Run `python manage.py collectstatic`.\n4. Run your app with `gunicorn` (or test locally with `runserver` after disabling DEBUG) to ensure static files are served.",
+    "hints": [
+        "Add `whitenoise` to requirements: `pip install whitenoise`.",
+        "Add `whitenoise.middleware.WhiteNoiseMiddleware` to MIDDLEWARE, after SecurityMiddleware.",
+        "Ensure `DEBUG` is False to test production behavior."
+    ],
+    "expectedOutput": "After collecting static files, your static assets (CSS, JS) are served correctly even when `DEBUG=False`.",
+    "solutionCode": "# settings.py\nSTATIC_ROOT = BASE_DIR / 'staticfiles'\n\nMIDDLEWARE = [\n    'django.middleware.security.SecurityMiddleware',\n    'whitenoise.middleware.WhiteNoiseMiddleware',\n    ...\n]\n\n# Terminal\npython manage.py collectstatic\n# Then run gunicorn or set DEBUG=False and use runserver to test"
+}

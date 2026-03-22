@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_7",
+    "title": "Implement Permissions for Blog Posts",
+    "description": "Add permissions to control who can edit and delete posts, and enforce them in views.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Your Mission\n\nAssume you have a `Post` model with `author` (ForeignKey to User).\n\n1. Create a group called `Editors` and give it the `change_post` permission.\n2. In the view that edits a post, ensure the user has either the `change_post` permission OR is the author of the post.\n3. In the view that deletes a post, ensure the user has the `delete_post` permission.\n4. In templates, show/hide edit/delete buttons based on these permissions.\n\nUse the `@permission_required` decorator where appropriate, and combine with custom logic in the view for the author check.",
+    "hints": [
+        "Use `@permission_required('blog.change_post')` but also check `post.author == request.user`.",
+        "For the author check, you may need to bypass the permission decorator and write a custom check in the view.",
+        "To show/hide buttons in template, use `{% if perms.blog.change_post or post.author == user %}`."
+    ],
+    "expectedOutput": "Only editors or the post author can edit; only users with delete permission can delete. Buttons appear accordingly.",
+    "solutionCode": "# views.py\nfrom django.contrib.auth.decorators import login_required, permission_required\nfrom django.shortcuts import get_object_or_404, redirect\n\n@login_required\ndef edit_post(request, post_id):\n    post = get_object_or_404(Post, id=post_id)\n    if not (request.user.has_perm('blog.change_post') or post.author == request.user):\n        return HttpResponseForbidden()\n    # ... edit logic\n\n@permission_required('blog.delete_post')\ndef delete_post(request, post_id):\n    post = get_object_or_404(Post, id=post_id)\n    post.delete()\n    return redirect('post_list')\n\n# template snippet\n{% if perms.blog.change_post or post.author == user %}\n    <a href=\"{% url 'edit_post' post.id %}\">Edit</a>\n{% endif %}\n{% if perms.blog.delete_post %}\n    <a href=\"{% url 'delete_post' post.id %}\">Delete</a>\n{% endif %}"
+}

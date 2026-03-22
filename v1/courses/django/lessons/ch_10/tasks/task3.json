@@ -1,0 +1,14 @@
+{
+    "id": "task3",
+    "chapterId": "ch_10",
+    "title": "Use Fixtures or Factories",
+    "description": "Create a fixture or factory for test data and use it in a test.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Your Mission\n\nChoose one approach:\n- **Fixtures**: Dump some posts from your database into a fixture file, then load that fixture in a test class. Write a test that verifies the number of posts loaded.\n- **Factories**: Install `factory_boy`, create a `PostFactory` that generates random titles and content. In a test, create 5 posts using the factory and assert that 5 posts exist in the database.\n\nWrite the necessary code and test.",
+    "hints": [
+        "For fixtures: `python manage.py dumpdata blog.Post > blog/fixtures/posts.json`, then add `fixtures = ['posts.json']` to your test class.",
+        "For factory: define `class PostFactory(factory.django.DjangoModelFactory):` with `title = factory.Faker('sentence')` and `content = factory.Faker('paragraph')`. Then in test, `PostFactory.create_batch(5)` and check count."
+    ],
+    "expectedOutput": "The test should pass, confirming the data is loaded or created correctly.",
+    "solutionCode": "# Option: Factory (requires factory_boy)\n# factories.py\nimport factory\nfrom .models import Post\n\nclass PostFactory(factory.django.DjangoModelFactory):\n    class Meta:\n        model = Post\n    title = factory.Faker('sentence')\n    content = factory.Faker('paragraph')\n\n# tests.py\nfrom django.test import TestCase\nfrom .factories import PostFactory\n\nclass PostFactoryTest(TestCase):\n    def test_factory_creates_posts(self):\n        PostFactory.create_batch(5)\n        self.assertEqual(Post.objects.count(), 5)"
+}

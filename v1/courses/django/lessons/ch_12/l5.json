@@ -1,0 +1,65 @@
+{
+    "id": "l5",
+    "chapterId": "ch_12",
+    "title": "Async Views and ASGI",
+    "description": "Write asynchronous views to handle long‑running tasks efficiently.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Async",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Async in Django ⏳",
+            "content": "Django 3.1 introduced **asynchronous support**. You can now write async views, middleware, and even use async ORM (via `async` methods). This allows handling many concurrent connections without blocking.\n\nTo use async, you need an ASGI server (like `uvicorn` or `daphne`) instead of WSGI."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Writing an Async View",
+            "content": "import asyncio\nfrom django.http import JsonResponse\n\nasync def async_view(request):\n    # Simulate an async operation (e.g., external API call)\n    await asyncio.sleep(1)\n    return JsonResponse({'message': 'Hello from async!'})\n\n# In urls.py, you can use this view normally:\npath('async/', async_view),\n\n# For class‑based views, you need to use `async def` methods:\nfrom django.views import View\n\nclass AsyncView(View):\n    async def get(self, request):\n        await asyncio.sleep(1)\n        return JsonResponse({'message': 'async CBV'})",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the primary benefit of asynchronous views?",
+                "options": [
+                    "They make the code run faster on a single request",
+                    "They allow handling multiple concurrent requests without blocking threads",
+                    "They are easier to write than sync views",
+                    "They replace the need for caching"
+                ],
+                "correctAnswer": 1,
+                "explanation": "Async views let you free up the server while waiting for I/O, improving concurrency.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "ASGI and Deployment",
+            "content": "To run Django in async mode, you need to configure an ASGI application. Django creates an `asgi.py` file by default. You can run it with:\n\n```bash\nuvicorn myproject.asgi:application\n```\n\nFor production, use a process manager like `gunicorn` with the `uvicorn` worker:\n```bash\ngunicorn myproject.asgi:application -k uvicorn.workers.UvicornWorker\n```\n\nNote: Not all parts of Django are async‑safe yet. The ORM, for example, still uses sync connections; you can use `sync_to_async` to wrap sync code."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Using sync_to_async",
+            "content": "from asgiref.sync import sync_to_async\n\nasync def my_async_view(request):\n    # Run sync ORM code in a thread pool\n    user = await sync_to_async(User.objects.get)(pk=request.user.id)\n    return JsonResponse({'username': user.username})\n\n# Or decorate a function\n@sync_to_async\ndef get_user(pk):\n    return User.objects.get(pk=pk)\n\n# Then use await get_user(pk) in async code.",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use async for I/O‑bound tasks, not CPU‑bound\n\nAsync is great for waiting on APIs, databases, and file I/O. For CPU‑intensive work, consider using a task queue (Celery) or offload to a separate process."
+        }
+    ]
+}

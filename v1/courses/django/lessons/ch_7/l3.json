@@ -1,0 +1,67 @@
+{
+    "id": "l3",
+    "chapterId": "ch_7",
+    "title": "Login, Logout, and Password Management",
+    "description": "Use Django’s built‑in views and forms for authentication.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Authentication Views",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Built‑in Auth Views 🧰",
+            "content": "Django provides ready‑made views for common authentication tasks. You can use them by including `django.contrib.auth.urls` in your URLconf.\n\nThese views handle:\n- Login (`LoginView`)\n- Logout (`LogoutView`)\n- Password change (`PasswordChangeView`)\n- Password reset (with email sending)\n\nThey also come with default templates, which you can override."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Adding Auth URLs",
+            "content": "# In your project's urls.py\nfrom django.contrib import admin\nfrom django.urls import path, include\n\nurlpatterns = [\n    path('admin/', admin.site.urls),\n    path('accounts/', include('django.contrib.auth.urls')),  # includes login, logout, etc.\n]\n\n# Now you have:\n# /accounts/login/\n# /accounts/logout/\n# /accounts/password_change/\n# /accounts/password_change/done/\n# /accounts/password_reset/\n# ...",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which URL pattern is provided by `django.contrib.auth.urls` for user login?",
+                "options": [
+                    "/login/",
+                    "/accounts/login/",
+                    "/auth/login/",
+                    "/user/login/"
+                ],
+                "correctAnswer": 1,
+                "explanation": "The default URL is `/accounts/login/` when you include the auth URLs at that path.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Manual Login in a View",
+            "content": "If you want to handle login manually (e.g., using a custom form), you can use `authenticate` and `login`:\n\n```python\nfrom django.contrib.auth import authenticate, login\nfrom django.shortcuts import render, redirect\n\ndef my_login(request):\n    if request.method == 'POST':\n        username = request.POST['username']\n        password = request.POST['password']\n        user = authenticate(request, username=username, password=password)\n        if user is not None:\n            login(request, user)\n            return redirect('home')\n        else:\n            # error message\n            ...\n    return render(request, 'login.html')\n```",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Logout",
+            "content": "from django.contrib.auth import logout\n\ndef my_logout(request):\n    logout(request)\n    return redirect('home')",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `@login_required` decorator\n\nTo restrict views to logged‑in users, decorate your view with `from django.contrib.auth.decorators import login_required` and then `@login_required` above the view."
+        }
+    ]
+}

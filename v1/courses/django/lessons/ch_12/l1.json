@@ -1,0 +1,72 @@
+{
+    "id": "l1",
+    "chapterId": "ch_12",
+    "title": "Signals: Decoupled Notifications",
+    "description": "Use signals to allow decoupled apps to get notified when certain actions occur.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Signals",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "What Are Signals? 🔔",
+            "content": "# Event‑Driven Programming\n\n**Signals** allow certain *senders* to notify a set of *receivers* that an action has occurred. They are useful when you want to perform an action in response to a model save, delete, or other events without coupling the code.\n\nFor example, you might want to:\n- Send a welcome email when a new user is created.\n- Invalidate a cache when a post is updated.\n- Log all changes to a model.\n\nDjango provides several built‑in signals (e.g., `pre_save`, `post_save`, `pre_delete`, `post_delete`, `request_started`, `request_finished`). You can also create custom signals."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What is the primary benefit of using signals?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They make the code run faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They decouple components, allowing one part to react to events without direct dependencies",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They replace Django's ORM",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They automatically handle authentication",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Signals promote loose coupling by letting senders and receivers communicate without direct imports.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "code",
+            "title": "Connecting a Signal",
+            "content": "from django.db.models.signals import post_save\nfrom django.contrib.auth.models import User\nfrom django.dispatch import receiver\n\n@receiver(post_save, sender=User)\ndef create_profile(sender, instance, created, **kwargs):\n    if created:\n        # Create a profile for the new user\n        Profile.objects.create(user=instance)\n\n# Alternatively, connect manually:\n# post_save.connect(create_profile, sender=User)\n\n# Signal receivers should be placed in `signals.py` and loaded in `apps.py` ready() method.",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "Custom Signals",
+            "content": "You can define your own signals when built‑in ones don't fit.\n\n```python\n# signals.py\nimport django.dispatch\n\norder_completed = django.dispatch.Signal()\n\n# Then in your code:\norder_completed.send(sender=Order, order=order)\n\n# Connect a receiver:\n@receiver(order_completed)\ndef handle_order_completed(sender, order, **kwargs):\n    # do something\n```"
+        },
+        {
+            "id": "s_l1_5",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Always put signals in a separate module and load them in `AppConfig.ready()`\n\nThis ensures they are registered when the app is loaded. Example:\n```python\nclass MyAppConfig(AppConfig):\n    def ready(self):\n        import myapp.signals\n```"
+        }
+    ]
+}

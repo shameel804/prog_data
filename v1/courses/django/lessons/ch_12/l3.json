@@ -1,0 +1,59 @@
+{
+    "id": "l3",
+    "chapterId": "ch_12",
+    "title": "Custom Management Commands",
+    "description": "Create your own `manage.py` commands to automate tasks.",
+    "xpReward": 20,
+    "estimatedMinutes": 8,
+    "section": "Commands",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Why Custom Commands? 🛠️",
+            "content": "Sometimes you need to run scripts that interact with your Django project: clean up old records, send scheduled emails, populate data, etc. **Custom management commands** let you extend `manage.py` with your own commands.\n\nThey are ideal for cron jobs, one‑off tasks, or providing a CLI for your app."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Creating a Command",
+            "content": "# Create a folder structure: app/management/commands/\n# Inside, create a Python file, e.g., cleanup.py\n\nfrom django.core.management.base import BaseCommand\nfrom datetime import timedelta\nfrom django.utils import timezone\nfrom myapp.models import Post\n\nclass Command(BaseCommand):\n    help = 'Deletes old posts older than a given number of days'\n\n    def add_arguments(self, parser):\n        parser.add_argument('days', type=int, help='Days threshold')\n        parser.add_argument('--dry-run', action='store_true', help='Show what would be deleted')\n\n    def handle(self, *args, **options):\n        days = options['days']\n        threshold = timezone.now() - timedelta(days=days)\n        old_posts = Post.objects.filter(created_at__lt=threshold)\n        count = old_posts.count()\n\n        if options['dry_run']:\n            self.stdout.write(f'Would delete {count} posts')\n            for post in old_posts[:10]:\n                self.stdout.write(f'  - {post.title}')\n        else:\n            old_posts.delete()\n            self.stdout.write(self.style.SUCCESS(f'Deleted {count} posts'))",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Where should custom management commands be placed?",
+                "options": [
+                    "In the app's `commands.py`",
+                    "In a `management/commands/` subdirectory of the app",
+                    "In the project root",
+                    "In `settings.py`"
+                ],
+                "correctAnswer": 1,
+                "explanation": "Commands are placed in `management/commands/` inside an app.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Running the Command",
+            "content": "python manage.py cleanup 30          # delete posts older than 30 days\npython manage.py cleanup 30 --dry-run # preview without deleting\n\n# The command can be called from cron or systemd timers.",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_5",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Use `BaseCommand`'s `stdout` and `stderr`\n\nThey respect the `--verbosity` option and make output consistent. Use `self.style.SUCCESS()` for colored output."
+        }
+    ]
+}

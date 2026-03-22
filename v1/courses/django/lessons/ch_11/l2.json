@@ -1,0 +1,59 @@
+{
+    "id": "l2",
+    "chapterId": "ch_11",
+    "title": "Environment Variables and Secrets",
+    "description": "Keep sensitive data out of your code with environment variables.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Configuration",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Why Environment Variables? 🔑",
+            "content": "Hard‑coding passwords, API keys, and secret keys in your code is a security risk. **Environment variables** allow you to inject configuration at runtime, keeping secrets out of version control.\n\nDjango’s `SECRET_KEY` is a prime candidate. If it’s exposed, attackers can forge signed content (sessions, password reset tokens)."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Using python‑decouple or os.getenv",
+            "content": "# Install python-decouple: pip install python-decouple\nfrom decouple import config\n\nSECRET_KEY = config('SECRET_KEY')\nDEBUG = config('DEBUG', default=False, cast=bool)\nDATABASE_URL = config('DATABASE_URL', default='sqlite:///db.sqlite3')\n\n# Or using os.getenv\nimport os\nSECRET_KEY = os.getenv('SECRET_KEY')\nDEBUG = os.getenv('DEBUG', 'False') == 'True'",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the main reason to use environment variables for settings like SECRET_KEY?",
+                "options": [
+                    "To make the code run faster",
+                    "To keep secrets out of version control and separate config from code",
+                    "To allow multiple developers to use different settings",
+                    "To automatically rotate keys"
+                ],
+                "correctAnswer": 1,
+                "explanation": "Environment variables prevent secrets from being hard‑coded and accidentally exposed in repositories.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": ".env file for local development",
+            "content": "Create a `.env` file (never commit it) with:\n\n```\nSECRET_KEY=your-secret-key-here\nDEBUG=True\nDATABASE_URL=postgres://user:pass@localhost:5432/mydb\n```\n\nIn your `settings.py`, use `python-decouple` to read it. The library looks for `.env` in the root.",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use a package like `django-environ` for database URLs\n\n`django-environ` can parse `DATABASE_URL` into a `DATABASES` dict easily."
+        }
+    ]
+}

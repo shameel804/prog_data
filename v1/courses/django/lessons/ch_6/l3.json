@@ -1,0 +1,80 @@
+{
+    "id": "l3",
+    "chapterId": "ch_6",
+    "title": "Customizing the Admin Interface",
+    "description": "Use `ModelAdmin` to control list views, search, filters, and more.",
+    "xpReward": 30,
+    "estimatedMinutes": 12,
+    "section": "Customization",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "List View Options 📋",
+            "content": "The `ModelAdmin` class offers many attributes to tweak the changelist (list) view.\n\n- **`list_display`** – which fields to show as columns.\n- **`list_display_links`** – which columns link to the edit page (default first).\n- **`list_filter`** – add filters in the sidebar.\n- **`search_fields`** – enable searching on specified fields.\n- **`ordering`** – default ordering of the list.\n- **`list_per_page`** – pagination."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Example Customization",
+            "content": "@admin.register(Post)\nclass PostAdmin(admin.ModelAdmin):\n    list_display = ('title', 'author', 'published_date', 'is_published')\n    list_filter = ('is_published', 'author')\n    search_fields = ('title', 'content', 'author__username')\n    ordering = ('-published_date',)\n    list_per_page = 25\n\n    # Show custom method in list_display\n    def is_published(self, obj):\n        return obj.published_date is not None\n    is_published.boolean = True  # display as icon",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which attribute of ModelAdmin controls which columns appear in the list view?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "list_columns",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "display_fields",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "list_display",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "show_fields",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`list_display` is a tuple of field names to display in the changelist.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Edit Form Customization ✏️",
+            "content": "You can also customize the add/change forms:\n\n- **`fields`** – which fields to show and in what order.\n- **`exclude`** – fields to omit.\n- **`fieldsets`** – group fields into sections.\n- **`readonly_fields`** – fields that are not editable.\n- **`prepopulated_fields`** – automatically fill a slug field from another field."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Using fieldsets",
+            "content": "class PostAdmin(admin.ModelAdmin):\n    fieldsets = (\n        (None, {\n            'fields': ('title', 'content')\n        }),\n        ('Publishing', {\n            'fields': ('published_date', 'is_published'),\n            'classes': ('collapse',)  # collapsible section\n        }),\n    )",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `readonly_fields` to prevent editing of auto‑populated fields\n\nFor example, if you have a `created_at` field set automatically, add it to `readonly_fields` so users cannot modify it."
+        }
+    ]
+}

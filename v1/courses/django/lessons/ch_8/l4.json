@@ -1,0 +1,80 @@
+{
+    "id": "l4",
+    "chapterId": "ch_8",
+    "title": "FormView and Customizing Forms",
+    "description": "Use FormView to handle forms and learn how to customize generic views.",
+    "xpReward": 25,
+    "estimatedMinutes": 10,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "FormView: General Purpose Form Handler 📝",
+            "content": "`FormView` is a generic view that displays a form and processes it. Unlike `CreateView`, it does not assume a model. It’s great for contact forms, search forms, or any form not tied to a model."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Using FormView",
+            "content": "from django.views.generic import FormView\nfrom django.urls import reverse_lazy\nfrom .forms import ContactForm\n\nclass ContactView(FormView):\n    template_name = 'contact.html'\n    form_class = ContactForm\n    success_url = reverse_lazy('thanks')\n\n    def form_valid(self, form):\n        # Process form data (e.g., send email)\n        name = form.cleaned_data['name']\n        # ...\n        return super().form_valid(form)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What method should you override to perform custom processing when a form is valid?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "form_valid()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "form_invalid()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "process_form()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "handle_form()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`form_valid()` is called after the form passes validation. You can access cleaned data and then return a response (usually a redirect).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Customizing Generic Views 🔧",
+            "content": "Generic views are designed to be customized. You can override methods like `get_context_data()` to add extra context, `get_queryset()` to filter, or `get_form_kwargs()` to pass dynamic arguments to the form.\n\nExample: adding a variable to template context:\n\n```python\ndef get_context_data(self, **kwargs):\n    context = super().get_context_data(**kwargs)\n    context['extra'] = 'Something extra'\n    return context\n```"
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Passing User to Form",
+            "content": "class PostCreateView(CreateView):\n    model = Post\n    fields = ['title', 'content']\n\n    def get_form_kwargs(self):\n        kwargs = super().get_form_kwargs()\n        kwargs['user'] = self.request.user  # pass user to form\n        return kwargs\n\n# Then in form __init__, you can accept `user` and use it.",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `get_form_kwargs()` to inject data into forms\n\nThis is useful for forms that need to know about the current user or other request data."
+        }
+    ]
+}

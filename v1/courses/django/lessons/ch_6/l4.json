@@ -1,0 +1,74 @@
+{
+    "id": "l4",
+    "chapterId": "ch_6",
+    "title": "Inlines and Relationships",
+    "description": "Edit related models on the same page using inline formsets.",
+    "xpReward": 25,
+    "estimatedMinutes": 10,
+    "section": "Relationships",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "What are Inlines? 🧩",
+            "content": "When you have a relationship (ForeignKey, ManyToMany), you often want to edit related objects without leaving the parent’s edit page. **Inlines** let you embed a form for related models directly within the parent’s admin form."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Example: Inline for Comments",
+            "content": "Assume you have `Post` and `Comment` models where `Comment` has a ForeignKey to `Post`. To edit comments on the post page:\n\n```python\nfrom django.contrib import admin\nfrom .models import Post, Comment\n\nclass CommentInline(admin.TabularInline):  # or StackedInline\n    model = Comment\n    extra = 1  # number of empty forms to show\n\n@admin.register(Post)\nclass PostAdmin(admin.ModelAdmin):\n    inlines = [CommentInline]\n```",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is the difference between `TabularInline` and `StackedInline`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "TabularInline uses a table layout; StackedInline uses vertical layout",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "TabularInline is for many‑to‑many; StackedInline is for foreign keys",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "There is no difference",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "StackedInline is for one‑to‑one",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "TabularInline displays related objects in a table row; StackedInline shows each as a separate block (more vertical space).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Customizing Inline Fields",
+            "content": "You can customize which fields appear in the inline form:\n\n```python\nclass CommentInline(admin.TabularInline):\n    model = Comment\n    fields = ('author', 'content', 'created_at')\n    readonly_fields = ('created_at',)\n    extra = 0\n```",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Use `show_change_link` in inlines\n\nIf you need to edit an inline object in its own separate admin page, add `show_change_link = True` to the inline class."
+        }
+    ]
+}

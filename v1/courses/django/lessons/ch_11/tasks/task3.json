@@ -1,0 +1,14 @@
+{
+    "id": "task3",
+    "chapterId": "ch_11",
+    "title": "Apply Security Settings",
+    "description": "Enable HTTPS‑related settings and set ALLOWED_HOSTS.",
+    "estimatedMinutes": 10,
+    "problemStatement": "## Your Mission\n\nAdd security settings to your production configuration:\n- Set `ALLOWED_HOSTS` to your domain (e.g., `['example.com']`).\n- Set `SESSION_COOKIE_SECURE = True` and `CSRF_COOKIE_SECURE = True`.\n- Set `SECURE_SSL_REDIRECT = True` (if you have HTTPS).\n- Optionally, set `SECURE_HSTS_SECONDS = 31536000`.\n\nTest that these settings don't break development by using environment variables to conditionally apply them (e.g., only when `DEBUG=False`).",
+    "hints": [
+        "You can wrap the settings in an `if not DEBUG:` block.",
+        "For ALLOWED_HOSTS, you can also read from env: `ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost').split(',')`."
+    ],
+    "expectedOutput": "When `DEBUG=False`, the security headers are sent and HTTPS is enforced (if behind a reverse proxy).",
+    "solutionCode": "# settings.py\nif not DEBUG:\n    ALLOWED_HOSTS = ['yourdomain.com']\n    SESSION_COOKIE_SECURE = True\n    CSRF_COOKIE_SECURE = True\n    SECURE_SSL_REDIRECT = True\n    SECURE_HSTS_SECONDS = 31536000\n    SECURE_HSTS_INCLUDE_SUBDOMAINS = True\n    SECURE_HSTS_PRELOAD = True\n    SECURE_CONTENT_TYPE_NOSNIFF = True\n    SECURE_BROWSER_XSS_FILTER = True"
+}

@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_8",
+    "title": "Create a Blog with ListView and DetailView",
+    "description": "Use ListView to list all posts and DetailView to show a single post.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Your Mission\n\nAssume you have a `Post` model with `title`, `content`, and `published_date` fields.\n\n1. Create a `ListView` that displays all posts, ordered by `-published_date`. Use the template `blog/post_list.html`.\n2. Create a `DetailView` that shows a single post, using the template `blog/post_detail.html`.\n3. Configure URLs so that the list is at `/posts/` and detail at `/posts/<int:pk>/`.\n\nWrite the views and URL patterns.",
+    "hints": [
+        "In ListView, set `model = Post`, `ordering = ['-published_date']`.",
+        "In DetailView, just set `model = Post`.",
+        "Don't forget to create the templates (you can just output the post title and content)."
+    ],
+    "expectedOutput": "The list page shows all posts; clicking a post link goes to the detail page with that post's content.",
+    "solutionCode": "# views.py\nfrom django.views.generic import ListView, DetailView\nfrom .models import Post\n\nclass PostListView(ListView):\n    model = Post\n    template_name = 'blog/post_list.html'\n    context_object_name = 'posts'\n    ordering = ['-published_date']\n\nclass PostDetailView(DetailView):\n    model = Post\n    template_name = 'blog/post_detail.html'\n    context_object_name = 'post'\n\n# urls.py\nfrom django.urls import path\nfrom . import views\n\nurlpatterns = [\n    path('posts/', views.PostListView.as_view(), name='post_list'),\n    path('posts/<int:pk>/', views.PostDetailView.as_view(), name='post_detail'),\n]"
+}

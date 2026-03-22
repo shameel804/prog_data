@@ -1,0 +1,65 @@
+{
+    "id": "l5",
+    "chapterId": "ch_10",
+    "title": "Advanced Testing: Fixtures and Mocking",
+    "description": "Set up test data with fixtures and mock external services.",
+    "xpReward": 30,
+    "estimatedMinutes": 12,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Fixtures: Pre‑defined Test Data 📊",
+            "content": "A **fixture** is a file containing data (JSON, XML, YAML) that can be loaded into the test database. It’s useful when you need a complex set of data for multiple tests.\n\nCreate a fixture by dumping data from your database:\n```bash\npython manage.py dumpdata blog > blog/fixtures/initial_data.json\n```\n\nThen in a test, load it:\n```python\nclass MyTest(TestCase):\n    fixtures = ['initial_data.json']\n\n    def test_something(self):\n        # data is available\n        ...\n```"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Using Factories (factory_boy)",
+            "content": "Instead of static fixtures, many developers use **factories** to generate test data dynamically. `factory_boy` is a popular library.\n\nInstall: `pip install factory_boy`\n\nDefine a factory:\n```python\nimport factory\nfrom .models import Post\n\nclass PostFactory(factory.django.DjangoModelFactory):\n    class Meta:\n        model = Post\n    title = factory.Faker('sentence')\n    content = factory.Faker('text')\n```\n\nIn tests: `post = PostFactory.create()`",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the advantage of using factories over fixtures?",
+                "options": [
+                    "Factories are faster",
+                    "Factories allow generating data with variations, reducing maintenance",
+                    "Factories are built into Django",
+                    "Factories do not require a database"
+                ],
+                "correctAnswer": 1,
+                "explanation": "Factories give you flexibility to generate data on the fly, and they are easier to maintain than static fixtures.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Mocking External Services 🎭",
+            "content": "When your code calls external APIs or services, you don't want to hit the real service in tests. **Mocking** replaces those calls with controlled behavior.\n\nPython’s `unittest.mock` module is perfect for this. Use `patch` to replace a function or object with a mock."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Mocking an API Call",
+            "content": "Assume you have a function that sends an email via an external service:\n\n```python\n# services.py\ndef send_welcome_email(email):\n    response = requests.post('https://api.emailservice.com/send', json={'to': email})\n    return response.status_code\n```\n\nIn tests, mock `requests.post` to avoid actually calling the API:\n\n```python\nfrom unittest.mock import patch\nfrom django.test import TestCase\nfrom .services import send_welcome_email\n\nclass EmailTest(TestCase):\n    @patch('services.requests.post')\n    def test_send_welcome_email(self, mock_post):\n        mock_post.return_value.status_code = 200\n        result = send_welcome_email('test@example.com')\n        self.assertEqual(result, 200)\n        mock_post.assert_called_once()\n```",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `patch` as a context manager\n\nFor temporary mocking, use `with patch('module.function') as mock:` to limit the scope of the mock."
+        }
+    ]
+}

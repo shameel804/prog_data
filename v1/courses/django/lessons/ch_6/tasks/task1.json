@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_6",
+    "title": "Register a Model and Customize List View",
+    "description": "Register the Post model with the admin and customize the list display, search, and filters.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Your Mission\n\nAssume you have a `Post` model with fields: `title`, `content`, `author` (ForeignKey to User), `published_date` (DateTimeField), and `is_published` (BooleanField).\n\nCreate a custom `ModelAdmin` class and register it. Customize:\n- `list_display` to show title, author, published_date, and is_published.\n- `list_filter` to filter by is_published and author.\n- `search_fields` to search by title and content.\n- `ordering` to show newest posts first (by published_date).\n\nTest by logging into the admin and verifying the changes.",
+    "hints": [
+        "Create the ModelAdmin class in `admin.py`.",
+        "Use `@admin.register(Post)` or `admin.site.register(Post, PostAdmin)`.",
+        "Set `ordering = ('-published_date',)`."
+    ],
+    "expectedOutput": "In the admin list view for Post, you see columns for title, author, published_date, is_published; a search box; and filters on the right.",
+    "solutionCode": "# admin.py\nfrom django.contrib import admin\nfrom .models import Post\n\n@admin.register(Post)\nclass PostAdmin(admin.ModelAdmin):\n    list_display = ('title', 'author', 'published_date', 'is_published')\n    list_filter = ('is_published', 'author')\n    search_fields = ('title', 'content')\n    ordering = ('-published_date',)"
+}

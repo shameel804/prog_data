@@ -1,0 +1,16 @@
+{
+    "id": "task2",
+    "chapterId": "ch_9",
+    "title": "Build a ViewSet and Router for Posts",
+    "description": "Create a ModelViewSet for Post and use a router to generate URLs.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Your Mission\n\nCreate a `ModelViewSet` called `PostViewSet` that uses the `PostSerializer`. Set `queryset = Post.objects.all()`.\n\nThen, in your project's `urls.py`, create a `DefaultRouter`, register the viewset with the router under the prefix `posts`, and include the router's URLs.\n\nTest the API by running the server and visiting `/posts/` (you should see a JSON list of posts).",
+    "hints": [
+        "In views.py, import `viewsets` from rest_framework, your model and serializer.",
+        "Define `class PostViewSet(viewsets.ModelViewSet):` with `queryset` and `serializer_class`.",
+        "In urls.py: `from rest_framework.routers import DefaultRouter` and `router = DefaultRouter()` then `router.register('posts', PostViewSet)`.",
+        "Include `router.urls` in urlpatterns."
+    ],
+    "expectedOutput": "When you visit `/posts/`, you see a JSON array of posts. You can also view the browsable API if DRF is configured.",
+    "solutionCode": "# views.py\nfrom rest_framework import viewsets\nfrom .models import Post\nfrom .serializers import PostSerializer\n\nclass PostViewSet(viewsets.ModelViewSet):\n    queryset = Post.objects.all()\n    serializer_class = PostSerializer\n\n# urls.py\nfrom django.urls import path, include\nfrom rest_framework.routers import DefaultRouter\nfrom .views import PostViewSet\n\nrouter = DefaultRouter()\nrouter.register('posts', PostViewSet)\n\nurlpatterns = [\n    path('', include(router.urls)),\n]"
+}

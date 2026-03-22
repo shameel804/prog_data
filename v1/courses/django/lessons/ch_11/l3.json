@@ -1,0 +1,57 @@
+{
+    "id": "l3",
+    "chapterId": "ch_11",
+    "title": "Static and Media Files in Production",
+    "description": "Serve static assets and user‑uploaded media correctly in production.",
+    "xpReward": 25,
+    "estimatedMinutes": 10,
+    "section": "Assets",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The collectstatic Command 📦",
+            "content": "In production, Django does not serve static files (CSS, JS, images). You must collect them into a single directory and configure your web server to serve them.\n\n```bash\npython manage.py collectstatic\n```\n\nThis copies all static files from each app’s `static/` folder and any `STATICFILES_DIRS` into `STATIC_ROOT`.\n\nSet `STATIC_ROOT` to a directory outside your project, e.g., `/var/www/static/`."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Serving Static Files with Whitenoise",
+            "content": "A simple way to serve static files in production without configuring a separate server is to use **Whitenoise**.\n\n```bash\npip install whitenoise\n```\n\nAdd to `MIDDLEWARE` (after SecurityMiddleware):\n```python\nMIDDLEWARE = [\n    'django.middleware.security.SecurityMiddleware',\n    'whitenoise.middleware.WhiteNoiseMiddleware',\n    ...\n]\n```\n\nThen set `STATIC_ROOT` and run `collectstatic`. Whitenoise will serve static files efficiently.",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of `collectstatic`?",
+                "options": [
+                    "To compress static files",
+                    "To gather all static files into a single directory for production",
+                    "To delete unused static files",
+                    "To serve static files during development"
+                ],
+                "correctAnswer": 1,
+                "explanation": "`collectstatic` copies static files to `STATIC_ROOT` so they can be served by a web server or Whitenoise.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Media Files (User Uploads) 📸",
+            "content": "User‑uploaded files (profile pictures, post images) should not be served by Django either. Use:\n- **Amazon S3** or other cloud storage for scalability.\n- **Web server** (Nginx, Apache) to serve from `MEDIA_ROOT`.\n\nFor local testing in production, you can use Whitenoise for media as well, but it’s not recommended for many files.\n\nAlways set `MEDIA_URL` and ensure your web server is configured to serve files from `MEDIA_ROOT`."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Use a CDN for static files\n\nFor better performance, serve static files from a CDN (e.g., CloudFront, Cloudflare) after collecting them to a cloud storage bucket (S3)."
+        }
+    ]
+}

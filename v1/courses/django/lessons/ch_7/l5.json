@@ -1,0 +1,65 @@
+{
+    "id": "l5",
+    "chapterId": "ch_7",
+    "title": "Customizing Authentication",
+    "description": "Extend the User model, create custom authentication backends, and use signals.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Extending the User Model 🧬",
+            "content": "There are two main ways to add extra fields to users:\n1. **Proxy Model** – if you only want to change behavior, not add fields.\n2. **One‑to‑One Profile** – create a `Profile` model with a `OneToOneField` to `User`.\n3. **Custom User Model** – for projects started from scratch, you can create your own user model that inherits from `AbstractUser` or `AbstractBaseUser`.\n\nDjango recommends using a custom user model if you anticipate needing extra fields from the beginning."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Profile Model Example",
+            "content": "from django.db import models\nfrom django.contrib.auth.models import User\n\nclass Profile(models.Model):\n    user = models.OneToOneField(User, on_delete=models.CASCADE)\n    bio = models.TextField(blank=True)\n    location = models.CharField(max_length=100, blank=True)\n\n# In a signal, create profile automatically when user is created\nfrom django.db.models.signals import post_save\nfrom django.dispatch import receiver\n\n@receiver(post_save, sender=User)\ndef create_user_profile(sender, instance, created, **kwargs):\n    if created:\n        Profile.objects.create(user=instance)\n\n@receiver(post_save, sender=User)\ndef save_user_profile(sender, instance, **kwargs):\n    instance.profile.save()",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the recommended way to add extra fields to users in an existing project?",
+                "options": [
+                    "Modify the User model directly",
+                    "Create a Profile model with OneToOneField",
+                    "Use a proxy model",
+                    "Store extra fields in session"
+                ],
+                "correctAnswer": 1,
+                "explanation": "For existing projects, a OneToOne profile is easiest. For new projects, a custom user model is preferred.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Custom Authentication Backend 🔧",
+            "content": "You can create a custom authentication backend to allow users to log in with email instead of username, or to authenticate against an external service.\n\nA backend must implement `authenticate()` and optionally `get_user()`."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Custom Email Backend Example",
+            "content": "from django.contrib.auth.backends import BaseBackend\nfrom django.contrib.auth import get_user_model\n\nUser = get_user_model()\n\nclass EmailBackend(BaseBackend):\n    def authenticate(self, request, username=None, password=None, **kwargs):\n        try:\n            user = User.objects.get(email=username)\n        except User.DoesNotExist:\n            return None\n        if user.check_password(password):\n            return user\n        return None\n\n    def get_user(self, user_id):\n        try:\n            return User.objects.get(pk=user_id)\n        except User.DoesNotExist:\n            return None\n\n# Then add to AUTHENTICATION_BACKENDS in settings.py\nAUTHENTICATION_BACKENDS = [\n    'myapp.backends.EmailBackend',\n    'django.contrib.auth.backends.ModelBackend',\n]",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `AUTH_USER_MODEL` setting\n\nIf you create a custom user model, set `AUTH_USER_MODEL = 'myapp.MyUser'` in settings.py. This ensures all auth features reference your custom model."
+        }
+    ]
+}

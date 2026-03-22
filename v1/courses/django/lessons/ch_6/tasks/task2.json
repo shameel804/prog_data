@@ -1,0 +1,16 @@
+{
+    "id": "task2",
+    "chapterId": "ch_6",
+    "title": "Add an Inline for Comments",
+    "description": "Create an inline admin for Comment objects on the Post edit page.",
+    "estimatedMinutes": 10,
+    "problemStatement": "## Your Mission\n\nYou have a `Comment` model with fields: `post` (ForeignKey to Post), `author` (CharField), `content` (TextField), and `created_at` (DateTimeField auto_now_add).\n\nModify the admin for Post to include an inline that allows adding/editing comments directly from the post edit page. Use `TabularInline` and show the `author`, `content`, and `created_at` fields. Set `created_at` as read‑only and display 2 extra blank forms.",
+    "hints": [
+        "Define a class `CommentInline(admin.TabularInline)` with model = Comment.",
+        "Set `fields = ('author', 'content', 'created_at')` and `readonly_fields = ('created_at',)`.",
+        "Set `extra = 2`.",
+        "Add `inlines = [CommentInline]` to your PostAdmin."
+    ],
+    "expectedOutput": "When editing a post in the admin, you see a section where you can add, edit, or delete comments directly.",
+    "solutionCode": "# admin.py\nfrom django.contrib import admin\nfrom .models import Post, Comment\n\nclass CommentInline(admin.TabularInline):\n    model = Comment\n    fields = ('author', 'content', 'created_at')\n    readonly_fields = ('created_at',)\n    extra = 2\n\n@admin.register(Post)\nclass PostAdmin(admin.ModelAdmin):\n    inlines = [CommentInline]\n    # other customizations from task1 can remain"
+}

@@ -1,0 +1,59 @@
+{
+    "id": "l5",
+    "chapterId": "ch_11",
+    "title": "Deploying to a Platform",
+    "description": "Walk through deploying to a production server (e.g., PythonAnywhere, Heroku).",
+    "xpReward": 30,
+    "estimatedMinutes": 12,
+    "section": "Deployment",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Choosing a Platform ☁️",
+            "content": "Many platforms offer easy Django deployment:\n- **PythonAnywhere** – simple, great for beginners.\n- **Heroku** – PaaS with Git push deployment.\n- **DigitalOcean / AWS / Google Cloud** – full control, more complex.\n- **Render** – modern PaaS with built‑in Postgres.\n\nEach requires slightly different configuration, but common steps: set environment variables, collectstatic, run migrations, and start the server (Gunicorn)."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Deployment Checklist",
+            "content": "1. **Set `DEBUG = False`**\n2. **Set `ALLOWED_HOSTS`** to your domain(s).\n3. **Configure a production database** (PostgreSQL).\n4. **Set environment variables** for SECRET_KEY, database URL, etc.\n5. **Run `collectstatic`** and serve static files.\n6. **Use a production WSGI server** (Gunicorn).\n7. **Set up SSL/HTTPS** (e.g., Let’s Encrypt).\n8. **Configure logging** to monitor errors.\n9. **Test** after deployment.",
+            "codeLanguage": "markdown",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which command should you run after updating static files in production?",
+                "options": [
+                    "python manage.py runserver",
+                    "python manage.py collectstatic",
+                    "python manage.py migrate",
+                    "python manage.py check"
+                ],
+                "correctAnswer": 1,
+                "explanation": "`collectstatic` gathers static files into `STATIC_ROOT` so they can be served.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Example: Procfile for Heroku",
+            "content": "# Procfile\nweb: gunicorn myproject.wsgi\n\n# runtime.txt (Python version)\npython-3.11.0\n\n# requirements.txt (generated via pip freeze)\nDjango==4.2\npsycopg2-binary\ngunicorn\nwhitenoise\ndj-database-url\n\n# settings.py\nimport dj_database_url\nDATABASES['default'] = dj_database_url.config(conn_max_age=600)",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use a process manager like Gunicorn\n\nIn production, never use `runserver`. Gunicorn (or uWSGI) handles multiple requests and is stable. Example: `gunicorn myproject.wsgi:application --bind 0.0.0.0:8000`"
+        }
+    ]
+}

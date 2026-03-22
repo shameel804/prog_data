@@ -1,0 +1,66 @@
+{
+    "id": "l5",
+    "chapterId": "ch_9",
+    "title": "Authentication & Permissions in DRF",
+    "description": "Secure your API with token authentication and permission classes.",
+    "xpReward": 25,
+    "estimatedMinutes": 10,
+    "section": "Security",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Authentication vs Permissions 🔐",
+            "content": "In DRF, **authentication** identifies the user (who they are), while **permissions** determine what actions they can take.\n\nDRF provides several authentication classes:\n- `SessionAuthentication` – uses Django's session (for browsable API).\n- `TokenAuthentication` – simple token‑based authentication.\n- `BasicAuthentication` – HTTP Basic Auth (not recommended for production without HTTPS).\n\nPermissions classes control access to views or actions."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Token Authentication Setup",
+            "content": "# settings.py\nINSTALLED_APPS = [\n    ...\n    'rest_framework.authtoken',  # add this\n]\n\n# Then run migrate to create token table\n\nREST_FRAMEWORK = {\n    'DEFAULT_AUTHENTICATION_CLASSES': [\n        'rest_framework.authentication.TokenAuthentication',\n    ]\n}",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which app must be added to INSTALLED_APPS to use token authentication?",
+                "options": [
+                    "rest_framework.tokens",
+                    "rest_framework.authtoken",
+                    "rest_framework.auth",
+                    "django.contrib.tokens"
+                ],
+                "correctAnswer": 1,
+                "explanation": "`rest_framework.authtoken` provides the Token model and views to generate tokens."
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Generating Tokens",
+            "content": "# Create a token for a user\nfrom rest_framework.authtoken.models import Token\ntoken = Token.objects.create(user=some_user)\nprint(token.key)\n\n# Or use the built‑in view to obtain token (requires username/password)\n# POST to /api-token-auth/ with username and password\n\n# In your API requests, include the token in the Authorization header:\n# Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Using Permissions",
+            "content": "from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly\nfrom rest_framework import viewsets\n\nclass PostViewSet(viewsets.ModelViewSet):\n    queryset = Post.objects.all()\n    serializer_class = PostSerializer\n    permission_classes = [IsAuthenticatedOrReadOnly]  # read for all, write for authenticated\n\n    # Override perform_create to set author automatically\n    def perform_create(self, serializer):\n        serializer.save(author=self.request.user)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Combine permission classes for fine‑grained control\n\nYou can list multiple permission classes; they all must pass for access. You can also create custom permission classes by subclassing `BasePermission`."
+        }
+    ]
+}

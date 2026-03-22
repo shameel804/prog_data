@@ -1,0 +1,59 @@
+{
+    "id": "l3",
+    "chapterId": "ch_10",
+    "title": "Testing Models and Views",
+    "description": "Test database interactions and view responses using Django’s test client.",
+    "xpReward": 30,
+    "estimatedMinutes": 12,
+    "section": "Testing",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Testing Model Methods 🧪",
+            "content": "You can test model methods, validations, and custom queries. For example, test a method that returns the post’s summary:\n\n```python\ndef test_post_summary(self):\n    post = Post.objects.create(title=\"Long Title\", content=\"...\")\n    self.assertEqual(post.summary(), \"Long Title...\")\n```"
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Using the Test Client",
+            "content": "The test client simulates HTTP requests:\n\n```python\nfrom django.test import TestCase\nfrom django.urls import reverse\n\nclass PostViewTest(TestCase):\n    def test_post_list_view(self):\n        response = self.client.get(reverse('post_list'))\n        self.assertEqual(response.status_code, 200)\n        self.assertContains(response, \"No posts yet\")\n\n    def test_post_detail_view(self):\n        post = Post.objects.create(title=\"Test\")\n        response = self.client.get(reverse('post_detail', args=[post.id]))\n        self.assertContains(response, post.title)\n```\n\n- `self.client` is the test client.\n- `reverse()` builds the URL from its name.",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which method would you use to check that a view returns a certain HTML snippet?",
+                "options": [
+                    "assertEqual",
+                    "assertContains",
+                    "assertRedirects",
+                    "assertTemplateUsed"
+                ],
+                "correctAnswer": 1,
+                "explanation": "`assertContains` checks that a response contains the given text.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Testing Forms and POST Requests",
+            "content": "Test form submission with `client.post()`:\n\n```python\ndef test_create_post(self):\n    self.client.login(username='testuser', password='pass')\n    response = self.client.post(reverse('post_create'), {\n        'title': 'New Post',\n        'content': 'Content...',\n    })\n    self.assertRedirects(response, reverse('post_list'))\n    self.assertEqual(Post.objects.count(), 1)\n```\n\nYou can also check for form errors: `self.assertFormError(response, 'form', 'title', 'This field is required.')`",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `setUpTestData()` for class‑level data\n\nIf you need data that is the same for all tests (and doesn't need to be modified), define `setUpTestData()` as a class method. It runs once per test class, speeding up tests."
+        }
+    ]
+}

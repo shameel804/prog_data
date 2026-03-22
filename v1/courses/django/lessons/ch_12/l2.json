@@ -1,0 +1,59 @@
+{
+    "id": "l2",
+    "chapterId": "ch_12",
+    "title": "Middleware: The Request/Response Pipeline",
+    "description": "Write custom middleware to process requests and responses globally.",
+    "xpReward": 25,
+    "estimatedMinutes": 10,
+    "section": "Middleware",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "What is Middleware? 🔄",
+            "content": "Middleware are hooks that process every request before it reaches the view and every response before it goes back to the client. They are executed in the order defined in `MIDDLEWARE`.\n\nCommon uses:\n- Authentication (attach user to request).\n- Security headers (e.g., X‑Frame‑Options).\n- Request/response logging.\n- Rate limiting.\n- Cross‑origin resource sharing (CORS)."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Writing a Simple Middleware",
+            "content": "# middleware.py\n\nclass SimpleMiddleware:\n    def __init__(self, get_response):\n        self.get_response = get_response\n\n    def __call__(self, request):\n        # Code executed before the view\n        print(\"Before view\")\n\n        response = self.get_response(request)\n\n        # Code executed after the view\n        print(\"After view\")\n\n        return response\n\n# Add to MIDDLEWARE list in settings.py\nMIDDLEWARE = [\n    ...\n    'myapp.middleware.SimpleMiddleware',\n]",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "When is the code inside `__call__` before the call to `get_response` executed?",
+                "options": [
+                    "After the view, before the response is sent",
+                    "Before the view is called",
+                    "After the response is sent",
+                    "When the server starts"
+                ],
+                "correctAnswer": 1,
+                "explanation": "The code before `self.get_response(request)` runs before the view, and after runs after the view.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Middleware with Response Modification",
+            "content": "class AddHeaderMiddleware:\n    def __init__(self, get_response):\n        self.get_response = get_response\n\n    def __call__(self, request):\n        response = self.get_response(request)\n        response['X-Custom-Header'] = 'My Value'\n        return response\n\n# You can also abort early by returning a response directly\nclass BlockIPMiddleware:\n    def __init__(self, get_response):\n        self.get_response = get_response\n\n    def __call__(self, request):\n        if request.META.get('REMOTE_ADDR') in ['192.168.1.1']:\n            return HttpResponseForbidden('Access denied')\n        return self.get_response(request)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use middleware sparingly\n\nEvery middleware adds overhead. Keep them lightweight and only for cross‑cutting concerns."
+        }
+    ]
+}

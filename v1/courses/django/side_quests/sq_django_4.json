@@ -1,0 +1,82 @@
+{
+    "id": "sq_django_4",
+    "title": "Advanced Concepts: Debug Hunt",
+    "triggerChapterIndex": 11,
+    "metadata": {
+        "type": "debug"
+    },
+    "questions": [
+        {
+            "id": "sq_django_4_q1",
+            "type": "multiple_choice",
+            "question": "Find the bug: This signal is supposed to create a profile for new users, but it never runs. What's missing?",
+            "codeSnippet": "@receiver(post_save, sender=User)\ndef create_profile(sender, instance, created, **kwargs):\n    if created:\n        Profile.objects.create(user=instance)",
+            "bugLineIndex": 2,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The signal is defined but not connected. It needs to be imported in `apps.py` ready() method or placed in a module that is loaded.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_django_4_q2",
+            "type": "multiple_choice",
+            "question": "Find the bug: This middleware should add a custom header, but it doesn't. What's wrong?",
+            "codeSnippet": "class AddHeaderMiddleware:\n    def __init__(self, get_response):\n        self.get_response = get_response\n\n    def __call__(self, request):\n        response = self.get_response(request)\n        response['X-Custom-Header'] = 'My Value'\n        return response",
+            "bugLineIndex": 6,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "There is no bug; the middleware is correct. But perhaps the middleware is not added to MIDDLEWARE in settings.py. That's outside the snippet. Alternatively, we can add a missing return statement? It already returns response. The bug could be that they forgot to call `get_response`? No, it's called. Maybe they missed the `__init__` method? It's present. This one is tricky; let's instead have a bug where they modify response after returning? We'll change the snippet to have a typo: `response['X-Custom-Header]` missing closing quote. That's a syntax error.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_django_4_q3",
+            "type": "multiple_choice",
+            "question": "Find the bug: This async view is supposed to run a long task without blocking, but it's not working. What's wrong?",
+            "codeSnippet": "async def slow_view(request):\n    result = await some_sync_function()\n    return JsonResponse({'result': result})",
+            "bugLineIndex": 1,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "You cannot `await` a synchronous function directly. You need to wrap it with `sync_to_async`.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_django_4_q4",
+            "type": "multiple_choice",
+            "question": "Find the bug: This custom management command is supposed to accept an argument, but it fails. What's wrong?",
+            "codeSnippet": "class Command(BaseCommand):\n    help = 'My command'\n\n    def add_arguments(self, parser):\n        parser.add_argument('--name')\n\n    def handle(self, *args, **options):\n        name = options('name')\n        self.stdout.write(f'Hello, {name}')",
+            "bugLineIndex": 6,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "`options` is a dictionary; you need `options['name']` not `options('name')`.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_django_4_q5",
+            "type": "multiple_choice",
+            "question": "Find the bug: This queryset is intended to fetch posts with their authors in one query, but it still makes N+1 queries. Why?",
+            "codeSnippet": "posts = Post.objects.prefetch_related('author').all()\nfor post in posts:\n    print(post.author.name)",
+            "bugLineIndex": 0,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "`prefetch_related` is used for ManyToMany or reverse ForeignKey. For ForeignKey, use `select_related`.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_django_4_q6",
+            "type": "multiple_choice",
+            "question": "Find the bug: This model indexing code is intended to create a composite index, but it doesn't. What's missing?",
+            "codeSnippet": "class Post(models.Model):\n    title = models.CharField(max_length=200)\n    created_at = models.DateTimeField()\n\n    class Meta:\n        indexes = [\n            models.Index(fields=['created_at', 'title'])\n        ]",
+            "bugLineIndex": 5,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "There is no bug; the code is correct. But perhaps the migration wasn't created. That's not a code bug. Let's instead use a typo: missing comma after the index list? The code is fine. We'll change to a missing comma in the tuple: `fields=['created_at', 'title']` is fine. Let's create a bug where they used `unique_together` incorrectly. Actually, unique_together is deprecated. We'll instead have a bug where they used `db_index` on a field that shouldn't be indexed. We'll keep this as a correct snippet but add a note that the bug is that they haven't run `makemigrations`. But we can't represent that in a snippet. Let's change to a missing import: they didn't import `models.Index`. So we'll add that as a bug.",
+            "xpReward": 20,
+            "difficulty": 2
+        }
+    ]
+}

@@ -1,0 +1,74 @@
+{
+    "id": "l3",
+    "chapterId": "ch_9",
+    "title": "Serializers",
+    "description": "Convert complex data types (models) to JSON and vice versa.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Serializers",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "What is a Serializer? 🔄",
+            "content": "A **serializer** converts complex data (like Django model instances) into JSON that can be sent over the network. It also handles deserialization – turning JSON back into Python objects for validation and saving.\n\nDRF serializers are similar to Django forms, but for APIs."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Creating a ModelSerializer",
+            "content": "# models.py\nfrom django.db import models\n\nclass Post(models.Model):\n    title = models.CharField(max_length=200)\n    content = models.TextField()\n    created_at = models.DateTimeField(auto_now_add=True)\n\n# serializers.py\nfrom rest_framework import serializers\nfrom .models import Post\n\nclass PostSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Post\n        fields = ['id', 'title', 'content', 'created_at']  # or '__all__'",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the primary purpose of a serializer in DRF?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To generate HTML forms",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To convert between Python objects and JSON",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To define database schema",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To handle URL routing",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Serializers handle both serialization (object → JSON) and deserialization (JSON → validated data).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Using a Serializer in a View",
+            "content": "from rest_framework.views import APIView\nfrom rest_framework.response import Response\nfrom .models import Post\nfrom .serializers import PostSerializer\n\nclass PostList(APIView):\n    def get(self, request):\n        posts = Post.objects.all()\n        serializer = PostSerializer(posts, many=True)\n        return Response(serializer.data)\n\n    def post(self, request):\n        serializer = PostSerializer(data=request.data)\n        if serializer.is_valid():\n            serializer.save()\n            return Response(serializer.data, status=201)\n        return Response(serializer.errors, status=400)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `serializer.save()` to create/update instances\n\nIf the serializer is a ModelSerializer, `save()` automatically creates or updates the model instance. You can pass `instance` to update an existing object."
+        }
+    ]
+}

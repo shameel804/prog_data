@@ -1,0 +1,17 @@
+{
+    "id": "task2",
+    "chapterId": "ch_12",
+    "title": "Build a Custom Management Command",
+    "description": "Create a command that exports all posts to a CSV file.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Your Mission\n\nCreate a custom management command called `export_posts` that exports all `Post` objects to a CSV file. The command should accept an optional argument `--output` to specify the file path (default: `posts.csv`). The CSV should have columns: `id`, `title`, `content`, `created_at`, `author` (username).\n\nUse the `csv` module to write the file. The command should output a success message with the number of exported posts.",
+    "hints": [
+        "Create a folder `management/commands/` in your app, with an empty `__init__.py`.",
+        "In `export_posts.py`, subclass `BaseCommand`.",
+        "Use `options.get('output')` to get the output filename.",
+        "Open the file with `with open(output, 'w', newline='') as f:`.",
+        "Write header row and then iterate over queryset."
+    ],
+    "expectedOutput": "Running `python manage.py export_posts --output=my_posts.csv` creates a CSV file with the posts.",
+    "solutionCode": "# management/commands/export_posts.py\nfrom django.core.management.base import BaseCommand\nimport csv\nfrom ...models import Post\n\nclass Command(BaseCommand):\n    help = 'Export all posts to a CSV file'\n\n    def add_arguments(self, parser):\n        parser.add_argument('--output', default='posts.csv', help='Output file name')\n\n    def handle(self, *args, **options):\n        output = options['output']\n        posts = Post.objects.select_related('author').all()\n\n        with open(output, 'w', newline='', encoding='utf-8') as f:\n            writer = csv.writer(f)\n            writer.writerow(['id', 'title', 'content', 'created_at', 'author'])\n            for post in posts:\n                writer.writerow([post.id, post.title, post.content, post.created_at, post.author.username])\n\n        self.stdout.write(self.style.SUCCESS(f'Exported {posts.count()} posts to {output}'))"
+}

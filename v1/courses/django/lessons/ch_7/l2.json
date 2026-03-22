@@ -1,0 +1,74 @@
+{
+    "id": "l2",
+    "chapterId": "ch_7",
+    "title": "Working with the User Model",
+    "description": "Create, retrieve, and update users using the User model.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "User Model",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "code",
+            "title": "Creating Users",
+            "content": "from django.contrib.auth.models import User\n\n# Create a regular user\nuser = User.objects.create_user('john', 'john@example.com', 'password123')\n\n# Create a superuser\nsuperuser = User.objects.create_superuser('admin', 'admin@example.com', 'adminpass')",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Why `create_user`? ⚠️",
+            "content": "Never set the `password` field directly. Use `set_password()` or `create_user()` because passwords must be hashed.\n\n```python\nuser = User(username='bob')\nuser.set_password('secret')\nuser.save()\n```\n\n`create_user` automatically handles hashing and saves the user."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What happens if you set `user.password = 'mypass'` directly?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It works fine",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It stores the password in plain text",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It raises an error",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It automatically hashes the password",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Direct assignment bypasses hashing, storing the password in plain text. Always use `set_password` or `create_user`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Retrieving and Updating",
+            "content": "from django.contrib.auth import authenticate\n\n# Get a user\nuser = User.objects.get(username='john')\n\n# Update user\nuser.email = 'new@example.com'\nuser.save()\n\n# Change password safely\nuser.set_password('newpass')\nuser.save()\n\n# Authenticate (returns user if credentials valid)\nuser = authenticate(username='john', password='password123')\nif user is not None:\n    # login\n    ...",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_5",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Use `get_user_model()` for reference\n\nIf you ever need to reference the user model (especially if you later customize it), use `from django.contrib.auth import get_user_model` and then `User = get_user_model()`. This ensures your code works with custom user models."
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_12",
+    "title": "Optimize a Slow View with select_related",
+    "description": "Identify an N+1 query in a view and fix it using select_related or prefetch_related.",
+    "estimatedMinutes": 10,
+    "problemStatement": "## Your Mission\n\nGiven a view that displays a list of posts with their authors, you notice that the number of database queries is high (one for the posts list, plus one for each author). Use `select_related` to reduce it to a single query.\n\nWrite the optimized queryset in the view. Then, use the Django Debug Toolbar or `assertNumQueries` in a test to verify that only one query is executed.",
+    "hints": [
+        "Original: `Post.objects.all()`",
+        "Optimized: `Post.objects.select_related('author').all()`",
+        "In a test, you can use `self.assertNumQueries(1)` after `client.get()`."
+    ],
+    "expectedOutput": "The view should still display the same content, but the number of database queries should drop to 1.",
+    "solutionCode": "# views.py (original)\n# posts = Post.objects.all()\n\n# Optimized\nposts = Post.objects.select_related('author').all()\n\n# Test\nfrom django.test import TestCase\nfrom django.urls import reverse\n\nclass PostListViewTest(TestCase):\n    def test_queries_optimized(self):\n        # create some posts with authors\n        with self.assertNumQueries(1):\n            response = self.client.get(reverse('post_list'))\n        self.assertEqual(response.status_code, 200)"
+}

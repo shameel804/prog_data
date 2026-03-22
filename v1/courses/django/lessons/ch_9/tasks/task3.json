@@ -1,0 +1,16 @@
+{
+    "id": "task3",
+    "chapterId": "ch_9",
+    "title": "Add Token Authentication and Permissions",
+    "description": "Secure the API so that only authenticated users can create, update, or delete posts.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Your Mission\n\nExtend the `PostViewSet` from Task 2 to enforce the following:\n- Any user (authenticated or not) can list posts (GET `/posts/`) and view a single post (GET `/posts/{id}/`).\n- Only authenticated users can create, update, or delete posts.\n\nUse token authentication. Add the `rest_framework.authtoken` app, run migrations, and create a token for a user. Test the API by sending requests with the `Authorization: Token <key>` header.\n\nAlso, automatically set the `author` of a new post to the currently authenticated user (override `perform_create`).",
+    "hints": [
+        "Add `'rest_framework.authtoken'` to INSTALLED_APPS and run `migrate`.",
+        "Set `permission_classes = [IsAuthenticatedOrReadOnly]` in the viewset.",
+        "Set `authentication_classes` in the viewset to `[TokenAuthentication]` or globally in settings.",
+        "Override `perform_create(self, serializer)` and call `serializer.save(author=self.request.user)`."
+    ],
+    "expectedOutput": "Unauthenticated requests can only GET; POST/PUT/DELETE return 403 Forbidden. Authenticated requests with a valid token can perform all actions.",
+    "solutionCode": "# views.py\nfrom rest_framework import viewsets, permissions\nfrom rest_framework.authentication import TokenAuthentication\nfrom .models import Post\nfrom .serializers import PostSerializer\n\nclass PostViewSet(viewsets.ModelViewSet):\n    queryset = Post.objects.all()\n    serializer_class = PostSerializer\n    authentication_classes = [TokenAuthentication]\n    permission_classes = [permissions.IsAuthenticatedOrReadOnly]\n\n    def perform_create(self, serializer):\n        serializer.save(author=self.request.user)\n\n# settings.py\nINSTALLED_APPS = [\n    ...\n    'rest_framework.authtoken',\n]\n\nREST_FRAMEWORK = {\n    'DEFAULT_AUTHENTICATION_CLASSES': [\n        'rest_framework.authentication.TokenAuthentication',\n    ],\n}\n\n# After adding authtoken, run migrate, then create a token for a user in the shell:\n# from rest_framework.authtoken.models import Token; token = Token.objects.create(user=user)"
+}

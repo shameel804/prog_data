@@ -1,0 +1,56 @@
+{
+    "id": "l4",
+    "chapterId": "ch_11",
+    "title": "Security Best Practices",
+    "description": "Protect your app from common vulnerabilities: CSRF, XSS, SQL injection, and more.",
+    "xpReward": 30,
+    "estimatedMinutes": 12,
+    "section": "Security",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Django’s Built‑in Security Features 🛡️",
+            "content": "Django provides many security protections out of the box when `DEBUG=False`:\n- **CSRF protection** – enabled by default for POST forms.\n- **XSS protection** – templates auto‑escape variables.\n- **SQL injection prevention** – ORM uses parameterized queries.\n- **Clickjacking protection** – `X‑Frame‑Options` middleware.\n- **SSL/HTTPS** – can enforce with `SECURE_SSL_REDIRECT`.\n\nBut you must configure them properly."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Security Settings",
+            "content": "# settings.py (production)\nSECURE_SSL_REDIRECT = True          # redirect HTTP to HTTPS\nSESSION_COOKIE_SECURE = True         # only send session cookie over HTTPS\nCSRF_COOKIE_SECURE = True            # only send CSRF cookie over HTTPS\nSECURE_HSTS_SECONDS = 31536000       # HTTP Strict Transport Security (1 year)\nSECURE_HSTS_INCLUDE_SUBDOMAINS = True\nSECURE_HSTS_PRELOAD = True\nSECURE_CONTENT_TYPE_NOSNIFF = True   # prevent MIME type sniffing\nSECURE_BROWSER_XSS_FILTER = True     # enable XSS filter\n\n# Set a strong SECRET_KEY (via env var)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which setting ensures that the session cookie is only sent over HTTPS?",
+                "options": [
+                    "SESSION_COOKIE_HTTPONLY",
+                    "SESSION_COOKIE_SECURE",
+                    "CSRF_COOKIE_SECURE",
+                    "SECURE_SSL_REDIRECT"
+                ],
+                "correctAnswer": 1,
+                "explanation": "`SESSION_COOKIE_SECURE = True` makes the session cookie only transmitted over HTTPS."
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Preventing Common Attacks",
+            "content": "**CSRF**: Use `{% csrf_token %}` in all POST forms. For API endpoints, use token authentication.\n\n**XSS**: Always use `|safe` filter only when you trust the content. Django auto‑escapes by default.\n\n**SQL Injection**: Use Django’s ORM; never concatenate user input into raw SQL.\n\n**Clickjacking**: Use `X_FRAME_OPTIONS = 'DENY'` to prevent your site from being embedded in an iframe.\n\n**Directory Traversal**: Don’t allow users to specify file paths directly; use `os.path.basename` or Django’s `FileField` to limit uploads."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Keep dependencies updated\n\nRegularly run `pip list --outdated` and update packages. Security vulnerabilities are often fixed in new releases."
+        }
+    ]
+}

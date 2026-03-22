@@ -1,0 +1,16 @@
+{
+    "id": "task3",
+    "chapterId": "ch_8",
+    "title": "Add Create, Update, Delete with Permissions",
+    "description": "Implement CRUD views with LoginRequiredMixin and custom author check.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Your Mission\n\nExtend the blog from Task 2. Add:\n- `CreateView` for creating new posts. Only logged‑in users can create; the author should be automatically set to the current user.\n- `UpdateView` for editing posts. Only the author of the post can edit it.\n- `DeleteView` for deleting posts. Only the author can delete.\n\nUse `LoginRequiredMixin` and create a custom mixin to check that the user is the author. Redirect to the post list after successful create/update/delete.\n\nWrite the views, mixin, and URL patterns.",
+    "hints": [
+        "Create a mixin `AuthorRequiredMixin` that checks `self.get_object().author == self.request.user` in `dispatch()`.",
+        "For CreateView, override `form_valid()` to set `post.author = request.user` before saving.",
+        "Use `reverse_lazy` for success URLs.",
+        "Ensure the templates exist (you can create simple forms)."
+    ],
+    "expectedOutput": "Logged‑in users can create posts; only the author can edit/delete their own posts.",
+    "solutionCode": "# mixins.py\nfrom django.contrib.auth.mixins import LoginRequiredMixin\nfrom django.core.exceptions import PermissionDenied\n\nclass AuthorRequiredMixin:\n    def dispatch(self, request, *args, **kwargs):\n        obj = self.get_object()\n        if obj.author != request.user:\n            raise PermissionDenied\n        return super().dispatch(request, *args, **kwargs)\n\n# views.py\nfrom django.views.generic import CreateView, UpdateView, DeleteView\nfrom django.urls import reverse_lazy\nfrom .models import Post\n\nclass PostCreateView(LoginRequiredMixin, CreateView):\n    model = Post\n    fields = ['title', 'content']\n    success_url = reverse_lazy('post_list')\n\n    def form_valid(self, form):\n        form.instance.author = self.request.user\n        return super().form_valid(form)\n\nclass PostUpdateView(LoginRequiredMixin, AuthorRequiredMixin, UpdateView):\n    model = Post\n    fields = ['title', 'content']\n    success_url = reverse_lazy('post_list')\n\nclass PostDeleteView(LoginRequiredMixin, AuthorRequiredMixin, DeleteView):\n    model = Post\n    success_url = reverse_lazy('post_list')\n\n# urls.py (add to existing)\npath('posts/create/', views.PostCreateView.as_view(), name='post_create'),\npath('posts/<int:pk>/edit/', views.PostUpdateView.as_view(), name='post_update'),\npath('posts/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post_delete'),"
+}

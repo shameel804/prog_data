@@ -1,0 +1,59 @@
+{
+    "id": "l2",
+    "chapterId": "ch_10",
+    "title": "Writing Your First Test",
+    "description": "Create a simple test case, run tests, and interpret results.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Basics",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Where Tests Live 📁",
+            "content": "Tests are typically placed in a `tests.py` file inside each app. Django’s `startapp` creates this file automatically. You can also organize tests into a `tests/` package with multiple modules.\n\nA basic test looks like:\n\n```python\nfrom django.test import TestCase\n\nclass MyTest(TestCase):\n    def test_something(self):\n        self.assertEqual(1 + 1, 2)\n```\n\nEach method starting with `test_` is a test case."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Running Tests",
+            "content": "Run all tests in your project:\n```bash\npython manage.py test\n```\n\nRun tests for a specific app:\n```bash\npython manage.py test blog\n```\n\nRun a specific test class or method:\n```bash\npython manage.py test blog.tests.PostModelTest\npython manage.py test blog.tests.PostModelTest.test_str_representation\n```\n\nOutput shows dots for passing tests, `E` for errors, `F` for failures.",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which command runs all tests in the project?",
+                "options": [
+                    "python manage.py runtests",
+                    "python manage.py test",
+                    "django test",
+                    "pytest"
+                ],
+                "correctAnswer": 1,
+                "explanation": "`python manage.py test` is the command to run tests.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "A Simple Model Test",
+            "content": "Assume you have a `Post` model with a `title` field. You can test that creating a post works:\n\n```python\nfrom django.test import TestCase\nfrom .models import Post\n\nclass PostModelTest(TestCase):\n    def test_create_post(self):\n        post = Post.objects.create(title=\"Test\")\n        self.assertEqual(post.title, \"Test\")\n        self.assertIsNotNone(post.id)\n```",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_5",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Use `setUp()` to avoid repetition\n\nIf many tests need the same data, define a `setUp()` method that creates test data. It runs before each test method."
+        }
+    ]
+}

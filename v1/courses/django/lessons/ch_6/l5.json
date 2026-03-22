@@ -1,0 +1,74 @@
+{
+    "id": "l5",
+    "chapterId": "ch_6",
+    "title": "Admin Actions & Advanced Features",
+    "description": "Create custom actions to perform bulk operations on selected records.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "What are Admin Actions? ⚙️",
+            "content": "Actions are functions that can be applied to a selection of objects in the changelist. For example, you could mark selected posts as published, delete them, or export them as CSV.\n\nDjango includes a default action to delete selected items. You can add your own."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Creating a Custom Action",
+            "content": "Define a function that takes three arguments: `modeladmin`, `request`, `queryset`. Then add it to the `actions` attribute.\n\n```python\ndef make_published(modeladmin, request, queryset):\n    queryset.update(is_published=True)\nmake_published.short_description = \"Mark selected posts as published\"\n\nclass PostAdmin(admin.ModelAdmin):\n    actions = [make_published]\n```",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What does the `queryset` argument in an admin action represent?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The currently filtered results",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The selected objects on the page",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "All objects of the model",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The request object",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`queryset` contains the objects the user selected in the admin list view.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Advanced: Export to CSV",
+            "content": "import csv\nfrom django.http import HttpResponse\n\ndef export_to_csv(modeladmin, request, queryset):\n    response = HttpResponse(content_type='text/csv')\n    response['Content-Disposition'] = 'attachment; filename=\"posts.csv\"'\n    writer = csv.writer(response)\n    writer.writerow(['ID', 'Title', 'Author'])\n    for obj in queryset:\n        writer.writerow([obj.id, obj.title, obj.author.username])\n    return response\nexport_to_csv.short_description = \"Export selected posts to CSV\"\n\nclass PostAdmin(admin.ModelAdmin):\n    actions = [export_to_csv]",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Restrict actions to certain users\n\nYou can override `get_actions` in your `ModelAdmin` to show/hide actions based on permissions."
+        }
+    ]
+}

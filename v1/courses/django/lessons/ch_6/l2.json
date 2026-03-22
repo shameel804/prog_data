@@ -1,0 +1,76 @@
+{
+    "id": "l2",
+    "chapterId": "ch_6",
+    "title": "Registering Models with the Admin",
+    "description": "Make your models appear in the admin and customize their display.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Registration",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "code",
+            "title": "Basic Registration",
+            "content": "In your app’s `admin.py`, import your model and register it with the admin site.",
+            "codeSnippet": "from django.contrib import admin\nfrom .models import Post\n\nadmin.site.register(Post)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "What You Get Immediately 🎁",
+            "content": "After registration, you’ll see a list view of all `Post` objects with a link to add or change them. Clicking an item opens a detailed edit form with fields generated from the model.\n\nDjango automatically:\n- Validates input based on model constraints.\n- Provides a search box (if you add `search_fields`).\n- Supports pagination and filtering (if you add `list_filter`)."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Where should you place the code to register a model with the admin?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "models.py",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "admin.py",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "views.py",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "urls.py",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Admin registrations belong in `admin.py` inside your app.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Using a ModelAdmin Class",
+            "content": "For more control, create a `ModelAdmin` subclass and register it with the model.",
+            "codeSnippet": "from django.contrib import admin\nfrom .models import Post\n\nclass PostAdmin(admin.ModelAdmin):\n    list_display = ('title', 'author', 'published_date')\n    search_fields = ('title', 'content')\n\nadmin.site.register(Post, PostAdmin)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_5",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Use `@admin.register` decorator\n\nA cleaner way:\n```python\n@admin.register(Post)\nclass PostAdmin(admin.ModelAdmin):\n    list_display = ('title', 'author')\n```"
+        }
+    ]
+}

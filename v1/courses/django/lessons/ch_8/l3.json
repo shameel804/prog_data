@@ -1,0 +1,82 @@
+{
+    "id": "l3",
+    "chapterId": "ch_8",
+    "title": "CreateView, UpdateView, DeleteView",
+    "description": "Handle creation, editing, and deletion of objects with minimal code.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Generic Views",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "CRUD in One Go ✍️",
+            "content": "Django provides generic views for create, update, and delete operations. They combine form handling and redirects.\n\n- `CreateView` – displays a form to create a new object, saves on POST.\n- `UpdateView` – displays a form pre‑filled with an existing object, updates on POST.\n- `DeleteView` – asks for confirmation, then deletes the object."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "CreateView Example",
+            "content": "from django.views.generic import CreateView\nfrom django.urls import reverse_lazy\nfrom .models import Post\nfrom .forms import PostForm\n\nclass PostCreateView(CreateView):\n    model = Post\n    form_class = PostForm          # optional; if not set, uses a ModelForm\n    template_name = 'posts/create.html'\n    success_url = reverse_lazy('post_list')  # where to redirect after success",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of `reverse_lazy` in a generic view?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To reverse URLs at runtime",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To avoid URL reversal errors when the URLconf hasn't loaded yet",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To make redirects faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To automatically set the success URL",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`reverse_lazy` delays URL reversal until the view is called, avoiding import issues when the URLconf is not fully loaded.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "UpdateView and DeleteView",
+            "content": "from django.views.generic import UpdateView, DeleteView\n\nclass PostUpdateView(UpdateView):\n    model = Post\n    fields = ['title', 'content']  # which fields to edit\n    template_name = 'posts/update.html'\n    success_url = reverse_lazy('post_list')\n\nclass PostDeleteView(DeleteView):\n    model = Post\n    template_name = 'posts/delete_confirm.html'\n    success_url = reverse_lazy('post_list')\n\n# DeleteView automatically asks for confirmation via a template (default: app/model_confirm_delete.html)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Customizing the Redirect",
+            "content": "You can override `get_success_url()` to redirect dynamically:\n\n```python\nclass PostCreateView(CreateView):\n    # ...\n    def get_success_url(self):\n        return reverse('post_detail', kwargs={'pk': self.object.pk})\n```",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Set `success_url` to a named URL\n\nUsing `reverse_lazy` ensures you don't get import errors. Always use `reverse_lazy` in class attributes."
+        }
+    ]
+}

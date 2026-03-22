@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_6",
+    "title": "Create a Custom Admin Action",
+    "description": "Add an action to mark selected posts as published.",
+    "estimatedMinutes": 10,
+    "problemStatement": "## Your Mission\n\nExtend the `PostAdmin` from previous tasks by adding a custom admin action called `make_published` that sets `is_published = True` for all selected posts.\n\nProvide a short description that appears in the action dropdown. Ensure the action appears only when at least one post is selected.",
+    "hints": [
+        "Define a function `make_published(modeladmin, request, queryset)` that calls `queryset.update(is_published=True)`.",
+        "Assign `make_published.short_description = \"Mark selected posts as published\"`.",
+        "Add the function to the `actions` list in the ModelAdmin."
+    ],
+    "expectedOutput": "In the admin list view, after selecting some posts, the action dropdown includes 'Mark selected posts as published'. Choosing it updates the selected posts.",
+    "solutionCode": "# admin.py\nfrom django.contrib import admin\nfrom .models import Post\n\ndef make_published(modeladmin, request, queryset):\n    queryset.update(is_published=True)\nmake_published.short_description = \"Mark selected posts as published\"\n\n@admin.register(Post)\nclass PostAdmin(admin.ModelAdmin):\n    list_display = ('title', 'author', 'published_date', 'is_published')\n    list_filter = ('is_published', 'author')\n    search_fields = ('title', 'content')\n    ordering = ('-published_date',)\n    actions = [make_published]"
+}

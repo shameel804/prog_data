@@ -1,0 +1,16 @@
+{
+    "id": "task2",
+    "chapterId": "ch_10",
+    "title": "Test Views with the Test Client",
+    "description": "Write tests for list and detail views, checking status codes and content.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Your Mission\n\nAssume you have a `Post` model and two views: `post_list` (url named 'post_list') and `post_detail` (url named 'post_detail', expects `pk`).\n\nWrite test methods in `tests.py`:\n- `test_post_list_view`: should return 200 and contain the text \"No posts yet\" when no posts exist.\n- `test_post_detail_view`: after creating a post, the detail view should return 200 and contain the post title.\n\nUse the test client and `reverse` to generate URLs.",
+    "hints": [
+        "Create a test class `PostViewTest`.",
+        "Use `self.client.get(reverse('post_list'))` to get the list page.",
+        "Use `assertContains` to check for text.",
+        "Create a post in `setUp()` or inside the test."
+    ],
+    "expectedOutput": "Running tests should pass, verifying view behavior.",
+    "solutionCode": "# blog/tests.py\nfrom django.test import TestCase\nfrom django.urls import reverse\nfrom .models import Post\n\nclass PostViewTest(TestCase):\n    def test_post_list_view_empty(self):\n        response = self.client.get(reverse('post_list'))\n        self.assertEqual(response.status_code, 200)\n        self.assertContains(response, \"No posts yet\")\n\n    def test_post_detail_view(self):\n        post = Post.objects.create(title='Detail Test', content='Hello')\n        response = self.client.get(reverse('post_detail', args=[post.id]))\n        self.assertEqual(response.status_code, 200)\n        self.assertContains(response, post.title)"
+}

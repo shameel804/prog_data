@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_7",
+    "title": "Create a User Profile",
+    "description": "Add a profile model with extra fields and create it automatically when a user is created.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Your Mission\n\nCreate a `Profile` model with fields:\n- `user` (OneToOneField to User)\n- `bio` (TextField, blank)\n- `birth_date` (DateField, null, blank)\n\nWrite a signal that automatically creates a profile whenever a new user is created. Also, update the profile when the user is saved.\n\nTest by creating a user in the Django shell and verifying that a profile exists.",
+    "hints": [
+        "Define the model in `models.py`.",
+        "Use `from django.db.models.signals import post_save` and `@receiver(post_save, sender=User)`.",
+        "In the signal, call `Profile.objects.create(user=instance)` if created is True.",
+        "Don't forget to connect the signal in `apps.py` or import the signals in the app's `ready()` method."
+    ],
+    "expectedOutput": "After creating a user, a profile record is automatically created with no extra fields (blank).",
+    "solutionCode": "# models.py\nfrom django.db import models\nfrom django.contrib.auth.models import User\n\nclass Profile(models.Model):\n    user = models.OneToOneField(User, on_delete=models.CASCADE)\n    bio = models.TextField(blank=True)\n    birth_date = models.DateField(null=True, blank=True)\n\n# signals.py\nfrom django.db.models.signals import post_save\nfrom django.dispatch import receiver\nfrom django.contrib.auth.models import User\nfrom .models import Profile\n\n@receiver(post_save, sender=User)\ndef create_user_profile(sender, instance, created, **kwargs):\n    if created:\n        Profile.objects.create(user=instance)\n\n@receiver(post_save, sender=User)\ndef save_user_profile(sender, instance, **kwargs):\n    instance.profile.save()\n\n# apps.py\nfrom django.apps import AppConfig\n\nclass MyappConfig(AppConfig):\n    default_auto_field = 'django.db.models.BigAutoField'\n    name = 'myapp'\n\n    def ready(self):\n        import myapp.signals"
+}

@@ -1,0 +1,65 @@
+{
+    "id": "l4",
+    "chapterId": "ch_12",
+    "title": "Performance Optimization",
+    "description": "Improve your app's speed with caching, efficient queries, and other techniques.",
+    "xpReward": 30,
+    "estimatedMinutes": 12,
+    "section": "Performance",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Why Optimize? ⚡",
+            "content": "A slow app leads to poor user experience and higher server costs. Django is fast out of the box, but as your app grows, you need to be proactive.\n\nKey areas:\n- Database queries (N+1 problem).\n- Caching (memcached, Redis).\n- Template rendering.\n- Static and media files.\n- Asynchronous processing."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Optimizing Queries: select_related and prefetch_related",
+            "content": "# N+1 problem example:\nposts = Post.objects.all()\nfor post in posts:\n    print(post.author.username)  # hits DB for each post\n\n# Fix with select_related (for ForeignKey, OneToOne)\nposts = Post.objects.select_related('author').all()\n\n# For ManyToMany or reverse ForeignKey, use prefetch_related\nposts = Post.objects.prefetch_related('tags').all()\n\n# You can combine them\nposts = Post.objects.select_related('author').prefetch_related('tags').all()",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which method should you use to fetch a related ForeignKey object in the same query to avoid N+1?",
+                "options": [
+                    "prefetch_related",
+                    "select_related",
+                    "only",
+                    "defer"
+                ],
+                "correctAnswer": 1,
+                "explanation": "`select_related` performs a SQL join to fetch the related object. `prefetch_related` does a separate query and then combines.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Caching 🗄️",
+            "content": "Django has a flexible caching framework. You can cache entire pages, fragments, or computed data.\n\n**Backends**: Memcached, Redis, database, file system.\n\n**Settings**:\n```python\nCACHES = {\n    'default': {\n        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',\n        'LOCATION': '127.0.0.1:11211',\n    }\n}\n```\n\n**Usage**:\n- Template fragment: `{% load cache %} {% cache 500 sidebar %} ... {% endcache %}`\n- Low‑level API: `from django.core.cache import cache; cache.set('key', value, timeout)`\n- Per‑view cache: `@cache_page(60 * 15)`"
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Database Indexing",
+            "content": "Add indexes to fields you frequently filter or sort on. Django creates indexes for `ForeignKey`, `ManyToMany`, and fields with `db_index=True`.\n\n```python\nclass Post(models.Model):\n    title = models.CharField(max_length=200, db_index=True)\n    created_at = models.DateTimeField(db_index=True)\n\n    class Meta:\n        indexes = [\n            models.Index(fields=['created_at', 'title']),\n        ]\n```\n\nAfter adding indexes, run `makemigrations` and `migrate` to create them in the database.",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `explain` to analyze queries\n\nIn the Django shell, you can use `queryset.explain()` to see the query plan and identify missing indexes."
+        }
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_12",
+    "title": "Create a Signal to Log Post Changes",
+    "description": "Write a signal that logs whenever a Post is created or updated.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Your Mission\n\nCreate a `Post` model (if not already present). Write a signal that logs to a file or console whenever a `Post` instance is saved (`post_save`). The log should include the post title and whether it was created or updated.\n\nAlso, ensure the signal is connected properly by loading it in the app's `ready()` method.\n\n> **Hint**: Use `created` parameter from `post_save` to distinguish creation vs update.",
+    "hints": [
+        "Create a `signals.py` file in your app.",
+        "Define a function `log_post_save(sender, instance, created, **kwargs)`.",
+        "Use `print()` or write to a file (like a log).",
+        "In `apps.py`, import signals in the `ready()` method."
+    ],
+    "expectedOutput": "When you create or update a post through the admin or a form, the log appears in the console (or a log file).",
+    "solutionCode": "# signals.py\nfrom django.db.models.signals import post_save\nfrom django.dispatch import receiver\nfrom .models import Post\n\n@receiver(post_save, sender=Post)\ndef log_post_save(sender, instance, created, **kwargs):\n    action = \"Created\" if created else \"Updated\"\n    print(f\"[LOG] {action} post: {instance.title}\")\n\n# apps.py\nfrom django.apps import AppConfig\n\nclass BlogConfig(AppConfig):\n    default_auto_field = 'django.db.models.BigAutoField'\n    name = 'blog'\n\n    def ready(self):\n        import blog.signals"
+}

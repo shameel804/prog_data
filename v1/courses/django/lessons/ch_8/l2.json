@@ -1,0 +1,74 @@
+{
+    "id": "l2",
+    "chapterId": "ch_8",
+    "title": "ListView and DetailView",
+    "description": "Display lists of objects and single object details using generic views.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Generic Views",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Generic Views: The Shortcut 📋",
+            "content": "Django provides **generic class‑based views** for common tasks. They handle many details automatically.\n\n- `ListView` – displays a list of objects.\n- `DetailView` – displays a single object.\n\nYou only need to specify the model (or queryset) and a template."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Using ListView",
+            "content": "from django.views.generic import ListView\nfrom .models import Post\n\nclass PostListView(ListView):\n    model = Post\n    template_name = 'posts/list.html'  # optional, defaults to app/model_list.html\n    context_object_name = 'posts'      # variable name in template, default is object_list\n    ordering = ['-published_date']     # order results\n\n# In template, you can iterate over {{ posts }}",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Check Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the default template name for a ListView on a model named `Post` in an app `blog`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "blog/post_list.html",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "blog/post_listing.html",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "posts/list.html",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "post_list.html",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The default is `app_name/model_name_list.html`. For app 'blog' and model 'Post', it's `blog/post_list.html`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Using DetailView",
+            "content": "from django.views.generic import DetailView\nfrom .models import Post\n\nclass PostDetailView(DetailView):\n    model = Post\n    template_name = 'posts/detail.html'  # default: blog/post_detail.html\n    context_object_name = 'post'\n\n# The view automatically captures a URL parameter like `pk` or `slug`.\n# In urls.py:\npath('post/<int:pk>/', PostDetailView.as_view(), name='post_detail'),",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Override `get_queryset()` for custom filtering\n\nIn ListView, you can filter results by overriding `get_queryset()`. For example, to show only published posts: `return Post.objects.filter(is_published=True)`."
+        }
+    ]
+}
