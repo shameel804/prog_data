@@ -1,0 +1,66 @@
+{
+    "id": "l6",
+    "chapterId": "ch_7",
+    "title": "Testing Data Layer with @DataJpaTest",
+    "description": "Test JPA repositories with an embedded database and slice tests.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Slice Testing JPA 🗃️",
+            "content": "# @DataJpaTest\n\nThis annotation configures an in‑memory database (by default H2), scans for `@Entity` classes and `@Repository` interfaces, and provides a `TestEntityManager` to interact with the database.\n\nIt does **not** load full Spring context – only JPA related components."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Which annotation is used to test Spring Data JPA repositories?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "@JpaTest",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "@DataJpaTest",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "@RepositoryTest",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "@EntityTest",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "@DataJpaTest sets up a slice for JPA repositories with an embedded database.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Repository Test Example",
+            "content": "```java\nimport org.junit.jupiter.api.Test;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;\nimport org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;\nimport static org.assertj.core.api.Assertions.assertThat;\n\n@DataJpaTest\nclass UserRepositoryTest {\n\n    @Autowired\n    private TestEntityManager entityManager;\n\n    @Autowired\n    private UserRepository userRepository;\n\n    @Test\n    void findByEmail_shouldReturnUser() {\n        User user = new User(\"test@example.com\", \"John\");\n        entityManager.persist(user);\n\n        Optional<User> found = userRepository.findByEmail(\"test@example.com\");\n\n        assertThat(found).isPresent();\n        assertThat(found.get().getName()).isEqualTo(\"John\");\n    }\n}\n```",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_4",
+            "type": "tip",
+            "title": "Rollback by Default",
+            "content": "Tests annotated with `@DataJpaTest` are transactional and rolled back after each test by default, keeping the database clean."
+        }
+    ]
+}

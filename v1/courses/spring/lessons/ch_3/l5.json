@@ -1,0 +1,76 @@
+{
+    "id": "l5",
+    "chapterId": "ch_3",
+    "title": "Response Status and Headers",
+    "description": "Control HTTP status codes and add custom headers to responses.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Why Status Codes Matter 🚦",
+            "content": "# Communicate the Outcome\n\nHTTP status codes tell the client whether the request succeeded, failed, or needs redirection. Common codes:\n\n* **200 OK** – Success.\n* **201 Created** – Resource successfully created (usually for POST).\n* **204 No Content** – Success, but no response body (e.g., DELETE).\n* **400 Bad Request** – Client error (malformed input).\n* **404 Not Found** – Resource doesn’t exist.\n* **500 Internal Server Error** – Server‑side error."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What status code should a POST endpoint return after successfully creating a resource?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "200 OK",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "201 Created",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "204 No Content",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "404 Not Found",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "201 Created is the standard response for a successful creation, often including the Location header pointing to the new resource.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Setting Status with @ResponseStatus",
+            "content": "Use `@ResponseStatus` on an exception class or on a controller method:",
+            "codeSnippet": "@PostMapping(\"/users\")\n@ResponseStatus(HttpStatus.CREATED)\npublic User createUser(@RequestBody User user) {\n    return userService.save(user);\n}\n\n// Or on an exception handler:\n@ResponseStatus(HttpStatus.NOT_FOUND)\npublic class ResourceNotFoundException extends RuntimeException { }",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Adding Headers with ResponseEntity",
+            "content": "For full control over status, headers, and body, use `ResponseEntity`:",
+            "codeSnippet": "@PostMapping(\"/users\")\npublic ResponseEntity<User> createUser(@RequestBody User user) {\n    User saved = userService.save(user);\n    URI location = URI.create(\"/users/\" + saved.getId());\n    return ResponseEntity.created(location).body(saved);\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "tip",
+            "title": "Don’t Overcomplicate 🌟",
+            "content": "For most cases, `@ResponseStatus` is enough. Use `ResponseEntity` when you need to set custom headers or vary status dynamically."
+        }
+    ]
+}

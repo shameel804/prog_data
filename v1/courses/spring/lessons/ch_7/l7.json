@@ -1,0 +1,66 @@
+{
+    "id": "l7",
+    "chapterId": "ch_7",
+    "title": "Integration Tests with @SpringBootTest",
+    "description": "Launch the whole Spring context to test real interactions.",
+    "xpReward": 40,
+    "estimatedMinutes": 15,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l7_1",
+            "type": "text",
+            "title": "Full Context Integration 🚀",
+            "content": "# @SpringBootTest\n\nStarts the entire application context, including all beans. Great for end‑to‑end tests, but slower. You can start a real server with `webEnvironment`.\n\nCommon setups:\n- `webEnvironment = RANDOM_PORT` – starts the embedded server on a random port.\n- `webEnvironment = MOCK` (default) – loads the context but uses MockMvc (no real server)."
+        },
+        {
+            "id": "s_l7_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_1",
+                "type": "multiple_choice",
+                "question": "Which annotation loads the full Spring application context for integration testing?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "@WebMvcTest",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "@DataJpaTest",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "@SpringBootTest",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "@IntegrationTest",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "@SpringBootTest loads the complete application context, making it suitable for integration tests.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l7_3",
+            "type": "code",
+            "title": "Integration Test with Real Server",
+            "content": "```java\nimport org.junit.jupiter.api.Test;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.boot.test.context.SpringBootTest;\nimport org.springframework.boot.test.web.client.TestRestTemplate;\nimport org.springframework.boot.test.web.server.LocalServerPort;\nimport static org.assertj.core.api.Assertions.assertThat;\n\n@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)\nclass UserIntegrationTest {\n\n    @LocalServerPort\n    private int port;\n\n    @Autowired\n    private TestRestTemplate restTemplate;\n\n    @Test\n    void getUser_shouldReturnUser() {\n        String url = \"http://localhost:\" + port + \"/api/users/1\";\n        User user = restTemplate.getForObject(url, User.class);\n        assertThat(user).isNotNull();\n        assertThat(user.getName()).isEqualTo(\"John\");\n    }\n}\n```",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_4",
+            "type": "tip",
+            "title": "TestRestTemplate vs RestClient",
+            "content": "`TestRestTemplate` is a convenience wrapper around RestTemplate with useful methods for testing. Use it to interact with your running application."
+        }
+    ]
+}

@@ -1,0 +1,73 @@
+{
+    "id": "l2",
+    "chapterId": "ch_4",
+    "title": "Setting Up a Database in Spring Boot",
+    "description": "Add dependencies, configure H2 or MySQL, and verify the connection.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Setup",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Add the Required Dependencies 🛠️",
+            "content": "# Spring Data JPA Starter\n\nIn your `pom.xml`, add:\n\n```xml\n<dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-data-jpa</artifactId>\n</dependency>\n```\n\nAnd a database driver. For **H2** (in‑memory, great for development):\n\n```xml\n<dependency>\n    <groupId>com.h2database</groupId>\n    <artifactId>h2</artifactId>\n    <scope>runtime</scope>\n</dependency>\n```\n\nFor **MySQL** (production), you'd add the MySQL connector."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which starter should you include to use Spring Data JPA?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "spring-boot-starter-jdbc",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "spring-boot-starter-data-jpa",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "spring-boot-starter-database",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "spring-boot-starter-orm",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "spring‑boot‑starter‑data‑jpa brings in JPA, Hibernate, and Spring Data JPA.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Configure application.properties",
+            "content": "Add these properties to configure the database connection and JPA behavior:",
+            "codeSnippet": "# H2 in‑memory database\nspring.datasource.url=jdbc:h2:mem:testdb\nspring.datasource.driverClassName=org.h2.Driver\nspring.datasource.username=sa\nspring.datasource.password=\n\n# JPA\nspring.jpa.database-platform=org.hibernate.dialect.H2Dialect\nspring.jpa.hibernate.ddl-auto=update\nspring.jpa.show-sql=true\n\n# H2 console (optional)\nspring.h2.console.enabled=true",
+            "codeLanguage": "properties",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "What `ddl-auto` Means 📖",
+            "content": "# Schema Generation Options\n\n* `ddl-auto=update` – automatically creates/updates tables based on your entities (good for development).\n* `ddl-auto=create` – drops and recreates tables each time.\n* `ddl-auto=create-drop` – creates tables, then drops them when the application stops.\n* `ddl-auto=validate` – only validates that the schema matches entities, does not change it.\n\n**Never use `update` or `create` in production** – use a migration tool like Flyway or Liquibase instead."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "tip",
+            "title": "H2 Console 🖥️",
+            "content": "With `spring.h2.console.enabled=true`, you can access the H2 web console at `http://localhost:8080/h2-console`. Use JDBC URL `jdbc:h2:mem:testdb` to see your tables."
+        }
+    ]
+}

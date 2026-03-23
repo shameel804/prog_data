@@ -1,0 +1,29 @@
+{
+    "id": "project3",
+    "title": "E‑Commerce Shopping Cart API",
+    "description": "Create a REST API for an online store with products, carts, and orders.",
+    "difficulty": "Advanced",
+    "estimatedHours": "6-8",
+    "problemStatement": "Build a complete e‑commerce backend API using Spring Boot. The system must support product management (CRUD), user shopping carts, order processing, and payment simulation. Users can add/remove items from their cart, place an order, and view their order history. Administrators can manage products and view all orders.\n\n**Core Features:**\n- User roles: `ROLE_CUSTOMER` and `ROLE_ADMIN`.\n- Product catalog: name, description, price, stock quantity.\n- Shopping cart: each user has one cart (automatically created). Cart items have quantity.\n- Order: when a user checks out, create an order from the cart, reduce stock, and clear the cart.\n- Order status: PENDING, PAID, SHIPPED, CANCELLED.\n- Payment simulation: simply update order status to PAID (no real payment integration).\n- Stock validation: prevent adding more than available stock, and prevent ordering if stock insufficient.\n- Pagination and sorting for product listing.\n- Validation and error handling.\n- Unit and integration tests.\n- Actuator endpoints.\n\n**Technical Requirements:**\n- Spring Boot 3.x, Spring Data JPA, Spring Security.\n- Database: H2 or MySQL.\n- Use transactions to ensure consistency (e.g., when creating order).\n- DTOs for request/response.\n- Use `@PreAuthorize` to secure endpoints.\n- Document API with OpenAPI.\n- Write at least 12 tests covering service and controller layers.\n\n**Bonus:**\n- Implement a product search with sorting by price or popularity.\n- Add a discount coupon system.\n- Use caching for product listings (e.g., with Redis).\n- Add an event listener to send a confirmation email on order placement (simulate with logging).",
+    "requirements": [
+        "User registration and authentication (JWT recommended).",
+        "Product CRUD – only ADMIN can create/update/delete; customers can view.",
+        "Cart endpoints: GET /api/cart (view cart), POST /api/cart/items (add item), PUT /api/cart/items/{productId} (update quantity), DELETE /api/cart/items/{productId} (remove item).",
+        "Order endpoints: POST /api/orders (place order), GET /api/orders (user's orders), GET /api/orders/{id} (order details). ADMIN can GET all orders and update status.",
+        "When placing an order, create an Order entity with items (snapshot of product details at that time) and reduce stock of each product.",
+        "All operations must check current stock and reject if insufficient.",
+        "Validation: product name/price not null, quantity positive, etc.",
+        "Global exception handling.",
+        "Actuator: expose health, info, and custom metrics (e.g., total orders).",
+        "Testing: unit tests for service methods, integration tests for controller endpoints."
+    ],
+    "hints": [
+        "Entities: User, Product, Cart, CartItem, Order, OrderItem.",
+        "A Cart is one‑to‑one with User, and CartItem is many‑to‑one to Cart and Product.",
+        "When placing an order, copy CartItem data to OrderItem and set the order reference.",
+        "Use `@Transactional` on the order placement method to ensure atomicity.",
+        "To avoid locking issues, consider pessimistic locking or optimistic locking for stock updates.",
+        "For tests, use `@DataJpaTest` for repository tests, `@WebMvcTest` for controllers, and `@SpringBootTest` for integration."
+    ],
+    "expectedOutput": "A fully functional e‑commerce backend that allows customers to browse products, manage their cart, and place orders. Admin users can manage products and view orders. The API must handle stock validation and transactional consistency. All tests should pass, and the code should be well‑structured and documented."
+}

@@ -1,0 +1,73 @@
+{
+    "id": "l3",
+    "chapterId": "ch_6",
+    "title": "In‑Memory Authentication",
+    "description": "Configure users and roles directly in Java code.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Hands‑on",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "UserDetailsService & In‑Memory Users 👥",
+            "content": "# Define Users in Code\n\nYou can create a `SecurityFilterChain` bean that configures authentication and authorization. For in‑memory users, we use `InMemoryUserDetailsManager`."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which class is used to manage in‑memory users in Spring Security?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "UserDetailsService",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "InMemoryUserDetailsManager",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "UserDetailsManager",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "JdbcUserDetailsManager",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "InMemoryUserDetailsManager is an implementation of UserDetailsService that stores user details in memory.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Configuring In‑Memory Users",
+            "content": "Create a configuration class (e.g., `SecurityConfig`):",
+            "codeSnippet": "import org.springframework.context.annotation.Bean;\nimport org.springframework.context.annotation.Configuration;\nimport org.springframework.security.config.annotation.web.builders.HttpSecurity;\nimport org.springframework.security.core.userdetails.User;\nimport org.springframework.security.core.userdetails.UserDetails;\nimport org.springframework.security.provisioning.InMemoryUserDetailsManager;\nimport org.springframework.security.web.SecurityFilterChain;\n\n@Configuration\npublic class SecurityConfig {\n\n    @Bean\n    public InMemoryUserDetailsManager userDetailsService() {\n        UserDetails user = User.withUsername(\"user\")\n                .password(\"{noop}password\") // {noop} means no password encoding\n                .roles(\"USER\")\n                .build();\n\n        UserDetails admin = User.withUsername(\"admin\")\n                .password(\"{noop}admin\")\n                .roles(\"ADMIN\")\n                .build();\n\n        return new InMemoryUserDetailsManager(user, admin);\n    }\n\n    @Bean\n    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {\n        http.authorizeHttpRequests()\n                .anyRequest().authenticated()\n                .and()\n                .httpBasic();\n        return http.build();\n    }\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Password Encoding 🗝️",
+            "content": "# Never Store Plain Passwords!\n\nIn the example, we used `{noop}` to indicate no password encoding (only for learning). In production, use a password encoder like `BCryptPasswordEncoder`.\n\n```java\n@Bean\npublic PasswordEncoder passwordEncoder() {\n    return new BCryptPasswordEncoder();\n}\n```\n\nThen create users with encoded passwords:\n\n```java\nUser.withUsername(\"user\")\n    .password(passwordEncoder().encode(\"password\"))\n    .roles(\"USER\")\n    .build();\n```"
+        },
+        {
+            "id": "s_l3_5",
+            "type": "tip",
+            "title": "Role Prefix",
+            "content": "Spring Security automatically adds `ROLE_` prefix to roles. So `roles(\"USER\")` becomes `ROLE_USER` internally. You'll see this when using expressions like `hasRole('USER')`."
+        }
+    ]
+}

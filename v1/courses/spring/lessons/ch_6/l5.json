@@ -1,0 +1,79 @@
+{
+    "id": "l5",
+    "chapterId": "ch_6",
+    "title": "Form Login and Logout",
+    "description": "Customize the login page and add logout functionality.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Login Form: The Default Page 📄",
+            "content": "# Form Login vs HTTP Basic\n\nHTTP Basic sends credentials in headers; Form Login presents an HTML page. You can enable form login with `.formLogin()`.\n\nSpring Security provides a default login page, but you can customize it."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which method enables the default form login page?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": ".httpBasic()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": ".formLogin()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": ".loginPage()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": ".loginForm()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "formLogin() enables form‑based authentication with Spring Security's default login page.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Enabling Form Login",
+            "content": "Update your `SecurityFilterChain` bean:",
+            "codeSnippet": "@Bean\npublic SecurityFilterChain filterChain(HttpSecurity http) throws Exception {\n    http.authorizeHttpRequests(authz -> authz\n            .anyRequest().authenticated()\n        )\n        .formLogin()\n            .loginPage(\"/login\") // optional custom login page\n            .permitAll()\n        .and()\n        .logout()\n            .logoutSuccessUrl(\"/\")\n            .permitAll();\n    return http.build();\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Custom Login Page (Optional) 🎨",
+            "content": "# Build Your Own Login Form\n\nYou can create a simple HTML page at `src/main/resources/templates/login.html` (if using Thymeleaf) and set `.loginPage(\"/login\")`.\n\nYou'll also need a controller to serve that page:\n\n```java\n@Controller\npublic class LoginController {\n    @GetMapping(\"/login\")\n    public String login() {\n        return \"login\";\n    }\n}\n```\n\nThe form must POST to `/login` with parameters `username` and `password`."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Logout Handling",
+            "content": "With `.logout()`, Spring Security creates a `/logout` endpoint that invalidates the session and clears the security context.\n\nYou can add a logout link in your pages:\n\n```html\n<a href=\"/logout\">Logout</a>\n```\n\nAfter logout, the user is redirected to the URL specified in `logoutSuccessUrl()` (default is `/login?logout`)."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "CSRF Protection",
+            "content": "Spring Security enables CSRF protection by default. If you use forms, include a CSRF token (automatically added by Thymeleaf). For REST APIs, you may disable it (`csrf().disable()`) if using stateless authentication."
+        }
+    ]
+}

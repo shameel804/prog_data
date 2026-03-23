@@ -1,0 +1,17 @@
+{
+    "id": "task2",
+    "chapterId": "ch_7",
+    "title": "Test a REST Controller with @WebMvcTest",
+    "description": "Use MockMvc to test a controller's endpoints.",
+    "estimatedMinutes": 20,
+    "problemStatement": "You have a `UserController` that exposes endpoints for users. Write tests using `@WebMvcTest` and `MockMvc` to verify:\n\n- `GET /api/users/{id}` returns 200 with the user JSON when the user exists.\n- `GET /api/users/{id}` returns 404 with an error message when the user does not exist.\n- `POST /api/users` returns 201 Created and the created user when valid JSON is sent.\n\nMock the `UserService` bean with `@MockBean`. Use `jsonPath` to assert the response content.",
+    "hints": [
+        "Use `@WebMvcTest(UserController.class)` to load only the web slice.",
+        "Inject `MockMvc` with `@Autowired`.",
+        "Mock the service with `@MockBean` and stub its methods.",
+        "For POST, use `MockMvcRequestBuilders.post(...).contentType(MediaType.APPLICATION_JSON).content(jsonString)`.",
+        "Use `jsonPath` to check fields."
+    ],
+    "expectedOutput": "All tests pass. The mock service should be called appropriately.",
+    "solutionCode": "import com.fasterxml.jackson.databind.ObjectMapper;\nimport org.junit.jupiter.api.Test;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;\nimport org.springframework.boot.test.mock.mockito.MockBean;\nimport org.springframework.http.MediaType;\nimport org.springframework.test.web.servlet.MockMvc;\n\nimport static org.mockito.ArgumentMatchers.any;\nimport static org.mockito.Mockito.*;\nimport static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;\nimport static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;\n\n@WebMvcTest(UserController.class)\nclass UserControllerTest {\n\n    @Autowired\n    private MockMvc mockMvc;\n\n    @MockBean\n    private UserService userService;\n\n    @Autowired\n    private ObjectMapper objectMapper;\n\n    @Test\n    void getUser_shouldReturnUser_whenExists() throws Exception {\n        User user = new User(1L, \"John\");\n        when(userService.getUserById(1L)).thenReturn(user);\n\n        mockMvc.perform(get(\"/api/users/1\"))\n                .andExpect(status().isOk())\n                .andExpect(jsonPath(\"$.id\").value(1))\n                .andExpect(jsonPath(\"$.name\").value(\"John\"));\n    }\n\n    @Test\n    void getUser_shouldReturn404_whenNotFound() throws Exception {\n        when(userService.getUserById(99L)).thenThrow(new ResourceNotFoundException(\"User not found\"));\n\n        mockMvc.perform(get(\"/api/users/99\"))\n                .andExpect(status().isNotFound());\n    }\n\n    @Test\n    void createUser_shouldReturnCreatedUser() throws Exception {\n        User newUser = new User(null, \"Alice\");\n        User savedUser = new User(2L, \"Alice\");\n        when(userService.createUser(any(User.class))).thenReturn(savedUser);\n\n        mockMvc.perform(post(\"/api/users\")\n                        .contentType(MediaType.APPLICATION_JSON)\n                        .content(objectMapper.writeValueAsString(newUser)))\n                .andExpect(status().isCreated())\n                .andExpect(jsonPath(\"$.id\").value(2))\n                .andExpect(jsonPath(\"$.name\").value(\"Alice\"));\n    }\n}"
+}

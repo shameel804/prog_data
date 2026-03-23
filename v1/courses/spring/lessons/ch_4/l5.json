@@ -1,0 +1,82 @@
+{
+    "id": "l5",
+    "chapterId": "ch_4",
+    "title": "Relationships: One‑to‑Many and Many‑to‑One",
+    "description": "Model associations between entities with @OneToMany and @ManyToOne.",
+    "xpReward": 40,
+    "estimatedMinutes": 15,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Why Relationships Matter 🔗",
+            "content": "# Real‑World Models\n\nEntities rarely live in isolation. A `User` can have many `Order`s – that's a **one‑to‑many** relationship. Conversely, many orders belong to one user – **many‑to‑one**.\n\nIn JPA, we annotate the relationship fields with `@OneToMany` and `@ManyToOne`."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "If a User can have many Orders, which annotation should be placed on the `orders` field in the User entity?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "@OneToOne",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "@OneToMany",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "@ManyToOne",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "@ManyToMany",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "@OneToMany is used on the side that holds the collection of related entities.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Defining Order Entity",
+            "content": "First, create an `Order` entity that belongs to a user:",
+            "codeSnippet": "@Entity\n@Table(name = \"orders\")\npublic class Order {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n\n    private String productName;\n    private Double price;\n\n    @ManyToOne\n    @JoinColumn(name = \"user_id\")\n    private User user;\n\n    // constructors, getters, setters\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Updating User Entity",
+            "content": "Add the one‑to‑many side to `User`:",
+            "codeSnippet": "@Entity\n@Table(name = \"users\")\npublic class User {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n\n    private String name;\n    private String email;\n\n    @OneToMany(mappedBy = \"user\", cascade = CascadeType.ALL, orphanRemoval = true)\n    private List<Order> orders = new ArrayList<>();\n\n    // Helper methods to maintain both sides\n    public void addOrder(Order order) {\n        orders.add(order);\n        order.setUser(this);\n    }\n\n    public void removeOrder(Order order) {\n        orders.remove(order);\n        order.setUser(null);\n    }\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Understanding `mappedBy` and Cascade 🔄",
+            "content": "# Bidirectional Relationship\n\n* `mappedBy = \"user\"` – tells JPA that the `Order` entity owns the relationship (it contains the foreign key). The `User` side is the inverse.\n* `cascade = CascadeType.ALL` – means operations (persist, merge, remove, etc.) on a `User` will be cascaded to its `Order`s. For example, saving a user will also save its orders.\n* `orphanRemoval = true` – if an order is removed from the list, it will be deleted from the database."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "Lazy vs Eager Loading 🐢⚡",
+            "content": "By default, `@OneToMany` is **lazy** – the collection is loaded only when accessed. `@ManyToOne` is **eager** – the related entity is loaded immediately. You can change this with `fetch = FetchType.LAZY` or `EAGER`."
+        }
+    ]
+}

@@ -1,0 +1,70 @@
+{
+    "id": "l3",
+    "chapterId": "ch_9",
+    "title": "Service Discovery with Netflix Eureka",
+    "description": "Use Eureka to dynamically locate services without hard‑coding URLs.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Hands‑on",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Why Service Discovery? 🧭",
+            "content": "# The Problem\n\nIn a microservices environment, instances come and go (auto‑scaling, failures). Hard‑coding IP addresses or hostnames is impossible.\n\n**Solution:** Service registry (like Netflix Eureka). Services register themselves, and clients look up the registry to find other services."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the role of a service registry in microservices?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To store configuration properties",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To keep track of available service instances",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To route external requests",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To perform load balancing",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A service registry (like Eureka) stores the network locations of available service instances so clients can discover them dynamically.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Setting Up a Eureka Server",
+            "content": "Create a new Spring Boot project with `spring-cloud-starter-netflix-eureka-server`. Add `@EnableEurekaServer` to the main class.\n\n```java\n@SpringBootApplication\n@EnableEurekaServer\npublic class EurekaServerApplication {\n    public static void main(String[] args) {\n        SpringApplication.run(EurekaServerApplication.class, args);\n    }\n}\n```\n\nIn `application.properties`:\n```properties\nserver.port=8761\neureka.client.register-with-eureka=false\neureka.client.fetch-registry=false\n```\n\nRun it – you'll see the Eureka dashboard at `http://localhost:8761`."
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Registering a Service with Eureka",
+            "content": "Add `spring-cloud-starter-netflix-eureka-client` to your microservice. Then in `application.properties`:\n\n```properties\nspring.application.name=user-service\neureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/\n```\n\nNow your service registers with Eureka. The `@FeignClient(name=\"user-service\")` will use the registry to find instances."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "tip",
+            "title": "Eureka Heartbeats",
+            "content": "Services send heartbeats to Eureka every 30 seconds. If a service fails to send three consecutive heartbeats, it's removed from the registry – preventing calls to dead instances."
+        }
+    ]
+}

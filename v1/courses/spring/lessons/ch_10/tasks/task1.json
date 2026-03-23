@@ -1,0 +1,17 @@
+{
+    "id": "task1",
+    "chapterId": "ch_10",
+    "title": "Extend the Task Manager with Categories",
+    "description": "Add a Category entity, allow tasks to be categorized, and implement filtering by category.",
+    "estimatedMinutes": 30,
+    "problemStatement": "Extend your Task Manager application with the following features:\n\n1. **Category Entity** – each category has a `name` (unique per user) and belongs to a user.\n2. **One‑to‑Many Relationship** – a `Task` can optionally belong to one `Category` (many tasks per category).\n3. **API Endpoints** – create, list, update, delete categories (only for the authenticated user).\n4. **Filtering** – extend the `GET /api/tasks` endpoint to accept an optional query parameter `categoryId` to filter tasks by category.\n5. **Validation** – ensure category name is not blank and max length 50.\n6. **Security** – ensure users can only access their own categories and tasks.\n\n**Bonus:** Add a `@PreAuthorize` method‑level security for category operations.",
+    "hints": [
+        "Create a `Category` entity with `@ManyToOne` to `User` and `@OneToMany` to `Task`.",
+        "Update `Task` entity to include a `Category` field with `@ManyToOne`.",
+        "Create `CategoryRepository`, `CategoryService`, and `CategoryController`.",
+        "Modify `TaskRepository` to have a method `findByUserIdAndCategoryId(Long userId, Long categoryId)`.",
+        "Update `TaskService` to filter by category when requested."
+    ],
+    "expectedOutput": "After implementation, you should be able to create categories, assign tasks to them, and retrieve tasks filtered by category. The API should respect user ownership at all levels.",
+    "solutionCode": "// Category.java\n@Entity\npublic class Category {\n    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    @Column(nullable = false)\n    private String name;\n    @ManyToOne\n    @JoinColumn(name = \"user_id\")\n    private User user;\n    @OneToMany(mappedBy = \"category\")\n    private List<Task> tasks = new ArrayList<>();\n    // getters, setters\n}\n\n// Task.java (add category field)\n@ManyToOne\n@JoinColumn(name = \"category_id\")\nprivate Category category;\n\n// CategoryRepository\npublic interface CategoryRepository extends JpaRepository<Category, Long> {\n    List<Category> findByUserId(Long userId);\n    Optional<Category> findByIdAndUserId(Long id, Long userId);\n}\n\n// TaskRepository (add method)\nList<Task> findByUserIdAndCategoryId(Long userId, Long categoryId);\n\n// TaskService - modify getAllTasksForCurrentUser\npublic List<TaskResponse> getAllTasksForCurrentUser(Optional<Long> categoryId) {\n    User currentUser = getCurrentUser();\n    if (categoryId.isPresent()) {\n        // optional: verify category belongs to user\n        return taskRepository.findByUserIdAndCategoryId(currentUser.getId(), categoryId.get())\n                .stream().map(this::toResponse).collect(Collectors.toList());\n    }\n    return taskRepository.findByUserId(currentUser.getId())\n            .stream().map(this::toResponse).collect(Collectors.toList());\n}\n\n// CategoryController (similar to TaskController)\n@RestController\n@RequestMapping(\"/api/categories\")\npublic class CategoryController {\n    private final CategoryService categoryService;\n    // endpoints for CRUD\n}"
+}

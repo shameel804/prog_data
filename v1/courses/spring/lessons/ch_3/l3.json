@@ -1,0 +1,76 @@
+{
+    "id": "l3",
+    "chapterId": "ch_3",
+    "title": "Path Variables and Request Parameters",
+    "description": "Capture dynamic data from URLs using @PathVariable and @RequestParam.",
+    "xpReward": 30,
+    "estimatedMinutes": 12,
+    "section": "Hands‑on",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Two Ways to Pass Data in URLs 🌐",
+            "content": "# Path Variables vs Query Parameters\n\n* **Path Variable** – Part of the URL path (e.g., `/users/42`).\n  * Used to identify a specific resource.\n* **Query Parameter** – Appended after `?` (e.g., `/users?page=2&size=10`).\n  * Used for filtering, pagination, or optional parameters."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which annotation would you use to capture the value `42` from the URL `/users/42`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "@RequestParam",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "@PathVariable",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "@RequestBody",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "@ModelAttribute",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "@PathVariable binds a template variable in the URI to a method parameter.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Using @PathVariable",
+            "content": "Map a placeholder in the URL to a method argument:",
+            "codeSnippet": "@GetMapping(\"/users/{userId}\")\npublic User getUserById(@PathVariable Long userId) {\n    return userService.findById(userId);\n}\n\n// If the parameter name differs from the placeholder, specify it:\n@GetMapping(\"/users/{id}\")\npublic User getUser(@PathVariable(\"id\") Long userId) {\n    return userService.findById(userId);\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Using @RequestParam",
+            "content": "Capture query parameters:",
+            "codeSnippet": "@GetMapping(\"/users\")\npublic List<User> getUsers(@RequestParam(defaultValue = \"0\") int page,\n                           @RequestParam(defaultValue = \"10\") int size) {\n    return userService.findAll(page, size);\n}\n\n// Optional parameter: @RequestParam(required = false) String name",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_5",
+            "type": "tip",
+            "title": "Best Practices 📌",
+            "content": "Use **path variables** for resource identification (e.g., `/orders/123`). Use **query parameters** for filtering, sorting, or optional inputs (e.g., `/orders?status=PAID`)."
+        }
+    ]
+}

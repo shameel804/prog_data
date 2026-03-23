@@ -1,0 +1,72 @@
+{
+    "id": "l3",
+    "chapterId": "ch_8",
+    "title": "Exploring Key Endpoints",
+    "description": "Deep dive into /health, /info, /metrics, /env, and /beans.",
+    "xpReward": 30,
+    "estimatedMinutes": 12,
+    "section": "Hands‑on",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The Most Useful Endpoints 🔍",
+            "content": "# Common Endpoints\n\n| Endpoint | Description |\n|----------|-------------|\n| `/health` | Shows application health (UP/DOWN) with details. |\n| `/info` | Displays custom application information. |\n| `/metrics` | Provides various metrics (memory, threads, HTTP requests). |\n| `/env` | Exposes environment properties (be careful with security!). |\n| `/beans` | Lists all Spring beans in the context. |\n| `/mappings` | Shows all URL mappings. |\n| `/loggers` | Allows viewing and changing log levels at runtime. |"
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which endpoint would you use to see the current memory usage?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "/health",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "/metrics",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "/env",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "/beans",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "/metrics provides runtime metrics including memory, heap, threads, and custom metrics.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Example Responses",
+            "content": "**/health** (default)\n```json\n{\n  \"status\": \"UP\"\n}\n```\n\n**/health** with details (if enabled)\n```json\n{\n  \"status\": \"UP\",\n  \"components\": {\n    \"db\": { \"status\": \"UP\" },\n    \"diskSpace\": { \"status\": \"UP\" }\n  }\n}\n```\n\n**/metrics/jvm.memory.used**\n```json\n{\n  \"name\": \"jvm.memory.used\",\n  \"description\": \"Used memory\",\n  \"baseUnit\": \"bytes\",\n  \"measurements\": [{\"statistic\": \"VALUE\", \"value\": 12345678}]\n}\n```",
+            "codeLanguage": "json",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Accessing Specific Metrics",
+            "content": "You can drill into specific metrics by appending the metric name:\n\n`GET /actuator/metrics/jvm.memory.used`\n\nThis returns the current value of that metric."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "tip",
+            "title": "Be Careful with /env",
+            "content": "The `/env` endpoint can expose sensitive configuration (like passwords). In production, restrict access via security or disable it."
+        }
+    ]
+}

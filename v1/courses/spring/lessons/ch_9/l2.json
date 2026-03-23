@@ -1,0 +1,70 @@
+{
+    "id": "l2",
+    "chapterId": "ch_9",
+    "title": "Inter‑Service Communication",
+    "description": "Learn how microservices talk to each other using REST, Feign clients, and messaging.",
+    "xpReward": 30,
+    "estimatedMinutes": 12,
+    "section": "Core Concepts",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Synchronous vs Asynchronous 📞📨",
+            "content": "# Two Communication Styles\n\n| Style | Example | Pros | Cons |\n|-------|---------|------|------|\n| **Synchronous** | HTTP/REST, gRPC | Simple, request‑response | Coupling, blocking, cascading failures |\n| **Asynchronous** | Messaging (RabbitMQ, Kafka) | Loose coupling, resilient | Complexity, eventual consistency |\n\nBoth have their place. For many simple microservices, **REST over HTTP** is a great start."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which communication style is synchronous?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "HTTP/REST",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Message queues",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Event streams",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Both A and C",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "HTTP/REST is synchronous because the client waits for a response. Messaging is asynchronous.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "REST Communication with RestTemplate",
+            "content": "A service can call another service using `RestTemplate` (or `WebClient`).\n\n```java\n@Service\npublic class OrderService {\n    private final RestTemplate restTemplate;\n\n    public OrderService(RestTemplate restTemplate) {\n        this.restTemplate = restTemplate;\n    }\n\n    public User getUser(Long userId) {\n        String url = \"http://user-service/users/\" + userId;\n        return restTemplate.getForObject(url, User.class);\n    }\n}\n```\n\n**Problem:** The URL `http://user-service` is hard‑coded. In a dynamic environment, we need service discovery."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Declarative REST with Feign",
+            "content": "Spring Cloud Feign makes HTTP clients declarative:\n\n```java\n@FeignClient(name = \"user-service\")\npublic interface UserClient {\n    @GetMapping(\"/users/{id}\")\n    User getUser(@PathVariable(\"id\") Long id);\n}\n```\n\nThen inject `UserClient` and call it like a local method. Feign integrates with service discovery automatically.\n\nYou'll need to add `@EnableFeignClients` in your main class."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "tip",
+            "title": "Resilience Patterns",
+            "content": "When microservices call each other, failures are inevitable. Use **circuit breakers** (like Resilience4j) to prevent cascading failures. Spring Cloud Circuit Breaker integrates with Resilience4j and Hystrix."
+        }
+    ]
+}

@@ -1,0 +1,82 @@
+{
+    "id": "l6",
+    "chapterId": "ch_6",
+    "title": "Method Security with @PreAuthorize",
+    "description": "Secure individual methods using annotations.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Beyond URL Security 🔒",
+            "content": "# Secure at the Method Level\n\nInstead of (or in addition to) URL rules, you can annotate methods with `@PreAuthorize` to restrict access based on roles, permissions, or even custom logic.\n\nThis is especially useful when you want different access rules for different methods inside the same controller."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Which annotation must you add to enable method security?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "@EnableWebSecurity",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "@EnableGlobalMethodSecurity",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "@EnableMethodSecurity",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "@SecurityConfig",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "You need to add @EnableGlobalMethodSecurity(prePostEnabled = true) to a configuration class to enable @PreAuthorize.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Enabling Method Security",
+            "content": "Add `@EnableGlobalMethodSecurity` to your security configuration class:",
+            "codeSnippet": "@Configuration\n@EnableWebSecurity\n@EnableGlobalMethodSecurity(prePostEnabled = true)\npublic class SecurityConfig {\n    // ... existing beans\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_4",
+            "type": "code",
+            "title": "Using @PreAuthorize",
+            "content": "Now you can annotate controller or service methods:",
+            "codeSnippet": "@RestController\n@RequestMapping(\"/api/users\")\npublic class UserController {\n\n    @GetMapping\n    public List<User> getAllUsers() {\n        // anyone with USER or ADMIN role can access\n        return userService.findAll();\n    }\n\n    @DeleteMapping(\"/{id}\")\n    @PreAuthorize(\"hasRole('ADMIN')\")\n    public void deleteUser(@PathVariable Long id) {\n        userService.delete(id);\n    }\n\n    @GetMapping(\"/me\")\n    @PreAuthorize(\"#id == authentication.principal.id\")\n    public User getCurrentUser(@PathVariable Long id) {\n        return userService.findById(id);\n    }\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_5",
+            "type": "text",
+            "title": "Powerful Expressions 💪",
+            "content": "# Common Expressions in @PreAuthorize\n\n| Expression | Meaning |\n|------------|---------|\n| `hasRole('ROLE')` | Checks if the user has the given role (without ROLE_ prefix if you use `hasRole`) |\n| `hasAnyRole('ROLE1','ROLE2')` | Any of the roles |\n| `hasAuthority('PERMISSION')` | Checks for a specific authority |\n| `#id == authentication.principal.id` | Access based on parameter value and authenticated user |\n| `@beanName.method(...)` | Call a custom bean for complex logic |\n\nYou can combine them with `and`, `or`, `!`."
+        },
+        {
+            "id": "s_l6_6",
+            "type": "tip",
+            "title": "Service Layer Security 🛡️",
+            "content": "Method security works on Spring beans (services, controllers). Place annotations on service methods to ensure business logic is protected even if someone bypasses the controller."
+        }
+    ]
+}

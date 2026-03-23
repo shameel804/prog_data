@@ -1,0 +1,67 @@
+{
+    "id": "l2",
+    "chapterId": "ch_5",
+    "title": "@ExceptionHandler at Controller Level",
+    "description": "Handle exceptions locally within a controller using @ExceptionHandler.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Hands‑on",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Local Exception Handling 🧩",
+            "content": "# Handle Specific Exceptions in One Controller\n\nYou can add a method annotated with `@ExceptionHandler` inside a controller. It will be called when the specified exception is thrown from any method in that controller.\n\n**Example:**\n```java\n@RestController\npublic class UserController {\n    @ExceptionHandler(ResourceNotFoundException.class)\n    @ResponseStatus(HttpStatus.NOT_FOUND)\n    public String handleNotFound(ResourceNotFoundException ex) {\n        return ex.getMessage();\n    }\n}\n```\n\nThis works, but if you have many controllers, you'd need to duplicate the handler."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Where does an @ExceptionHandler method belong?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "In a separate class annotated with @ControllerAdvice",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Inside the controller class",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "In the main application class",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "In a repository",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "@ExceptionHandler methods can be placed inside a controller (local) or in a @ControllerAdvice (global).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Example: Local Handler for Custom Exception",
+            "content": "Create a custom exception and handle it locally:",
+            "codeSnippet": "// Custom exception\npublic class ResourceNotFoundException extends RuntimeException {\n    public ResourceNotFoundException(String message) {\n        super(message);\n    }\n}\n\n// Controller with local handler\n@RestController\n@RequestMapping(\"/api/users\")\npublic class UserController {\n    @GetMapping(\"/{id}\")\n    public User getUser(@PathVariable Long id) {\n        return userService.findById(id)\n                .orElseThrow(() -> new ResourceNotFoundException(\"User not found with id: \" + id));\n    }\n\n    @ExceptionHandler(ResourceNotFoundException.class)\n    @ResponseStatus(HttpStatus.NOT_FOUND)\n    public Map<String, String> handleNotFound(ResourceNotFoundException ex) {\n        return Map.of(\"error\", ex.getMessage());\n    }\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_4",
+            "type": "tip",
+            "title": "When to Use Local Handlers 🎯",
+            "content": "Local handlers are useful for exceptions that are specific to a single controller. For global handling, use `@ControllerAdvice` – we'll cover that next."
+        }
+    ]
+}

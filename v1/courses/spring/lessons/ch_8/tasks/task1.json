@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_8",
+    "title": "Enable and Explore Actuator Endpoints",
+    "description": "Add Actuator, expose endpoints, and explore their responses.",
+    "estimatedMinutes": 10,
+    "problemStatement": "Add Spring Boot Actuator to your existing Spring Boot application. Then:\n1. Expose all Actuator endpoints over HTTP.\n2. Visit the following endpoints and write down what you see:\n   - `/actuator` (the index)\n   - `/actuator/health` (check details)\n   - `/actuator/info` (add custom info via properties)\n   - `/actuator/beans` (count the number of beans)\n   - `/actuator/metrics` (find a metric for memory usage)\n3. In `application.properties`, add `info.app.name=My Awesome App` and `info.app.version=1.0` and verify they appear in `/info`.\n4. Restrict endpoints to only `health`, `info`, and `metrics` after exploring.\n\n**Bonus:** Change the base path to `/manage` and verify.",
+    "hints": [
+        "Add the starter: `spring-boot-starter-actuator`.",
+        "Set `management.endpoints.web.exposure.include=*` to expose all.",
+        "To restrict later, change to `management.endpoints.web.exposure.include=health,info,metrics`.",
+        "To change base path: `management.endpoints.web.base-path=/manage`."
+    ],
+    "expectedOutput": "You should be able to access endpoints like `http://localhost:8080/actuator/health` (or `/manage/health` if you changed the path). The `/info` endpoint should show the custom info. After restricting, only the specified endpoints should be accessible.",
+    "solutionCode": "// pom.xml addition\n<dependency>\n    <groupId>org.springframework.boot</groupId>\n    <artifactId>spring-boot-starter-actuator</artifactId>\n</dependency>\n\n// application.properties\nmanagement.endpoints.web.exposure.include=*\ninfo.app.name=My Awesome App\ninfo.app.version=1.0\n\n// Later, to restrict:\n# management.endpoints.web.exposure.include=health,info,metrics"
+}

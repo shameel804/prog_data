@@ -1,0 +1,17 @@
+{
+    "id": "task2",
+    "chapterId": "ch_9",
+    "title": "Add Feign Client and API Gateway",
+    "description": "Create a second microservice that calls the first using Feign, and add a gateway.",
+    "estimatedMinutes": 20,
+    "problemStatement": "Extend the previous task by adding:\n1. **Order Service** – a microservice that calls the User Service using Feign to get user details.\n2. **API Gateway** – a Spring Cloud Gateway that routes requests to both services.\n\n**Requirements:**\n- Order Service should have a Feign client interface to call User Service.\n- Order Service must register with Eureka (same as User Service).\n- The gateway must use service discovery (`lb://`) to route requests.\n- Test that a request to `http://localhost:8080/orders/1` (via gateway) returns a message that includes the user's name from the User Service.\n\n**Bonus:** Add a custom filter in the gateway that logs all incoming requests.",
+    "hints": [
+        "Add `spring-cloud-starter-openfeign` and `spring-cloud-starter-netflix-eureka-client` to Order Service.",
+        "Annotate Order Service main class with `@EnableFeignClients`.",
+        "Define a Feign client interface with `@FeignClient(name = \"user-service\")`.",
+        "For the gateway, add `spring-cloud-starter-gateway` and `spring-cloud-starter-netflix-eureka-client`.",
+        "Configure routes in `application.yml` as shown in the lesson."
+    ],
+    "expectedOutput": "When all services are running (Eureka, User Service, Order Service, Gateway), a GET request to `http://localhost:8080/orders/1` should return a response like `Order for John Doe` (or similar), proving that Order Service successfully called User Service via Feign and the gateway routed correctly.",
+    "solutionCode": "// Order Service - Feign client\n@FeignClient(name = \"user-service\")\npublic interface UserClient {\n    @GetMapping(\"/users/{id}\")\n    User getUser(@PathVariable(\"id\") Long id);\n}\n\n// Order Service - controller\n@RestController\n@RequestMapping(\"/orders\")\npublic class OrderController {\n    private final UserClient userClient;\n\n    public OrderController(UserClient userClient) {\n        this.userClient = userClient;\n    }\n\n    @GetMapping(\"/{userId}\")\n    public String getOrder(@PathVariable Long userId) {\n        User user = userClient.getUser(userId);\n        return \"Order for \" + user.getName();\n    }\n}\n\n// Order Service main class\n@SpringBootApplication\n@EnableFeignClients\npublic class OrderServiceApplication {\n    public static void main(String[] args) {\n        SpringApplication.run(OrderServiceApplication.class, args);\n    }\n}\n\n// Gateway application.yml\nspring:\n  cloud:\n    gateway:\n      routes:\n        - id: user-service\n          uri: lb://user-service\n          predicates:\n            - Path=/users/**\n        - id: order-service\n          uri: lb://order-service\n          predicates:\n            - Path=/orders/**\n\n# Gateway also needs Eureka client configuration\nspring.application.name=gateway\neureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/"
+}

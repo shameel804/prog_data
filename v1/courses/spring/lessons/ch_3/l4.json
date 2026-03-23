@@ -1,0 +1,84 @@
+{
+    "id": "l4",
+    "chapterId": "ch_3",
+    "title": "Handling Request Bodies with @RequestBody",
+    "description": "Send JSON data to your API and map it to Java objects.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Hands‑on",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Receiving Data in the Request Body 📦",
+            "content": "# When to Use @RequestBody\n\nFor POST, PUT, PATCH requests, the data is often sent in the body of the request (as JSON, XML, etc.). Spring can automatically convert that data into a Java object using **HttpMessageConverter**.\n\nYou don’t need to parse the JSON yourself – just annotate a parameter with `@RequestBody` and Spring does the rest."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which annotation tells Spring to map the HTTP request body to a Java object?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "@RequestParam",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "@PathVariable",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "@RequestBody",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "@ResponseBody",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "@RequestBody is used to bind the HTTP request body to a method parameter.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Example: Creating a User",
+            "content": "Assume you have a simple `User` class:",
+            "codeSnippet": "public class User {\n    private Long id;\n    private String name;\n    private String email;\n    // getters and setters\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Controller Method",
+            "content": "The controller can accept a User object directly:",
+            "codeSnippet": "@PostMapping(\"/users\")\npublic User createUser(@RequestBody User user) {\n    // Save the user (maybe set an id)\n    user.setId(generateId());\n    return userService.save(user);\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Sending a Request",
+            "content": "A client would send a POST request with JSON body:\n\n```json\n{\n  \"name\": \"Alice\",\n  \"email\": \"alice@example.com\"\n}\n```\n\nSpring maps the JSON fields to the `User` object’s fields (by name).",
+            "codeLanguage": "json",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Validation Coming Soon 🛡️",
+            "content": "We’ll cover how to validate incoming data (e.g., `@NotNull`, `@Email`) in a later chapter. For now, trust that the client sends proper data."
+        }
+    ]
+}

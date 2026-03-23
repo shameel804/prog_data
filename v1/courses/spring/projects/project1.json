@@ -1,0 +1,29 @@
+{
+    "id": "project1",
+    "title": "Task Manager Pro",
+    "description": "A full‑featured task management system with user authentication, task CRUD, categories, and monitoring.",
+    "difficulty": "Intermediate",
+    "estimatedHours": "4-6",
+    "problemStatement": "Build a complete Task Manager application using Spring Boot. The system should allow users to register, log in, and manage their tasks. Each task has a title, description, completion status, and optionally belongs to a category. Categories are user‑specific. The application must be secured so that users can only access their own data.\n\n**Core Features:**\n- User registration and login with Spring Security (BCrypt).\n- CRUD operations for tasks.\n- CRUD operations for categories (optional category per task).\n- Filtering tasks by category.\n- Input validation and global exception handling.\n- Unit and integration tests covering at least the service layer and controller layer.\n- Actuator endpoints enabled for health, metrics, and info.\n\n**Technical Requirements:**\n- Use Spring Boot 3.x.\n- Use Spring Data JPA with an in‑memory H2 database for development.\n- Use Maven or Gradle.\n- All endpoints must return JSON.\n- API must be RESTful and use proper HTTP status codes.\n- Validation on all incoming DTOs.\n- Global exception handler to return structured errors.\n\n**Bonus (optional):**\n- Add a custom health indicator that checks the database connection.\n- Add a filter to the gateway that logs request duration.\n- Write a Dockerfile and containerize the application.",
+    "requirements": [
+        "User registration endpoint (`POST /api/auth/register`) that accepts username and password, hashes the password, and stores the user.",
+        "Login is handled by Spring Security (HTTP Basic or form login).",
+        "Task endpoints (`GET /api/tasks`, `POST /api/tasks`, `PUT /api/tasks/{id}`, `DELETE /api/tasks/{id}`) that are secured.",
+        "Category endpoints (`GET /api/categories`, `POST /api/categories`, `PUT /api/categories/{id}`, `DELETE /api/categories/{id}`).",
+        "Tasks can be assigned a category via `categoryId` in the request.",
+        "Filtering tasks by category via `?categoryId=...`.",
+        "All requests must be authenticated (except registration and Actuator public endpoints).",
+        "Unit tests for `TaskService` and `CategoryService` using Mockito.",
+        "Integration tests for controllers using `@WebMvcTest` and `MockMvc`.",
+        "Actuator endpoints `/actuator/health` and `/actuator/info` exposed and optionally secured."
+    ],
+    "hints": [
+        "Start with the code from Chapter 10 lesson – it already contains the basic task manager.",
+        "To add categories, create a new entity and adjust the task entity.",
+        "Remember to handle the case when a category is deleted – tasks should either have `category` set to null or be deleted as well (choose appropriate cascade).",
+        "Use `@PreAuthorize` on category service methods to ensure users can only access their own categories.",
+        "For testing, use `@DataJpaTest` for repository tests, `@WebMvcTest` for controller slices, and `@SpringBootTest` for integration tests.",
+        "Mock the `SecurityContext` in service tests to simulate an authenticated user."
+    ],
+    "expectedOutput": "A runnable Spring Boot application that passes all provided tests. When started, you can register a user, authenticate, and then perform CRUD operations on tasks and categories. All endpoints should return appropriate JSON and status codes."
+}

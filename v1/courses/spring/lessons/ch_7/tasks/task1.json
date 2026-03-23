@@ -1,0 +1,17 @@
+{
+    "id": "task1",
+    "chapterId": "ch_7",
+    "title": "Unit Test a Service with Mocks",
+    "description": "Write a unit test for a UserService using Mockito and JUnit.",
+    "estimatedMinutes": 15,
+    "problemStatement": "You have a `UserService` class that depends on `UserRepository`. Write a unit test that covers the following scenarios:\n\n- `getUserById` returns a user when found.\n- `getUserById` throws `ResourceNotFoundException` when not found.\n- `createUser` saves a user and returns it.\n\nUse JUnit 5 and Mockito. Mock the `UserRepository` and inject it into `UserService`. Verify interactions and assertions.",
+    "hints": [
+        "Use `@ExtendWith(MockitoExtension.class)`.",
+        "Use `@Mock` for the repository, `@InjectMocks` for the service.",
+        "Stub methods with `when(...).thenReturn(...)`.",
+        "Use `verify()` to check that the repository methods were called.",
+        "Use `assertThrows` for exception testing."
+    ],
+    "expectedOutput": "A test class with multiple test methods that all pass when run. The service should behave as expected.",
+    "solutionCode": "import org.junit.jupiter.api.Test;\nimport org.junit.jupiter.api.extension.ExtendWith;\nimport org.mockito.InjectMocks;\nimport org.mockito.Mock;\nimport org.mockito.junit.jupiter.MockitoExtension;\nimport java.util.Optional;\nimport static org.junit.jupiter.api.Assertions.*;\nimport static org.mockito.Mockito.*;\n\n@ExtendWith(MockitoExtension.class)\nclass UserServiceTest {\n\n    @Mock\n    private UserRepository userRepository;\n\n    @InjectMocks\n    private UserService userService;\n\n    @Test\n    void getUserById_shouldReturnUser_whenExists() {\n        User user = new User(1L, \"John\");\n        when(userRepository.findById(1L)).thenReturn(Optional.of(user));\n\n        User result = userService.getUserById(1L);\n\n        assertEquals(user, result);\n        verify(userRepository).findById(1L);\n    }\n\n    @Test\n    void getUserById_shouldThrowException_whenNotFound() {\n        when(userRepository.findById(99L)).thenReturn(Optional.empty());\n\n        assertThrows(ResourceNotFoundException.class, () -> userService.getUserById(99L));\n        verify(userRepository).findById(99L);\n    }\n\n    @Test\n    void createUser_shouldSaveAndReturnUser() {\n        User newUser = new User(null, \"Alice\");\n        User savedUser = new User(2L, \"Alice\");\n        when(userRepository.save(newUser)).thenReturn(savedUser);\n\n        User result = userService.createUser(newUser);\n\n        assertEquals(savedUser, result);\n        verify(userRepository).save(newUser);\n    }\n}"
+}

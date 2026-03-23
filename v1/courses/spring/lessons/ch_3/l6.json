@@ -1,0 +1,56 @@
+{
+    "id": "l6",
+    "chapterId": "ch_3",
+    "title": "Building a CRUD API",
+    "description": "Combine everything to create a complete CRUD API for a simple resource.",
+    "xpReward": 40,
+    "estimatedMinutes": 15,
+    "section": "Project",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Let’s Build a Task Manager ✅",
+            "content": "# Model: Task\n\nWe’ll create a simple `Task` resource with:\n- `id` (Long)\n- `title` (String)\n- `completed` (boolean)\n\nWe’ll store tasks in an in‑memory list (no database yet)."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Task Class",
+            "content": "Create a new class in your project:",
+            "codeSnippet": "public class Task {\n    private Long id;\n    private String title;\n    private boolean completed;\n\n    // constructors, getters, setters\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Service Layer (In‑memory Store)",
+            "content": "We’ll create a service that holds tasks and provides CRUD operations. Use `@Service` and a `Map` or `List`. This is temporary; later we’ll use a database.",
+            "codeSnippet": "@Service\npublic class TaskService {\n    private final List<Task> tasks = new ArrayList<>();\n    private Long nextId = 1L;\n\n    public List<Task> findAll() { return tasks; }\n\n    public Task findById(Long id) {\n        return tasks.stream()\n                .filter(t -> t.getId().equals(id))\n                .findFirst()\n                .orElseThrow(() -> new RuntimeException(\"Task not found\"));\n    }\n\n    public Task save(Task task) {\n        task.setId(nextId++);\n        tasks.add(task);\n        return task;\n    }\n\n    public Task update(Long id, Task task) {\n        Task existing = findById(id);\n        existing.setTitle(task.getTitle());\n        existing.setCompleted(task.isCompleted());\n        return existing;\n    }\n\n    public void delete(Long id) {\n        tasks.removeIf(t -> t.getId().equals(id));\n    }\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_4",
+            "type": "code",
+            "title": "Controller (REST API)",
+            "content": "Now wire everything in a controller:",
+            "codeSnippet": "@RestController\n@RequestMapping(\"/api/tasks\")\npublic class TaskController {\n\n    private final TaskService taskService;\n\n    public TaskController(TaskService taskService) {\n        this.taskService = taskService;\n    }\n\n    @GetMapping\n    public List<Task> getAllTasks() {\n        return taskService.findAll();\n    }\n\n    @GetMapping(\"/{id}\")\n    public Task getTask(@PathVariable Long id) {\n        return taskService.findById(id);\n    }\n\n    @PostMapping\n    @ResponseStatus(HttpStatus.CREATED)\n    public Task createTask(@RequestBody Task task) {\n        return taskService.save(task);\n    }\n\n    @PutMapping(\"/{id}\")\n    public Task updateTask(@PathVariable Long id, @RequestBody Task task) {\n        return taskService.update(id, task);\n    }\n\n    @DeleteMapping(\"/{id}\")\n    @ResponseStatus(HttpStatus.NO_CONTENT)\n    public void deleteTask(@PathVariable Long id) {\n        taskService.delete(id);\n    }\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_5",
+            "type": "text",
+            "title": "Test Your API 🧪",
+            "content": "# Use curl or Postman\n\n* **GET** `http://localhost:8080/api/tasks` – list tasks.\n* **POST** `http://localhost:8080/api/tasks` with JSON body:\n```json\n{\n  \"title\": \"Learn Spring Boot\",\n  \"completed\": false\n}\n```\n* **PUT** `http://localhost:8080/api/tasks/1` with updated JSON.\n* **DELETE** `http://localhost:8080/api/tasks/1`\n\nCongratulations – you’ve built a complete CRUD API! 🎉"
+        },
+        {
+            "id": "s_l6_6",
+            "type": "tip",
+            "title": "Next Steps 🔜",
+            "content": "In upcoming chapters, we’ll connect this to a real database, add validation, and handle exceptions properly."
+        }
+    ]
+}

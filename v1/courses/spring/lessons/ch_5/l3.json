@@ -1,0 +1,73 @@
+{
+    "id": "l3",
+    "chapterId": "ch_5",
+    "title": "Global Exception Handling with @ControllerAdvice",
+    "description": "Centralize error handling across all controllers with @ControllerAdvice.",
+    "xpReward": 30,
+    "estimatedMinutes": 12,
+    "section": "Core Concepts",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "One Place to Rule Them All 🏰",
+            "content": "# @ControllerAdvice\n\nA class annotated with `@ControllerAdvice` can contain `@ExceptionHandler`, `@InitBinder`, and `@ModelAttribute` methods that apply globally to all controllers.\n\n**Benefits:**\n- Centralized error handling.\n- Consistent error responses across the entire API.\n- No duplication of exception handling code."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which annotation is used to create a global exception handler class?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "@GlobalExceptionHandler",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "@ControllerAdvice",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "@ExceptionHandler",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "@RestControllerAdvice",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "@ControllerAdvice (or its REST‑specific variant @RestControllerAdvice) is used for global exception handling.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Creating a Global Handler",
+            "content": "Create a class and annotate it with `@RestControllerAdvice` (which combines `@ControllerAdvice` and `@ResponseBody`).",
+            "codeSnippet": "@RestControllerAdvice\npublic class GlobalExceptionHandler {\n\n    @ExceptionHandler(ResourceNotFoundException.class)\n    @ResponseStatus(HttpStatus.NOT_FOUND)\n    public Map<String, String> handleResourceNotFound(ResourceNotFoundException ex) {\n        return Map.of(\"error\", ex.getMessage());\n    }\n\n    @ExceptionHandler(MethodArgumentNotValidException.class)\n    @ResponseStatus(HttpStatus.BAD_REQUEST)\n    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {\n        Map<String, String> errors = new HashMap<>();\n        ex.getBindingResult().getFieldErrors().forEach(error -> \n            errors.put(error.getField(), error.getDefaultMessage()));\n        return errors;\n    }\n\n    @ExceptionHandler(Exception.class)\n    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)\n    public Map<String, String> handleGenericException(Exception ex) {\n        return Map.of(\"error\", \"An unexpected error occurred\");\n    }\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Order Matters 📜",
+            "content": "# How Exceptions Are Matched\n\nSpring picks the most specific exception handler. For example, if you have handlers for `ResourceNotFoundException` and `Exception`, the former will be used for that specific exception. The generic `Exception` handler acts as a fallback.\n\n**Best Practice:** Always include a generic `Exception` handler to catch any unhandled exceptions and return a friendly error message (without exposing stack traces)."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "tip",
+            "title": "Logging Errors 📝",
+            "content": "Don't forget to log the exception! In your global handler, use a logger to record the error for debugging, while returning a sanitized message to the client."
+        }
+    ]
+}

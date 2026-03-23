@@ -1,0 +1,76 @@
+{
+    "id": "l4",
+    "chapterId": "ch_4",
+    "title": "Spring Data JPA Repositories",
+    "description": "Use JpaRepository to get CRUD operations out‑of‑the‑box.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Hands‑on",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Repositories: The Magic Interface ✨",
+            "content": "# Spring Data JPA Repository\n\nInstead of writing DAO classes, you define an **interface** that extends `JpaRepository`. Spring automatically provides an implementation at runtime, with methods like `save()`, `findById()`, `findAll()`, `deleteById()`, and more.\n\n**Example:**\n\n```java\npublic interface UserRepository extends JpaRepository<User, Long> {\n    // No code needed! CRUD methods are already available.\n}\n```"
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which interface should you extend to get CRUD methods for an entity?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "CrudRepository",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "JpaRepository",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Repository",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "PagingAndSortingRepository",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "JpaRepository extends CrudRepository and PagingAndSortingRepository, providing the most complete set of methods.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Creating UserRepository",
+            "content": "Add this interface in your package (usually alongside the entity):",
+            "codeSnippet": "package com.example.demo;\n\nimport org.springframework.data.jpa.repository.JpaRepository;\nimport java.util.Optional;\n\npublic interface UserRepository extends JpaRepository<User, Long> {\n    // You can add custom methods later\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Using the Repository in a Service",
+            "content": "Inject the repository and use its methods:",
+            "codeSnippet": "@Service\npublic class UserService {\n    private final UserRepository userRepository;\n\n    public UserService(UserRepository userRepository) {\n        this.userRepository = userRepository;\n    }\n\n    public List<User> getAllUsers() {\n        return userRepository.findAll();\n    }\n\n    public User getUserById(Long id) {\n        return userRepository.findById(id)\n                .orElseThrow(() -> new RuntimeException(\"User not found\"));\n    }\n\n    public User createUser(User user) {\n        return userRepository.save(user);\n    }\n\n    public void deleteUser(Long id) {\n        userRepository.deleteById(id);\n    }\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "tip",
+            "title": "Optional Return 📦",
+            "content": "`findById()` returns an `Optional` – always check if the value is present to avoid `NoSuchElementException`."
+        }
+    ]
+}

@@ -1,0 +1,73 @@
+{
+    "id": "l4",
+    "chapterId": "ch_6",
+    "title": "Securing Endpoints with Role‑Based Access",
+    "description": "Use HttpSecurity to define who can access which URLs.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Hands‑on",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Fine‑Grained Authorization 🎯",
+            "content": "# Restrict Access by URL Pattern\n\nYou can configure security rules using `authorizeHttpRequests()`:\n- `permitAll()` – accessible without authentication.\n- `authenticated()` – only authenticated users.\n- `hasRole(\"ROLE\")` – users with given role.\n- `hasAnyRole(\"ROLE1\", \"ROLE2\")` – users with any of the roles.\n- `denyAll()` – no access."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which method would you use to allow unauthenticated access to a specific URL?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": ".permitAll()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": ".authenticated()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": ".anonymous()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": ".access(\"permitAll\")",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "permitAll() grants access to everyone, even unauthenticated users.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Configuring URL Security",
+            "content": "Modify your `SecurityFilterChain` bean:",
+            "codeSnippet": "@Bean\npublic SecurityFilterChain filterChain(HttpSecurity http) throws Exception {\n    http.authorizeHttpRequests(authz -> authz\n            .antMatchers(\"/public/**\").permitAll()\n            .antMatchers(\"/api/admin/**\").hasRole(\"ADMIN\")\n            .antMatchers(\"/api/user/**\").hasAnyRole(\"USER\", \"ADMIN\")\n            .anyRequest().authenticated()\n        )\n        .httpBasic();\n    return http.build();\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Order Matters! 🔢",
+            "content": "# Rules Are Evaluated in Order\n\nMore specific rules should come first. For example:\n\n```java\n.antMatchers(\"/api/admin/**\").hasRole(\"ADMIN\")\n.antMatchers(\"/api/**\").authenticated()\n```\n\nIf `/api/admin/users` matches both, the first rule applies because it's more specific.\n\nAlways end with `.anyRequest().authenticated()` or a catch‑all rule."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "tip",
+            "title": "Using Path Variables 🛣️",
+            "content": "You can also secure endpoints based on path variables: `antMatchers(\"/api/users/{id}\").access(\"@userSecurity.checkUserId(authentication,#id)\")` – but that's more advanced (method security is easier)."
+        }
+    ]
+}

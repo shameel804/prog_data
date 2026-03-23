@@ -1,0 +1,94 @@
+{
+    "id": "sq_spring_2",
+    "title": "Data & Security Deep Dive",
+    "triggerChapterIndex": 5,
+    "metadata": {
+        "type": "prediction"
+    },
+    "questions": [
+        {
+            "id": "sq_spring_2_q1",
+            "type": "code_output",
+            "question": "What is the output of this JPA derived query method? (Assume a User with name 'John' exists.)",
+            "codeSnippet": "List<User> findByEmailContaining(String email);\n\n// Calling: findByEmailContaining(\"example\")\n// Database contains user with email \"john@example.com\"",
+            "correctOutput": "List containing the user",
+            "correctAnswer": "List containing the user",
+            "options": [],
+            "explanation": "The derived method `findByEmailContaining` performs a `LIKE %example%` query, matching the email.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_spring_2_q2",
+            "type": "code_output",
+            "question": "What will this Spring Security configuration allow?",
+            "codeSnippet": "http.authorizeHttpRequests(authz -> authz\n    .antMatchers(\"/api/public/**\").permitAll()\n    .antMatchers(\"/api/admin/**\").hasRole(\"ADMIN\")\n    .anyRequest().authenticated()\n);",
+            "correctOutput": "Public endpoints accessible to all, admin endpoints only to ADMIN users, others require authentication.",
+            "correctAnswer": "Public endpoints accessible to all, admin endpoints only to ADMIN users, others require authentication.",
+            "options": [],
+            "explanation": "The rules are evaluated in order; `/api/public/**` is open, `/api/admin/**` requires ADMIN, all others need authentication.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_spring_2_q3",
+            "type": "code_output",
+            "question": "What does this method return if the user has role 'ADMIN'?",
+            "codeSnippet": "@PreAuthorize(\"hasRole('USER')\")\npublic String getData() {\n    return \"secret\";\n}",
+            "correctOutput": "AccessDeniedException",
+            "correctAnswer": "AccessDeniedException",
+            "options": [],
+            "explanation": "`hasRole('USER')` will return false for an ADMIN, so access is denied.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_spring_2_q4",
+            "type": "code_output",
+            "question": "What is the result of this cascade configuration when a User is deleted?",
+            "codeSnippet": "@OneToMany(mappedBy = \"user\", cascade = CascadeType.ALL, orphanRemoval = true)\nprivate List<Order> orders;",
+            "correctOutput": "All associated orders are also deleted.",
+            "correctAnswer": "All associated orders are also deleted.",
+            "options": [],
+            "explanation": "CascadeType.ALL propagates all operations including delete; orphanRemoval ensures removal from collection results in deletion.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_spring_2_q5",
+            "type": "code_output",
+            "question": "What will this validation produce for a request with an empty name?",
+            "codeSnippet": "public class UserDto {\n    @NotBlank(message = \"Name required\")\n    private String name;\n}",
+            "correctOutput": "MethodArgumentNotValidException with message 'Name required'",
+            "correctAnswer": "MethodArgumentNotValidException with message 'Name required'",
+            "options": [],
+            "explanation": "`@NotBlank` triggers validation failure, which Spring translates into MethodArgumentNotValidException.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_spring_2_q6",
+            "type": "code_output",
+            "question": "Given a `UserRepository` with `findByEmail(String email)`, what is the JPQL generated?",
+            "codeSnippet": "Optional<User> findByEmail(String email);",
+            "correctOutput": "select u from User u where u.email = ?1",
+            "correctAnswer": "select u from User u where u.email = ?1",
+            "options": [],
+            "explanation": "Spring Data JPA derives a JPQL query based on the method name.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_spring_2_q7",
+            "type": "code_output",
+            "question": "What is the default HTTP status for a successful POST request without @ResponseStatus?",
+            "codeSnippet": "@PostMapping\npublic User create(@RequestBody User user) { ... }",
+            "correctOutput": "200 OK",
+            "correctAnswer": "200 OK",
+            "options": [],
+            "explanation": "If no status is specified, Spring returns 200 OK.",
+            "xpReward": 25,
+            "difficulty": 1
+        }
+    ]
+}

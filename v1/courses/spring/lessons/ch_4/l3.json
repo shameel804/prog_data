@@ -1,0 +1,73 @@
+{
+    "id": "l3",
+    "chapterId": "ch_4",
+    "title": "Defining Entities with JPA Annotations",
+    "description": "Map Java classes to database tables using @Entity, @Id, @GeneratedValue, and more.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Hands‑on",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "An Entity is a POJO 🧱",
+            "content": "# A Simple Entity\n\nAn **entity** is a Java class that maps to a database table. You mark it with `@Entity`. Each instance corresponds to a row in the table.\n\nCommon annotations:\n* `@Id` – marks the primary key.\n* `@GeneratedValue` – automatically generates IDs (e.g., AUTO, IDENTITY, SEQUENCE).\n* `@Column` – customizes column name, length, nullable, etc. (optional)."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which annotation marks a Java class as a JPA entity?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "@Table",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "@Entity",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "@Document",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "@Persistent",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "@Entity is the JPA annotation that declares a class as an entity.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Example: User Entity",
+            "content": "Create a `User` class in your `com.example.demo` package:",
+            "codeSnippet": "package com.example.demo;\n\nimport javax.persistence.*;\n\n@Entity\n@Table(name = \"users\")\npublic class User {\n\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n\n    @Column(nullable = false, length = 50)\n    private String name;\n\n    @Column(unique = true, nullable = false)\n    private String email;\n\n    // Constructors, getters, setters\n    public User() {}\n\n    public User(String name, String email) {\n        this.name = name;\n        this.email = email;\n    }\n\n    // ... getters and setters\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Understanding the Annotations 🏷️",
+            "content": "# What Each Part Does\n\n* `@Entity` – tells JPA this class is an entity.\n* `@Table(name = \"users\")` – optionally specify the table name (defaults to class name).\n* `@Id` – marks the primary key.\n* `@GeneratedValue(strategy = GenerationType.IDENTITY)` – tells the database to auto‑increment the ID (common for MySQL). Other strategies: `AUTO` (default), `SEQUENCE` (for PostgreSQL/Oracle), `TABLE`.\n* `@Column` – fine‑tunes column mapping: `nullable`, `unique`, `length`, etc."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "tip",
+            "title": "No‑arg Constructor Required 🛠️",
+            "content": "JPA requires entities to have a **no‑argument constructor** (can be protected or public). This is used by Hibernate to create instances when loading data."
+        }
+    ]
+}

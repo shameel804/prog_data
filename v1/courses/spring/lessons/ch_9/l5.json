@@ -1,0 +1,47 @@
+{
+    "id": "l5",
+    "chapterId": "ch_9",
+    "title": "Building a Simple Microservice",
+    "description": "Put it all together: create two microservices that discover each other and communicate.",
+    "xpReward": 40,
+    "estimatedMinutes": 15,
+    "section": "Project",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Let's Build a Mini System 🏗️",
+            "content": "# Two Services + Discovery + Gateway\n\nWe'll create:\n1. **Eureka Server** – service registry.\n2. **User Service** – simple CRUD on users.\n3. **Order Service** – depends on User Service to get user details.\n4. **API Gateway** – entry point for clients.\n\nAll services will register with Eureka. The Order Service will use Feign to call User Service (via service discovery). The Gateway will route `/users/**` and `/orders/**`."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "User Service (Minimal)",
+            "content": "```java\n@RestController\n@RequestMapping(\"/users\")\npublic class UserController {\n    @GetMapping(\"/{id}\")\n    public User getUser(@PathVariable Long id) {\n        return new User(id, \"John Doe\");\n    }\n}\n```\n\nAdd `spring-cloud-starter-netflix-eureka-client` and configure `spring.application.name=user-service`. Also ensure `@EnableDiscoveryClient` (or just add the starter which auto‑enables it)."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Order Service with Feign Client",
+            "content": "Add `spring-cloud-starter-openfeign` and `spring-cloud-starter-netflix-eureka-client`.\n\n```java\n@FeignClient(name = \"user-service\")\npublic interface UserClient {\n    @GetMapping(\"/users/{id}\")\n    User getUser(@PathVariable(\"id\") Long id);\n}\n\n@RestController\n@RequestMapping(\"/orders\")\npublic class OrderController {\n    private final UserClient userClient;\n\n    public OrderController(UserClient userClient) {\n        this.userClient = userClient;\n    }\n\n    @GetMapping(\"/{userId}\")\n    public String getOrderForUser(@PathVariable Long userId) {\n        User user = userClient.getUser(userId);\n        return \"Order for \" + user.getName();\n    }\n}\n```\n\nEnable Feign clients with `@EnableFeignClients` in the main class."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "API Gateway Configuration",
+            "content": "Create a gateway project with `spring-cloud-starter-gateway` and `spring-cloud-starter-netflix-eureka-client`. Configure routes:\n\n```yaml\nspring:\n  cloud:\n    gateway:\n      routes:\n        - id: user-service\n          uri: lb://user-service\n          predicates:\n            - Path=/users/**\n        - id: order-service\n          uri: lb://order-service\n          predicates:\n            - Path=/orders/**\n```\n\nNow clients can call `http://localhost:8080/users/1` and the gateway will forward to the user service."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Run Everything! 🚀",
+            "content": "# Steps\n\n1. Start Eureka Server (port 8761).\n2. Start User Service (any port, e.g., 8081).\n3. Start Order Service (any port, e.g., 8082).\n4. Start Gateway (port 8080).\n\nVisit Eureka dashboard – you'll see both services registered.\nNow call `http://localhost:8080/orders/1` through the gateway. The gateway will route to Order Service, which then calls User Service via Feign. You should see `Order for John Doe`.\n\nCongratulations – you've built a mini microservices system!"
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "Spring Cloud Versions",
+            "content": "Use Spring Boot 3.x with Spring Cloud 2022.0.x or later. The dependencies are managed by Spring Cloud BOM. Make sure to import it in your parent pom."
+        }
+    ]
+}

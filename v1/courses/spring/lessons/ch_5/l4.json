@@ -1,0 +1,82 @@
+{
+    "id": "l4",
+    "chapterId": "ch_5",
+    "title": "Input Validation with Bean Validation",
+    "description": "Add validation constraints to your DTOs and entities using Jakarta Bean Validation.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Hands‑on",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Why Validate? 🛡️",
+            "content": "# Never Trust Client Input\n\nYour API should always validate incoming data before processing it. Bean Validation (JSR‑380) allows you to declare constraints on fields using annotations like `@NotNull`, `@Size`, `@Email`, and many more.\n\nWhen validation fails, Spring throws a `MethodArgumentNotValidException`, which you can handle globally."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which annotation is used to enable validation on a controller method parameter?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "@Validated",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "@Validate",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "@Valid",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "@Validation",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Use `@Valid` (from jakarta.validation) to trigger validation on an object.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Adding Validation Constraints",
+            "content": "Define a DTO with validation annotations:",
+            "codeSnippet": "public class UserDto {\n    @NotNull(message = \"Name is required\")\n    @Size(min = 2, max = 50, message = \"Name must be between 2 and 50 characters\")\n    private String name;\n\n    @NotNull(message = \"Email is required\")\n    @Email(message = \"Email should be valid\")\n    private String email;\n\n    @Min(value = 18, message = \"Age must be at least 18\")\n    private int age;\n\n    // getters and setters\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Using @Valid in Controller",
+            "content": "Annotate the `@RequestBody` parameter with `@Valid`:",
+            "codeSnippet": "@PostMapping(\"/users\")\npublic User createUser(@Valid @RequestBody UserDto userDto) {\n    // If validation passes, userDto is valid\n    return userService.create(userDto);\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Common Validation Annotations 📋",
+            "content": "# Built‑in Constraints\n\n| Annotation | Purpose |\n|------------|---------|\n| `@NotNull` | Value cannot be null |\n| `@NotEmpty` | CharSequence/Collection/Map not null and not empty |\n| `@NotBlank` | String not null and not empty after trimming |\n| `@Size(min, max)` | Size of string, collection, array |\n| `@Min(value)` | Numeric value >= value |\n| `@Max(value)` | Numeric value <= value |\n| `@Email` | Valid email address |\n| `@Pattern(regexp)` | String matches regex |\n| `@Past` / `@Future` | Date in the past/future |\n\nYou can also create custom constraints."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Validation Groups 🔧",
+            "content": "You can group constraints (e.g., for create vs update) using validation groups. We'll cover that in advanced topics."
+        }
+    ]
+}

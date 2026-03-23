@@ -1,0 +1,30 @@
+{
+    "id": "project2",
+    "title": "Blog Platform API",
+    "description": "Build a REST API for a multi‑user blog with posts, comments, and tags.",
+    "difficulty": "Intermediate",
+    "estimatedHours": "5-7",
+    "problemStatement": "Create a Spring Boot application that powers a blogging platform. The API must support user registration, authentication, and allow users to create, read, update, and delete their own blog posts. Each post can have multiple comments and multiple tags. Readers (authenticated or anonymous) can view posts and comments. Only the author of a post can edit or delete it. Admins can manage users.\n\n**Core Features:**\n- User roles: `ROLE_USER` and `ROLE_ADMIN`.\n- Blog post management (CRUD).\n- Comment management (add, edit, delete) – only comment author can edit/delete.\n- Tag management – tags can be created on the fly when creating/updating posts.\n- Search posts by title, content, or tags.\n- Pagination and sorting for listing posts.\n- Validation and error handling.\n- Unit and integration tests.\n- Actuator endpoints for monitoring.\n\n**Technical Requirements:**\n- Spring Boot 3.x, Spring Data JPA, Spring Security.\n- Database: H2 (development) or MySQL (production).\n- RESTful API design with proper HTTP methods and status codes.\n- DTOs for request/response (avoid exposing entities).\n- Use `@PreAuthorize` for method‑level security.\n- Document API using OpenAPI/Swagger (springdoc‑openapi).\n- Write at least 10 meaningful tests (service and controller).\n\n**Bonus:**\n- Implement a \"likes\" feature for posts.\n- Add a scheduled task to generate a weekly summary email (simulate with logging).\n- Write a custom health indicator that checks the database connection.",
+    "requirements": [
+        "User registration and authentication (HTTP Basic or JWT – your choice).",
+        "Only authenticated users can create posts.",
+        "Only the author of a post can update or delete it (admins can also delete).",
+        "Any user (including anonymous) can view posts and comments.",
+        "Comments are associated with a user and a post; only comment author can edit/delete.",
+        "Tags are many‑to‑many with posts; creating a new tag should be possible on the fly.",
+        "GET /api/posts – supports pagination, sorting, and filters (by title, tags).",
+        "All POST/PUT requests must include validation (e.g., title not blank, content not empty).",
+        "Global exception handler for consistent error responses.",
+        "Actuator endpoints: /health, /info, /metrics exposed.",
+        "Test coverage: at least service layer tests with Mockito, and controller tests with MockMvc."
+    ],
+    "hints": [
+        "Define entities: User, Post, Comment, Tag.",
+        "Use `@ManyToMany` between Post and Tag (cascade = CascadeType.PERSIST, MERGE).",
+        "For pagination, use `Pageable` in controller and repository.",
+        "For security, use a custom `UserDetailsService` that loads users from the database.",
+        "In the service layer, inject `Authentication` to get the current user's username.",
+        "For tags, when creating a post, you may need to look up existing tags or create new ones."
+    ],
+    "expectedOutput": "A working Spring Boot application that can be started and tested with a tool like Postman. The API should allow users to register, log in, create posts, add comments, and search/filter posts. All business rules (ownership, roles) must be enforced. The application should pass the provided tests and produce clean, well‑structured JSON responses."
+}

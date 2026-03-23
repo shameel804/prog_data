@@ -1,0 +1,83 @@
+{
+    "id": "l1",
+    "chapterId": "ch_10",
+    "title": "Build a Complete Task Manager",
+    "description": "Combine everything you've learned to build a full‑stack application with user authentication, task CRUD, validation, error handling, testing, and production features.",
+    "xpReward": 100,
+    "estimatedMinutes": 45,
+    "section": "Final Project",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Your Final Challenge 🎯",
+            "content": "# Welcome to the Capstone\n\nYou've learned Spring Boot from the ground up. Now it's time to build a **complete, production‑ready application** that showcases everything:\n\n* User authentication with Spring Security.\n* CRUD operations for tasks (each owned by a user).\n* Input validation and global exception handling.\n* RESTful API design.\n* Unit and integration tests.\n* Actuator endpoints for monitoring.\n\nWe'll guide you step by step. By the end, you'll have a fully functional Task Manager API that you can deploy and extend."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "Project Overview 📋",
+            "content": "# Features\n\n1. **User Registration & Login** – secure passwords with BCrypt.\n2. **Task Management** – create, read, update, delete tasks.\n3. **User‑Specific Data** – each user sees only their own tasks.\n4. **Validation** – ensure input correctness.\n5. **Global Exception Handling** – consistent error responses.\n6. **Testing** – unit tests for services, integration tests for controllers.\n7. **Actuator** – health, metrics, info.\n\n**Tech Stack:** Spring Boot, Spring Security, Spring Data JPA, H2 (or MySQL), JUnit, Mockito, Spring Boot Actuator."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "code",
+            "title": "Step 1: Set Up the Project",
+            "content": "Use Spring Initializr with:\n\n- **Project**: Maven\n- **Language**: Java\n- **Spring Boot**: 3.2.x (or latest)\n- **Dependencies**:\n  - Spring Web\n  - Spring Security\n  - Spring Data JPA\n  - H2 Database (or MySQL Driver)\n  - Validation\n  - Spring Boot Actuator\n  - Spring Boot DevTools (optional)\n\nDownload and open the project. Configure `application.properties`:\n\n```properties\nspring.application.name=task-manager\nserver.port=8080\n\n# Database (H2 in‑memory)\nspring.datasource.url=jdbc:h2:mem:taskdb\nspring.datasource.driverClassName=org.h2.Driver\nspring.datasource.username=sa\nspring.datasource.password=\n\n# JPA\nspring.jpa.hibernate.ddl-auto=update\nspring.jpa.show-sql=true\n\n# H2 Console\nspring.h2.console.enabled=true\n\n# Actuator\nmanagement.endpoints.web.exposure.include=health,info,metrics\nmanagement.endpoint.health.show-details=always\n\n# Security (for now, we'll override later)\n# spring.security.user.name=... (not needed)\n```"
+        },
+        {
+            "id": "s_l1_4",
+            "type": "code",
+            "title": "Step 2: Create Entities and Repositories",
+            "content": "Create a `User` entity and a `Task` entity. Use `@Entity`, `@Id`, `@GeneratedValue`. The `Task` should have a many‑to‑one relationship to `User`.\n\n```java\n// User.java\n@Entity\n@Table(name = \"users\")\npublic class User {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n\n    @Column(unique = true, nullable = false)\n    private String username;\n\n    @Column(nullable = false)\n    private String password;\n\n    @OneToMany(mappedBy = \"user\", cascade = CascadeType.ALL, orphanRemoval = true)\n    private List<Task> tasks = new ArrayList<>();\n\n    // constructors, getters, setters\n}\n\n// Task.java\n@Entity\n@Table(name = \"tasks\")\npublic class Task {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n\n    @Column(nullable = false)\n    private String title;\n\n    private String description;\n\n    private boolean completed;\n\n    @ManyToOne\n    @JoinColumn(name = \"user_id\")\n    private User user;\n\n    // constructors, getters, setters\n}\n```\n\nCreate repositories:\n```java\npublic interface UserRepository extends JpaRepository<User, Long> {\n    Optional<User> findByUsername(String username);\n}\n\npublic interface TaskRepository extends JpaRepository<Task, Long> {\n    List<Task> findByUserId(Long userId);\n}\n```"
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "Step 3: Configure Spring Security",
+            "content": "Set up in‑memory users for simplicity, or better: load users from the database. We'll use a `UserDetailsService` that queries the `UserRepository`.\n\n```java\n@Service\npublic class CustomUserDetailsService implements UserDetailsService {\n\n    private final UserRepository userRepository;\n\n    public CustomUserDetailsService(UserRepository userRepository) {\n        this.userRepository = userRepository;\n    }\n\n    @Override\n    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {\n        User user = userRepository.findByUsername(username)\n                .orElseThrow(() -> new UsernameNotFoundException(\"User not found\"));\n        return org.springframework.security.core.userdetails.User\n                .withUsername(user.getUsername())\n                .password(user.getPassword())\n                .roles(\"USER\")\n                .build();\n    }\n}\n```\n\nThen, create a security configuration:\n\n```java\n@Configuration\n@EnableWebSecurity\npublic class SecurityConfig {\n\n    @Bean\n    public PasswordEncoder passwordEncoder() {\n        return new BCryptPasswordEncoder();\n    }\n\n    @Bean\n    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {\n        http\n            .csrf().disable()\n            .authorizeHttpRequests(authz -> authz\n                .antMatchers(\"/api/auth/**\").permitAll()\n                .antMatchers(\"/actuator/health\", \"/actuator/info\").permitAll()\n                .anyRequest().authenticated()\n            )\n            .httpBasic();\n        return http.build();\n    }\n}\n```\n\nAdd a simple registration endpoint to create users (use `PasswordEncoder` to hash passwords)."
+        },
+        {
+            "id": "s_l1_6",
+            "type": "code",
+            "title": "Step 4: Create DTOs and Validation",
+            "content": "Use DTOs to separate API input/output from entities. Add validation annotations.\n\n```java\n// AuthRequest.java\npublic class AuthRequest {\n    @NotBlank(message = \"Username is required\")\n    private String username;\n\n    @NotBlank(message = \"Password is required\")\n    private String password;\n\n    // getters, setters\n}\n\n// TaskRequest.java\npublic class TaskRequest {\n    @NotBlank(message = \"Title is required\")\n    @Size(max = 100, message = \"Title too long\")\n    private String title;\n\n    private String description;\n\n    private boolean completed;\n\n    // getters, setters\n}\n\n// TaskResponse.java\npublic class TaskResponse {\n    private Long id;\n    private String title;\n    private String description;\n    private boolean completed;\n    private Long userId;\n\n    // constructor, getters, setters\n}\n```"
+        },
+        {
+            "id": "s_l1_7",
+            "type": "code",
+            "title": "Step 5: Implement Controllers",
+            "content": "Create `AuthController` and `TaskController`.\n\n```java\n@RestController\n@RequestMapping(\"/api/auth\")\npublic class AuthController {\n\n    private final UserRepository userRepository;\n    private final PasswordEncoder passwordEncoder;\n\n    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder) {\n        this.userRepository = userRepository;\n        this.passwordEncoder = passwordEncoder;\n    }\n\n    @PostMapping(\"/register\")\n    @ResponseStatus(HttpStatus.CREATED)\n    public void register(@Valid @RequestBody AuthRequest request) {\n        if (userRepository.findByUsername(request.getUsername()).isPresent()) {\n            throw new ResponseStatusException(HttpStatus.CONFLICT, \"Username already exists\");\n        }\n        User user = new User();\n        user.setUsername(request.getUsername());\n        user.setPassword(passwordEncoder.encode(request.getPassword()));\n        userRepository.save(user);\n    }\n}\n\n@RestController\n@RequestMapping(\"/api/tasks\")\npublic class TaskController {\n\n    private final TaskService taskService;\n\n    public TaskController(TaskService taskService) {\n        this.taskService = taskService;\n    }\n\n    @GetMapping\n    public List<TaskResponse> getAllTasks() {\n        return taskService.getAllTasksForCurrentUser();\n    }\n\n    @GetMapping(\"/{id}\")\n    public TaskResponse getTask(@PathVariable Long id) {\n        return taskService.getTaskById(id);\n    }\n\n    @PostMapping\n    @ResponseStatus(HttpStatus.CREATED)\n    public TaskResponse createTask(@Valid @RequestBody TaskRequest taskRequest) {\n        return taskService.createTask(taskRequest);\n    }\n\n    @PutMapping(\"/{id}\")\n    public TaskResponse updateTask(@PathVariable Long id, @Valid @RequestBody TaskRequest taskRequest) {\n        return taskService.updateTask(id, taskRequest);\n    }\n\n    @DeleteMapping(\"/{id}\")\n    @ResponseStatus(HttpStatus.NO_CONTENT)\n    public void deleteTask(@PathVariable Long id) {\n        taskService.deleteTask(id);\n    }\n}\n```\n\nThe `TaskService` should use `SecurityContextHolder` to get the currently authenticated user."
+        },
+        {
+            "id": "s_l1_8",
+            "type": "code",
+            "title": "Step 6: Implement Service Layer",
+            "content": "```java\n@Service\npublic class TaskService {\n\n    private final TaskRepository taskRepository;\n    private final UserRepository userRepository;\n\n    public TaskService(TaskRepository taskRepository, UserRepository userRepository) {\n        this.taskRepository = taskRepository;\n        this.userRepository = userRepository;\n    }\n\n    private User getCurrentUser() {\n        String username = SecurityContextHolder.getContext().getAuthentication().getName();\n        return userRepository.findByUsername(username)\n                .orElseThrow(() -> new ResourceNotFoundException(\"User not found\"));\n    }\n\n    public List<TaskResponse> getAllTasksForCurrentUser() {\n        User currentUser = getCurrentUser();\n        return taskRepository.findByUserId(currentUser.getId())\n                .stream()\n                .map(this::toResponse)\n                .collect(Collectors.toList());\n    }\n\n    public TaskResponse getTaskById(Long id) {\n        Task task = taskRepository.findById(id)\n                .orElseThrow(() -> new ResourceNotFoundException(\"Task not found\"));\n        if (!task.getUser().getId().equals(getCurrentUser().getId())) {\n            throw new AccessDeniedException(\"You are not authorized to view this task\");\n        }\n        return toResponse(task);\n    }\n\n    public TaskResponse createTask(TaskRequest request) {\n        User currentUser = getCurrentUser();\n        Task task = new Task();\n        task.setTitle(request.getTitle());\n        task.setDescription(request.getDescription());\n        task.setCompleted(request.isCompleted());\n        task.setUser(currentUser);\n        Task saved = taskRepository.save(task);\n        return toResponse(saved);\n    }\n\n    public TaskResponse updateTask(Long id, TaskRequest request) {\n        Task task = taskRepository.findById(id)\n                .orElseThrow(() -> new ResourceNotFoundException(\"Task not found\"));\n        if (!task.getUser().getId().equals(getCurrentUser().getId())) {\n            throw new AccessDeniedException(\"You are not authorized to modify this task\");\n        }\n        task.setTitle(request.getTitle());\n        task.setDescription(request.getDescription());\n        task.setCompleted(request.isCompleted());\n        Task updated = taskRepository.save(task);\n        return toResponse(updated);\n    }\n\n    public void deleteTask(Long id) {\n        Task task = taskRepository.findById(id)\n                .orElseThrow(() -> new ResourceNotFoundException(\"Task not found\"));\n        if (!task.getUser().getId().equals(getCurrentUser().getId())) {\n            throw new AccessDeniedException(\"You are not authorized to delete this task\");\n        }\n        taskRepository.delete(task);\n    }\n\n    private TaskResponse toResponse(Task task) {\n        return new TaskResponse(task.getId(), task.getTitle(), task.getDescription(),\n                task.isCompleted(), task.getUser().getId());\n    }\n}\n```"
+        },
+        {
+            "id": "s_l1_9",
+            "type": "code",
+            "title": "Step 7: Global Exception Handling",
+            "content": "Create a `@RestControllerAdvice` to handle exceptions consistently.\n\n```java\n@RestControllerAdvice\npublic class GlobalExceptionHandler {\n\n    @ExceptionHandler(ResourceNotFoundException.class)\n    @ResponseStatus(HttpStatus.NOT_FOUND)\n    public Map<String, String> handleNotFound(ResourceNotFoundException ex) {\n        return Map.of(\"error\", ex.getMessage());\n    }\n\n    @ExceptionHandler(AccessDeniedException.class)\n    @ResponseStatus(HttpStatus.FORBIDDEN)\n    public Map<String, String> handleAccessDenied(AccessDeniedException ex) {\n        return Map.of(\"error\", ex.getMessage());\n    }\n\n    @ExceptionHandler(MethodArgumentNotValidException.class)\n    @ResponseStatus(HttpStatus.BAD_REQUEST)\n    public Map<String, String> handleValidation(MethodArgumentNotValidException ex) {\n        Map<String, String> errors = new HashMap<>();\n        ex.getBindingResult().getFieldErrors().forEach(error ->\n            errors.put(error.getField(), error.getDefaultMessage()));\n        return errors;\n    }\n\n    @ExceptionHandler(Exception.class)\n    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)\n    public Map<String, String> handleGeneric(Exception ex) {\n        // Log the exception\n        return Map.of(\"error\", \"An unexpected error occurred\");\n    }\n}\n```"
+        },
+        {
+            "id": "s_l1_10",
+            "type": "text",
+            "title": "Step 8: Write Tests",
+            "content": "# Testing\n\nWrite unit tests for `TaskService` using Mockito and JUnit. Write integration tests for controllers using `@WebMvcTest` and `MockMvc`. Also write a repository test with `@DataJpaTest`.\n\nExample service test:\n```java\n@ExtendWith(MockitoExtension.class)\nclass TaskServiceTest {\n    @Mock private TaskRepository taskRepository;\n    @Mock private UserRepository userRepository;\n    @InjectMocks private TaskService taskService;\n\n    @Test\n    void createTask_shouldSaveAndReturnTask() {\n        // arrange\n        User user = new User();\n        user.setId(1L);\n        when(userRepository.findByUsername(\"testuser\")).thenReturn(Optional.of(user));\n        // ... more\n    }\n}\n```\n\nExample controller test:\n```java\n@WebMvcTest(TaskController.class)\nclass TaskControllerTest {\n    @Autowired MockMvc mockMvc;\n    @MockBean TaskService taskService;\n    // ...\n}\n```"
+        },
+        {
+            "id": "s_l1_11",
+            "type": "tip",
+            "title": "Bonus: Add Actuator Customizations",
+            "content": "Enhance the `/info` endpoint with build details and add a custom health indicator that checks the database connection (optional).\n\n```java\n@Component\npublic class DatabaseHealthIndicator implements HealthIndicator {\n    // check database connectivity\n}\n```"
+        },
+        {
+            "id": "s_l1_12",
+            "type": "text",
+            "title": "Congratulations! 🎉",
+            "content": "# You've Built a Complete Spring Boot Application!\n\nNow you can run the app, register a user, authenticate, and manage tasks securely. Your API is well‑tested, handles errors gracefully, and provides monitoring endpoints.\n\n**What's next?**\n- Add a frontend (React, Angular, or Thymeleaf).\n- Deploy to a cloud platform (Heroku, AWS, etc.).\n- Add more features like task deadlines, categories, or file attachments.\n- Explore more advanced topics: OAuth2, Docker, Kubernetes.\n\nYou've mastered Spring Boot – go build something amazing! 🚀"
+        }
+    ]
+}

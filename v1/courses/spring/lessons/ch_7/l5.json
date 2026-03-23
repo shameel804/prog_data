@@ -1,0 +1,67 @@
+{
+    "id": "l5",
+    "chapterId": "ch_7",
+    "title": "Testing REST Controllers with @WebMvcTest",
+    "description": "Slice test your web layer using MockMvc to simulate HTTP requests.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Slice Testing the Web Layer 🌐",
+            "content": "# @WebMvcTest\n\nThis annotation loads only the web layer (controllers, filters, etc.) – not full application context. It auto‑configures **MockMvc** to simulate HTTP requests without starting a real server.\n\nYou'll typically mock the service layer dependencies."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which annotation is used to test a Spring MVC controller slice?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "@SpringBootTest",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "@WebMvcTest",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "@DataJpaTest",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "@MockMvcTest",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "@WebMvcTest focuses on controllers and related components, providing MockMvc for testing.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Controller Test Example",
+            "content": "Assume a `UserController` that uses `UserService`. We'll test its endpoints.",
+            "codeSnippet": "import org.junit.jupiter.api.Test;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;\nimport org.springframework.boot.test.mock.mockito.MockBean;\nimport org.springframework.test.web.servlet.MockMvc;\nimport static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;\nimport static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;\n\n@WebMvcTest(UserController.class)\nclass UserControllerTest {\n\n    @Autowired\n    private MockMvc mockMvc;\n\n    @MockBean\n    private UserService userService;\n\n    @Test\n    void getUser_shouldReturnUser_whenExists() throws Exception {\n        User user = new User(1L, \"John\");\n        when(userService.getUserById(1L)).thenReturn(user);\n\n        mockMvc.perform(get(\"/api/users/1\"))\n                .andExpect(status().isOk())\n                .andExpect(jsonPath(\"$.name\").value(\"John\"));\n    }\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_4",
+            "type": "tip",
+            "title": "JSON Assertions",
+            "content": "Use `jsonPath` from Spring Test to assert JSON response fields. Add `spring-boot-starter-test` which includes JsonPath."
+        }
+    ]
+}

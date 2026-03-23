@@ -1,0 +1,16 @@
+{
+    "id": "task2",
+    "chapterId": "ch_6",
+    "title": "Add Method Security with @PreAuthorize",
+    "description": "Enable method security and protect controller methods using annotations.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Extend the previous task by enabling method security and adding @PreAuthorize to controller methods.\n\n1. Add `@EnableGlobalMethodSecurity(prePostEnabled = true)` to your configuration.\n2. Create a simple REST controller with the following endpoints:\n   - `GET /api/data` – accessible to all authenticated users.\n   - `DELETE /api/data/{id}` – accessible only to users with role ADMIN.\n   - `GET /api/data/me` – accessible only if the authenticated user's ID equals the path variable `id` (you can simulate a user ID from principal).\n3. For the last endpoint, assume that the authenticated principal has an `id` property (you can create a custom UserDetails class, or simply check username). For simplicity, check that the authenticated user's username equals the path variable.\n\n**Hint:** You can get the username from `authentication.principal.username` or `authentication.name`.",
+    "hints": [
+        "Add @EnableGlobalMethodSecurity(prePostEnabled = true) on the configuration class.",
+        "Use @PreAuthorize on the controller methods.",
+        "For the 'me' endpoint, you can write: @PreAuthorize(\"#username == authentication.name\") and capture the username as a path variable.",
+        "Ensure your users have roles as in task1."
+    ],
+    "expectedOutput": "After implementing:\n- Any authenticated user can GET /api/data.\n- Only ADMIN can DELETE /api/data/1.\n- GET /api/data/me/john should work only if the authenticated user is 'john' (based on username).",
+    "solutionCode": "// Add to SecurityConfig\n@Configuration\n@EnableWebSecurity\n@EnableGlobalMethodSecurity(prePostEnabled = true) // Add this\npublic class SecurityConfig {\n    // ... existing beans\n}\n\n// New Controller\npackage com.example.demo;\n\nimport org.springframework.security.access.prepost.PreAuthorize;\nimport org.springframework.web.bind.annotation.*;\n\n@RestController\n@RequestMapping(\"/api/data\")\npublic class DataController {\n\n    @GetMapping\n    public String getAllData() {\n        return \"All data (authenticated users)\";\n    }\n\n    @DeleteMapping(\"/{id}\")\n    @PreAuthorize(\"hasRole('ADMIN')\")\n    public String deleteData(@PathVariable Long id) {\n        return \"Deleted data \" + id;\n    }\n\n    @GetMapping(\"/me/{username}\")\n    @PreAuthorize(\"#username == authentication.name\")\n    public String getMyData(@PathVariable String username) {\n        return \"Data for \" + username;\n    }\n}"
+}

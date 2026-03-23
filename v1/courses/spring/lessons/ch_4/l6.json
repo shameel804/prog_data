@@ -1,0 +1,82 @@
+{
+    "id": "l6",
+    "chapterId": "ch_4",
+    "title": "Custom Queries with @Query and Derived Methods",
+    "description": "Write custom queries using method naming conventions or the @Query annotation.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "When Built‑in Methods Aren't Enough 🎯",
+            "content": "# Two Ways to Add Custom Queries\n\n1. **Derived query methods** – Spring Data JPA parses method names to create queries.\n   Example: `findByName(String name)`\n2. **@Query annotation** – write your own JPQL (or native SQL) for complex queries."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Which of these is a valid derived query method name to find users by email?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "findUserByEmail(String email)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "findByEmail(String email)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "getUserWithEmail(String email)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "queryByEmail(String email)",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The pattern is `findBy` followed by the property name (capitalized).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Derived Query Methods",
+            "content": "Add these to `UserRepository`:",
+            "codeSnippet": "public interface UserRepository extends JpaRepository<User, Long> {\n    // Find user by exact email\n    Optional<User> findByEmail(String email);\n\n    // Find users whose name contains a substring (ignoring case)\n    List<User> findByNameContainingIgnoreCase(String name);\n\n    // Count users with a given email domain (using JPQL in method name? not possible, but we can combine)\n    // For complex conditions, use @Query\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_4",
+            "type": "code",
+            "title": "Custom Query with @Query",
+            "content": "Use `@Query` with JPQL (similar to SQL but uses entity names):",
+            "codeSnippet": "public interface UserRepository extends JpaRepository<User, Long> {\n\n    @Query(\"SELECT u FROM User u WHERE u.email LIKE %:domain\")\n    List<User> findByEmailDomain(@Param(\"domain\") String domain);\n\n    // Native SQL (if you must)\n    @Query(value = \"SELECT * FROM users WHERE name = ?1\", nativeQuery = true)\n    User findByNameNative(String name);\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_5",
+            "type": "text",
+            "title": "JPQL vs Native SQL ⚔️",
+            "content": "# Which to Use?\n\n* **JPQL** – object‑oriented, database‑independent, uses entity names and fields. Preferred.\n* **Native SQL** – direct SQL queries, can use database‑specific features, but ties you to a specific database.\n\nSpring Data JPA also supports **projections** (return only specific fields) and **pagination** (`Pageable`)."
+        },
+        {
+            "id": "s_l6_6",
+            "type": "tip",
+            "title": "Named Parameters 🏷️",
+            "content": "Use `@Param` in JPQL queries to avoid ambiguity. You can also use positional parameters (`?1`, `?2`), but named parameters are clearer."
+        }
+    ]
+}

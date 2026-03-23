@@ -1,0 +1,70 @@
+{
+    "id": "l4",
+    "chapterId": "ch_9",
+    "title": "API Gateway with Spring Cloud Gateway",
+    "description": "Route requests, enforce security, and add cross‑cutting concerns with a gateway.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Gateway Pattern 🚪",
+            "content": "# Single Entry Point\n\nAn **API Gateway** sits between clients and microservices. It:\n- Routes requests to the appropriate service.\n- Enforces security (authentication/authorization).\n- Aggregates responses.\n- Handles cross‑cutting concerns (logging, rate limiting, CORS).\n\nSpring Cloud Gateway is a reactive, non‑blocking gateway built on Project Reactor."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which of the following is NOT a typical responsibility of an API Gateway?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Routing requests",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Storing business data",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Authentication",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Rate limiting",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "API Gateway handles traffic management, but business data is stored in microservices, not the gateway.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Setting Up Spring Cloud Gateway",
+            "content": "Create a new Spring Boot project with `spring-cloud-starter-gateway`. Then define routes in `application.yml`:\n\n```yaml\nspring:\n  cloud:\n    gateway:\n      routes:\n        - id: user-service\n          uri: lb://user-service   # lb:// uses service discovery\n          predicates:\n            - Path=/users/**\n        - id: order-service\n          uri: lb://order-service\n          predicates:\n            - Path=/orders/**\n```\n\nNow any request to `/users/**` is forwarded to the user‑service, and `/orders/**` to order‑service."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Adding a Custom Filter",
+            "content": "You can add filters to modify requests/responses. Example: add a request header.\n\n```yaml\nspring:\n  cloud:\n    gateway:\n      routes:\n        - id: user-service\n          uri: lb://user-service\n          predicates:\n            - Path=/users/**\n          filters:\n            - AddRequestHeader=X-Request-Source, gateway\n```\n\nOr write a custom filter class implementing `GlobalFilter` to log requests."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "tip",
+            "title": "Reactive Under the Hood",
+            "content": "Spring Cloud Gateway is built on **Spring WebFlux** (non‑blocking). It's lightweight and can handle many concurrent connections. Make sure your dependencies are compatible (no Tomcat, use Netty)."
+        }
+    ]
+}

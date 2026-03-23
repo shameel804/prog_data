@@ -1,0 +1,73 @@
+{
+    "id": "l5",
+    "chapterId": "ch_5",
+    "title": "Putting It All Together: Custom Error Responses",
+    "description": "Create a consistent error response structure and combine validation with global handling.",
+    "xpReward": 40,
+    "estimatedMinutes": 15,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Design a Consistent Error Response 🎨",
+            "content": "# Standard Error Object\n\nInstead of returning ad‑hoc maps, define a class that represents your error response:\n\n```java\npublic class ErrorResponse {\n    private String timestamp;\n    private int status;\n    private String error;\n    private String message;\n    private String path;\n    private Map<String, String> details; // for validation errors\n    // constructors, getters, setters\n}\n```\n\nThis makes it easier for clients to parse errors."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Why should you return a structured error response instead of a simple string?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's required by the HTTP spec",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It provides consistency and makes it easier for clients to handle errors",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It prevents the application from crashing",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It improves performance",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A consistent error structure helps clients programmatically handle different error scenarios.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Complete Global Handler with Custom Error Response",
+            "content": "Here's a robust global exception handler that uses a consistent `ErrorResponse` class:",
+            "codeSnippet": "@RestControllerAdvice\npublic class GlobalExceptionHandler {\n\n    @ExceptionHandler(ResourceNotFoundException.class)\n    public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex, HttpServletRequest request) {\n        ErrorResponse error = new ErrorResponse(\n            LocalDateTime.now(),\n            HttpStatus.NOT_FOUND.value(),\n            \"Not Found\",\n            ex.getMessage(),\n            request.getRequestURI()\n        );\n        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);\n    }\n\n    @ExceptionHandler(MethodArgumentNotValidException.class)\n    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {\n        Map<String, String> details = new HashMap<>();\n        ex.getBindingResult().getFieldErrors().forEach(error -> \n            details.put(error.getField(), error.getDefaultMessage()));\n\n        ErrorResponse error = new ErrorResponse(\n            LocalDateTime.now(),\n            HttpStatus.BAD_REQUEST.value(),\n            \"Validation Failed\",\n            \"Invalid input\",\n            request.getRequestURI(),\n            details\n        );\n        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);\n    }\n\n    @ExceptionHandler(Exception.class)\n    public ResponseEntity<ErrorResponse> handleGeneric(Exception ex, HttpServletRequest request) {\n        // Log the exception\n        log.error(\"Unexpected error\", ex);\n        ErrorResponse error = new ErrorResponse(\n            LocalDateTime.now(),\n            HttpStatus.INTERNAL_SERVER_ERROR.value(),\n            \"Internal Server Error\",\n            \"An unexpected error occurred\",\n            request.getRequestURI()\n        );\n        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);\n    }\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Test Your Error Handling 🧪",
+            "content": "# Try It Out!\n\n1. Send a GET request to a non‑existent resource → 404 with custom response.\n2. Send a POST with invalid data (e.g., email missing) → 400 with field‑specific messages.\n3. Cause an unexpected exception (e.g., null pointer) → 500 with sanitized message (and logged stack trace).\n\nYour API now handles errors gracefully and consistently."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "tip",
+            "title": "Don't Forget to Log! 📝",
+            "content": "Always log the full stack trace of unexpected exceptions. This helps you debug issues without exposing sensitive details to clients."
+        }
+    ]
+}

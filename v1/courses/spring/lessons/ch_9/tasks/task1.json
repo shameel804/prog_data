@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_9",
+    "title": "Set Up Eureka Server and Register a Service",
+    "description": "Create a Eureka server and a simple microservice that registers with it.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Create two Spring Boot projects:\n1. **Eureka Server** – a standalone service registry.\n2. **User Service** – a simple REST API that returns user data. It should register with Eureka.\n\n**Requirements:**\n- Eureka Server must be accessible at port 8761 and show the dashboard.\n- User Service must have a name `user-service` and register with Eureka.\n- The User Service should have at least one endpoint, e.g., `GET /users/{id}` returning a dummy user.\n- Verify that the User Service appears in the Eureka dashboard.\n\n**Bonus:** Add a second instance of the User Service on a different port and see both registered.",
+    "hints": [
+        "Use `spring-cloud-starter-netflix-eureka-server` for the server.",
+        "Use `spring-cloud-starter-netflix-eureka-client` for the service.",
+        "In Eureka Server, set `eureka.client.register-with-eureka=false` and `fetch-registry=false`.",
+        "In the service, set `spring.application.name=user-service` and `eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/`."
+    ],
+    "expectedOutput": "After starting both applications, you should see the Eureka dashboard at `http://localhost:8761`. Under 'Instances currently registered with Eureka', `user-service` should appear with its IP and port.",
+    "solutionCode": "// Eureka Server (main class)\n@SpringBootApplication\n@EnableEurekaServer\npublic class EurekaServerApplication {\n    public static void main(String[] args) {\n        SpringApplication.run(EurekaServerApplication.class, args);\n    }\n}\n\n// Eureka Server application.properties\nserver.port=8761\neureka.client.register-with-eureka=false\neureka.client.fetch-registry=false\n\n// User Service (main class)\n@SpringBootApplication\npublic class UserServiceApplication {\n    public static void main(String[] args) {\n        SpringApplication.run(UserServiceApplication.class, args);\n    }\n}\n\n// User Service application.properties\nspring.application.name=user-service\nserver.port=8081\neureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/\n\n// User Controller\n@RestController\n@RequestMapping(\"/users\")\npublic class UserController {\n    @GetMapping(\"/{id}\")\n    public User getUser(@PathVariable Long id) {\n        return new User(id, \"John Doe\");\n    }\n}\n\n// User model\npublic class User {\n    private Long id;\n    private String name;\n    // constructor, getters, setters\n}"
+}
