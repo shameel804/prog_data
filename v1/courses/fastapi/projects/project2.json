@@ -1,0 +1,26 @@
+{
+    "id": "project2",
+    "title": "Real-Time Chat Application",
+    "description": "Create a full-stack chat app with WebSockets, rooms, and user presence.",
+    "difficulty": "Advanced",
+    "estimatedHours": "4-6",
+    "problemStatement": "# Real-Time Chat Application\n\nBuild a real-time chat system using FastAPI WebSockets, Redis, and a simple frontend (HTML/JS). The application should support multiple chat rooms, user presence, and message history.\n\n## Core Features\n\n### Backend\n- **User Authentication**: Use JWT tokens (sent via WebSocket query or header).\n- **WebSocket Endpoint**: `/ws/{room}` – accept connections, handle disconnections.\n- **Rooms**: Users can join any room by providing the room name in the WebSocket URL.\n- **Message Broadcasting**: When a user sends a message, it is broadcast to all users in that room.\n- **Presence**: Notify room when a user joins or leaves.\n- **Message History**: Store last 50 messages per room in Redis (or database) and send them to new users upon joining.\n\n### Frontend (simple HTML/JS)\n- A page where the user enters a username and a room name, then connects.\n- Displays messages, with own messages distinguished.\n- Shows who is currently in the room.\n- Input field to send messages.\n\n### Additional Requirements\n- Use Redis for pub/sub to enable scaling across multiple server instances.\n- Handle disconnections gracefully and clean up connections.\n- Use environment variables for configuration (JWT secret, Redis URL).\n- Write tests for the WebSocket handling (using `websockets` library).\n- Provide a `docker-compose.yml` to run FastAPI, Redis, and optionally a simple static server for the frontend.\n\n## What We're Looking For\n- Proper WebSocket connection management and error handling.\n- Scalability: using Redis pub/sub allows multiple servers to share messages.\n- Clean separation of WebSocket logic from HTTP routes.\n- User authentication for WebSockets (validating token).\n- Good frontend UX (though simple).",
+    "requirements": [
+        "JWT authentication for WebSocket connections",
+        "Support for multiple chat rooms",
+        "Real-time message broadcasting",
+        "Presence notifications (join/leave)",
+        "Message history stored in Redis",
+        "Simple frontend for demo",
+        "Redis pub/sub for scalability",
+        "Dockerized setup"
+    ],
+    "hints": [
+        "When a WebSocket connects, first validate the JWT token (e.g., from query parameter `?token=...`).",
+        "Use `asyncio.Queue` per connection to send messages without blocking.",
+        "For pub/sub, create a Redis subscriber task that listens to the room's channel and forwards messages to all connections in that room.",
+        "Store the list of active connections per room in memory (dictionary).",
+        "Use `websockets` library for testing WebSocket endpoints."
+    ],
+    "expectedOutput": "A working chat application where multiple users can join rooms and exchange messages in real time. The server can scale horizontally with Redis. The frontend is functional but minimal."
+}

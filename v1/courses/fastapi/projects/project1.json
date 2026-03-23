@@ -1,0 +1,25 @@
+{
+    "id": "project1",
+    "title": "Task Manager API",
+    "description": "Build a RESTful API for managing tasks with user authentication and database persistence.",
+    "difficulty": "Intermediate",
+    "estimatedHours": "3-4",
+    "problemStatement": "# Task Manager API\n\nBuild a complete task management system using FastAPI, PostgreSQL, and JWT authentication. The API must allow users to register, log in, and manage their own tasks.\n\n## Core Features\n\n### User Management\n- `POST /auth/register` – create a new user (username, email, password). Password must be hashed.\n- `POST /auth/login` – returns a JWT token.\n\n### Task Management (authenticated endpoints)\n- `GET /tasks` – list all tasks for the authenticated user. Support pagination (skip, limit).\n- `POST /tasks` – create a new task (title, description, due_date, status: pending/in_progress/completed).\n- `GET /tasks/{task_id}` – get a specific task.\n- `PUT /tasks/{task_id}` – update a task (partial updates allowed).\n- `DELETE /tasks/{task_id}` – delete a task.\n\n### Additional Requirements\n- Use SQLAlchemy async with PostgreSQL.\n- Validate input using Pydantic schemas (different schemas for create, update, response).\n- Add a background task that sends a reminder email when a task's due date is approaching (simulate with print).\n- Write at least 5 unit tests for critical endpoints.\n- Use environment variables for configuration (database URL, secret key).\n- Include a `Dockerfile` and `docker-compose.yml` to run the app with PostgreSQL.\n\n## What We're Looking For\n- Clear separation of concerns (models, schemas, routes, dependencies).\n- Proper error handling and HTTP status codes.\n- Security: passwords hashed, JWT with expiration, user isolation.\n- Code organization (modules).\n- Comprehensive README with setup instructions.",
+    "requirements": [
+        "User registration and authentication with JWT",
+        "CRUD operations for tasks, scoped to the logged-in user",
+        "Database persistence using async SQLAlchemy and PostgreSQL",
+        "Input validation with Pydantic",
+        "Background task for email reminders (simulated)",
+        "Unit tests for at least 5 endpoints",
+        "Dockerized application with docker-compose"
+    ],
+    "hints": [
+        "Use `fastapi.security.OAuth2PasswordBearer` and `python-jose` for JWT.",
+        "Create a dependency `get_current_user` to retrieve the user from the token.",
+        "Use `BackgroundTasks` to send email reminders without blocking.",
+        "For pagination, use `skip` and `limit` query parameters.",
+        "In tests, override the database dependency to use a test database or in-memory SQLite."
+    ],
+    "expectedOutput": "A fully functional API that meets the requirements. The frontend (not required) could be a simple React app or Postman collection. All tests pass."
+}

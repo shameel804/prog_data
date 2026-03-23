@@ -1,0 +1,77 @@
+{
+    "id": "l3",
+    "chapterId": "ch_4",
+    "title": "Dependencies with Parameters & Sub-dependencies",
+    "description": "Pass arguments to dependencies and chain dependencies together.",
+    "xpReward": 25,
+    "estimatedMinutes": 14,
+    "section": "Advanced Patterns",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Parameterized Dependencies 🎛️",
+            "content": "# Dependencies can have their own parameters\n\nJust like path operations, dependencies can declare their own parameters (path, query, header, body, etc.).\n\nFastAPI will resolve those parameters automatically, combining them with any parameters from the path operation.\n\nThis allows you to create highly reusable and configurable dependencies."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Dependency with Query Parameter",
+            "content": "Here's a dependency that takes an optional limit parameter.",
+            "codeSnippet": "def pagination(skip: int = 0, limit: int = 10):\n    return {\"skip\": skip, \"limit\": limit}\n\n@app.get(\"/items/\")\nasync def list_items(pagination_params: dict = Depends(pagination)):\n    # In a real app, you'd use skip/limit to query DB\n    return pagination_params",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Sub-dependencies: Dependencies that Depend on Others 🔗",
+            "content": "# Chaining Dependencies\n\nA dependency can itself depend on other dependencies. FastAPI will resolve the entire dependency tree.\n\nExample:\n- `get_current_user` depends on `get_token`.\n- `get_current_user` is used in a path operation.\n\nFastAPI will call `get_token` first, then pass its result to `get_current_user`."
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Sub-dependency Example",
+            "content": "Let's build a simple authentication chain.",
+            "codeSnippet": "from fastapi import FastAPI, Depends, Header, HTTPException\n\napp = FastAPI()\n\n# Sub-dependency\ndef get_token(authorization: str = Header(...)):\n    return authorization.split(\" \")[1]  # Extract token from \"Bearer <token>\"\n\n# Main dependency that uses the sub-dependency\ndef get_current_user(token: str = Depends(get_token)):\n    if token != \"secret-token\":\n        raise HTTPException(status_code=401, detail=\"Invalid token\")\n    return {\"username\": \"alice\"}\n\n@app.get(\"/users/me\")\nasync def read_current_user(current_user: dict = Depends(get_current_user)):\n    return current_user",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_5",
+            "type": "quiz",
+            "title": "Sub-dependency Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "In a chain of dependencies, which one runs first?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The dependency that is declared first in the code",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The deepest sub-dependency runs first",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They run in parallel",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "FastAPI resolves the dependency tree from the leaves up. The most nested (sub-dependency) runs first, then its result is passed to the parent.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Sub-dependencies let you build modular, testable components. For example, you can have a database session dependency that depends on a configuration dependency."
+        }
+    ]
+}

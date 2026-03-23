@@ -1,0 +1,13 @@
+{
+    "id": "task3",
+    "chapterId": "ch_9",
+    "title": "Simple Chat Room",
+    "description": "Build a multi-room chat system where clients can join a room and messages are broadcast to that room only.",
+    "estimatedMinutes": 20,
+    "problemStatement": "# Multi-Room Chat\n\nCreate a WebSocket endpoint `/ws/{room}` that implements a chat room:\n- Each room is identified by the path parameter.\n- Clients can join any room.\n- Messages sent by a client are broadcast to all other clients in the same room.\n- When a client connects, send a welcome message: `{\"system\": \"You joined room {room}\"}`.\n- When a client disconnects, notify other clients in the room: `{\"system\": \"User left\"}`.\n- Use a dictionary to store active connections per room.\n\n**Bonus:** Add a username field (e.g., from query parameter) and include it in messages.",
+    "hints": [
+        "Store `rooms: dict[str, list[WebSocket]]`.\nOn connect, add to the room list.\nOn message, iterate over the room's connections (excluding sender) and send.\nHandle disconnection by removing from the list."
+    ],
+    "expectedOutput": "Clients in different rooms do not see each other's messages. Joins/leaves are announced.",
+    "solutionCode": "from fastapi import FastAPI, WebSocket, WebSocketDisconnect\n\napp = FastAPI()\n\nrooms = {}\n\n@app.websocket(\"/ws/{room}\")\nasync def chat_room(websocket: WebSocket, room: str):\n    await websocket.accept()\n    if room not in rooms:\n        rooms[room] = []\n    rooms[room].append(websocket)\n    # Send welcome to the new client only\n    await websocket.send_text(f'{{\"system\": \"You joined room {room}\"}}')\n    # Notify others\n    for conn in rooms[room]:\n        if conn != websocket:\n            await conn.send_text(f'{{\"system\": \"User joined\"}}')\n    try:\n        while True:\n            data = await websocket.receive_text()\n            # Broadcast to everyone else in the room\n            for conn in rooms[room]:\n                if conn != websocket:\n                    await conn.send_text(data)\n    except WebSocketDisconnect:\n        rooms[room].remove(websocket)\n        if not rooms[room]:\n            del rooms[room]\n        else:\n            for conn in rooms[room]:\n                await conn.send_text(f'{{\"system\": \"User left\"}}')"
+}

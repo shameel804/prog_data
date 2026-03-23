@@ -1,0 +1,56 @@
+{
+    "id": "l4",
+    "chapterId": "ch_6",
+    "title": "Password Hashing with Passlib",
+    "description": "Safely store passwords using bcrypt hashing.",
+    "xpReward": 20,
+    "estimatedMinutes": 10,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Why Hash Passwords? 🔒",
+            "content": "# Never Store Plain Text Passwords!\n\nHashing transforms a password into a fixed-length string that cannot be reversed. When a user logs in, you hash the provided password and compare with the stored hash.\n\n**Use bcrypt** – it's slow and resistant to brute-force attacks."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Hashing with Passlib",
+            "content": "Install: `pip install passlib[bcrypt]`\n\n```python\nfrom passlib.context import CryptContext\n\npwd_context = CryptContext(schemes=[\"bcrypt\"], deprecated=\"auto\")\n\ndef verify_password(plain_password, hashed_password):\n    return pwd_context.verify(plain_password, hashed_password)\n\ndef get_password_hash(password):\n    return pwd_context.hash(password)\n```",
+            "codeSnippet": "from passlib.context import CryptContext\n\npwd_context = CryptContext(schemes=[\"bcrypt\"], deprecated=\"auto\")\n\nhashed = pwd_context.hash(\"mypassword\")\nprint(hashed)  # $2b$12$...\nprint(pwd_context.verify(\"mypassword\", hashed))  # True",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Password Hashing",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Why is bcrypt preferred over simple hash functions like MD5 for passwords?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It produces shorter hashes",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It is intentionally slow, making brute-force harder",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It can be reversed",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "bcrypt is a key derivation function designed to be slow, which helps mitigate brute-force attacks.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

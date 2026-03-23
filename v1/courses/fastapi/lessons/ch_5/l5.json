@@ -1,0 +1,101 @@
+{
+    "id": "l5",
+    "chapterId": "ch_5",
+    "title": "Pydantic Schemas for DB Data",
+    "description": "Use Pydantic models to validate and serialize database data.",
+    "xpReward": 25,
+    "estimatedMinutes": 15,
+    "section": "Integration",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Why Pydantic with SQLAlchemy?",
+            "content": "# Separation of Concerns\n\n- **SQLAlchemy models** – handle database mapping and logic.\n- **Pydantic schemas** – define API request/response shapes, validation, and serialization.\n\nThis separation keeps your code clean and flexible.\n\n**Common pattern:**\n- `UserCreate` (request body) – username, email, password\n- `UserResponse` (response) – id, username, email, created_at (no password)\n- `UserInDB` – includes hashed password (internal use)"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Defining Schemas",
+            "content": "Create Pydantic models for different use cases.",
+            "codeSnippet": "from pydantic import BaseModel, EmailStr\nfrom datetime import datetime\nfrom typing import Optional\n\nclass UserBase(BaseModel):\n    email: EmailStr\n    username: str\n\nclass UserCreate(UserBase):\n    password: str\n\nclass UserResponse(UserBase):\n    id: int\n    is_active: bool\n    created_at: datetime\n\n    class Config:\n        orm_mode = True  # allows conversion from SQLAlchemy model",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Schema Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What does `orm_mode = True` enable in a Pydantic schema?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It allows the schema to be used with SQLAlchemy models directly",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It automatically creates database tables",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It encrypts the data",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`orm_mode = True` allows Pydantic to read data from ORM models (like SQLAlchemy) by accessing attributes, not just dictionaries.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Using Schemas in Endpoints",
+            "content": "Combine Pydantic schemas with SQLAlchemy models in your API.",
+            "codeSnippet": "@app.post(\"/users/\", response_model=UserResponse)\nasync def create_user(user: UserCreate, db: AsyncSession = Depends(get_db)):\n    # Hash password (omitted for brevity)\n    db_user = User(email=user.email, username=user.username, hashed_password=fake_hash)\n    db.add(db_user)\n    await db.commit()\n    await db.refresh(db_user)\n    return db_user  # Pydantic will convert using orm_mode",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Use `response_model_exclude_unset=True` to skip default values in responses. This keeps the API payload clean."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Pydantic Integration",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "Why would you create separate Pydantic schemas for creation and response?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To avoid exposing sensitive fields like password in responses",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Because SQLAlchemy models cannot be used directly",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To make the API faster",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Separate schemas allow you to control what data is sent to the client; for example, never send hashed passwords.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,77 @@
+{
+    "id": "l5",
+    "chapterId": "ch_8",
+    "title": "Advanced Background Processing with Celery",
+    "description": "Set up Celery for distributed, persistent background jobs.",
+    "xpReward": 25,
+    "estimatedMinutes": 15,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Why Celery? 🍒",
+            "content": "# When BackgroundTasks isn't Enough\n\n`BackgroundTasks` works within the same process. For long-running, resource-intensive, or recurring tasks, you need a **distributed task queue**.\n\n**Celery** is a popular Python task queue that:\n- Runs tasks in separate workers\n- Can scale horizontally\n- Persists tasks in a broker (Redis, RabbitMQ)\n- Provides retries, scheduling, and monitoring"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Basic Celery Setup",
+            "content": "# Steps\n\n1. Install Celery and a broker (e.g., Redis).\n2. Create a Celery app.\n3. Define tasks.\n4. Run a worker.\n5. Call tasks from FastAPI.\n\n```bash\npip install celery redis\n```"
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Celery App & Task",
+            "content": "`tasks.py`",
+            "codeSnippet": "from celery import Celery\n\ncelery_app = Celery(\n    \"myapp\",\n    broker=\"redis://localhost:6379/0\",\n    backend=\"redis://localhost:6379/0\"\n)\n\n@celery_app.task\ndef send_welcome_email(user_email: str):\n    # Simulate email sending\n    print(f\"Sending email to {user_email}\")\n    return True",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Calling Celery Task from FastAPI",
+            "content": "```python\nfrom fastapi import FastAPI\nfrom tasks import send_welcome_email\n\napp = FastAPI()\n\n@app.post(\"/register\")\nasync def register_user(email: str):\n    # Save user to DB (omitted)\n    send_welcome_email.delay(email)  # .delay() sends to Celery worker\n    return {\"message\": \"User registered, email will be sent\"}\n```",
+            "codeSnippet": "from fastapi import FastAPI\nfrom tasks import send_welcome_email\n\napp = FastAPI()\n\n@app.post(\"/register\")\nasync def register(email: str):\n    send_welcome_email.delay(email)\n    return {\"status\": \"queued\"}",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "For production, always run Celery workers separately from the FastAPI server. Use a process manager like Supervisor or run them in containers."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Celery Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the main advantage of using Celery over FastAPI's BackgroundTasks?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's easier to set up",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Tasks can be distributed across multiple workers and survive restarts",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It runs tasks faster",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Celery provides a persistent, distributed task queue that can scale and handle long-running tasks more reliably than in-process background tasks.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

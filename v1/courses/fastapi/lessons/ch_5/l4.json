@@ -1,0 +1,122 @@
+{
+    "id": "l4",
+    "chapterId": "ch_5",
+    "title": "Relationships & Joins",
+    "description": "Define relationships between tables (one-to-many, many-to-many) and query related data.",
+    "xpReward": 30,
+    "estimatedMinutes": 20,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "One-to-Many Relationship",
+            "content": "# User → Posts\n\nA user can have many posts. Define:\n- A `ForeignKey` in the child table (`post.user_id`).\n- A `relationship()` in the parent to access children.\n\n```python\nfrom sqlalchemy import ForeignKey\nfrom sqlalchemy.orm import relationship\n\nclass User(Base):\n    __tablename__ = \"users\"\n    id = Column(Integer, primary_key=True)\n    posts = relationship(\"Post\", back_populates=\"author\")\n\nclass Post(Base):\n    __tablename__ = \"posts\"\n    id = Column(Integer, primary_key=True)\n    user_id = Column(Integer, ForeignKey(\"users.id\"))\n    author = relationship(\"User\", back_populates=\"posts\")\n```"
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Full Example",
+            "content": "Create the models and use them.",
+            "codeSnippet": "class User(Base):\n    __tablename__ = \"users\"\n    id = Column(Integer, primary_key=True)\n    name = Column(String)\n    posts = relationship(\"Post\", back_populates=\"user\", cascade=\"all, delete-orphan\")\n\nclass Post(Base):\n    __tablename__ = \"posts\"\n    id = Column(Integer, primary_key=True)\n    title = Column(String)\n    user_id = Column(Integer, ForeignKey(\"users.id\"))\n    user = relationship(\"User\", back_populates=\"posts\")",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Relationships",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does `ForeignKey(\"users.id\")` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It creates a new column that references the users table",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It automatically creates a relationship",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It deletes the user when a post is deleted",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "ForeignKey defines a column that references the primary key of another table, establishing a link.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Querying with Joins",
+            "content": "# Fetch Related Data\n\nUse `select(...).join(...)` to load related data in one query.\n\n```python\n# Get user with their posts\nstmt = select(User).where(User.id == user_id).options(selectinload(User.posts))\nresult = await session.execute(stmt)\nuser = result.scalar_one()\n```\n\n`selectinload` loads the posts in a separate query (efficient).\n`joinedload` uses a SQL JOIN."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Loading Relationships",
+            "content": "Fetch a user and all their posts.",
+            "codeSnippet": "from sqlalchemy.orm import selectinload\n\nasync def get_user_with_posts(db: AsyncSession, user_id: int):\n    stmt = select(User).where(User.id == user_id).options(selectinload(User.posts))\n    result = await db.execute(stmt)\n    return result.scalar_one_or_none()",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Many-to-Many Relationships",
+            "content": "# Student ↔ Course\n\nMany-to-many uses an association table.\n\n```python\nstudent_course = Table(\n    \"student_course\",\n    Base.metadata,\n    Column(\"student_id\", ForeignKey(\"students.id\"), primary_key=True),\n    Column(\"course_id\", ForeignKey(\"courses.id\"), primary_key=True)\n)\n\nclass Student(Base):\n    __tablename__ = \"students\"\n    id = Column(Integer, primary_key=True)\n    courses = relationship(\"Course\", secondary=student_course, back_populates=\"students\")\n\nclass Course(Base):\n    __tablename__ = \"courses\"\n    id = Column(Integer, primary_key=True)\n    students = relationship(\"Student\", secondary=student_course, back_populates=\"courses\")\n```"
+        },
+        {
+            "id": "s_l4_7",
+            "type": "code",
+            "title": "Many-to-Many Example",
+            "content": "Creating and querying many-to-many relationships.",
+            "codeSnippet": "# Add a course to a student\nstudent = await get_student(db, student_id)\ncourse = await get_course(db, course_id)\nstudent.courses.append(course)\nawait db.commit()\n\n# Fetch student with courses\nstmt = select(Student).where(Student.id == student_id).options(selectinload(Student.courses))\nresult = await db.execute(stmt)\nstudent = result.scalar_one()",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_8",
+            "type": "quiz",
+            "title": "Many-to-Many",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What is the `secondary` argument in a `relationship()` used for?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It specifies the foreign key column",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It names the association table for many-to-many",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It defines the order of loading",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "In many-to-many, `secondary` points to the association table that links the two main tables.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Always use `selectinload` for collections when possible. It loads all related objects in a second query, which is often faster than `joinedload` for many items."
+        }
+    ]
+}

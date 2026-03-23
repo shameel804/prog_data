@@ -1,0 +1,107 @@
+{
+    "id": "l2",
+    "chapterId": "ch_5",
+    "title": "Defining Models with SQLAlchemy",
+    "description": "Create database models (tables) using SQLAlchemy's declarative base.",
+    "xpReward": 25,
+    "estimatedMinutes": 15,
+    "section": "Models",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "What is a Model? 🗃️",
+            "content": "# Models = Database Tables\n\nA model is a Python class that represents a database table. Each attribute maps to a column.\n\nWe define models by inheriting from `Base` (the declarative base).\n\n```python\nfrom sqlalchemy.orm import declarative_base\nfrom sqlalchemy import Column, Integer, String\n\nBase = declarative_base()\n\nclass User(Base):\n    __tablename__ = \"users\"\n\n    id = Column(Integer, primary_key=True, index=True)\n    name = Column(String, nullable=False)\n    email = Column(String, unique=True, index=True)\n```"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Example: User Model",
+            "content": "Let's create a simple User model.",
+            "codeSnippet": "from sqlalchemy import Column, Integer, String, Boolean\nfrom sqlalchemy.orm import declarative_base\n\nBase = declarative_base()\n\nclass User(Base):\n    __tablename__ = \"users\"\n\n    id = Column(Integer, primary_key=True, index=True)\n    email = Column(String, unique=True, index=True, nullable=False)\n    username = Column(String, unique=True, index=True, nullable=False)\n    hashed_password = Column(String, nullable=False)\n    is_active = Column(Boolean, default=True)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Model Basics",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What does `__tablename__` specify in a SQLAlchemy model?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The database name",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The name of the table in the database",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The name of the Python class",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`__tablename__` is used to specify the database table name for the model.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Column Types",
+            "content": "# Common Column Types\n\n- `Integer` – whole numbers\n- `String` – text (with optional length)\n- `Boolean` – True/False\n- `DateTime` – date and time\n- `Float` – decimal numbers\n- `ForeignKey` – for relationships\n\n**Constraints:**\n- `primary_key=True`\n- `nullable=False` (NOT NULL)\n- `unique=True`\n- `index=True` – speeds up queries\n- `default` – default value"
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Extended Model Example",
+            "content": "A more complete model with multiple columns.",
+            "codeSnippet": "from sqlalchemy import Column, Integer, String, DateTime, Boolean, Float\nfrom datetime import datetime\n\nclass Product(Base):\n    __tablename__ = \"products\"\n\n    id = Column(Integer, primary_key=True, index=True)\n    name = Column(String(100), nullable=False, index=True)\n    description = Column(String(500))\n    price = Column(Float, nullable=False)\n    in_stock = Column(Boolean, default=True)\n    created_at = Column(DateTime, default=datetime.utcnow)\n    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Always add `index=True` to columns you will frequently filter or sort by. It dramatically improves query performance."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "Column Constraints",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Which constraint ensures a column cannot have duplicate values?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "primary_key",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "unique",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "index",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`unique=True` enforces that all values in the column are distinct.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_8",
+    "title": "Logging Middleware",
+    "description": "Create a middleware that logs each request's method, path, and duration.",
+    "estimatedMinutes": 10,
+    "problemStatement": "# Logging Middleware\n\nCreate a middleware that logs every request in a structured way.\n\n**Requirements:**\n- Log the request method, path, status code, and processing time (in ms).\n- Use Python's `logging` module.\n- Add a unique request ID to each log line for tracing.\n\n**Bonus:** Log the request body for POST/PUT requests (be careful with large bodies).",
+    "hints": [
+        "Generate a request ID with `uuid.uuid4()` and store it in `request.state`.",
+        "Use `logger.info` with `extra` dict to include request ID.",
+        "Be careful not to log sensitive data."
+    ],
+    "expectedOutput": "Each request appears in logs with a request ID, method, path, status, and duration.",
+    "solutionCode": "import time\nimport uuid\nimport logging\nfrom fastapi import FastAPI, Request\n\nlogging.basicConfig(level=logging.INFO)\nlogger = logging.getLogger(__name__)\n\napp = FastAPI()\n\n@app.middleware(\"http\")\nasync def log_requests(request: Request, call_next):\n    request_id = str(uuid.uuid4())\n    request.state.request_id = request_id\n    start = time.time()\n    response = await call_next(request)\n    duration_ms = (time.time() - start) * 1000\n    logger.info(\n        f\"Request {request_id}: {request.method} {request.url.path} -> {response.status_code} ({duration_ms:.2f}ms)\"\n    )\n    return response"
+}

@@ -1,0 +1,62 @@
+{
+    "id": "l4",
+    "chapterId": "ch_10",
+    "title": "Performance Optimization",
+    "description": "Optimize async code, database connections, and response times.",
+    "xpReward": 25,
+    "estimatedMinutes": 15,
+    "section": "Performance",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Async Best Practices",
+            "content": "# Keep I/O Async\n\n- Use `async def` for endpoints that perform I/O (database, HTTP calls).\n- Use async libraries (e.g., `asyncpg`, `httpx`, `aiofiles`).\n- Avoid blocking calls in async routes (e.g., `time.sleep()`, CPU-heavy sync code).\n- For CPU-bound tasks, offload to a separate thread/process or use Celery."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Database Connection Pooling",
+            "content": "# Reuse Connections\n\nCreating a new database connection for each request is expensive. Use connection pooling.\n\nWith SQLAlchemy async:\n```python\nfrom sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker\n\nengine = create_async_engine(\n    DATABASE_URL,\n    pool_size=20,\n    max_overflow=10,\n    pool_pre_ping=True\n)\nAsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)\n```\n- `pool_size`: number of persistent connections\n- `max_overflow`: extra connections allowed when all are busy"
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Response Compression",
+            "content": "Enable Gzip compression to reduce bandwidth.",
+            "codeSnippet": "from fastapi.middleware.gzip import GZipMiddleware\n\napp = FastAPI()\napp.add_middleware(GZipMiddleware, minimum_size=1000)  # compress responses > 1KB",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Performance Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is a key benefit of database connection pooling?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It improves security",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It reduces the overhead of creating connections per request",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It automatically optimizes queries",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Connection pooling reuses existing connections, reducing latency and resource usage.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

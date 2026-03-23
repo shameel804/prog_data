@@ -1,0 +1,68 @@
+{
+    "id": "l3",
+    "chapterId": "ch_3",
+    "title": "Request Body with Pydantic",
+    "description": "Receive and validate JSON request bodies using Pydantic models.",
+    "xpReward": 25,
+    "estimatedMinutes": 12,
+    "section": "Request",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Receiving JSON Data",
+            "content": "# Declare a Request Body\n\nIn FastAPI, you can declare a parameter of a Pydantic model type. FastAPI will read the JSON body, validate it, and pass the model instance to your function.\n\n```python\nfrom fastapi import FastAPI\nfrom pydantic import BaseModel\n\napp = FastAPI()\n\nclass Item(BaseModel):\n    name: str\n    price: float\n\n@app.post(\"/items/\")\ndef create_item(item: Item):\n    return {\"item_name\": item.name, \"item_price\": item.price}\n```\n\n- The request body must be JSON.\n- Validation errors will return a 422 response automatically."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Try it Yourself",
+            "content": "Send a POST request to `/items/` with JSON body.",
+            "codeSnippet": "# Example request body\n{\n    \"name\": \"Keyboard\",\n    \"price\": 29.99\n}\n\n# Response\n{\n    \"item_name\": \"Keyboard\",\n    \"item_price\": 29.99\n}",
+            "codeLanguage": "json",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Request Body",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "How does FastAPI know to read a request body as a Pydantic model?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "You must use a special decorator",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "By using a parameter of a Pydantic model type",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "By naming the parameter 'body'",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "When a function parameter is annotated with a Pydantic model, FastAPI automatically extracts the JSON body and validates it.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Combining Path, Query, and Body",
+            "content": "# Mixed Parameters\n\nYou can combine path, query, and body parameters in one endpoint.\n\n```python\n@app.put(\"/items/{item_id}\")\ndef update_item(item_id: int, item: Item, q: str = None):\n    return {\"item_id\": item_id, \"item\": item, \"query\": q}\n```\n\n- Path: `item_id`\n- Query: `q`\n- Body: `item` (Item model)\n\nFastAPI intelligently distinguishes between them."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "You can also use multiple body parameters by using `Body()` from FastAPI, but for most cases, a single Pydantic model is cleanest."
+        }
+    ]
+}

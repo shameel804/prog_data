@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_4",
+    "title": "Query Parameter Extractor",
+    "description": "Create a dependency that extracts a common set of query parameters and injects them.",
+    "estimatedMinutes": 10,
+    "problemStatement": "# Query Parameter Extractor\n\nCreate a dependency function called `common_params` that accepts three optional query parameters:\n- `q` (str, default None) – search query\n- `skip` (int, default 0) – number of items to skip\n- `limit` (int, default 10) – maximum items to return\n\nThe dependency should return a dictionary with these values.\n\nThen, create a path operation `/search/` that uses this dependency and returns the parameters.\n\n**Bonus:** Add type hints and documentation strings.",
+    "hints": [
+        "Use `Query()` from fastapi to define each parameter with defaults.",
+        "Return a dict: `{\"q\": q, \"skip\": skip, \"limit\": limit}`.",
+        "Inject the dependency using `Depends(common_params)`."
+    ],
+    "expectedOutput": "When you access `/search/?q=hello&skip=5&limit=20`, the endpoint should return `{\"q\": \"hello\", \"skip\": 5, \"limit\": 20}`.",
+    "solutionCode": "from fastapi import FastAPI, Depends, Query\n\napp = FastAPI()\n\ndef common_params(\n    q: str | None = Query(None, description=\"Search query\"),\n    skip: int = Query(0, description=\"Number of items to skip\"),\n    limit: int = Query(10, description=\"Maximum items to return\")\n) -> dict:\n    return {\"q\": q, \"skip\": skip, \"limit\": limit}\n\n@app.get(\"/search/\")\nasync def search(params: dict = Depends(common_params)):\n    return params"
+}

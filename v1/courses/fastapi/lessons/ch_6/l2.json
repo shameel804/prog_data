@@ -1,0 +1,56 @@
+{
+    "id": "l2",
+    "chapterId": "ch_6",
+    "title": "OAuth2 with Password Flow",
+    "description": "Implement the OAuth2 password flow using FastAPI's built-in utilities.",
+    "xpReward": 25,
+    "estimatedMinutes": 12,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "What is OAuth2? 🛡️",
+            "content": "# OAuth2 Password Flow\n\nOAuth2 is a framework for authorization. The **password flow** is where the user sends their username and password to the API, and the API returns a token.\n\nFastAPI provides `OAuth2PasswordBearer` to simplify this."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Setting Up OAuth2",
+            "content": "First, create an OAuth2 scheme.",
+            "codeSnippet": "from fastapi import FastAPI, Depends\nfrom fastapi.security import OAuth2PasswordBearer\n\napp = FastAPI()\n\noauth2_scheme = OAuth2PasswordBearer(tokenUrl=\"token\")\n\n# The `tokenUrl` is the endpoint where clients send credentials.\n\n@app.post(\"/token\")\nasync def login(form_data: OAuth2PasswordRequestForm = Depends()):\n    # Validate credentials and return token\n    ...",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "OAuth2 Basics",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of the `tokenUrl` parameter in `OAuth2PasswordBearer`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It specifies where to send the token",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It tells FastAPI where to redirect for login",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's the URL where the client obtains the token",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`tokenUrl` indicates the endpoint that handles login and returns a token. FastAPI uses this to generate the OpenAPI documentation.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

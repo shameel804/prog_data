@@ -1,0 +1,56 @@
+{
+    "id": "l2",
+    "chapterId": "ch_9",
+    "title": "Building a Simple WebSocket Endpoint",
+    "description": "Create a WebSocket route and handle messages.",
+    "xpReward": 20,
+    "estimatedMinutes": 12,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Defining a WebSocket Route",
+            "content": "# Syntax\n\nUse `@app.websocket(\"/path\")` to define a WebSocket endpoint.\n\nThe function receives a `WebSocket` object and must be `async`.\n\n```python\nfrom fastapi import FastAPI, WebSocket\n\napp = FastAPI()\n\n@app.websocket(\"/ws\")\nasync def websocket_endpoint(websocket: WebSocket):\n    await websocket.accept()\n    while True:\n        data = await websocket.receive_text()\n        await websocket.send_text(f\"Echo: {data}\")\n```"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Simple Echo Server",
+            "content": "Try connecting with a WebSocket client (like `websocat` or browser console).",
+            "codeSnippet": "from fastapi import FastAPI, WebSocket\n\napp = FastAPI()\n\n@app.websocket(\"/echo\")\nasync def echo(websocket: WebSocket):\n    await websocket.accept()\n    try:\n        while True:\n            message = await websocket.receive_text()\n            await websocket.send_text(f\"You said: {message}\")\n    except Exception as e:\n        print(f\"Connection closed: {e}\")",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "WebSocket Basics",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What method do you call to accept a WebSocket connection?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "websocket.open()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "websocket.accept()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "websocket.connect()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`websocket.accept()` confirms the upgrade and establishes the connection.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

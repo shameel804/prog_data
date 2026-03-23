@@ -1,0 +1,240 @@
+{
+    "id": "quiz_ch_4",
+    "chapterId": "ch_4",
+    "title": "Chapter 4 Quiz: Dependency Injection",
+    "description": "Test your knowledge of FastAPI's DI system, including dependencies, sub-dependencies, class-based DI, and yields.",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the primary purpose of dependency injection in FastAPI?",
+            "options": [
+                "To make code run faster",
+                "To share logic and avoid code duplication",
+                "To automatically generate API documentation",
+                "To enforce data validation"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Dependency injection helps you share common logic (like authentication, database sessions) across multiple path operations, reducing duplication and improving maintainability."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "A dependency in FastAPI must always be an async function.",
+            "correctAnswer": false,
+            "explanation": "Dependencies can be regular `def` functions or `async def` functions. FastAPI handles both."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "How do you tell FastAPI to inject a dependency into a path operation?",
+            "options": [
+                "By using `@dependency` decorator",
+                "By passing the dependency as a positional argument",
+                "By using `Depends(dependency)` as a default value for a parameter",
+                "By calling the dependency function inside the path operation"
+            ],
+            "correctAnswer": 2,
+            "explanation": "You use `Depends(dependency)` as the default value for a parameter. FastAPI will then call the dependency and inject the result."
+        },
+        {
+            "id": "q4",
+            "type": "fill_blank",
+            "question": "What keyword is used in a dependency to perform setup and teardown (cleanup) actions?",
+            "options": [
+                "return",
+                "yield",
+                "await",
+                "finally"
+            ],
+            "correctAnswer": "yield",
+            "explanation": "A dependency that uses `yield` becomes a context manager: code before `yield` runs before the path operation, and code after `yield` runs after."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "Given the following code, what is the order of execution?\n```python\ndef dep_a():\n    return \"a\"\n\ndef dep_b(a: str = Depends(dep_a)):\n    return f\"b-{a}\"\n\n@app.get(\"/\")\ndef main(b: str = Depends(dep_b)):\n    return b\n```",
+            "options": [
+                "dep_a -> dep_b -> main",
+                "main -> dep_b -> dep_a",
+                "dep_b -> dep_a -> main",
+                "All run in parallel"
+            ],
+            "correctAnswer": 0,
+            "explanation": "FastAPI resolves dependencies from the leaves upward. `dep_a` is needed by `dep_b`, so `dep_a` runs first, then `dep_b`, then `main`."
+        },
+        {
+            "id": "q6",
+            "type": "true_false",
+            "question": "A dependency can have its own dependencies (sub-dependencies).",
+            "correctAnswer": true,
+            "explanation": "Yes, dependencies can depend on other dependencies, forming a tree. FastAPI resolves the entire tree."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "What is the correct way to define a class-based dependency?",
+            "options": [
+                "Define a class with `__call__` method and use `Depends(MyClass)`",
+                "Define a class with `__init__` and FastAPI will instantiate it when using `Depends(MyClass)`",
+                "Classes cannot be dependencies",
+                "Use `@dependency` decorator on the class"
+            ],
+            "correctAnswer": 1,
+            "explanation": "When you use `Depends(MyClass)`, FastAPI will call `MyClass()` (passing any dependencies defined in `__init__`) and inject the instance."
+        },
+        {
+            "id": "q8",
+            "type": "fill_blank",
+            "question": "What exception should you raise inside a dependency to indicate an authentication failure?",
+            "options": [
+                "ValueError",
+                "HTTPException",
+                "PermissionError",
+                "AuthenticationError"
+            ],
+            "correctAnswer": "HTTPException",
+            "explanation": "You should raise `HTTPException` with an appropriate status code (e.g., 401) to let FastAPI return an error response."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "Which of the following is NOT a valid use case for a dependency?",
+            "options": [
+                "Reading a common query parameter",
+                "Authenticating a user",
+                "Starting a database transaction and committing/rolling back",
+                "Defining a new route decorator"
+            ],
+            "correctAnswer": 3,
+            "explanation": "Dependencies are for providing values to path operations; they cannot define new route decorators."
+        },
+        {
+            "id": "q10",
+            "type": "true_false",
+            "question": "A dependency can be a generator that yields a value, and the yielded value is injected into the path operation.",
+            "correctAnswer": true,
+            "explanation": "Yes, if a dependency uses `yield`, the yielded value is what gets injected. The code after the yield runs after the path operation finishes."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "What happens if a dependency raises an HTTPException?",
+            "options": [
+                "The server crashes",
+                "The exception is ignored",
+                "FastAPI returns the error response to the client",
+                "The dependency retries automatically"
+            ],
+            "correctAnswer": 2,
+            "explanation": "FastAPI catches HTTPException and returns the appropriate error response, stopping further execution."
+        },
+        {
+            "id": "q12",
+            "type": "fill_blank",
+            "question": "What decorator can you use to apply a dependency to an entire router or app?",
+            "options": [
+                "@app.dependency",
+                "@app.middleware",
+                "`dependencies` parameter in `APIRouter` or `FastAPI`",
+                "`@app.include_router`"
+            ],
+            "correctAnswer": "dependencies parameter in APIRouter or FastAPI",
+            "explanation": "You can pass a list of dependencies to the `dependencies` parameter when creating an `APIRouter` or the `FastAPI` app to apply them to all routes in that scope."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "Which of the following is a benefit of using class-based dependencies?",
+            "options": [
+                "They are always faster",
+                "They allow you to encapsulate state and methods",
+                "They automatically cache results",
+                "They do not require Depends()"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Class-based dependencies let you group related functionality and maintain state across calls (if the instance is reused)."
+        },
+        {
+            "id": "q14",
+            "type": "true_false",
+            "question": "A dependency can have its own path, query, or header parameters, which will be taken from the request.",
+            "correctAnswer": true,
+            "explanation": "Yes, dependencies can declare parameters just like path operations, and FastAPI will extract them from the request."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "What is the correct way to use a dependency that yields a database session in a path operation?",
+            "options": [
+                "`db: Session = Depends(get_db)`",
+                "`db: Session = yield get_db`",
+                "`db = await get_db()`",
+                "`db = get_db()`"
+            ],
+            "correctAnswer": 0,
+            "explanation": "You use `Depends(get_db)` as the default value for a parameter. The yielded value will be injected."
+        },
+        {
+            "id": "q16",
+            "type": "fill_blank",
+            "question": "If a dependency uses `yield`, what block should you use to ensure cleanup happens even if an exception occurs?",
+            "options": [
+                "try/except",
+                "try/finally",
+                "with",
+                "except/finally"
+            ],
+            "correctAnswer": "try/finally",
+            "explanation": "You typically wrap the yield in a try block, and put cleanup code in a finally block to guarantee execution."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "Can a dependency be used to modify the response?",
+            "options": [
+                "No, dependencies only provide values",
+                "Yes, by returning a custom response object",
+                "Yes, but only if it's a class-based dependency",
+                "No, that's the job of middleware"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Dependencies are for providing values, not for modifying the response directly. Middleware is better suited for that."
+        },
+        {
+            "id": "q18",
+            "type": "true_false",
+            "question": "You can have multiple dependencies in a single path operation by declaring multiple parameters with `Depends`.",
+            "correctAnswer": true,
+            "explanation": "Yes, you can have as many dependencies as you need, each as a different parameter with `Depends()`."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "What is the main difference between using a function dependency and a class dependency?",
+            "options": [
+                "Classes can't be async",
+                "Classes can store state across calls",
+                "Classes are slower",
+                "There is no difference"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Class dependencies allow you to store state and have multiple methods, while function dependencies are stateless."
+        },
+        {
+            "id": "q20",
+            "type": "fill_blank",
+            "question": "What module must you import to use `Depends`?",
+            "options": [
+                "from fastapi import Depends",
+                "from fastapi.dependencies import Depends",
+                "from pydantic import Depends",
+                "import depends"
+            ],
+            "correctAnswer": "from fastapi import Depends",
+            "explanation": "`Depends` is imported directly from `fastapi`."
+        }
+    ]
+}

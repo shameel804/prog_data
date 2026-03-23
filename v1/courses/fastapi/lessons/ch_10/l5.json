@@ -1,0 +1,56 @@
+{
+    "id": "l5",
+    "chapterId": "ch_10",
+    "title": "Caching with Redis",
+    "description": "Implement caching to reduce load and speed up responses.",
+    "xpReward": 25,
+    "estimatedMinutes": 14,
+    "section": "Performance",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Why Cache? ⚡",
+            "content": "# Speed Up Expensive Operations\n\nCaching stores frequently requested data in memory (e.g., Redis) so subsequent requests are served faster.\n\n**Use cases:**\n- Database query results\n- API responses from external services\n- Session storage\n- Rate limiting"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Setting Up Redis with FastAPI",
+            "content": "Install `redis` and `aioredis` for async support.\n\n```bash\npip install redis\n```\n\n```python\nimport redis.asyncio as aioredis\n\nredis_client = aioredis.from_url(\"redis://localhost:6379\", decode_responses=True)\n\n@app.get(\"/items/{item_id}\")\nasync def get_item(item_id: int):\n    cached = await redis_client.get(f\"item:{item_id}\")\n    if cached:\n        return {\"source\": \"cache\", \"data\": cached}\n    # Simulate DB fetch\n    data = f\"Item {item_id}\"\n    await redis_client.setex(f\"item:{item_id}\", 60, data)  # cache for 60s\n    return {\"source\": \"db\", \"data\": data}\n```",
+            "codeSnippet": "import redis.asyncio as aioredis\n\nasync def get_cached_item(item_id: int):\n    redis = await aioredis.from_url(\"redis://localhost:6379\", decode_responses=True)\n    cached = await redis.get(f\"item:{item_id}\")\n    if cached:\n        return cached\n    # fetch from DB\n    data = f\"Item {item_id}\"\n    await redis.setex(f\"item:{item_id}\", 60, data)\n    return data",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Caching Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is a common use case for Redis in a FastAPI application?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Serving static files",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Caching database query results",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Replacing the database",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Redis is often used as a cache to store frequently accessed data, reducing load on primary databases.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

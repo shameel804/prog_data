@@ -1,0 +1,240 @@
+{
+    "id": "quiz_ch_3",
+    "chapterId": "ch_3",
+    "title": "Chapter 3 Quiz: Data Validation with Pydantic",
+    "description": "Test your knowledge of Pydantic models, request bodies, field validation, and response models.",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What does Pydantic primarily provide?",
+            "options": [
+                "Web framework",
+                "Data validation using type hints",
+                "Database ORM",
+                "Template engine"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Pydantic is a data validation library that uses Python type hints."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "Pydantic models must inherit from `BaseModel`.",
+            "correctAnswer": true,
+            "explanation": "Yes, all Pydantic models subclass `pydantic.BaseModel`."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "In a Pydantic model, a field defined as `name: str` is:",
+            "options": [
+                "Optional",
+                "Required",
+                "Has default value 'str'",
+                "Ignored"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Fields without defaults are required when creating an instance."
+        },
+        {
+            "id": "q4",
+            "type": "fill_blank",
+            "question": "What is the function used to add constraints like `min_length` to a field?",
+            "options": [
+                "Field",
+                "Validator",
+                "Constraint",
+                "Option"
+            ],
+            "correctAnswer": "Field",
+            "explanation": "`Field` from pydantic allows setting constraints like `min_length`, `gt`, etc."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "How does FastAPI know to extract JSON request body into a Pydantic model?",
+            "options": [
+                "By using a special decorator @body",
+                "By annotating a parameter with the model type",
+                "By naming the parameter 'body'",
+                "By using the `Body` class"
+            ],
+            "correctAnswer": 1,
+            "explanation": "FastAPI automatically treats parameters that are Pydantic models as request bodies."
+        },
+        {
+            "id": "q6",
+            "type": "true_false",
+            "question": "You can have both a path parameter and a request body in the same endpoint.",
+            "correctAnswer": true,
+            "explanation": "Yes, FastAPI distinguishes them based on the parameter type."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "Which of the following is a valid constraint for a numeric field?",
+            "options": [
+                "min_length",
+                "gt",
+                "regex",
+                "contains"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`gt` (greater than) is a numeric constraint; the others are for strings or lists."
+        },
+        {
+            "id": "q8",
+            "type": "fill_blank",
+            "question": "What decorator is used to define custom validation in a Pydantic model?",
+            "options": [
+                "@validate",
+                "@validator",
+                "@field_validator",
+                "@check"
+            ],
+            "correctAnswer": "@validator",
+            "explanation": "The `@validator` decorator (or `@field_validator` in v2) is used for custom validation."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "What is the purpose of `response_model` in a route decorator?",
+            "options": [
+                "To validate the request body",
+                "To filter and structure the response data",
+                "To set the response status code",
+                "To define response headers"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`response_model` defines the structure of the response, filtering out fields not in the model."
+        },
+        {
+            "id": "q10",
+            "type": "true_false",
+            "question": "If you use a response model, any extra fields returned from the function will be automatically included.",
+            "correctAnswer": false,
+            "explanation": "Extra fields are filtered out; only fields present in the response model are included."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "Which of the following imports the `BaseModel` class?",
+            "options": [
+                "from pydantic import Model",
+                "from pydantic import BaseModel",
+                "from fastapi import BaseModel",
+                "from pydantic import PydanticModel"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`BaseModel` is imported from `pydantic`."
+        },
+        {
+            "id": "q12",
+            "type": "fill_blank",
+            "question": "What does `Field(..., gt=0)` mean?",
+            "options": [
+                "The field value must be greater than 0",
+                "The field value must be greater than or equal to 0",
+                "The field value must be exactly 0",
+                "The field is optional"
+            ],
+            "correctAnswer": "The field value must be greater than 0",
+            "explanation": "`gt` stands for 'greater than'."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "How do you make a field optional with a default of `None`?",
+            "options": [
+                "`name: str = None`",
+                "`name: Optional[str] = None`",
+                "Both A and B",
+                "`name: str = None` is sufficient"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Both forms work; using `Optional` from typing is explicit but not required."
+        },
+        {
+            "id": "q14",
+            "type": "true_false",
+            "question": "Pydantic models can be nested to represent complex JSON structures.",
+            "correctAnswer": true,
+            "explanation": "Yes, models can contain other models as fields."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "If you define a model with `class Item(BaseModel): name: str; price: float`, which of the following would raise a validation error?",
+            "options": [
+                "Item(name='Laptop', price=999.99)",
+                "Item(name='Laptop', price='expensive')",
+                "Item(name='Laptop')",
+                "Both B and C"
+            ],
+            "correctAnswer": 3,
+            "explanation": "B has price as string, which is invalid; C missing required field price. Both raise errors."
+        },
+        {
+            "id": "q16",
+            "type": "fill_blank",
+            "question": "What is the default HTTP status code returned when a Pydantic validation fails?",
+            "options": [
+                "400",
+                "422",
+                "500",
+                "404"
+            ],
+            "correctAnswer": "422",
+            "explanation": "FastAPI returns a 422 Unprocessable Entity for validation errors."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "Which of the following is NOT a valid Pydantic field constraint?",
+            "options": [
+                "max_length",
+                "regex",
+                "gt",
+                "contains"
+            ],
+            "correctAnswer": 3,
+            "explanation": "`contains` is not a valid Pydantic field constraint, while `max_length`, `regex`, and `gt` are supported constraints."
+        },
+        {
+            "id": "q18",
+            "type": "true_false",
+            "question": "You can use `response_model` to automatically filter out sensitive fields like passwords.",
+            "correctAnswer": true,
+            "explanation": "Yes, response models allow you to specify which fields to expose, hiding others."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "What is the correct way to define a custom validator in Pydantic?",
+            "options": [
+                "Use `@field_validator` (v2) or `@validator` (v1)",
+                "Use a separate function and call it manually",
+                "Override the `__init__` method",
+                "Use `@validate` decorator"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Pydantic provides `@validator` (v1) or `@field_validator` (v2) for custom validation."
+        },
+        {
+            "id": "q20",
+            "type": "fill_blank",
+            "question": "Which method of a Pydantic model converts it to a dictionary?",
+            "options": [
+                "to_dict()",
+                "dict()",
+                "json()",
+                "model_dump()"
+            ],
+            "correctAnswer": "dict()",
+            "explanation": "In Pydantic v1, `dict()` returns a dictionary. In v2, `model_dump()` is used. But for simplicity, `dict()` is the method."
+        }
+    ]
+}

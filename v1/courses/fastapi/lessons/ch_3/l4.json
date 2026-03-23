@@ -1,0 +1,68 @@
+{
+    "id": "l4",
+    "chapterId": "ch_3",
+    "title": "Field Validation & Constraints",
+    "description": "Add advanced validation like minimum/maximum, regex patterns, and custom validators.",
+    "xpReward": 25,
+    "estimatedMinutes": 15,
+    "section": "Validation",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Field Constraints",
+            "content": "# Using `Field` for Extra Validation\n\nYou can add constraints to fields using the `Field` function from Pydantic.\n\n```python\nfrom pydantic import BaseModel, Field\n\nclass Product(BaseModel):\n    name: str = Field(..., min_length=1, max_length=50)\n    price: float = Field(..., gt=0, le=10000)\n    tags: list[str] = Field(default_factory=list, max_items=10)\n```\n\n- `...` means required.\n- `gt` = greater than, `ge` = greater or equal, `lt`, `le`.\n- `min_length`, `max_length` for strings.\n- `default_factory` for mutable defaults."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Field Example",
+            "content": "Try these constraints.",
+            "codeSnippet": "product = Product(name=\"Laptop\", price=1200, tags=[\"electronics\", \"computers\"])\n# This is valid\n\n# This would raise validation errors:\n# product = Product(name=\"\", price=-5, tags=[\"a\"]*20)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Field Validation",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does `Field(..., gt=0)` enforce?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The value must be greater than 0",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The value must be greater than or equal to 0",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The value must be exactly 0",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`gt` stands for 'greater than'.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Custom Validators",
+            "content": "# Using `@validator`\n\nFor complex validation, you can write custom validator methods.\n\n```python\nfrom pydantic import BaseModel, validator\n\nclass User(BaseModel):\n    username: str\n    password: str\n    password2: str\n\n    @validator('password2')\n    def passwords_match(cls, v, values):\n        if 'password' in values and v != values['password']:\n            raise ValueError('passwords do not match')\n        return v\n```\n\n- Decorator `@validator` on a method.\n- The method name can be arbitrary; use `fields` to specify which fields to validate.\n- Raise `ValueError` for validation errors."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Pydantic also supports `@root_validator` for validating multiple fields together, and `@field_validator` (new in v2) with more options."
+        }
+    ]
+}

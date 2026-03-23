@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_5",
+    "title": "Add Alembic Migrations",
+    "description": "Initialize Alembic, create a migration for your models, and apply it.",
+    "estimatedMinutes": 15,
+    "problemStatement": "# Alembic Migrations\n\nSet up Alembic for your FastAPI project with SQLAlchemy models.\n\n**Steps:**\n1. Install Alembic.\n2. Run `alembic init alembic` to create the migration environment.\n3. Edit `alembic.ini` to set the database URL (use environment variable).\n4. Edit `alembic/env.py` to import your `Base` metadata from your models.\n5. Generate an initial migration with `alembic revision --autogenerate -m \"initial\"`.\n6. Review the generated migration script and adjust if needed.\n7. Apply the migration with `alembic upgrade head`.\n8. Add a second migration: add a new column (e.g., `User.last_login`) to your model, then generate and apply it.\n\nWrite a simple script to verify the migrations have been applied correctly.",
+    "hints": [
+        "In `env.py`, set `target_metadata = Base.metadata` after importing your Base.",
+        "If using async, you may need to configure Alembic to run synchronously or use the `run_migrations_online` function with an async engine.",
+        "Test downgrades with `alembic downgrade -1` to ensure reversibility."
+    ],
+    "expectedOutput": "Alembic successfully creates and applies migrations. The database reflects the current model state.",
+    "solutionCode": "# alembic/env.py modifications\nfrom myapp.models import Base\n\ntarget_metadata = Base.metadata\n\ndef run_migrations_online():\n    # ...\n    connectable = engine_from_config(...)\n    with connectable.connect() as connection:\n        context.configure(connection=connection, target_metadata=target_metadata)\n        with context.begin_transaction():\n            context.run_migrations()\n\n# After adding User.last_login, run:\n# alembic revision --autogenerate -m \"add last_login\"\n# Review the generated migration, then apply with alembic upgrade head\n\n# Check current revision\nalembic current"
+}

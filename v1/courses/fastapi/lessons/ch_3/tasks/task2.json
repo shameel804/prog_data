@@ -1,0 +1,16 @@
+{
+    "id": "task2",
+    "chapterId": "ch_3",
+    "title": "Product Validation",
+    "description": "Add constraints to product fields and handle validation errors.",
+    "estimatedMinutes": 15,
+    "problemStatement": "# Product Validation API\n\nCreate a FastAPI app with a Pydantic model `Product` with the following fields and constraints:\n\n- `name`: str, required, min length 1, max length 50.\n- `price`: float, required, greater than 0.\n- `tags`: list of strings, optional, default empty list, max items 5.\n- `in_stock`: bool, required.\n\n**Endpoint:** `POST /products/` that accepts a `Product` model and returns the product (with the same fields).\n\n**Requirements:**\n- Use `Field` to enforce constraints.\n- Test with valid and invalid data via the docs.\n- Ensure that if validation fails, the API returns a clear error.\n\n**Bonus:** Add a custom validator that ensures the product name is capitalized.",
+    "hints": [
+        "Use `Field(..., min_length=1, max_length=50)` for name.",
+        "Use `Field(..., gt=0)` for price.",
+        "Use `Field(default_factory=list, max_items=5)` for tags.",
+        "For custom validator, use `@validator('name')` to capitalize."
+    ],
+    "expectedOutput": "Valid product returns 200 with the same data; invalid returns 422.",
+    "solutionCode": "from fastapi import FastAPI\nfrom pydantic import BaseModel, Field, validator\n\napp = FastAPI()\n\nclass Product(BaseModel):\n    name: str = Field(..., min_length=1, max_length=50)\n    price: float = Field(..., gt=0)\n    tags: list[str] = Field(default_factory=list, max_items=5)\n    in_stock: bool\n\n    @validator('name')\n    def capitalize_name(cls, v):\n        return v.capitalize()\n\n@app.post(\"/products/\")\ndef create_product(product: Product):\n    return product"
+}

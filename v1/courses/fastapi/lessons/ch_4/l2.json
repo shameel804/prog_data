@@ -1,0 +1,65 @@
+{
+    "id": "l2",
+    "chapterId": "ch_4",
+    "title": "Writing Your First Dependency",
+    "description": "Create a simple dependency function and inject it into a path operation.",
+    "xpReward": 25,
+    "estimatedMinutes": 12,
+    "section": "Core Concepts",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Anatomy of a Dependency 🧬",
+            "content": "# Dependencies are just functions\n\nA dependency can be any callable: a function, a class, or even a generator.\n\n**Key points:**\n- It can have its own parameters (path, query, header, etc.).\n- It can be `async` or regular `def`.\n- It returns something that will be passed to the path operation.\n\nWe inject it using `Depends()`."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Simple Dependency Example",
+            "content": "Let's create a dependency that returns a common query parameter value.",
+            "codeSnippet": "from fastapi import FastAPI, Depends, Query\n\napp = FastAPI()\n\n# Dependency function\ndef common_parameters(q: str | None = Query(None, description=\"Search query\")):\n    return {\"q\": q}\n\n# Path operation that uses the dependency\n@app.get(\"/items/\")\nasync def read_items(params: dict = Depends(common_parameters)):\n    return params",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Check Understanding",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "How do you tell FastAPI to inject a dependency into a path operation?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "By calling the dependency function directly",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "By using `Depends(dependency)` as a default value for a parameter",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "By adding a decorator `@dependency`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "You use `Depends(dependency)` as the default value for a path operation parameter. FastAPI will then inject the result.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Try It Yourself",
+            "content": "Run this code and visit `/items/?q=test`. The `params` will contain `{'q': 'test'}`.",
+            "codeSnippet": "from fastapi import FastAPI, Depends, Query\n\napp = FastAPI()\n\ndef common_parameters(q: str | None = Query(None)):\n    return {\"q\": q}\n\n@app.get(\"/items/\")\nasync def read_items(params: dict = Depends(common_parameters)):\n    return params",
+            "codeLanguage": "python",
+            "canRunCode": true
+        }
+    ]
+}

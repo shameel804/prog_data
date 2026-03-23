@@ -1,0 +1,106 @@
+{
+    "id": "sq_fastapi_2",
+    "title": "Prediction: FastAPI Request Flow",
+    "triggerChapterIndex": 5,
+    "metadata": {
+        "type": "prediction"
+    },
+    "questions": [
+        {
+            "id": "sq_fastapi_2_q1",
+            "type": "code_output",
+            "question": "What is the output of this code?",
+            "codeSnippet": "from fastapi import FastAPI, Depends\n\napp = FastAPI()\n\ndef dep_a():\n    return \"A\"\n\ndef dep_b(a: str = Depends(dep_a)):\n    return f\"B-{a}\"\n\n@app.get(\"/\")\nasync def main(b: str = Depends(dep_b)):\n    return b",
+            "correctOutput": "B-A",
+            "correctAnswer": "B-A",
+            "options": [],
+            "explanation": "dep_a runs first, returns 'A', which is passed to dep_b, returning 'B-A'. The endpoint returns that string.",
+            "xpReward": 25,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_fastapi_2_q2",
+            "type": "code_output",
+            "question": "What is printed when the user sends a GET request to / with query `?skip=5&limit=20`?",
+            "codeSnippet": "from fastapi import FastAPI, Query\n\napp = FastAPI()\n\n@app.get(\"/\")\nasync def read_items(skip: int = Query(0), limit: int = Query(10)):\n    return {\"skip\": skip, \"limit\": limit}",
+            "correctOutput": "{\"skip\":5,\"limit\":20}",
+            "correctAnswer": "{\"skip\":5,\"limit\":20}",
+            "options": [],
+            "explanation": "Query parameters override the default values.",
+            "xpReward": 20,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_fastapi_2_q3",
+            "type": "code_output",
+            "question": "What is the response status code and body?",
+            "codeSnippet": "from fastapi import FastAPI, HTTPException\n\napp = FastAPI()\n\n@app.get(\"/items/{item_id}\")\nasync def get_item(item_id: int):\n    if item_id == 0:\n        raise HTTPException(status_code=404, detail=\"Item not found\")\n    return {\"item_id\": item_id}",
+            "correctOutput": "404 with {\"detail\":\"Item not found\"}",
+            "correctAnswer": "404 with {\"detail\":\"Item not found\"}",
+            "options": [],
+            "explanation": "For item_id=0, the exception is raised, returning a 404 response.",
+            "xpReward": 20,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_fastapi_2_q4",
+            "type": "code_output",
+            "question": "What will be the output of this code when a client connects to the WebSocket endpoint?",
+            "codeSnippet": "from fastapi import FastAPI, WebSocket\n\napp = FastAPI()\n\n@app.websocket(\"/ws\")\nasync def websocket_endpoint(websocket: WebSocket):\n    await websocket.accept()\n    data = await websocket.receive_text()\n    await websocket.send_text(f\"You said: {data}\")",
+            "correctOutput": "The server echoes back \"You said: [message]\".",
+            "correctAnswer": "The server echoes back \"You said: [message]\".",
+            "options": [],
+            "explanation": "The WebSocket accepts, receives text, and sends back a prefixed message.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_fastapi_2_q5",
+            "type": "code_output",
+            "question": "What is the output when the user accesses `/test?name=Alice`?",
+            "codeSnippet": "from fastapi import FastAPI, Query\n\napp = FastAPI()\n\ndef get_name(name: str = Query(...)):\n    return name\n\n@app.get(\"/test\")\nasync def test(name: str = Depends(get_name)):\n    return {\"name\": name}",
+            "correctOutput": "{\"name\":\"Alice\"}",
+            "correctAnswer": "{\"name\":\"Alice\"}",
+            "options": [],
+            "explanation": "The dependency extracts the required query parameter and returns it.",
+            "xpReward": 20,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_fastapi_2_q6",
+            "type": "code_output",
+            "question": "What is the response body?",
+            "codeSnippet": "from fastapi import FastAPI, status\nfrom pydantic import BaseModel\n\napp = FastAPI()\n\nclass Item(BaseModel):\n    name: str\n    price: float\n\n@app.post(\"/items\", status_code=status.HTTP_201_CREATED)\nasync def create_item(item: Item):\n    return item",
+            "correctOutput": "{\"name\":\"example\",\"price\":12.34} (same as input)",
+            "correctAnswer": "{\"name\":\"example\",\"price\":12.34} (same as input)",
+            "options": [],
+            "explanation": "The endpoint returns the same item that was sent, with status 201.",
+            "xpReward": 20,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_fastapi_2_q7",
+            "type": "code_output",
+            "question": "What does the `background_tasks.add_task` call do?",
+            "codeSnippet": "from fastapi import FastAPI, BackgroundTasks\n\napp = FastAPI()\n\ndef log_msg(msg: str):\n    with open(\"log.txt\", \"a\") as f:\n        f.write(f\"{msg}\\n\")\n\n@app.post(\"/log\")\nasync def log(background_tasks: BackgroundTasks, msg: str):\n    background_tasks.add_task(log_msg, msg)\n    return {\"status\": \"logged\"}",
+            "correctOutput": "The function returns immediately, and log_msg runs after the response.",
+            "correctAnswer": "The function returns immediately, and log_msg runs after the response.",
+            "options": [],
+            "explanation": "BackgroundTasks runs the function after sending the response, not blocking the client.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_fastapi_2_q8",
+            "type": "code_output",
+            "question": "What is the output of this code?",
+            "codeSnippet": "from fastapi import FastAPI, Depends\n\napp = FastAPI()\n\nasync def get_current_user():\n    return {\"id\": 1, \"name\": \"Alice\"}\n\n@app.get(\"/users/me\")\nasync def read_current_user(user=Depends(get_current_user)):\n    return user",
+            "correctOutput": "{\"id\":1,\"name\":\"Alice\"}",
+            "correctAnswer": "{\"id\":1,\"name\":\"Alice\"}",
+            "options": [],
+            "explanation": "The dependency returns a dict, which is injected and returned.",
+            "xpReward": 20,
+            "difficulty": 1
+        }
+    ]
+}

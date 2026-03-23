@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_6",
+    "title": "Add Role-Based Access to Posts",
+    "description": "Extend your API with posts; allow users to edit only their own posts, and admins to edit all.",
+    "estimatedMinutes": 25,
+    "problemStatement": "# Role-Based Access to Posts\n\nExtend the previous API (with posts) to include a `role` field for users (admin or user).\n\n**Requirements:**\n- Add a `role` column to the User model (default \"user\").\n- When creating a post, automatically associate it with the current user.\n- Implement the following permissions:\n  - Any authenticated user can view any post.\n  - Only the author can update/delete their own post.\n  - Users with role \"admin\" can update/delete any post.\n\nWrite a dependency `require_role` that checks the user's role and raises 403 if insufficient.\n\n**Bonus:** Add an admin-only endpoint to list all posts (including other users).",
+    "hints": [
+        "Add `role: str = \"user\"` to your User model.\nCreate a dependency that takes a required role: `def require_role(role: str): ...`.",
+        "In the update/delete endpoints, first get the post, then check if `current_user.id == post.user_id or current_user.role == \"admin\"`."
+    ],
+    "expectedOutput": "Users can only edit their own posts; admins can edit any post. The API returns 403 when a user tries to edit another's post.",
+    "solutionCode": "# models.py\nclass User(Base):\n    # ...\n    role = Column(String, default=\"user\")\n\n# dependencies.py\ndef require_role(required_role: str):\n    async def role_checker(current_user: User = Depends(get_current_user)):\n        if current_user.role != required_role and required_role != \"user\":\n            raise HTTPException(status_code=403, detail=\"Insufficient permissions\")\n        return current_user\n    return role_checker\n\n# endpoints.py\n@app.put(\"/posts/{post_id}\")\nasync def update_post(post_id: int, post_update: PostUpdate,\n                      current_user: User = Depends(get_current_user),\n                      db: AsyncSession = Depends(get_db)):\n    post = await get_post(db, post_id)\n    if not post:\n        raise HTTPException(status_code=404, detail=\"Post not found\")\n    if post.user_id != current_user.id and current_user.role != \"admin\":\n        raise HTTPException(status_code=403, detail=\"Not authorized\")\n    # update logic\n    return updated_post\n\n@app.get(\"/admin/posts\")\nasync def admin_list_posts(admin: User = Depends(require_role(\"admin\")),\n                            db: AsyncSession = Depends(get_db)):\n    posts = await get_all_posts(db)\n    return posts"
+}

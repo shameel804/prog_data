@@ -1,0 +1,240 @@
+{
+    "id": "quiz_ch_9",
+    "chapterId": "ch_9",
+    "title": "Chapter 9 Quiz: WebSockets & Real-Time",
+    "description": "Test your knowledge of WebSockets, connection management, broadcasting, and real-time applications.",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "Which protocol upgrade is used to establish a WebSocket connection?",
+            "options": [
+                "HTTP/1.1 Upgrade: websocket",
+                "HTTP/2 Upgrade: websocket",
+                "TCP Upgrade: websocket",
+                "No upgrade needed"
+            ],
+            "correctAnswer": 0,
+            "explanation": "A WebSocket connection starts as an HTTP request with `Upgrade: websocket` header."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "WebSockets are a request-response protocol like HTTP.",
+            "correctAnswer": false,
+            "explanation": "WebSockets provide full-duplex, persistent communication where either side can send messages at any time."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "In FastAPI, how do you define a WebSocket endpoint?",
+            "options": [
+                "@app.ws(\"/path\")",
+                "@app.websocket(\"/path\")",
+                "@app.socket(\"/path\")",
+                "@app.route(\"/path\", methods=[\"WS\"])"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The `@app.websocket` decorator is used to register a WebSocket route."
+        },
+        {
+            "id": "q4",
+            "type": "fill_blank",
+            "question": "What method is called to accept an incoming WebSocket connection?",
+            "options": [
+                "websocket.open()",
+                "websocket.accept()",
+                "websocket.connect()",
+                "websocket.handshake()"
+            ],
+            "correctAnswer": "websocket.accept()",
+            "explanation": "`websocket.accept()` must be called to complete the handshake."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "Which exception is raised when a WebSocket client disconnects?",
+            "options": [
+                "ConnectionError",
+                "WebSocketDisconnect",
+                "DisconnectError",
+                "ClientDisconnected"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`WebSocketDisconnect` is raised when the client closes the connection."
+        },
+        {
+            "id": "q6",
+            "type": "true_false",
+            "question": "You can use `await websocket.receive_json()` to get JSON data from the client.",
+            "correctAnswer": true,
+            "explanation": "FastAPI provides convenience methods like `receive_json()` and `send_json()` for JSON messages."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "What is the purpose of storing active WebSocket connections in a list?",
+            "options": [
+                "To send messages to all connected clients (broadcast)",
+                "To log client IP addresses",
+                "To prevent reconnections",
+                "To limit the number of connections"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Storing connections allows you to iterate over them and send messages (broadcast)."
+        },
+        {
+            "id": "q8",
+            "type": "fill_blank",
+            "question": "What method is used to send a text message to a WebSocket client?",
+            "options": [
+                "websocket.send()",
+                "websocket.send_text()",
+                "websocket.write()",
+                "websocket.emit()"
+            ],
+            "correctAnswer": "websocket.send_text()",
+            "explanation": "`send_text(message)` sends a string to the client."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "What does broadcasting mean in the context of WebSockets?",
+            "options": [
+                "Sending a message to a single client",
+                "Sending a message to all connected clients",
+                "Sending a message to the server",
+                "Encrypting a message"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Broadcasting sends the same message to every connected client."
+        },
+        {
+            "id": "q10",
+            "type": "true_false",
+            "question": "You can have multiple WebSocket endpoints in the same FastAPI app.",
+            "correctAnswer": true,
+            "explanation": "Yes, you can define as many WebSocket routes as needed."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "How can you handle disconnections gracefully?",
+            "options": [
+                "Wrap the receive loop in a try/except catching WebSocketDisconnect",
+                "Use a timeout",
+                "Check connection status before each send",
+                "There is no way to detect disconnection"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Catching `WebSocketDisconnect` allows you to clean up and notify other clients."
+        },
+        {
+            "id": "q12",
+            "type": "fill_blank",
+            "question": "What is the recommended way to manage rooms in a chat application?",
+            "options": [
+                "A list of rooms",
+                "A dictionary mapping room names to lists of connections",
+                "A set of all connections with room metadata",
+                "A database table"
+            ],
+            "correctAnswer": "A dictionary mapping room names to lists of connections",
+            "explanation": "This structure allows efficient per-room broadcasting."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "Which of the following is a common use case for WebSockets?",
+            "options": [
+                "Serving static files",
+                "Real-time notifications",
+                "Database queries",
+                "Authentication"
+            ],
+            "correctAnswer": 1,
+            "explanation": "WebSockets excel at real-time, server-initiated updates."
+        },
+        {
+            "id": "q14",
+            "type": "true_false",
+            "question": "WebSocket connections are automatically closed when the server restarts.",
+            "correctAnswer": true,
+            "explanation": "WebSocket connections are tied to the server process; a restart will terminate them."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "What is the purpose of the `WebSocketDisconnect` exception?",
+            "options": [
+                "It indicates an error in the WebSocket protocol",
+                "It is raised when the client disconnects",
+                "It is raised when the server wants to disconnect",
+                "It is a normal part of the handshake"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`WebSocketDisconnect` is raised when the client closes the connection, allowing you to handle cleanup."
+        },
+        {
+            "id": "q16",
+            "type": "fill_blank",
+            "question": "What method do you use to send a binary message over WebSocket?",
+            "options": [
+                "send_bytes()",
+                "send_binary()",
+                "send_text()",
+                "send_data()"
+            ],
+            "correctAnswer": "send_bytes()",
+            "explanation": "`websocket.send_bytes(data)` sends binary data."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "In a chat application with multiple rooms, what should you do when a client disconnects?",
+            "options": [
+                "Remove them from all rooms they were in",
+                "Do nothing, the connection will be garbage collected",
+                "Notify only that room about the departure",
+                "Both A and C"
+            ],
+            "correctAnswer": 3,
+            "explanation": "You should remove the connection from the room and optionally notify other users in that room."
+        },
+        {
+            "id": "q18",
+            "type": "true_false",
+            "question": "You can use `await websocket.receive_json()` to receive a JSON object.",
+            "correctAnswer": true,
+            "explanation": "`receive_json()` parses the incoming text as JSON and returns a Python object."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "Which of the following is true about WebSockets?",
+            "options": [
+                "They are stateless",
+                "They maintain a persistent connection",
+                "They are slower than HTTP",
+                "They use TCP port 80 only"
+            ],
+            "correctAnswer": 1,
+            "explanation": "WebSockets maintain a persistent connection, enabling real-time communication."
+        },
+        {
+            "id": "q20",
+            "type": "fill_blank",
+            "question": "What status code is returned when a WebSocket upgrade is successful?",
+            "options": [
+                "200",
+                "101",
+                "102",
+                "201"
+            ],
+            "correctAnswer": "101",
+            "explanation": "HTTP status code 101 indicates switching protocols."
+        }
+    ]
+}

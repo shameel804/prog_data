@@ -1,0 +1,56 @@
+{
+    "id": "l4",
+    "chapterId": "ch_8",
+    "title": "Background Tasks",
+    "description": "Run tasks in the background after returning a response.",
+    "xpReward": 20,
+    "estimatedMinutes": 12,
+    "section": "Background",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "What are Background Tasks? ⏳",
+            "content": "# Run Code After Response\n\nBackground tasks let you execute functions **after** the response has been sent to the client. This is perfect for:\n- Sending emails\n- Logging\n- Processing uploaded files\n- Updating caches\n\nFastAPI provides `BackgroundTasks` as a built-in dependency."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Using BackgroundTasks",
+            "content": "```python\nfrom fastapi import FastAPI, BackgroundTasks\n\ndef write_log(message: str):\n    with open(\"log.txt\", \"a\") as f:\n        f.write(f\"{message}\\n\")\n\n@app.post(\"/notify\")\nasync def notify(background_tasks: BackgroundTasks, email: str):\n    background_tasks.add_task(write_log, f\"Notification sent to {email}\")\n    return {\"message\": \"Notification will be sent\"}\n```\n\nThe `write_log` function runs after the response is returned.",
+            "codeSnippet": "from fastapi import FastAPI, BackgroundTasks\nimport time\n\ndef long_task(name: str):\n    time.sleep(5)  # simulate heavy work\n    print(f\"Task {name} completed\")\n\n@app.post(\"/run-task\")\nasync def run_task(background_tasks: BackgroundTasks):\n    background_tasks.add_task(long_task, \"example\")\n    return {\"status\": \"task started\"}",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Background Tasks",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "When does a background task run?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Before the route handler",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "After the response is sent",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "In parallel with the route handler",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Background tasks are executed after the response has been sent, so they don't slow down the client.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

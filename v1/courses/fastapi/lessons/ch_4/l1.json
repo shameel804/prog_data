@@ -1,0 +1,62 @@
+{
+    "id": "l1",
+    "chapterId": "ch_4",
+    "title": "What is Dependency Injection?",
+    "description": "Understand the concept of dependencies and how FastAPI's DI system simplifies your code.",
+    "xpReward": 20,
+    "estimatedMinutes": 10,
+    "section": "Core Concepts",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The Problem: Repeating Code 🔁",
+            "content": "# Without Dependency Injection\n\nImagine you have several API endpoints that all need to check if the user is authenticated. Without DI, you might copy-paste the same code:\n\n```python\n@app.get(\"/users/me\")\ndef read_users_me(token: str = Header(...)):\n    # authentication logic here...\n    return {\"user\": current_user}\n\n@app.get(\"/items\")\ndef read_items(token: str = Header(...)):\n    # same authentication logic here...\n    return {\"items\": items}\n```\n\nThis leads to **code duplication**, **harder maintenance**, and **more bugs**."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "Dependency Injection to the Rescue 💉",
+            "content": "# What is Dependency Injection?\n\nDependency Injection (DI) is a pattern where a function declares the things it needs (dependencies) and the framework provides them.\n\n- **Dependency** = something your function needs to work (e.g., a database connection, authentication logic).\n- **Injection** = the framework automatically passing those dependencies to your function.\n\nIn FastAPI, dependencies are simply functions that can be called and injected into path operations."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "code",
+            "title": "Conceptual Example",
+            "content": "Here's how DI looks in FastAPI (simplified):\n\n```python\n# Dependency function\ndef get_current_user(token: str = Header(...)):\n    # authenticate and return user\n    return user\n\n# Path operation using the dependency\n@app.get(\"/users/me\")\ndef read_users_me(current_user: User = Depends(get_current_user)):\n    return {\"user\": current_user}\n```\n\nNo repetition! FastAPI calls `get_current_user` automatically and passes the result.",
+            "codeSnippet": "from fastapi import Depends, Header\n\nasync def get_current_user(token: str = Header(...)):\n    # Simulate authentication\n    return {\"username\": \"alice\", \"id\": 1}\n\n@app.get(\"/users/me\")\nasync def read_current_user(user: dict = Depends(get_current_user)):\n    return user",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What is the main benefit of using dependency injection in FastAPI?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It makes code run faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It reduces code duplication and improves reusability",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It automatically adds authentication to all endpoints",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "DI helps you avoid repeating code by extracting common logic into dependencies that can be injected into multiple endpoints.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

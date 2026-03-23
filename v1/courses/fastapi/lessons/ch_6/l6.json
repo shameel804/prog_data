@@ -1,0 +1,56 @@
+{
+    "id": "l6",
+    "chapterId": "ch_6",
+    "title": "Role-Based Access Control (RBAC)",
+    "description": "Add user roles and restrict access based on permissions.",
+    "xpReward": 25,
+    "estimatedMinutes": 14,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Adding Roles",
+            "content": "# RBAC Basics\n\nExtend your `User` model to include a `role` (e.g., `admin`, `user`). Then create a dependency that checks if the user has a required role.\n\n```python\nfrom enum import Enum\n\nclass UserRole(str, Enum):\n    admin = \"admin\"\n    user = \"user\"\n```"
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Role Check Dependency",
+            "content": "```python\ndef require_role(required_role: UserRole):\n    def role_checker(current_user: User = Depends(get_current_user)):\n        if current_user.role != required_role:\n            raise HTTPException(status_code=403, detail=\"Insufficient permissions\")\n        return current_user\n    return role_checker\n```\n\nUse it in routes:\n```python\n@app.delete(\"/admin/users/{user_id}\")\nasync def delete_user(user_id: int, admin: User = Depends(require_role(UserRole.admin))):\n    # Only admins can delete users\n    ...\n```",
+            "codeSnippet": "from fastapi import Depends, HTTPException\n\ndef require_role(role: str):\n    def dependency(current_user: dict = Depends(get_current_user)):\n        if current_user.get(\"role\") != role:\n            raise HTTPException(status_code=403, detail=\"Not enough permissions\")\n        return current_user\n    return dependency\n\n@app.get(\"/admin\")\nasync def admin_panel(admin: dict = Depends(require_role(\"admin\"))):\n    return {\"message\": \"Welcome, admin\"}",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "RBAC Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What status code should you return when an authenticated user lacks permission?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "401 Unauthorized",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "403 Forbidden",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "405 Method Not Allowed",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "403 Forbidden indicates the user is authenticated but does not have the necessary permissions.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

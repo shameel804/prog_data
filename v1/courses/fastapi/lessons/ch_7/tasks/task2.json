@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_7",
+    "title": "Add a Custom Exception Handler",
+    "description": "Create a custom exception handler that returns a unified error format for all HTTPException.",
+    "estimatedMinutes": 15,
+    "problemStatement": "# Custom Exception Handler\n\nCreate a unified error response format for your API.\n\n**Requirements:**\n- Define a Pydantic model `ErrorResponse` with fields: `detail` (str), `status_code` (int), and `timestamp` (datetime).\n- Register a custom exception handler for `HTTPException` that returns `ErrorResponse`.\n- Also handle `RequestValidationError` to return a similar format.\n- Ensure that all exceptions raised in your endpoints are caught and formatted consistently.\n\n**Bonus:** Log each error using structlog before returning the response.",
+    "hints": [
+        "Use `@app.exception_handler(HTTPException)` to register a handler.\nInside, return `JSONResponse` with your `ErrorResponse` dict.",
+        "For `RequestValidationError`, use the built-in handler to format errors nicely."
+    ],
+    "expectedOutput": "When an HTTPException is raised, the response contains `{\"detail\": \"...\", \"status_code\": 404, \"timestamp\": \"...\"}`.",
+    "solutionCode": "from fastapi import FastAPI, HTTPException, Request\nfrom fastapi.responses import JSONResponse\nfrom fastapi.exceptions import RequestValidationError\nfrom datetime import datetime\nfrom pydantic import BaseModel\n\napp = FastAPI()\n\nclass ErrorResponse(BaseModel):\n    detail: str\n    status_code: int\n    timestamp: datetime\n\n@app.exception_handler(HTTPException)\nasync def http_exception_handler(request: Request, exc: HTTPException):\n    return JSONResponse(\n        status_code=exc.status_code,\n        content=ErrorResponse(\n            detail=exc.detail,\n            status_code=exc.status_code,\n            timestamp=datetime.utcnow()\n        ).dict()\n    )\n\n@app.exception_handler(RequestValidationError)\nasync def validation_exception_handler(request: Request, exc: RequestValidationError):\n    return JSONResponse(\n        status_code=400,\n        content=ErrorResponse(\n            detail=exc.errors(),\n            status_code=400,\n            timestamp=datetime.utcnow()\n        ).dict()\n    )"
+}

@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_7",
+    "title": "Write Tests for Existing Endpoints",
+    "description": "Write pytest tests for at least three of your API endpoints using TestClient.",
+    "estimatedMinutes": 20,
+    "problemStatement": "# Testing Endpoints\n\nWrite tests for your existing FastAPI application using `pytest` and `TestClient`.\n\n**Requirements:**\n- Create a test file `test_main.py`.\n- Use a fixture to provide a `TestClient` instance.\n- Write tests for at least three endpoints, including:\n  - A public endpoint (e.g., health check).\n  - An endpoint that requires authentication.\n  - A CRUD endpoint (e.g., create a user).\n- Use dependency overrides to mock authentication and database sessions.\n- Assert status codes and response content.\n\n**Bonus:** Write a test for a WebSocket endpoint.",
+    "hints": [
+        "Use `from fastapi.testclient import TestClient`.\nCreate a fixture: `client = TestClient(app)`.",
+        "To override authentication, mock `get_current_user` with a test user: `app.dependency_overrides[get_current_user] = lambda: test_user`.",
+        "For database, override `get_db` to use a test database or an in-memory SQLite."
+    ],
+    "expectedOutput": "All tests pass, covering positive and negative cases.",
+    "solutionCode": "import pytest\nfrom fastapi.testclient import TestClient\nfrom main import app, get_db, get_current_user\n\nclient = TestClient(app)\n\n# Override authentication\ndef override_get_current_user():\n    return {\"id\": 1, \"username\": \"testuser\", \"role\": \"user\"}\napp.dependency_overrides[get_current_user] = override_get_current_user\n\n# Override database\ndef override_get_db():\n    # Use an in-memory SQLite session for tests\n    ...\napp.dependency_overrides[get_db] = override_get_db\n\ndef test_health():\n    response = client.get(\"/health\")\n    assert response.status_code == 200\n    assert response.json() == {\"status\": \"ok\"}\n\ndef test_get_authenticated_user():\n    response = client.get(\"/users/me\")\n    assert response.status_code == 200\n    assert response.json()[\"username\"] == \"testuser\"\n\ndef test_create_user():\n    user_data = {\"email\": \"test@example.com\", \"username\": \"newuser\", \"password\": \"secret\"}\n    response = client.post(\"/users/\", json=user_data)\n    assert response.status_code == 200\n    assert response.json()[\"email\"] == \"test@example.com\""
+}

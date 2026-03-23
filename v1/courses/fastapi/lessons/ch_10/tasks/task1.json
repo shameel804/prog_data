@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_10",
+    "title": "Dockerize Your FastAPI App",
+    "description": "Write a Dockerfile and docker-compose.yml to run your app with Gunicorn and a PostgreSQL database.",
+    "estimatedMinutes": 20,
+    "problemStatement": "# Dockerize FastAPI App\n\nCreate a `Dockerfile` that:\n- Uses a Python 3.11 slim image.\n- Installs dependencies from `requirements.txt`.\n- Copies the application code.\n- Runs the app with Gunicorn + Uvicorn workers (e.g., 4 workers).\n\nCreate a `docker-compose.yml` that:\n- Runs the app container.\n- Runs a PostgreSQL container for the database.\n- Uses environment variables for configuration (database URL, secret key).\n\nTest by building and running `docker-compose up`. Verify the app is accessible and can connect to the database.",
+    "hints": [
+        "Set the `DATABASE_URL` environment variable in the app service to `postgresql://user:pass@db:5432/dbname`.",
+        "Use a volume for PostgreSQL data persistence.",
+        "Expose port 8000 from the app container."
+    ],
+    "expectedOutput": "The app runs successfully, and health checks show it can connect to the database.",
+    "solutionCode": "# Dockerfile\nFROM python:3.11-slim\n\nWORKDIR /app\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\nCOPY . .\nCMD [\"gunicorn\", \"main:app\", \"-w\", \"4\", \"-k\", \"uvicorn.workers.UvicornWorker\", \"--bind\", \"0.0.0.0:8000\"]\n\n# docker-compose.yml\nversion: '3.8'\nservices:\n  db:\n    image: postgres:15\n    environment:\n      POSTGRES_USER: user\n      POSTGRES_PASSWORD: pass\n      POSTGRES_DB: dbname\n    volumes:\n      - pgdata:/var/lib/postgresql/data\n  app:\n    build: .\n    ports:\n      - \"8000:8000\"\n    environment:\n      DATABASE_URL: postgresql://user:pass@db:5432/dbname\n    depends_on:\n      - db\nvolumes:\n  pgdata:"
+}

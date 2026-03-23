@@ -1,0 +1,14 @@
+{
+    "id": "task3",
+    "chapterId": "ch_7",
+    "title": "Implement Request Logging Middleware",
+    "description": "Add a middleware that logs every request and its processing time.",
+    "estimatedMinutes": 10,
+    "problemStatement": "# Request Logging Middleware\n\nCreate a middleware that logs every incoming request and its processing time.\n\n**Requirements:**\n- Use Python's `logging` module.\n- Log the request method, path, status code, and duration in milliseconds.\n- Use a consistent format (e.g., `INFO: GET /users/me -> 200 (12.34ms)`).\n- Ensure the middleware works for both HTTP and WebSocket endpoints.\n\n**Bonus:** Log the client IP address and user agent.",
+    "hints": [
+        "Create a middleware with `@app.middleware(\"http\")`.\nRecord `start = time.time()`, then call `response = await call_next(request)`, then compute duration.",
+        "Use `logger.info(...)` with f-string."
+    ],
+    "expectedOutput": "Each request is logged to the console with method, path, status, and time.",
+    "solutionCode": "import time\nimport logging\nfrom fastapi import FastAPI, Request\n\nlogging.basicConfig(level=logging.INFO)\nlogger = logging.getLogger(__name__)\n\napp = FastAPI()\n\n@app.middleware(\"http\")\nasync def log_requests(request: Request, call_next):\n    start = time.time()\n    response = await call_next(request)\n    duration_ms = (time.time() - start) * 1000\n    logger.info(\n        f\"{request.method} {request.url.path} -> {response.status_code} \"\n        f\"({duration_ms:.2f}ms)\"\n    )\n    return response"
+}

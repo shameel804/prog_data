@@ -1,0 +1,77 @@
+{
+    "id": "l4",
+    "chapterId": "ch_4",
+    "title": "Class-based Dependencies & Yields",
+    "description": "Use classes as dependencies and manage resources with yield.",
+    "xpReward": 25,
+    "estimatedMinutes": 15,
+    "section": "Advanced Patterns",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Class-based Dependencies 🧩",
+            "content": "# Using Classes as Dependencies\n\nDependencies can be classes. FastAPI will instantiate the class and inject the instance.\n\nThis is useful when you need to encapsulate state or use multiple methods.\n\n**How it works:**\n- Define a class with `__init__` (parameters become dependencies).\n- Use `Depends(MyClass)` – FastAPI calls `MyClass(...)` and passes the instance."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Class Dependency Example",
+            "content": "A class that holds a database connection and provides methods.",
+            "codeSnippet": "class Database:\n    def __init__(self, db_url: str = \"sqlite:///./test.db\"):\n        self.db_url = db_url\n        # In real code, you'd initialize connection\n\n    def get_items(self):\n        return [{\"name\": \"item1\"}, {\"name\": \"item2\"}]\n\n@app.get(\"/items/\")\nasync def read_items(db: Database = Depends(Database)):\n    return db.get_items()",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Dependencies with Yields: Resource Management 🔄",
+            "content": "# Using `yield` for setup/teardown\n\nIf a dependency uses `yield`, it becomes a **context manager**. The code before `yield` runs before the path operation, and the code after `yield` runs after.\n\nPerfect for:\n- Opening and closing database connections.\n- Acquiring and releasing locks.\n- Starting and stopping transactions."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Yield Dependency Example",
+            "content": "Simulate a database session with cleanup.",
+            "codeSnippet": "from fastapi import FastAPI, Depends\n\napp = FastAPI()\n\n# Dependency that yields a session\ndef get_db():\n    db = \"fake_db_session\"  # e.g., SQLAlchemy session\n    try:\n        yield db  # this is what gets injected\n    finally:\n        # Code here runs after the path operation finishes\n        print(f\"Closing {db}\")\n\n@app.get(\"/items/\")\nasync def read_items(db: str = Depends(get_db)):\n    # db is the yielded value\n    return {\"db\": db, \"items\": []}",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Yield Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What happens to the code after `yield` in a dependency?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It runs before the path operation",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It runs after the path operation, even if an exception occurs",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It is never executed",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The code after `yield` runs after the path operation completes, and it's guaranteed to run even if an exception occurs (thanks to try/finally).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Use `yield` dependencies to manage resources like database sessions. They ensure proper cleanup, making your code robust and leak-free."
+        }
+    ]
+}

@@ -1,0 +1,240 @@
+{
+    "id": "quiz_ch_5",
+    "chapterId": "ch_5",
+    "title": "Chapter 5 Quiz: Databases & SQLAlchemy",
+    "description": "Test your knowledge of SQLAlchemy ORM, async sessions, CRUD, relationships, and Alembic.",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What does ORM stand for?",
+            "options": [
+                "Object Relational Mapping",
+                "Object Request Model",
+                "Online Relational Management",
+                "Open Resource Module"
+            ],
+            "correctAnswer": 0,
+            "explanation": "ORM stands for Object Relational Mapping, which maps database tables to Python objects."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "SQLAlchemy can be used only with PostgreSQL.",
+            "correctAnswer": false,
+            "explanation": "SQLAlchemy supports many databases, including PostgreSQL, MySQL, SQLite, and more."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "Which of the following is used to create a database engine for async SQLAlchemy?",
+            "options": [
+                "create_engine",
+                "create_async_engine",
+                "async_engine",
+                "Engine"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`create_async_engine` from `sqlalchemy.ext.asyncio` creates an async engine."
+        },
+        {
+            "id": "q4",
+            "type": "fill_blank",
+            "question": "What function is used to create a session factory in async SQLAlchemy?",
+            "options": [
+                "sessionmaker",
+                "async_sessionmaker",
+                "create_session",
+                "AsyncSession"
+            ],
+            "correctAnswer": "async_sessionmaker",
+            "explanation": "`async_sessionmaker` creates a factory for `AsyncSession` objects."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "How do you define a SQLAlchemy model class?",
+            "options": [
+                "Inherit from `db.Model`",
+                "Inherit from `Base` (declarative base)",
+                "Decorate with `@model`",
+                "Use `class Model:`"
+            ],
+            "correctAnswer": 1,
+            "explanation": "You create a declarative base (e.g., `Base = declarative_base()`) and inherit your model classes from it."
+        },
+        {
+            "id": "q6",
+            "type": "true_false",
+            "question": "In SQLAlchemy, `Column` objects define the table columns.",
+            "correctAnswer": true,
+            "explanation": "Yes, each attribute in a model that is a `Column` maps to a database column."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "What method is used to add a new record to the database using an async session?",
+            "options": [
+                "session.add()",
+                "session.insert()",
+                "session.create()",
+                "session.append()"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`session.add()` stages the object, then you call `await session.commit()` to persist."
+        },
+        {
+            "id": "q8",
+            "type": "fill_blank",
+            "question": "To query a model's records, you use `await session.execute(select(MyModel))` and then call `.scalars().all()`. What method is used to get a list of model instances?",
+            "options": [
+                ".all()",
+                ".fetchall()",
+                ".scalars().all()",
+                ".results()"
+            ],
+            "correctAnswer": ".scalars().all()",
+            "explanation": "`session.execute(select(...))` returns a `Result`; `.scalars()` extracts the ORM objects, and `.all()` returns them as a list."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "How do you define a one-to-many relationship in SQLAlchemy?",
+            "options": [
+                "Using `relationship()` with `uselist=False`",
+                "Using `relationship()` with `back_populates`",
+                "Using `ForeignKey` on the child table and `relationship()` on the parent",
+                "Both B and C"
+            ],
+            "correctAnswer": 3,
+            "explanation": "A one-to-many is defined by a `ForeignKey` on the child and a `relationship()` on the parent with `back_populates`."
+        },
+        {
+            "id": "q10",
+            "type": "true_false",
+            "question": "SQLAlchemy models can include Pydantic validations automatically.",
+            "correctAnswer": false,
+            "explanation": "SQLAlchemy models are for database mapping; Pydantic schemas are used separately for validation and serialization."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "What is Alembic used for in the context of SQLAlchemy?",
+            "options": [
+                "Database migration management",
+                "Connection pooling",
+                "Query optimization",
+                "Async support"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Alembic is a database migration tool for SQLAlchemy, helping manage schema changes over time."
+        },
+        {
+            "id": "q12",
+            "type": "fill_blank",
+            "question": "When using async SQLAlchemy, what method must you `await` to actually execute a query?",
+            "options": [
+                "session.execute()",
+                "session.run()",
+                "session.query()",
+                "session.fetch()"
+            ],
+            "correctAnswer": "session.execute()",
+            "explanation": "`session.execute()` is an async method that must be awaited to perform the query."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "What is the purpose of the `expire_on_commit` parameter in `async_sessionmaker`?",
+            "options": [
+                "It makes the session expire after commit, requiring fresh loads",
+                "It automatically refreshes objects after commit",
+                "It commits automatically after each operation",
+                "It prevents commits"
+            ],
+            "correctAnswer": 0,
+            "explanation": "When `expire_on_commit=True` (default), objects become expired after commit; you'll need to refresh them to access attributes."
+        },
+        {
+            "id": "q14",
+            "type": "true_false",
+            "question": "SQLAlchemy supports only synchronous operations.",
+            "correctAnswer": false,
+            "explanation": "SQLAlchemy 1.4+ has async support via the `asyncio` extension."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "Which of the following is the correct way to filter records in a SQLAlchemy async query?",
+            "options": [
+                ".filter(MyModel.name == 'Alice')",
+                ".where(MyModel.name == 'Alice')",
+                ".filter_by(name='Alice')",
+                "All of the above"
+            ],
+            "correctAnswer": 3,
+            "explanation": "SQLAlchemy allows `.filter()`, `.where()`, and `.filter_by()` for filtering."
+        },
+        {
+            "id": "q16",
+            "type": "fill_blank",
+            "question": "What method do you call to delete a record after staging it with `session.delete()`?",
+            "options": [
+                "session.flush()",
+                "session.commit()",
+                "session.save()",
+                "session.persist()"
+            ],
+            "correctAnswer": "session.commit()",
+            "explanation": "Like any other change, deletions are committed with `await session.commit()`."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "What is the role of `async_sessionmaker`?",
+            "options": [
+                "It creates a new database engine",
+                "It creates a session factory that produces `AsyncSession` objects",
+                "It runs migrations",
+                "It validates models"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`async_sessionmaker` is a factory that creates `AsyncSession` instances for interacting with the database."
+        },
+        {
+            "id": "q18",
+            "type": "true_false",
+            "question": "You can use Pydantic models to automatically generate SQLAlchemy model code.",
+            "correctAnswer": false,
+            "explanation": "While you can use Pydantic for validation and serialization, they are separate from the SQLAlchemy ORM models."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "Which of the following is true about Alembic migrations?",
+            "options": [
+                "They are automatically applied when the app starts",
+                "They need to be manually created and run",
+                "They are not needed if you use async",
+                "They only work with PostgreSQL"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Alembic requires you to generate migration scripts and run them manually or via a script."
+        },
+        {
+            "id": "q20",
+            "type": "fill_blank",
+            "question": "What is the typical pattern for creating a database session dependency in FastAPI with SQLAlchemy?",
+            "options": [
+                "A function that returns a session and uses `yield` to close it",
+                "A global session variable",
+                "A middleware that attaches a session to the request",
+                "Using `Depends` with a plain session object"
+            ],
+            "correctAnswer": "A function that returns a session and uses `yield` to close it",
+            "explanation": "You create a dependency that yields a session, and after the response, you close it. This ensures proper cleanup."
+        }
+    ]
+}

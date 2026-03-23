@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_4",
+    "title": "Authentication Dependency Chain",
+    "description": "Build a chain of dependencies to validate an API key and return user info.",
+    "estimatedMinutes": 15,
+    "problemStatement": "# Authentication Dependency Chain\n\nCreate two dependencies:\n1. `get_api_key` – reads the `X-API-Key` header and returns the key.\n2. `get_current_user` – depends on `get_api_key`. It validates the key against a hardcoded dictionary of valid keys -> user info. If the key is valid, return user info (e.g., `{\"username\": \"alice\", \"role\": \"admin\"}`). If invalid, raise an HTTPException with status 403.\n\nThen, create a protected endpoint `/users/me` that uses `get_current_user` and returns the user info.\n\n**Bonus:** Make the dependency chain produce a `User` Pydantic model.",
+    "hints": [
+        "Use `Header(...)` to get the API key; `...` means required.",
+        "In `get_current_user`, you can call `Depends(get_api_key)` to get the key.",
+        "Use a dict: `valid_keys = {\"secret1\": {\"username\": \"alice\", \"role\": \"admin\"}, \"secret2\": ...}`."
+    ],
+    "expectedOutput": "If you provide a valid key in the header, you get the user info; otherwise, a 403 error.",
+    "solutionCode": "from fastapi import FastAPI, Depends, Header, HTTPException\n\napp = FastAPI()\n\nVALID_KEYS = {\n    \"abc123\": {\"username\": \"alice\", \"role\": \"admin\"},\n    \"def456\": {\"username\": \"bob\", \"role\": \"user\"}\n}\n\ndef get_api_key(x_api_key: str = Header(...)) -> str:\n    return x_api_key\n\ndef get_current_user(api_key: str = Depends(get_api_key)) -> dict:\n    user = VALID_KEYS.get(api_key)\n    if not user:\n        raise HTTPException(status_code=403, detail=\"Invalid API key\")\n    return user\n\n@app.get(\"/users/me\")\nasync def read_current_user(current_user: dict = Depends(get_current_user)):\n    return current_user"
+}

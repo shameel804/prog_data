@@ -1,0 +1,240 @@
+{
+    "id": "quiz_ch_10",
+    "chapterId": "ch_10",
+    "title": "Chapter 10 Quiz: Deployment & Performance",
+    "description": "Test your knowledge of deployment, Docker, configuration, optimization, caching, and monitoring.",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "Which command runs Gunicorn with Uvicorn workers for a FastAPI app?",
+            "options": [
+                "gunicorn main:app -k uvicorn.workers.UvicornWorker",
+                "uvicorn main:app --workers 4",
+                "gunicorn main:app --bind 0.0.0.0:8000",
+                "fastapi run main:app"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Gunicorn with `-k uvicorn.workers.UvicornWorker` runs Uvicorn workers behind a process manager."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "You should use the Uvicorn development server with `--reload` in production.",
+            "correctAnswer": false,
+            "explanation": "The development server is not optimized for production; use Gunicorn with multiple workers or a similar setup."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "What does the `-w 4` flag in Gunicorn specify?",
+            "options": [
+                "Number of worker processes",
+                "Number of threads per worker",
+                "Number of CPU cores",
+                "Worker timeout"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`-w` sets the number of worker processes. Typically 2-4 per CPU core."
+        },
+        {
+            "id": "q4",
+            "type": "fill_blank",
+            "question": "What Docker command builds an image from a Dockerfile in the current directory?",
+            "options": [
+                "docker build",
+                "docker create",
+                "docker image build",
+                "docker compose build"
+            ],
+            "correctAnswer": "docker build",
+            "explanation": "`docker build -t name .` builds an image from a Dockerfile."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "Which Pydantic class is used to load settings from environment variables and .env files?",
+            "options": [
+                "BaseSettings",
+                "Settings",
+                "EnvSettings",
+                "Config"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`BaseSettings` from `pydantic_settings` provides this functionality."
+        },
+        {
+            "id": "q6",
+            "type": "true_false",
+            "question": "Connection pooling improves performance by reusing database connections.",
+            "correctAnswer": true,
+            "explanation": "Pooling avoids the overhead of opening and closing connections per request."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "What is the purpose of the `minimum_size` parameter in `GZipMiddleware`?",
+            "options": [
+                "Minimum response size to compress",
+                "Minimum request size to decompress",
+                "Minimum CPU usage",
+                "Minimum memory allocation"
+            ],
+            "correctAnswer": 0,
+            "explanation": "It specifies the smallest response that will be compressed (e.g., 1000 bytes)."
+        },
+        {
+            "id": "q8",
+            "type": "fill_blank",
+            "question": "What Redis command sets a key with an expiration time?",
+            "options": [
+                "SETEX",
+                "SET with EXPIRE",
+                "SET and EXPIRE",
+                "SET with TTL"
+            ],
+            "correctAnswer": "SETEX",
+            "explanation": "`SETEX key seconds value` sets a key with an expiration."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "Which library is commonly used to expose Prometheus metrics from FastAPI?",
+            "options": [
+                "prometheus-fastapi-instrumentator",
+                "fastapi-prometheus",
+                "prometheus_client",
+                "metrics-fastapi"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`prometheus-fastapi-instrumentator` integrates Prometheus metrics with FastAPI."
+        },
+        {
+            "id": "q10",
+            "type": "true_false",
+            "question": "A health check endpoint should always return 200 OK, even if the database is down.",
+            "correctAnswer": false,
+            "explanation": "Health checks should return 200 only when the service is fully functional; otherwise return 5xx."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "What is the primary benefit of structured logging (e.g., JSON)?",
+            "options": [
+                "It's human-readable",
+                "It can be easily parsed by log aggregation tools",
+                "It's faster",
+                "It uses less disk space"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Structured logs (JSON) are machine-readable, making them easy to search and analyze."
+        },
+        {
+            "id": "q12",
+            "type": "fill_blank",
+            "question": "In a multi-worker setup, what is a potential issue with in-memory caching?",
+            "options": [
+                "Cache inconsistency between workers",
+                "Higher memory usage",
+                "Slower response times",
+                "None"
+            ],
+            "correctAnswer": "Cache inconsistency between workers",
+            "explanation": "Each worker has its own memory; a distributed cache like Redis is needed for consistency."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "What is the purpose of the `pool_pre_ping` option in SQLAlchemy engine?",
+            "options": [
+                "It checks the connection is alive before using it",
+                "It pre-creates connections",
+                "It logs every query",
+                "It disables pooling"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`pool_pre_ping` verifies connections are still alive, preventing stale connections."
+        },
+        {
+            "id": "q14",
+            "type": "true_false",
+            "question": "You should commit your `.env` file to version control.",
+            "correctAnswer": false,
+            "explanation": "`.env` often contains secrets; it should be added to `.gitignore`."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "What is the recommended way to run CPU-intensive tasks in FastAPI?",
+            "options": [
+                "Use `async def` and hope it's fast",
+                "Offload to a background task queue like Celery",
+                "Use `time.sleep` to wait",
+                "Run them in the same thread"
+            ],
+            "correctAnswer": 1,
+            "explanation": "CPU-intensive tasks block the event loop; offloading to a separate process or task queue is necessary."
+        },
+        {
+            "id": "q16",
+            "type": "fill_blank",
+            "question": "What HTTP status code does a successful WebSocket upgrade return?",
+            "options": [
+                "200",
+                "101",
+                "102",
+                "202"
+            ],
+            "correctAnswer": "101",
+            "explanation": "HTTP 101 Switching Protocols indicates the protocol upgrade to WebSocket."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "Which of the following is a common production deployment architecture for FastAPI?",
+            "options": [
+                "Nginx → Gunicorn with Uvicorn workers → FastAPI",
+                "FastAPI directly exposed to the internet",
+                "Apache → mod_wsgi",
+                "IIS → FastCGI"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Nginx as a reverse proxy, Gunicorn as a process manager, and Uvicorn workers is a standard stack."
+        },
+        {
+            "id": "q18",
+            "type": "true_false",
+            "question": "Using `async` for endpoints that perform no I/O can still be beneficial because it allows concurrent requests.",
+            "correctAnswer": false,
+            "explanation": "Async endpoints without I/O offer no benefit and add overhead; use `def` for CPU-bound or simple endpoints."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "What is the purpose of the `expire_on_commit` parameter in SQLAlchemy async sessions?",
+            "options": [
+                "It expires objects after commit, requiring reload",
+                "It automatically commits after each query",
+                "It sets a session timeout",
+                "It disables rollback"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`expire_on_commit=False` prevents objects from being expired after commit, avoiding unnecessary refreshes."
+        },
+        {
+            "id": "q20",
+            "type": "fill_blank",
+            "question": "What tool is commonly used to containerize applications for consistent deployment?",
+            "options": [
+                "Docker",
+                "Virtualenv",
+                "pip",
+                "Ansible"
+            ],
+            "correctAnswer": "Docker",
+            "explanation": "Docker packages applications into containers that run consistently across environments."
+        }
+    ]
+}

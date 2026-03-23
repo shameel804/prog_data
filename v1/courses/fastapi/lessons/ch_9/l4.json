@@ -1,0 +1,56 @@
+{
+    "id": "l4",
+    "chapterId": "ch_9",
+    "title": "Broadcasting Messages",
+    "description": "Send messages to all connected clients.",
+    "xpReward": 25,
+    "estimatedMinutes": 14,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Broadcasting in Action 📢",
+            "content": "# Sending to All\n\nWith the connection manager, you can broadcast messages to all connected clients. This is the foundation of chat rooms and real-time dashboards."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Broadcast Endpoint",
+            "content": "```python\nmanager = ConnectionManager()\n\n@app.websocket(\"/ws/{client_id}\")\nasync def websocket_endpoint(websocket: WebSocket, client_id: int):\n    await manager.connect(websocket)\n    try:\n        while True:\n            data = await websocket.receive_text()\n            await manager.broadcast(f\"Client #{client_id} says: {data}\")\n    except WebSocketDisconnect:\n        manager.disconnect(websocket)\n        await manager.broadcast(f\"Client #{client_id} left the chat\")\n```",
+            "codeSnippet": "from fastapi import WebSocket, WebSocketDisconnect\n\nmanager = ConnectionManager()\n\n@app.websocket(\"/chat\")\nasync def chat(websocket: WebSocket):\n    await manager.connect(websocket)\n    try:\n        while True:\n            msg = await websocket.receive_text()\n            await manager.broadcast(f\"Someone: {msg}\")\n    except WebSocketDisconnect:\n        manager.disconnect(websocket)\n        await manager.broadcast(\"A user left\")",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Broadcasting",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of broadcasting?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To send a message to a single client",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To send a message to all connected clients",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To disconnect all clients",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Broadcasting sends the same message to every active WebSocket connection.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

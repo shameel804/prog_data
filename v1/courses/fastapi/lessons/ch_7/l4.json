@@ -1,0 +1,56 @@
+{
+    "id": "l4",
+    "chapterId": "ch_7",
+    "title": "Testing Database Operations",
+    "description": "Set up a test database and write async tests for CRUD operations.",
+    "xpReward": 25,
+    "estimatedMinutes": 15,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Test Database Setup",
+            "content": "# Use a Separate Database\n\nFor tests, use a dedicated database (e.g., SQLite in memory) or a test database that you clean before each test.\n\nUse `pytest` fixtures to create and tear down sessions."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Async Test with Database",
+            "content": "```python\nimport pytest\nfrom sqlalchemy.ext.asyncio import create_async_engine, AsyncSession\nfrom main import Base, get_db\n\n@pytest.fixture\nasync def db_session():\n    engine = create_async_engine(\"sqlite+aiosqlite:///:memory:\")\n    async with engine.begin() as conn:\n        await conn.run_sync(Base.metadata.create_all)\n    async with AsyncSession(engine) as session:\n        yield session\n    # drop tables after test\n\n# Override the get_db dependency\n@pytest.fixture\ndef override_get_db(db_session):\n    async def _get_db():\n        yield db_session\n    app.dependency_overrides[get_db] = _get_db\n    yield\n    app.dependency_overrides.pop(get_db, None)\n```",
+            "codeSnippet": "from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession\n\n# Simplified example\nasync def test_create_user(client, db_session):\n    response = await client.post(\"/users/\", json={\"name\": \"Alice\"})\n    assert response.status_code == 200\n    # Query the test database to verify\n    result = await db_session.execute(select(User).where(User.name == \"Alice\"))\n    assert result.scalar_one().name == \"Alice\"",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Database Testing",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Why should you use a separate database for testing?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To avoid polluting development data",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Because tests cannot run on the same database",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To speed up tests",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Using a separate test database ensures tests are isolated and do not affect real data.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

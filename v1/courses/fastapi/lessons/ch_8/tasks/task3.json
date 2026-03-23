@@ -1,0 +1,14 @@
+{
+    "id": "task3",
+    "chapterId": "ch_8",
+    "title": "Set Up Celery with FastAPI",
+    "description": "Create a Celery task that computes something heavy and call it from FastAPI.",
+    "estimatedMinutes": 20,
+    "problemStatement": "# Celery with FastAPI\n\nSet up Celery to run heavy tasks asynchronously.\n\n**Requirements:**\n- Install Celery and a broker (Redis).\n- Define a Celery task that simulates a heavy computation (e.g., compute factorial of a large number).\n- Create a FastAPI endpoint `/compute/{n}` that sends the task to Celery and returns a task ID.\n- Create another endpoint `/task/{task_id}` to check the status and result.\n- Use Celery's `AsyncResult` to fetch the result.\n\n**Bonus:** Use a result backend (Redis) to store task results.",
+    "hints": [
+        "Create a `celery.py` file with `celery_app = Celery(...)`.\nDefine task with `@celery_app.task`.\nIn FastAPI, call `task.delay(n)` and return `task.id`.",
+        "To get result: `result = AsyncResult(task_id, app=celery_app)`, then check `result.ready()` and `result.result`."
+    ],
+    "expectedOutput": "The endpoint returns a task ID immediately, and the result can be retrieved later.",
+    "solutionCode": "# celery_worker.py\nfrom celery import Celery\nimport math\n\ncelery_app = Celery('tasks', broker='redis://localhost:6379/0', backend='redis://localhost:6379/0')\n\n@celery_app.task\ndef compute_factorial(n):\n    return math.factorial(n)\n\n# main.py\nfrom fastapi import FastAPI\nfrom celery.result import AsyncResult\nfrom celery_worker import celery_app\n\napp = FastAPI()\n\n@app.post(\"/compute/{n}\")\nasync def compute(n: int):\n    task = compute_factorial.delay(n)\n    return {\"task_id\": task.id}\n\n@app.get(\"/task/{task_id}\")\nasync def get_result(task_id: str):\n    result = AsyncResult(task_id, app=celery_app)\n    if result.ready():\n        return {\"status\": \"ready\", \"result\": result.result}\n    else:\n        return {\"status\": \"pending\"}"
+}

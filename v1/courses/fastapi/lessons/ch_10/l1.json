@@ -1,0 +1,56 @@
+{
+    "id": "l1",
+    "chapterId": "ch_10",
+    "title": "Deployment Strategies",
+    "description": "Learn how to run FastAPI in production with Gunicorn, Uvicorn, and process managers.",
+    "xpReward": 20,
+    "estimatedMinutes": 12,
+    "section": "Deployment",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Development vs. Production 🚀",
+            "content": "# Development Server is NOT Production-Ready\n\n`uvicorn main:app --reload` is great for development, but for production you need:\n- Multiple worker processes (to utilize CPU cores)\n- Process management (auto-restart on failure)\n- Load balancing\n- Security hardening\n\n**Standard production stack:**\n- **Uvicorn** as the ASGI server\n- **Gunicorn** as a process manager (for Unix)\n- **Nginx** as a reverse proxy (optional but recommended)"
+        },
+        {
+            "id": "s_l1_2",
+            "type": "code",
+            "title": "Running with Gunicorn + Uvicorn Workers",
+            "content": "```bash\npip install gunicorn uvicorn\n\ngunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000\n```\n\n- `-w 4` : number of worker processes (typically 2-4 x number of CPU cores)\n- `-k uvicorn.workers.UvicornWorker` : use Uvicorn's ASGI worker\n\nThis runs multiple Uvicorn workers behind a master process that manages them.",
+            "codeSnippet": "# Example with 4 workers\ngunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Deployment Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Why is it recommended to use multiple workers in production?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To handle more concurrent requests by utilizing multiple CPU cores",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To make the application slower",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To reduce memory usage",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Multiple workers allow parallel request handling, leveraging multi-core CPUs and increasing throughput.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

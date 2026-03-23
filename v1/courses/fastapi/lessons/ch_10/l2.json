@@ -1,0 +1,65 @@
+{
+    "id": "l2",
+    "chapterId": "ch_10",
+    "title": "Dockerizing FastAPI",
+    "description": "Containerize your application using Docker for consistent deployment.",
+    "xpReward": 25,
+    "estimatedMinutes": 15,
+    "section": "Deployment",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Why Docker? 🐳",
+            "content": "# Containers for Consistency\n\nDocker packages your app and its dependencies into a lightweight container, ensuring it runs the same everywhere (development, staging, production).\n\n**Benefits:**\n- Isolated environment\n- Easy scaling\n- Simplified dependency management\n- Works with orchestration (Kubernetes, Docker Swarm)"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Sample Dockerfile",
+            "content": "Create a `Dockerfile` in your project root.",
+            "codeSnippet": "# Use official Python image\nFROM python:3.11-slim\n\n# Set working directory\nWORKDIR /app\n\n# Copy requirements and install dependencies\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\n\n# Copy the rest of the application\nCOPY . .\n\n# Run the app with Gunicorn\nCMD [\"gunicorn\", \"main:app\", \"-w\", \"4\", \"-k\", \"uvicorn.workers.UvicornWorker\", \"--bind\", \"0.0.0.0:8000\"]",
+            "codeLanguage": "dockerfile",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Building and Running",
+            "content": "```bash\n# Build the image\ndocker build -t my-fastapi-app .\n\n# Run the container\ndocker run -p 8000:8000 my-fastapi-app\n```\n\nFor development with hot-reload, you can mount your code and use `--reload` flag.",
+            "codeSnippet": "docker build -t my-fastapi-app .\ndocker run -p 8000:8000 my-fastapi-app",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Docker Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the primary advantage of using Docker for deployment?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It makes the app run faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It ensures consistent environments across development and production",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It automatically scales the app",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Docker containers package the application and its dependencies, providing consistency across environments.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

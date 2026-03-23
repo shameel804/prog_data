@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_10",
+    "title": "Add Redis Caching",
+    "description": "Implement caching for a frequently accessed endpoint using Redis. Include cache invalidation.",
+    "estimatedMinutes": 15,
+    "problemStatement": "# Redis Caching\n\nEnhance your existing FastAPI application by adding Redis caching for a frequently accessed endpoint (e.g., get items or user profile).\n\n**Requirements:**\n1. Install `redis` and set up a Redis client (async).\n2. Create an endpoint (e.g., `/items/{item_id}`) that:\n   - First checks Redis for a cached value using a key like `item:{item_id}`.\n   - If cached, return the value with a `source: cache` flag.\n   - If not cached, fetch from the database (simulate with a delay), then cache with an expiration of 60 seconds.\n3. Add a second endpoint (e.g., `/items/{item_id}/invalidate`) that clears the cache for that item.\n4. Use environment variables for Redis connection URL.\n\n**Bonus:** Implement a cache-aside pattern with cache invalidation on update/delete.",
+    "hints": [
+        "Use `redis.asyncio` for async operations.\nExample: `redis = await aioredis.from_url(settings.REDIS_URL, decode_responses=True)`.",
+        "Use `setex` to set key with expiration.",
+        "For invalidation, use `delete` on the key."
+    ],
+    "expectedOutput": "First request to `/items/1` takes a few seconds (simulated DB), subsequent requests within 60 seconds return instantly. Invalidating the cache makes the next request fetch again.",
+    "solutionCode": "from fastapi import FastAPI, Depends\nimport redis.asyncio as aioredis\nimport asyncio\nfrom pydantic_settings import BaseSettings\n\nclass Settings(BaseSettings):\n    redis_url: str = \"redis://localhost:6379\"\n    class Config:\n        env_file = \".env\"\n\nsettings = Settings()\napp = FastAPI()\n\nasync def get_redis():\n    redis = await aioredis.from_url(settings.redis_url, decode_responses=True)\n    return redis\n\n@app.get(\"/items/{item_id}\")\nasync def get_item(item_id: int, redis=Depends(get_redis)):\n    cache_key = f\"item:{item_id}\"\n    cached = await redis.get(cache_key)\n    if cached:\n        return {\"source\": \"cache\", \"data\": cached}\n    # Simulate database fetch\n    await asyncio.sleep(2)  # simulate slow DB query\n    data = f\"Item {item_id} details\"\n    await redis.setex(cache_key, 60, data)\n    return {\"source\": \"db\", \"data\": data}\n\n@app.delete(\"/items/{item_id}/invalidate\")\nasync def invalidate_cache(item_id: int, redis=Depends(get_redis)):\n    await redis.delete(f\"item:{item_id}\")\n    return {\"message\": f\"Cache for item {item_id} invalidated\"}"
+}

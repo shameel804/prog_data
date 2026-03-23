@@ -1,0 +1,56 @@
+{
+    "id": "l3",
+    "chapterId": "ch_7",
+    "title": "Overriding Dependencies for Tests",
+    "description": "Replace dependencies with mocks to isolate the code under test.",
+    "xpReward": 25,
+    "estimatedMinutes": 14,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Dependency Override 🎭",
+            "content": "# Isolate Your Tests\n\nFastAPI allows you to override dependencies during testing. This is perfect for replacing real database sessions or authentication with mock versions.\n\nUse `app.dependency_overrides`."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Overriding a Dependency",
+            "content": "```python\nfrom main import app, get_db\n\nasync def override_get_db():\n    # Return a mock database session\n    return MockSession()\n\napp.dependency_overrides[get_db] = override_get_db\n\n# Now, any test that uses get_db will get the mock.\n```",
+            "codeSnippet": "from fastapi import Depends\n\nasync def get_current_user():\n    return {\"id\": 1, \"username\": \"alice\"}\n\n@app.get(\"/users/me\")\nasync def me(user=Depends(get_current_user)):\n    return user\n\n# In test\nasync def override_get_current_user():\n    return {\"id\": 999, \"username\": \"testuser\"}\n\napp.dependency_overrides[get_current_user] = override_get_current_user",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Override Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of `app.dependency_overrides`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It disables all dependencies during tests",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It allows you to replace a dependency with a test version",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It increases test performance",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`dependency_overrides` is a dictionary mapping original dependencies to test doubles, enabling isolated testing.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

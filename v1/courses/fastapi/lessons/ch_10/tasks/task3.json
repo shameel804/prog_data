@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_10",
+    "title": "Set Up Monitoring",
+    "description": "Add health checks, structured logging, and Prometheus metrics to your app.",
+    "estimatedMinutes": 15,
+    "problemStatement": "# Monitoring Setup\n\nAdd production‑ready observability to your FastAPI application.\n\n**Requirements:**\n1. Create a `/health` endpoint that returns `{\"status\": \"ok\"}` and optionally checks database connectivity.\n2. Install and configure `structlog` to output JSON logs. Add a middleware to log each request (method, path, status, duration).\n3. Install `prometheus-fastapi-instrumentator` and expose metrics at `/metrics`. Add at least one custom metric (e.g., a counter for cache hits).\n4. Ensure all logging and metrics work in a Docker container.\n\n**Bonus:** Add a dependency check that verifies Redis and database before returning health status.",
+    "hints": [
+        "For structlog: `structlog.configure(processors=[structlog.processors.JSONRenderer()])`",
+        "For custom metrics: `from prometheus_client import Counter; cache_hits = Counter('cache_hits', 'Number of cache hits')`",
+        "Add logging middleware: use `@app.middleware('http')` and log with `structlog.get_logger()`."
+    ],
+    "expectedOutput": "The app logs each request in JSON format, `/health` returns 200, and `/metrics` exposes Prometheus metrics including your custom counter.",
+    "solutionCode": "from fastapi import FastAPI, Request\nfrom prometheus_fastapi_instrumentator import Instrumentator\nfrom prometheus_client import Counter\nimport structlog\nimport time\nimport logging\n\n# Setup structured logging\nstructlog.configure(processors=[structlog.processors.JSONRenderer()])\nlogger = structlog.get_logger()\n\n# Setup custom metrics\ncache_hits = Counter('cache_hits', 'Number of cache hits')\n\napp = FastAPI()\n\n# Middleware for request logging\n@app.middleware(\"http\")\nasync def log_requests(request: Request, call_next):\n    start = time.time()\n    response = await call_next(request)\n    duration = time.time() - start\n    logger.info(\n        \"request\",\n        method=request.method,\n        path=request.url.path,\n        status=response.status_code,\n        duration=duration\n    )\n    return response\n\n# Health check\n@app.get(\"/health\")\nasync def health():\n    # Optionally check DB, Redis, etc.\n    return {\"status\": \"ok\"}\n\n# Example endpoint with custom metric\n@app.get(\"/items/{item_id}\")\nasync def get_item(item_id: int):\n    # ... your logic\n    cache_hits.inc()  # increment on cache hit\n    return {\"item_id\": item_id}\n\n# Prometheus metrics\ninstrumentator = Instrumentator().instrument(app)\n@app.on_event(\"startup\")\nasync def startup():\n    instrumentator.expose(app)"
+}

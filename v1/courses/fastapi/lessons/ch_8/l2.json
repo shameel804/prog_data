@@ -1,0 +1,65 @@
+{
+    "id": "l2",
+    "chapterId": "ch_8",
+    "title": "Writing Custom Middleware",
+    "description": "Create your own middleware to add headers, log requests, or modify responses.",
+    "xpReward": 20,
+    "estimatedMinutes": 12,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Anatomy of a Middleware Function",
+            "content": "# Structure\n\nA middleware in FastAPI is an async function decorated with `@app.middleware(\"http\")`.\n\n```python\nfrom fastapi import FastAPI, Request\n\napp = FastAPI()\n\n@app.middleware(\"http\")\nasync def my_middleware(request: Request, call_next):\n    # Do something before the request\n    response = await call_next(request)\n    # Do something after the response\n    return response\n```\n\n- `request`: The incoming request object.\n- `call_next`: A function that passes the request to the next middleware or route.\n- Return the response."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Example: Add a Custom Header",
+            "content": "This middleware adds a `X-Processed-By` header to every response.",
+            "codeSnippet": "from fastapi import FastAPI, Request\n\napp = FastAPI()\n\n@app.middleware(\"http\")\nasync def add_header(request: Request, call_next):\n    response = await call_next(request)\n    response.headers[\"X-Processed-By\"] = \"FastAPI\"\n    return response\n\n@app.get(\"/\")\nasync def root():\n    return {\"message\": \"Hello\"}",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Example: Request Logging",
+            "content": "Log the request method, path, and duration.",
+            "codeSnippet": "import time\nimport logging\n\nlogging.basicConfig(level=logging.INFO)\nlogger = logging.getLogger(__name__)\n\n@app.middleware(\"http\")\nasync def log_requests(request: Request, call_next):\n    start = time.time()\n    response = await call_next(request)\n    duration = time.time() - start\n    logger.info(f\"{request.method} {request.url.path} -> {response.status_code} ({duration:.3f}s)\")\n    return response",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Middleware Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What does `call_next(request)` do in a middleware?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It terminates the request",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It passes the request to the next middleware or route handler",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It returns a default response",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`call_next` continues the request through the middleware chain and eventually to the route handler, returning the response.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

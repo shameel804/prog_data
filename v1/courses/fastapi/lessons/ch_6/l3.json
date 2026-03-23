@@ -1,0 +1,56 @@
+{
+    "id": "l3",
+    "chapterId": "ch_6",
+    "title": "JWT Tokens: Creation & Validation",
+    "description": "Generate and verify JSON Web Tokens for stateless authentication.",
+    "xpReward": 25,
+    "estimatedMinutes": 15,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "What is JWT? 📜",
+            "content": "# JSON Web Tokens (JWT)\n\nA JWT is a compact, URL-safe token containing:\n- **Header** (algorithm and type)\n- **Payload** (claims like user ID, expiration)\n- **Signature** (to verify integrity)\n\nStateless: server doesn't need to store session info."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Generating a JWT",
+            "content": "Install `python-jose` for JWT handling.\n\n```bash\npip install python-jose[cryptography]\n```\n\nThen create a token.",
+            "codeSnippet": "from datetime import datetime, timedelta\nfrom jose import JWTError, jwt\n\nSECRET_KEY = \"your-secret-key\"\nALGORITHM = \"HS256\"\nACCESS_TOKEN_EXPIRE_MINUTES = 30\n\ndef create_access_token(data: dict, expires_delta: timedelta | None = None):\n    to_encode = data.copy()\n    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))\n    to_encode.update({\"exp\": expire})\n    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)\n    return encoded_jwt",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "JWT Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which part of a JWT contains the user information?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Header",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Payload",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Signature",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The payload (or claims) holds the data, such as user ID and expiration.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

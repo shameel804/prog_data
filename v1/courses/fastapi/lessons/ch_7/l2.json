@@ -1,0 +1,56 @@
+{
+    "id": "l2",
+    "chapterId": "ch_7",
+    "title": "Testing Endpoints with TestClient",
+    "description": "Use FastAPI's TestClient to simulate HTTP requests and assert responses.",
+    "xpReward": 20,
+    "estimatedMinutes": 12,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The TestClient",
+            "content": "# Simulate Requests\n\n`TestClient` from `fastapi.testclient` mimics a real HTTP client.\n\n```python\nfrom fastapi.testclient import TestClient\nfrom main import app\n\nclient = TestClient(app)\n\ndef test_read_root():\n    response = client.get(\"/\")\n    assert response.status_code == 200\n    assert response.json() == {\"message\": \"Hello World\"}\n```"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Example Test",
+            "content": "Test a simple endpoint.",
+            "codeSnippet": "from fastapi import FastAPI\nfrom fastapi.testclient import TestClient\n\napp = FastAPI()\n\n@app.get(\"/ping\")\nasync def ping():\n    return {\"pong\": True}\n\nclient = TestClient(app)\n\ndef test_ping():\n    response = client.get(\"/ping\")\n    assert response.status_code == 200\n    assert response.json() == {\"pong\": True}",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "TestClient Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What does `TestClient` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It runs the application in a separate thread and sends HTTP requests",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It mocks the database connection",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It generates API documentation",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "TestClient uses Starlette's TestClient to simulate requests without needing a running server.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

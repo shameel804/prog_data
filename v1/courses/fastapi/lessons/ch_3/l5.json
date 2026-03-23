@@ -1,0 +1,68 @@
+{
+    "id": "l5",
+    "chapterId": "ch_3",
+    "title": "Response Models",
+    "description": "Control what data is returned to the client using response models.",
+    "xpReward": 20,
+    "estimatedMinutes": 12,
+    "section": "Responses",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Why Response Models?",
+            "content": "# Filtering Output\n\nResponse models let you specify the structure of the response. They can:\n\n- Exclude sensitive data (like passwords).\n- Add computed fields.\n- Provide automatic documentation.\n\nUse the `response_model` parameter in route decorators.\n\n```python\nfrom pydantic import BaseModel\n\nclass UserOut(BaseModel):\n    username: str\n    email: str\n    # no password field\n\n@app.get(\"/users/{user_id}\", response_model=UserOut)\ndef get_user(user_id: int):\n    # internal user object may have password\n    return {\"username\": \"alice\", \"email\": \"alice@example.com\", \"password\": \"secret\"}\n```\n\nThe password is automatically filtered out."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Response Model Example",
+            "content": "See how response_model filters.",
+            "codeSnippet": "class ItemIn(BaseModel):\n    name: str\n    price: float\n    tax: float\n\nclass ItemOut(BaseModel):\n    name: str\n    price: float\n    # tax excluded\n\n@app.post(\"/items/\", response_model=ItemOut)\ndef create_item(item: ItemIn):\n    # item has tax, but response won't\n    return item",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Response Models",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of `response_model` in FastAPI?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To validate the request body",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To filter and structure the response data",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To set the HTTP status code",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`response_model` defines the structure of the response, filtering out fields not in the model.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Nested Response Models",
+            "content": "# Composing Responses\n\nYou can nest models to create complex responses.\n\n```python\nclass Address(BaseModel):\n    street: str\n    city: str\n\nclass UserResponse(BaseModel):\n    username: str\n    address: Address\n\n@app.get(\"/users/{user_id}\", response_model=UserResponse)\ndef get_user(user_id: int):\n    return {\n        \"username\": \"alice\",\n        \"address\": {\"street\": \"123 Main\", \"city\": \"Springfield\"},\n        \"internal_id\": 123  # filtered out\n    }\n```"
+        },
+        {
+            "id": "s_l5_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Response models also generate the OpenAPI documentation, so your API consumers know exactly what to expect."
+        }
+    ]
+}

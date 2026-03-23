@@ -1,0 +1,62 @@
+{
+    "id": "l5",
+    "chapterId": "ch_9",
+    "title": "Real-Time Chat Application",
+    "description": "Build a complete chat application with rooms and user management.",
+    "xpReward": 30,
+    "estimatedMinutes": 20,
+    "section": "Project",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Chat Rooms Feature",
+            "content": "# Adding Rooms\n\nEnhance the connection manager to support rooms. Each room has its own list of connections.\n\n```python\nclass RoomManager:\n    def __init__(self):\n        self.rooms: dict[str, list[WebSocket]] = {}\n\n    async def connect(self, room: str, websocket: WebSocket):\n        await websocket.accept()\n        if room not in self.rooms:\n            self.rooms[room] = []\n        self.rooms[room].append(websocket)\n\n    def disconnect(self, room: str, websocket: WebSocket):\n        self.rooms[room].remove(websocket)\n        if not self.rooms[room]:\n            del self.rooms[room]\n```"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Chat Room Endpoint",
+            "content": "```python\nmanager = RoomManager()\n\n@app.websocket(\"/chat/{room_name}\")\nasync def chat_room(websocket: WebSocket, room_name: str):\n    await manager.connect(room_name, websocket)\n    try:\n        while True:\n            data = await websocket.receive_text()\n            # Broadcast to everyone in the same room\n            for conn in manager.rooms[room_name]:\n                if conn != websocket:  # don't echo to sender\n                    await conn.send_text(data)\n    except WebSocketDisconnect:\n        manager.disconnect(room_name, websocket)\n        # Optionally notify others\n```",
+            "codeSnippet": "from fastapi import FastAPI, WebSocket, WebSocketDisconnect\nfrom typing import Dict, List\n\napp = FastAPI()\n\nclass RoomManager:\n    def __init__(self):\n        self.rooms: Dict[str, List[WebSocket]] = {}\n\n    async def connect(self, room: str, websocket: WebSocket):\n        await websocket.accept()\n        if room not in self.rooms:\n            self.rooms[room] = []\n        self.rooms[room].append(websocket)\n\n    def disconnect(self, room: str, websocket: WebSocket):\n        self.rooms[room].remove(websocket)\n        if not self.rooms[room]:\n            del self.rooms[room]\n\n    async def broadcast(self, room: str, message: str, exclude: WebSocket = None):\n        for conn in self.rooms.get(room, []):\n            if conn != exclude:\n                await conn.send_text(message)\n\nmanager = RoomManager()\n\n@app.websocket(\"/ws/{room}\")\nasync def websocket_room(websocket: WebSocket, room: str):\n    await manager.connect(room, websocket)\n    try:\n        while True:\n            msg = await websocket.receive_text()\n            await manager.broadcast(room, msg, exclude=websocket)\n    except WebSocketDisconnect:\n        manager.disconnect(room, websocket)\n        await manager.broadcast(room, \"A user left\", exclude=websocket)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "For production, use `asyncio` queues to handle many connections efficiently, and consider using Redis for pub/sub if you have multiple server instances."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Chat Application",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "In a multi-room chat, what data structure is best for storing connections?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A list of all connections",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A dictionary mapping room names to lists of connections",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A single set of connections",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A dictionary keyed by room allows efficient per-room broadcasting.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

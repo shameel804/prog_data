@@ -1,0 +1,13 @@
+{
+    "id": "task2",
+    "chapterId": "ch_9",
+    "title": "Connection Counter",
+    "description": "Implement a WebSocket endpoint that keeps track of how many clients are connected and broadcasts the count to all.",
+    "estimatedMinutes": 12,
+    "problemStatement": "# Connection Counter\n\nCreate a WebSocket endpoint `/counter` that:\n- Accepts connections.\n- Maintains a count of active connections.\n- Whenever a client connects or disconnects, broadcast the new count to all connected clients.\n- The message should be a JSON object: `{\"type\": \"count\", \"value\": 5}`.\n\n**Bonus:** Also send a welcome message to new clients with the current count.",
+    "hints": [
+        "Store active connections in a list or set.\nWhen a client connects, add to list and broadcast.\nWhen a client disconnects, remove and broadcast.\nUse a `try/finally` to ensure removal."
+    ],
+    "expectedOutput": "All connected clients receive the updated count whenever the number of connections changes.",
+    "solutionCode": "from fastapi import FastAPI, WebSocket\nimport json\n\napp = FastAPI()\n\nactive_connections = []\n\n@app.websocket(\"/counter\")\nasync def counter(websocket: WebSocket):\n    await websocket.accept()\n    active_connections.append(websocket)\n    await broadcast_count()\n    try:\n        while True:\n            # Wait for messages (could be used for other things)\n            await websocket.receive_text()\n    except Exception:\n        pass\n    finally:\n        active_connections.remove(websocket)\n        await broadcast_count()\n\nasync def broadcast_count():\n    count = len(active_connections)\n    message = json.dumps({\"type\": \"count\", \"value\": count})\n    for conn in active_connections:\n        await conn.send_text(message)"
+}

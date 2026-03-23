@@ -1,0 +1,62 @@
+{
+    "id": "l1",
+    "chapterId": "ch_5",
+    "title": "Introduction to SQLAlchemy & Async",
+    "description": "Learn what SQLAlchemy is and how to set up an async database connection.",
+    "xpReward": 20,
+    "estimatedMinutes": 12,
+    "section": "Setup",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Why SQLAlchemy? 🗄️",
+            "content": "# SQLAlchemy – The Python SQL Toolkit\n\nSQLAlchemy is an **ORM** (Object Relational Mapper) that lets you interact with databases using Python objects instead of raw SQL.\n\n- **Supports async** – with `asyncpg` for PostgreSQL.\n- **Works with many databases** – PostgreSQL, MySQL, SQLite, etc.\n- **Powerful query builder**.\n\nFastAPI + SQLAlchemy = a robust, modern stack."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "Setting Up Async SQLAlchemy",
+            "content": "# Installation & Configuration\n\n```bash\npip install sqlalchemy asyncpg databases\n```\n\nWe'll use `asyncpg` for PostgreSQL async support, and `sqlalchemy.ext.asyncio` for async ORM.\n\n**Key components:**\n- `create_async_engine` – creates the database engine.\n- `AsyncSession` – the async session to interact with the DB.\n- `async_sessionmaker` – creates sessions."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "code",
+            "title": "Basic Setup Code",
+            "content": "```python\nfrom sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker\nfrom sqlalchemy.orm import declarative_base\n\nDATABASE_URL = \"postgresql+asyncpg://user:pass@localhost/db\"\n\nengine = create_async_engine(DATABASE_URL, echo=True)\nAsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)\n\nBase = declarative_base()\n```",
+            "codeSnippet": "from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker\nfrom sqlalchemy.orm import declarative_base\n\nDATABASE_URL = \"sqlite+aiosqlite:///./test.db\"\nengine = create_async_engine(DATABASE_URL, echo=True)\nAsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)\nBase = declarative_base()",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_4",
+            "type": "quiz",
+            "title": "Quick Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What is the main advantage of using SQLAlchemy with FastAPI?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It automatically generates the API documentation",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It allows you to interact with databases using Python objects",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It makes the API run faster",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "SQLAlchemy is an ORM that maps Python classes to database tables, making database operations more intuitive.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_8",
+    "title": "Background Email Sender",
+    "description": "Implement an endpoint that sends an email as a background task (simulate with print).",
+    "estimatedMinutes": 12,
+    "problemStatement": "# Background Email Sender\n\nCreate an endpoint `/send-email` that accepts an email address and a subject, and sends an email in the background using FastAPI's `BackgroundTasks`.\n\n**Requirements:**\n- The endpoint should return immediately with a 202 Accepted response.\n- In the background, simulate sending an email by printing a message to the console after a 2-second delay (using `time.sleep` or `asyncio.sleep`).\n- Use `BackgroundTasks` to run the email-sending function.\n- Log the start and completion of the email sending.\n\n**Bonus:** Add a simple rate limit to prevent too many background tasks.",
+    "hints": [
+        "Define a function `send_email(email, subject)` that prints and sleeps.\nAdd it with `background_tasks.add_task(send_email, email, subject)`.",
+        "If using `asyncio.sleep`, the function must be `async`. `BackgroundTasks` works with both sync and async functions."
+    ],
+    "expectedOutput": "The endpoint returns quickly, and the background task prints after 2 seconds.",
+    "solutionCode": "from fastapi import FastAPI, BackgroundTasks\nimport asyncio\n\napp = FastAPI()\n\nasync def send_email(email: str, subject: str):\n    print(f\"Starting email to {email} with subject '{subject}'\")\n    await asyncio.sleep(2)  # simulate sending\n    print(f\"Email sent to {email}\")\n\n@app.post(\"/send-email\")\nasync def schedule_email(email: str, subject: str, background_tasks: BackgroundTasks):\n    background_tasks.add_task(send_email, email, subject)\n    return {\"status\": \"accepted\", \"message\": \"Email will be sent in background\"}"
+}

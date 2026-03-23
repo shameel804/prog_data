@@ -1,0 +1,71 @@
+{
+    "id": "l6",
+    "chapterId": "ch_10",
+    "title": "Monitoring & Logging",
+    "description": "Set up health checks, structured logging, and metrics for observability.",
+    "xpReward": 25,
+    "estimatedMinutes": 16,
+    "section": "Observability",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Health Checks 🏥",
+            "content": "# Keep Your API Alive\n\nAdd a health check endpoint that can be used by load balancers and orchestration systems.\n\n```python\n@app.get(\"/health\")\nasync def health_check():\n    # Check database, cache, etc.\n    return {\"status\": \"ok\"}\n```\n\nReturn 200 if healthy, else 500 with details."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Structured Logging",
+            "content": "Use JSON logs for easier parsing by log aggregation tools (e.g., ELK, Datadog).\n\n```python\nimport structlog\n\nlogger = structlog.get_logger()\n\n@app.get(\"/\")\nasync def root():\n    logger.info(\"Root endpoint called\", extra={\"user\": \"anonymous\"})\n    return {\"message\": \"Hello\"}\n```\n\nConfigure structlog to output JSON in production.",
+            "codeSnippet": "import structlog\n\nstructlog.configure(\n    processors=[\n        structlog.processors.JSONRenderer()\n    ]\n)\n\nlogger = structlog.get_logger()\n\nlogger.info(\"App started\", version=\"1.0.0\")",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "text",
+            "title": "Metrics with Prometheus",
+            "content": "# Monitor Performance\n\nUse `prometheus-fastapi-instrumentator` to expose metrics.\n\n```bash\npip install prometheus-fastapi-instrumentator\n```\n\n```python\nfrom prometheus_fastapi_instrumentator import Instrumentator\n\ninstrumentator = Instrumentator().instrument(app).expose(app)\n```\n\nNow metrics are available at `/metrics` for Prometheus to scrape."
+        },
+        {
+            "id": "s_l6_4",
+            "type": "code",
+            "title": "Basic Monitoring Setup",
+            "content": "```python\nfrom fastapi import FastAPI\nfrom prometheus_fastapi_instrumentator import Instrumentator\n\napp = FastAPI()\n\ninstrumentator = Instrumentator().instrument(app)\n\n@app.on_event(\"startup\")\nasync def startup():\n    instrumentator.expose(app)\n\n@app.get(\"/\")\nasync def root():\n    return {\"message\": \"Hello\"}\n```\n\nNow you can see request count, latency, etc., at `/metrics`.",
+            "codeSnippet": "from prometheus_fastapi_instrumentator import Instrumentator\n\napp = FastAPI()\nInstrumentator().instrument(app).expose(app)\n\n# After this, /metrics endpoint is available.",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_5",
+            "type": "quiz",
+            "title": "Monitoring Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of a health check endpoint?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To restart the application",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To allow load balancers to verify the service is alive",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To provide API documentation",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Health checks let infrastructure tools know if the service is ready to receive traffic.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

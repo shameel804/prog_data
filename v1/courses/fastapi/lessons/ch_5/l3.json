@@ -1,0 +1,149 @@
+{
+    "id": "l3",
+    "chapterId": "ch_5",
+    "title": "CRUD Operations",
+    "description": "Perform Create, Read, Update, Delete operations asynchronously.",
+    "xpReward": 30,
+    "estimatedMinutes": 20,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "CRUD Basics",
+            "content": "# Create, Read, Update, Delete\n\nWith async SQLAlchemy, we use an `AsyncSession` to interact with the database.\n\n**Create:** `session.add(obj)` + `await session.commit()`\n**Read:** `await session.execute(select(...))`\n**Update:** modify object and commit\n**Delete:** `await session.delete(obj)` + commit"
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Create (Insert)",
+            "content": "Adding a new user to the database.",
+            "codeSnippet": "from sqlalchemy import select\nfrom sqlalchemy.ext.asyncio import AsyncSession\n\nasync def create_user(db: AsyncSession, user_data):\n    db_user = User(**user_data.dict())\n    db.add(db_user)\n    await db.commit()\n    await db.refresh(db_user)  # load generated fields like id\n    return db_user",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Create Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "After adding an object with `session.add()`, what must you call to persist it to the database?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "session.flush()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "session.commit()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "session.save()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`commit()` flushes any pending changes and commits the transaction to the database.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Read (Select)",
+            "content": "Fetching users with filters.",
+            "codeSnippet": "from sqlalchemy import select\n\nasync def get_user(db: AsyncSession, user_id: int):\n    result = await db.execute(select(User).where(User.id == user_id))\n    return result.scalar_one_or_none()\n\nasync def get_users(db: AsyncSession, skip: int = 0, limit: int = 100):\n    result = await db.execute(select(User).offset(skip).limit(limit))\n    return result.scalars().all()",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_5",
+            "type": "quiz",
+            "title": "Read Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "What method do you call on a `Result` to get the first ORM object (or None)?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "scalar_one_or_none()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "first()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "one()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`scalar_one_or_none()` returns a single ORM instance or None if no result found.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_6",
+            "type": "code",
+            "title": "Update",
+            "content": "Updating an existing object.",
+            "codeSnippet": "async def update_user(db: AsyncSession, user_id: int, user_update):\n    user = await get_user(db, user_id)\n    if not user:\n        return None\n    # Update fields from Pydantic model (exclude unset)\n    for key, value in user_update.dict(exclude_unset=True).items():\n        setattr(user, key, value)\n    await db.commit()\n    await db.refresh(user)\n    return user",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_7",
+            "type": "code",
+            "title": "Delete",
+            "content": "Removing an object.",
+            "codeSnippet": "async def delete_user(db: AsyncSession, user_id: int):\n    user = await get_user(db, user_id)\n    if not user:\n        return None\n    await db.delete(user)\n    await db.commit()\n    return user",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Always use `await session.refresh(obj)` after commit if you need to access auto-generated fields (like IDs or defaults) that were set by the database."
+        },
+        {
+            "id": "s_l3_9",
+            "type": "quiz",
+            "title": "CRUD Summary",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_3",
+                "type": "multiple_choice",
+                "question": "Which of the following correctly deletes a record?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "session.delete(obj); await session.commit()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "await session.delete(obj)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "session.remove(obj); await session.flush()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`session.delete()` marks the object for deletion; you must still `commit()` to apply the change.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

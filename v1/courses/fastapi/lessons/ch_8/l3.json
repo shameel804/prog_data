@@ -1,0 +1,56 @@
+{
+    "id": "l3",
+    "chapterId": "ch_8",
+    "title": "CORS Middleware",
+    "description": "Enable Cross-Origin Resource Sharing to allow frontend apps to communicate with your API.",
+    "xpReward": 20,
+    "estimatedMinutes": 10,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "What is CORS? 🌐",
+            "content": "# Cross-Origin Resource Sharing\n\nBrowsers enforce the **same-origin policy**: a web page can only make requests to the same domain. CORS allows a server to specify which origins are allowed to access its resources.\n\nWithout CORS, a frontend running on `localhost:3000` cannot call your API on `localhost:8000`.\n\n**FastAPI** provides `CORSMiddleware` to handle this."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Adding CORS Middleware",
+            "content": "```python\nfrom fastapi import FastAPI\nfrom fastapi.middleware.cors import CORSMiddleware\n\napp = FastAPI()\n\norigins = [\n    \"http://localhost:3000\",\n    \"https://myfrontend.com\",\n]\n\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=origins,          # list of allowed origins\n    allow_credentials=True,\n    allow_methods=[\"*\"],             # all HTTP methods\n    allow_headers=[\"*\"],             # all headers\n)\n```",
+            "codeSnippet": "from fastapi.middleware.cors import CORSMiddleware\n\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"*\"],  # Not recommended for production\n    allow_credentials=True,\n    allow_methods=[\"*\"],\n    allow_headers=[\"*\"],\n)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "CORS Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of CORS middleware?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To encrypt requests",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To allow web pages from other origins to access your API",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To prevent SQL injection",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "CORS is a browser security mechanism that requires servers to explicitly allow cross-origin requests.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

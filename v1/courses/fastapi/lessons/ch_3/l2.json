@@ -1,0 +1,68 @@
+{
+    "id": "l2",
+    "chapterId": "ch_3",
+    "title": "Defining Pydantic Models",
+    "description": "Create models to structure request bodies and responses.",
+    "xpReward": 25,
+    "estimatedMinutes": 12,
+    "section": "Models",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Model Fields",
+            "content": "# Fields with Types\n\nA Pydantic model is a class that inherits from `BaseModel`. Each attribute is defined with a type hint.\n\n```python\nfrom pydantic import BaseModel\n\nclass Item(BaseModel):\n    name: str\n    description: str = None   # optional with default\n    price: float\n    tax: float = 0.0\n```\n\n- Required fields have no default.\n- Optional fields can have a default (`None` or a value).\n- Type hints can be from `typing` like `List`, `Optional`, `Union`."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Using Optional Fields",
+            "content": "Example of creating instances.",
+            "codeSnippet": "item1 = Item(name=\"Laptop\", price=999.99)\nprint(item1)  # name='Laptop' description=None price=999.99 tax=0.0\n\nitem2 = Item(name=\"Phone\", description=\"Smart\", price=499.99, tax=20.0)\nprint(item2)  # name='Phone' description='Smart' price=499.99 tax=20.0",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Model Fields",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "In a Pydantic model, a field without a default value is:",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Optional",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Required",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Always set to None",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Fields without defaults are required when instantiating the model.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Nested Models",
+            "content": "# Composing Models\n\nModels can contain other models, creating complex structures.\n\n```python\nclass Address(BaseModel):\n    street: str\n    city: str\n\nclass User(BaseModel):\n    name: str\n    address: Address\n```\n\n- You can nest models arbitrarily.\n- This is powerful for APIs with hierarchical data."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Use `from pydantic import BaseModel` and define models in a separate `schemas.py` file to keep your code organized."
+        }
+    ]
+}

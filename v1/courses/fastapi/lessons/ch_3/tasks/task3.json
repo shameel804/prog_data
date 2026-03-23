@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_3",
+    "title": "Response Model Filtering",
+    "description": "Use response models to hide sensitive data and compute fields.",
+    "estimatedMinutes": 12,
+    "problemStatement": "# User Profile API\n\nCreate a FastAPI app with:\n\n- A Pydantic model `UserDB` representing data in the database: `username` (str), `email` (str), `hashed_password` (str).\n- A Pydantic model `UserOut` for responses: `username` (str), `email` (str), `full_name` (str) – where `full_name` is a computed field that combines first and last name? Actually, we don't have first/last. Let's simplify: `UserOut` should have `username`, `email`, and `age` (int). But we need to compute age from birthdate? Let's instead compute `is_adult` (bool) based on age.\n\n**Spec:**\n- Endpoint `GET /users/{user_id}` returns a user. The database user has `username`, `email`, `hashed_password`, and `birth_year` (int).\n- Use `response_model=UserOut` where `UserOut` contains `username`, `email`, and `is_adult` (bool) computed as `current_year - birth_year >= 18`.\n- Do not include `hashed_password` in response.\n\n**Requirements:**\n- Use `response_model` to filter out the password.\n- Compute `is_adult` in the response model. You can use `@property` in the model or just compute before returning.\n\n**Bonus:** Add a `@validator` that ensures birth_year is between 1900 and current year.",
+    "hints": [
+        "Define `UserOut` with fields `username`, `email`, and `is_adult`.",
+        "In your endpoint, you can manually compute is_adult and return a dict that matches UserOut.",
+        "Alternatively, you can create a `UserOut` instance with computed values."
+    ],
+    "expectedOutput": "GET /users/1 returns {\"username\": \"alice\", \"email\": \"alice@example.com\", \"is_adult\": true} if age >=18.",
+    "solutionCode": "from fastapi import FastAPI\nfrom pydantic import BaseModel\nimport datetime\n\napp = FastAPI()\n\nclass UserDB(BaseModel):\n    username: str\n    email: str\n    hashed_password: str\n    birth_year: int\n\nclass UserOut(BaseModel):\n    username: str\n    email: str\n    is_adult: bool\n\n# Simulated database\nusers_db = {\n    1: UserDB(username=\"alice\", email=\"alice@example.com\", hashed_password=\"hash1\", birth_year=1995),\n    2: UserDB(username=\"bob\", email=\"bob@example.com\", hashed_password=\"hash2\", birth_year=2010)\n}\n\n@app.get(\"/users/{user_id}\", response_model=UserOut)\ndef get_user(user_id: int):\n    user = users_db[user_id]\n    current_year = datetime.datetime.now().year\n    is_adult = (current_year - user.birth_year) >= 18\n    return UserOut(username=user.username, email=user.email, is_adult=is_adult)"
+}

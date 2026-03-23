@@ -1,0 +1,62 @@
+{
+    "id": "l6",
+    "chapterId": "ch_7",
+    "title": "Logging & Monitoring",
+    "description": "Add logging to your application for better observability.",
+    "xpReward": 20,
+    "estimatedMinutes": 12,
+    "section": "Error Handling",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Why Log? 📝",
+            "content": "# Logging Helps You\n\n- Debug issues in production\n- Track user activity\n- Monitor performance\n- Auditing\n\nPython's built-in `logging` module is sufficient for most apps."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Configuring Logging",
+            "content": "```python\nimport logging\n\nlogging.basicConfig(level=logging.INFO)\nlogger = logging.getLogger(__name__)\n\n@app.get(\"/\")\nasync def root():\n    logger.info(\"Root endpoint called\")\n    return {\"message\": \"Hello\"}\n```\n\nYou can also use middleware to log every request."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Request Logging Middleware",
+            "content": "```python\nfrom fastapi import Request\nimport time\n\n@app.middleware(\"http\")\nasync def log_requests(request: Request, call_next):\n    start = time.time()\n    response = await call_next(request)\n    process_time = time.time() - start\n    logger.info(f\"{request.method} {request.url.path} - {response.status_code} - {process_time:.3f}s\")\n    return response\n```",
+            "codeSnippet": "import logging\nimport time\nfrom fastapi import FastAPI, Request\n\napp = FastAPI()\nlogging.basicConfig(level=logging.INFO)\nlogger = logging.getLogger(\"api\")\n\n@app.middleware(\"http\")\nasync def log_requests(request: Request, call_next):\n    start = time.time()\n    response = await call_next(request)\n    process_time = time.time() - start\n    logger.info(f\"{request.method} {request.url.path} -> {response.status_code} ({process_time:.2f}s)\")\n    return response",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_4",
+            "type": "quiz",
+            "title": "Logging Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Why is it important to log requests in a production API?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To debug issues and monitor performance",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To make the API run faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To automatically fix bugs",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Logs provide visibility into what your API is doing, which is essential for debugging and monitoring.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,56 @@
+{
+    "id": "l3",
+    "chapterId": "ch_10",
+    "title": "Environment Variables & Configuration",
+    "description": "Manage configuration securely with Pydantic settings and .env files.",
+    "xpReward": 20,
+    "estimatedMinutes": 10,
+    "section": "Configuration",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Config Management with Pydantic",
+            "content": "# Keep Secrets Out of Code\n\nNever hardcode secrets or configuration values. Use environment variables and load them into Pydantic models.\n\n**Pydantic Settings** provides automatic validation and type conversion.\n\n```python\nfrom pydantic_settings import BaseSettings\n\nclass Settings(BaseSettings):\n    app_name: str = \"My FastAPI App\"\n    database_url: str\n    secret_key: str\n    debug: bool = False\n\n    class Config:\n        env_file = \".env\"\n\nsettings = Settings()\n```"
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Using Settings in FastAPI",
+            "content": "```python\nfrom fastapi import FastAPI\nfrom .config import settings\n\napp = FastAPI(title=settings.app_name, debug=settings.debug)\n\n# Use settings.database_url to connect to DB\n```\n\nCreate a `.env` file (never commit it):\n```\nDATABASE_URL=postgresql://user:pass@localhost/db\nSECRET_KEY=your-secret\nDEBUG=False\n```",
+            "codeSnippet": "# config.py\nfrom pydantic_settings import BaseSettings\n\nclass Settings(BaseSettings):\n    app_name: str = \"MyAPI\"\n    database_url: str\n    secret_key: str\n    debug: bool = False\n\n    class Config:\n        env_file = \".env\"\n\nsettings = Settings()\n\n# main.py\nfrom fastapi import FastAPI\nfrom .config import settings\n\napp = FastAPI(title=settings.app_name, debug=settings.debug)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Config Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Why should you use environment variables for configuration?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To make the code more readable",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To avoid committing secrets to version control",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To make the app run faster",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Environment variables allow you to keep sensitive information out of code and vary configuration per environment.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

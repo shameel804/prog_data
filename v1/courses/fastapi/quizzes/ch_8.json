@@ -1,0 +1,240 @@
+{
+    "id": "quiz_ch_8",
+    "chapterId": "ch_8",
+    "title": "Chapter 8 Quiz: Middleware & Background Tasks",
+    "description": "Test your knowledge of middleware, CORS, background tasks, and Celery.",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the primary purpose of middleware in FastAPI?",
+            "options": [
+                "To define database models",
+                "To intercept requests and responses for cross-cutting concerns",
+                "To handle authentication only",
+                "To serve static files"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Middleware is for cross-cutting concerns like logging, CORS, adding headers, etc."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "Middleware runs only after the route handler executes.",
+            "correctAnswer": false,
+            "explanation": "Middleware runs both before and after the route handler."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "Which decorator is used to create a custom middleware in FastAPI?",
+            "options": [
+                "@app.middleware(\"http\")",
+                "@app.on_event(\"middleware\")",
+                "@app.intercept",
+                "@app.filter"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`@app.middleware(\"http\")` registers a function as HTTP middleware."
+        },
+        {
+            "id": "q4",
+            "type": "fill_blank",
+            "question": "What argument to `CORSMiddleware` specifies which origins are allowed to access the API?",
+            "options": [
+                "allow_headers",
+                "allow_methods",
+                "allow_origins",
+                "allow_credentials"
+            ],
+            "correctAnswer": "allow_origins",
+            "explanation": "`allow_origins` is a list of allowed origins (e.g., `[\"http://localhost:3000\"]`)."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "What does `call_next(request)` return?",
+            "options": [
+                "The request object",
+                "The response object after passing through the rest of the middleware chain",
+                "A boolean indicating success",
+                "None"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`call_next` returns the response from the next middleware or route handler."
+        },
+        {
+            "id": "q6",
+            "type": "true_false",
+            "question": "You can add multiple middleware to a FastAPI app; they run in the order they are added.",
+            "correctAnswer": true,
+            "explanation": "Middleware is executed in the order they are added, like a chain."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "Which FastAPI class is used for simple background tasks?",
+            "options": [
+                "BackgroundWorker",
+                "BackgroundTasks",
+                "AsyncTasks",
+                "CeleryTasks"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`BackgroundTasks` is a built-in dependency for simple background tasks."
+        },
+        {
+            "id": "q8",
+            "type": "fill_blank",
+            "question": "What method do you call to add a task to `BackgroundTasks`?",
+            "options": [
+                "add_task",
+                "append",
+                "run",
+                "schedule"
+            ],
+            "correctAnswer": "add_task",
+            "explanation": "`background_tasks.add_task(func, *args, **kwargs)` schedules a function to run after the response."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "What is the main limitation of FastAPI's `BackgroundTasks`?",
+            "options": [
+                "It cannot accept arguments",
+                "It runs in the same process and may be lost if the server restarts",
+                "It requires a separate database",
+                "It only works with async functions"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`BackgroundTasks` are in-memory and not persistent; they don't survive server restarts and can't be distributed."
+        },
+        {
+            "id": "q10",
+            "type": "true_false",
+            "question": "Celery tasks are executed in the same process as the FastAPI server.",
+            "correctAnswer": false,
+            "explanation": "Celery workers run in separate processes, often on different machines, making tasks distributed."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "What is a common message broker for Celery?",
+            "options": [
+                "PostgreSQL",
+                "Redis",
+                "SQLite",
+                "MongoDB"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Redis and RabbitMQ are popular brokers for Celery."
+        },
+        {
+            "id": "q12",
+            "type": "fill_blank",
+            "question": "In Celery, what method is used to send a task to the queue?",
+            "options": [
+                "run",
+                "start",
+                "delay",
+                "enqueue"
+            ],
+            "correctAnswer": "delay",
+            "explanation": "`task.delay(*args)` adds the task to the broker for execution by a worker."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "What is the purpose of the `allow_credentials` parameter in `CORSMiddleware`?",
+            "options": [
+                "It allows cookies and authentication headers to be sent cross-origin",
+                "It encrypts the request",
+                "It allows any origin automatically",
+                "It disables CORS checks"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`allow_credentials=True` permits the browser to include credentials (cookies, authorization headers) in cross-origin requests."
+        },
+        {
+            "id": "q14",
+            "type": "true_false",
+            "question": "Middleware can modify the response headers before sending to the client.",
+            "correctAnswer": true,
+            "explanation": "After obtaining the response from `call_next`, you can modify it (e.g., add headers) and return it."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "Which of the following is a valid use case for `BackgroundTasks`?",
+            "options": [
+                "Processing a large dataset that takes hours",
+                "Sending a welcome email after registration",
+                "Running a complex machine learning model",
+                "All of the above"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`BackgroundTasks` is suitable for quick, non-critical tasks. Long or heavy tasks should use Celery."
+        },
+        {
+            "id": "q16",
+            "type": "fill_blank",
+            "question": "What is the name of the dependency that provides `BackgroundTasks` in a path operation?",
+            "options": [
+                "BackgroundTasks",
+                "background_tasks",
+                "TaskManager",
+                "AsyncTask"
+            ],
+            "correctAnswer": "BackgroundTasks",
+            "explanation": "You use `background_tasks: BackgroundTasks` as a parameter to inject it."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "What happens if a background task raises an exception?",
+            "options": [
+                "The response is sent with an error",
+                "The exception is logged but does not affect the response",
+                "The server crashes",
+                "The task retries automatically"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Exceptions in background tasks are logged, but the response has already been sent, so the client doesn't see it."
+        },
+        {
+            "id": "q18",
+            "type": "true_false",
+            "question": "You can override the default CORS middleware behavior by creating a custom middleware.",
+            "correctAnswer": true,
+            "explanation": "You can implement your own CORS handling if the built-in middleware doesn't meet your needs."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "In a middleware, if you do not call `call_next`, what happens?",
+            "options": [
+                "The request continues normally",
+                "The request is aborted and no response is sent",
+                "The response is None",
+                "An exception is raised"
+            ],
+            "correctAnswer": 1,
+            "explanation": "If you omit `call_next`, the request processing stops, and no response will be sent, causing a timeout."
+        },
+        {
+            "id": "q20",
+            "type": "fill_blank",
+            "question": "What is the typical Celery worker command to start processing tasks?",
+            "options": [
+                "celery worker -A tasks --loglevel=info",
+                "celery start",
+                "celery run",
+                "celery serve"
+            ],
+            "correctAnswer": "celery worker -A tasks --loglevel=info",
+            "explanation": "The command `celery -A tasks worker --loglevel=info` starts a worker for the app defined in `tasks.py`."
+        }
+    ]
+}

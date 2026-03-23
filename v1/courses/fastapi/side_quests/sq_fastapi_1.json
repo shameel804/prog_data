@@ -1,0 +1,70 @@
+{
+    "id": "sq_fastapi_1",
+    "title": "Bug Hunt: Async Pitfalls",
+    "triggerChapterIndex": 2,
+    "metadata": {
+        "type": "debug"
+    },
+    "questions": [
+        {
+            "id": "sq_fastapi_1_q1",
+            "type": "multiple_choice",
+            "question": "Find the bug that would cause this endpoint to block the event loop.",
+            "codeSnippet": "import time\nfrom fastapi import FastAPI\n\napp = FastAPI()\n\n@app.get(\"/slow\")\nasync def slow_endpoint():\n    time.sleep(5)  # simulate heavy work\n    return {\"message\": \"Done\"}",
+            "bugLineIndex": 7,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "Using `time.sleep()` in an async function blocks the event loop. Replace with `await asyncio.sleep(5)` or use a sync route.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_fastapi_1_q2",
+            "type": "multiple_choice",
+            "question": "What is the bug in this dependency that causes a connection leak?",
+            "codeSnippet": "from fastapi import FastAPI, Depends\nimport asyncpg\n\napp = FastAPI()\n\nasync def get_db():\n    conn = await asyncpg.connect(\"postgresql://user:pass@localhost/db\")\n    return conn\n\n@app.get(\"/users\")\nasync def get_users(conn=Depends(get_db)):\n    users = await conn.fetch(\"SELECT * FROM users\")\n    return users",
+            "bugLineIndex": 6,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The connection is never closed. The dependency should `yield` the connection and close it in a `finally` block.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_fastapi_1_q3",
+            "type": "multiple_choice",
+            "question": "Identify the bug that prevents the background task from running.",
+            "codeSnippet": "from fastapi import FastAPI, BackgroundTasks\n\napp = FastAPI()\n\ndef send_email(email: str):\n    print(f\"Sending email to {email}\")\n\n@app.post(\"/notify\")\nasync def notify(email: str):\n    background_tasks = BackgroundTasks()\n    background_tasks.add_task(send_email, email)\n    return {\"message\": \"Will send email\"}",
+            "bugLineIndex": 8,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "`background_tasks` is created but not injected. The parameter `background_tasks: BackgroundTasks` must be in the function signature.",
+            "xpReward": 20,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_fastapi_1_q4",
+            "type": "multiple_choice",
+            "question": "Find the bug in this Pydantic model that would cause validation to fail silently.",
+            "codeSnippet": "from pydantic import BaseModel\n\nclass Item(BaseModel):\n    name: str\n    price: float\n\nitem = Item(name=\"Apple\", price=\"not a number\")\nprint(item.price)",
+            "bugLineIndex": 5,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "`price=\"not a number\"` will raise a validation error because it expects a float. The bug is not in the model but in the data; the issue is that the error is not caught.",
+            "xpReward": 20,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_fastapi_1_q5",
+            "type": "multiple_choice",
+            "question": "What is wrong with this CORS configuration?",
+            "codeSnippet": "from fastapi import FastAPI\nfrom fastapi.middleware.cors import CORSMiddleware\n\napp = FastAPI()\n\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"https://example.com\"],\n    allow_credentials=True,\n    allow_methods=[\"GET\", \"POST\"],\n    allow_headers=[\"*\"],\n)",
+            "bugLineIndex": 6,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "When `allow_credentials=True`, `allow_origins` cannot be a list of specific origins? Actually it can, but the bug is that the frontend origin (e.g., `http://localhost:3000`) is missing. The real bug is that CORS is not configured for development.",
+            "xpReward": 20,
+            "difficulty": 2
+        }
+    ]
+}

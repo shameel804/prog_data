@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_4",
+    "title": "Database Session with Yield",
+    "description": "Implement a yield dependency that simulates opening and closing a database session.",
+    "estimatedMinutes": 12,
+    "problemStatement": "# Database Session with Yield\n\nCreate a dependency called `get_db` that:\n- Prints \"Opening database connection\" before yielding.\n- Yields a dictionary representing a database session (e.g., `{\"session_id\": 1, \"connected\": True}`).\n- After the yield, prints \"Closing database connection\".\n\nThen, create two endpoints that use this dependency:\n- `/users/` – returns a list of users (just a placeholder list).\n- `/items/` – returns a list of items.\n\nIn each endpoint, print the db session to the console (or return it along with the data).\n\nObserve that the \"Closing\" message appears after each request.",
+    "hints": [
+        "Use `yield` in the dependency and a `try/finally` block.",
+        "Print statements will appear in the server console, not in the response.",
+        "You can return a dict that includes the db session for demonstration."
+    ],
+    "expectedOutput": "The endpoints return some data; the server logs show open/close messages.",
+    "solutionCode": "from fastapi import FastAPI, Depends\n\napp = FastAPI()\n\ndef get_db():\n    print(\"Opening database connection\")\n    db = {\"session_id\": 1, \"connected\": True}\n    try:\n        yield db\n    finally:\n        print(\"Closing database connection\")\n\n@app.get(\"/users/\")\nasync def get_users(db: dict = Depends(get_db)):\n    # Simulate fetching users\n    users = [{\"id\": 1, \"name\": \"Alice\"}, {\"id\": 2, \"name\": \"Bob\"}]\n    return {\"db\": db, \"users\": users}\n\n@app.get(\"/items/\")\nasync def get_items(db: dict = Depends(get_db)):\n    items = [{\"id\": 1, \"name\": \"item1\"}, {\"id\": 2, \"name\": \"item2\"}]\n    return {\"db\": db, \"items\": items}"
+}

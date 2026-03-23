@@ -1,0 +1,16 @@
+{
+    "id": "task3",
+    "chapterId": "ch_6",
+    "title": "Secure File Upload with Permissions",
+    "description": "Create an endpoint for uploading files that only users with 'uploader' role can access.",
+    "estimatedMinutes": 15,
+    "problemStatement": "# Secure File Upload\n\nAdd a file upload feature to your API. Only users with the role \"uploader\" can upload files.\n\n**Requirements:**\n- Add a new user role: \"uploader\".\n- Create an endpoint `POST /upload` that accepts a file (using `File`).\n- Save the file to a local directory (e.g., `uploads/`).\n- Store metadata in the database: filename, uploader_id, timestamp.\n- Return a JSON response with the saved filename.\n- Only users with role \"uploader\" can access this endpoint.\n\n**Bonus:** Add a GET endpoint `/uploads` to list files that the current user has uploaded.",
+    "hints": [
+        "Use `UploadFile` from `fastapi` to handle file uploads.\nExample: `file: UploadFile = File(...)`.",
+        "Save the file with `await file.save(f\"uploads/{file.filename}\")` (use aiofiles).",
+        "Create a new table `Upload` with foreign key to `User`.",
+        "Use the `require_role` dependency with role \"uploader\"."
+    ],
+    "expectedOutput": "Only users with uploader role can upload files. The file is saved and metadata recorded.",
+    "solutionCode": "from fastapi import File, UploadFile\nimport aiofiles\nimport os\n\n# models.py\nclass Upload(Base):\n    __tablename__ = \"uploads\"\n    id = Column(Integer, primary_key=True)\n    filename = Column(String)\n    uploader_id = Column(Integer, ForeignKey(\"users.id\"))\n    uploaded_at = Column(DateTime, default=datetime.utcnow)\n    user = relationship(\"User\", back_populates=\"uploads\")\n\n# endpoints.py\n@app.post(\"/upload\")\nasync def upload_file(file: UploadFile = File(...),\n                      current_user: User = Depends(require_role(\"uploader\")),\n                      db: AsyncSession = Depends(get_db)):\n    # Ensure directory exists\n    os.makedirs(\"uploads\", exist_ok=True)\n    file_path = f\"uploads/{file.filename}\"\n    async with aiofiles.open(file_path, 'wb') as f:\n        content = await file.read()\n        await f.write(content)\n    db_upload = Upload(filename=file.filename, uploader_id=current_user.id)\n    db.add(db_upload)\n    await db.commit()\n    return {\"filename\": file.filename, \"message\": \"uploaded\"}"
+}

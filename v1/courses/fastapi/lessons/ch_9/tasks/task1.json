@@ -1,0 +1,13 @@
+{
+    "id": "task1",
+    "chapterId": "ch_9",
+    "title": "Echo WebSocket Server",
+    "description": "Create a WebSocket endpoint that echoes back any message it receives.",
+    "estimatedMinutes": 8,
+    "problemStatement": "# Echo WebSocket\n\nCreate a WebSocket endpoint `/echo` that:\n- Accepts the connection.\n- For each received text message, sends back the same message prefixed with \"Echo: \".\n- Handles disconnections gracefully.\n\nTest using a WebSocket client (e.g., browser console or `websocat`).",
+    "hints": [
+        "Use `await websocket.accept()` to accept the connection.\nIn a loop, `await websocket.receive_text()` and `await websocket.send_text(f\"Echo: {message}\")`."
+    ],
+    "expectedOutput": "When a client sends \"Hello\", the server responds with \"Echo: Hello\".",
+    "solutionCode": "from fastapi import FastAPI, WebSocket\n\napp = FastAPI()\n\n@app.websocket(\"/echo\")\nasync def echo(websocket: WebSocket):\n    await websocket.accept()\n    try:\n        while True:\n            data = await websocket.receive_text()\n            await websocket.send_text(f\"Echo: {data}\")\n    except Exception as e:\n        print(f\"Connection closed: {e}\")"
+}

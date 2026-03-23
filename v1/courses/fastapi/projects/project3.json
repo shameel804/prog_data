@@ -1,0 +1,27 @@
+{
+    "id": "project3",
+    "title": "E-Commerce API with Caching & Background Tasks",
+    "description": "Design a scalable e-commerce backend with product catalog, cart, order processing, and async email notifications.",
+    "difficulty": "Advanced",
+    "estimatedHours": "5-7",
+    "problemStatement": "# E-Commerce API\n\nBuild a production-ready e-commerce backend that combines all the concepts from the course: authentication, database, caching, background tasks, and monitoring.\n\n## Core Features\n\n### Product Catalog\n- `GET /products` – list products with filtering (category, price range), sorting, and pagination.\n- `GET /products/{id}` – get product details.\n- (Admin only) `POST /products` – create a product.\n- (Admin only) `PUT /products/{id}` – update product.\n- (Admin only) `DELETE /products/{id}` – delete product.\n\n### Shopping Cart\n- `GET /cart` – view current user's cart.\n- `POST /cart/items` – add item to cart (product_id, quantity).\n- `PUT /cart/items/{product_id}` – update quantity.\n- `DELETE /cart/items/{product_id}` – remove item.\n\n### Orders\n- `POST /orders` – create order from cart (checkout).\n- `GET /orders` – list user's orders.\n- `GET /orders/{id}` – order details.\n- After order creation, send a confirmation email (background task).\n\n### Additional Requirements\n- **Caching**: Cache product details and product list using Redis (invalidate on product update).\n- **Rate Limiting**: Use middleware to limit requests per user (e.g., 100 requests per minute).\n- **Structured Logging**: Log all requests with structlog in JSON format.\n- **Metrics**: Expose Prometheus metrics (request count, latency, cache hits).\n- **Health Checks**: Provide a `/health` endpoint that checks database and Redis.\n- **Database**: Use async SQLAlchemy with PostgreSQL.\n- **Testing**: Write tests for all critical endpoints (at least 10 tests).\n- **Deployment**: Provide Dockerfile and docker-compose.yml with all services (app, postgres, redis).\n\n## What We're Looking For\n- Comprehensive use of FastAPI features: dependency injection, background tasks, middleware.\n- Efficient caching strategy (cache-aside, invalidation).\n- Proper error handling and validation.\n- Scalable architecture ready for production.\n- Observability (logs, metrics).",
+    "requirements": [
+        "Product catalog with filtering, sorting, pagination",
+        "Shopping cart functionality",
+        "Order processing with email notification (background)",
+        "Redis caching for product data",
+        "Rate limiting middleware",
+        "Structured JSON logging",
+        "Prometheus metrics endpoint",
+        "Health check endpoint",
+        "Dockerized deployment"
+    ],
+    "hints": [
+        "Use `@app.middleware('http')` to implement rate limiting with Redis (e.g., token bucket).",
+        "For caching, use a dependency that checks Redis first, then database, and updates cache on write.",
+        "Use `BackgroundTasks` for sending emails to avoid delaying the response.",
+        "Use `prometheus-fastapi-instrumentator` to expose metrics easily.",
+        "Add a `check_health` endpoint that verifies DB and Redis connections."
+    ],
+    "expectedOutput": "A full-featured e-commerce backend that is secure, performant, and observable. It can be deployed in production with minimal changes."
+}

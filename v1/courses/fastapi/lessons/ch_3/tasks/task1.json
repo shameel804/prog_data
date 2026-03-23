@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_3",
+    "title": "Create a User Model",
+    "description": "Define a Pydantic model for a user and create an endpoint to receive user data.",
+    "estimatedMinutes": 10,
+    "problemStatement": "# User Registration API\n\nCreate a FastAPI app with:\n\n- A Pydantic model `UserCreate` with fields: `username` (str), `email` (str), `password` (str).\n- An endpoint `POST /users/` that accepts a `UserCreate` model as request body and returns a response with `{\"username\": ..., \"email\": ...}` (no password).\n\n**Requirements:**\n- Use the model to validate input.\n- Return a dictionary with username and email.\n- If validation fails, FastAPI should automatically return a 422 error.\n\n**Bonus:** Add validation that email contains '@' and username is at least 3 characters using `Field` constraints.",
+    "hints": [
+        "Import BaseModel and Field.",
+        "Use `Field(..., min_length=3)` for username.",
+        "For email validation, you can use `EmailStr` from `pydantic` but that requires `email-validator`. Or use regex."
+    ],
+    "expectedOutput": "POST /users/ with valid JSON returns 200 with `{\"username\": \"alice\", \"email\": \"alice@example.com\"}`. Invalid data returns 422.",
+    "solutionCode": "from fastapi import FastAPI\nfrom pydantic import BaseModel, Field\n\napp = FastAPI()\n\nclass UserCreate(BaseModel):\n    username: str = Field(..., min_length=3)\n    email: str\n    password: str\n\n@app.post(\"/users/\")\ndef create_user(user: UserCreate):\n    return {\"username\": user.username, \"email\": user.email}"
+}
