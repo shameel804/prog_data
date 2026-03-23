@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_2",
+    "title": "Calculator API",
+    "description": "Create a calculator API using path parameters for operation and numbers, with query parameters for options.",
+    "estimatedMinutes": 12,
+    "problemStatement": "# Calculator API\n\nBuild a FastAPI app that performs basic arithmetic operations via path parameters.\n\n**Endpoint:** `GET /calc/{operation}/{a}/{b}`\n\nWhere `operation` can be `add`, `subtract`, `multiply`, or `divide`.\n\n**Behavior:**\n- For `add`: return `{\"result\": a + b}`\n- For `subtract`: return `{\"result\": a - b}`\n- For `multiply`: return `{\"result\": a * b}`\n- For `divide`: return `{\"result\": a / b}` (if `b` is 0, return a 400 error with message \"Cannot divide by zero\")\n\n**Optional query parameter:** `format` – if set to `\"text\"`, return plain text instead of JSON. Example: `/calc/add/5/3?format=text` returns `\"8\"` (as plain text).\n\n**Requirements:**\n- Use path parameters for operation, a, b.\n- Use type hints.\n- For invalid operation, return a 400 error.\n- Use FastAPI's `HTTPException` to return errors.",
+    "hints": [
+        "Use `from fastapi import HTTPException` to raise errors.",
+        "Check operation string with if/elif or dictionary mapping.",
+        "For plain text, set response content type: `return PlainTextResponse(str(result))` (you need to import `PlainTextResponse` from `fastapi.responses`)."
+    ],
+    "expectedOutput": "GET /calc/add/5/3 → {\"result\": 8}. GET /calc/divide/10/0 → HTTP 400 with error. GET /calc/multiply/4/2?format=text → '8'.",
+    "solutionCode": "from fastapi import FastAPI, HTTPException\nfrom fastapi.responses import PlainTextResponse\n\napp = FastAPI()\n\n@app.get(\"/calc/{operation}/{a}/{b}\")\ndef calculate(operation: str, a: float, b: float, format: str = None):\n    if operation == \"add\":\n        result = a + b\n    elif operation == \"subtract\":\n        result = a - b\n    elif operation == \"multiply\":\n        result = a * b\n    elif operation == \"divide\":\n        if b == 0:\n            raise HTTPException(status_code=400, detail=\"Cannot divide by zero\")\n        result = a / b\n    else:\n        raise HTTPException(status_code=400, detail=\"Invalid operation\")\n\n    if format == \"text\":\n        return PlainTextResponse(str(result))\n    return {\"result\": result}"
+}

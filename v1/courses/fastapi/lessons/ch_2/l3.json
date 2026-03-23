@@ -1,0 +1,68 @@
+{
+    "id": "l3",
+    "chapterId": "ch_2",
+    "title": "Path Parameters",
+    "description": "Capture dynamic values from the URL path.",
+    "xpReward": 25,
+    "estimatedMinutes": 12,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Path Parameters 🌐",
+            "content": "# Variables in the URL\n\nPath parameters are part of the URL path. Define them with curly braces in the path.\n\n```python\n@app.get(\"/users/{user_id}\")\ndef get_user(user_id: int):\n    return {\"user_id\": user_id}\n```\n\n- `user_id` is captured from the URL.\n- FastAPI automatically validates types (e.g., `int`).\n- If you provide a non-integer, FastAPI returns a clear error."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Multiple Path Parameters",
+            "content": "You can have multiple path parameters.",
+            "codeSnippet": "@app.get(\"/users/{user_id}/items/{item_id}\")\ndef get_user_item(user_id: int, item_id: int):\n    return {\"user_id\": user_id, \"item_id\": item_id}",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Path Parameter Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Given the route `@app.get(\"/items/{item_id}\")`, how would you access the item ID in the function?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "As a function parameter named `item_id`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Via `request.path_params['item_id']`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's not accessible directly",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "FastAPI automatically maps path parameters to function parameters with the same name.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Path Order Matters",
+            "content": "# Fixed Paths vs. Parameters\n\nIf you have both a fixed path and a parameter, define the fixed one first to avoid conflicts.\n\n```python\n# This works\n@app.get(\"/users/me\")\ndef get_current_user():\n    return {\"user\": \"current\"}\n\n@app.get(\"/users/{user_id}\")\ndef get_user(user_id: int):\n    return {\"user_id\": user_id}\n```\n\nThe fixed path `/users/me` is checked before the parameterized one."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Use type hints for path parameters to get automatic validation and documentation. FastAPI will handle type conversion and error messages for you."
+        }
+    ]
+}

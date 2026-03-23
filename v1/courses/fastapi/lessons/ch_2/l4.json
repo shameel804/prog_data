@@ -1,0 +1,68 @@
+{
+    "id": "l4",
+    "chapterId": "ch_2",
+    "title": "Query Parameters",
+    "description": "Handle optional and required parameters from the query string.",
+    "xpReward": 25,
+    "estimatedMinutes": 12,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Query Parameters 🔍",
+            "content": "# The Part After `?`\n\nQuery parameters are key-value pairs after the `?` in the URL.\n\nExample: `/items/?skip=0&limit=10`\n\nIn FastAPI, any function parameter not declared in the path becomes a query parameter.\n\n```python\n@app.get(\"/items/\")\ndef read_items(skip: int = 0, limit: int = 10):\n    return {\"skip\": skip, \"limit\": limit}\n```\n\n- Default values make them optional.\n- Without defaults, they are required."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Optional vs. Required",
+            "content": "See how defaults affect query parameters.",
+            "codeSnippet": "@app.get(\"/search/\")\ndef search(q: str, sort: str = \"asc\"):\n    return {\"query\": q, \"sort\": sort}\n\n# /search/?q=hello  → sort defaults to \"asc\"\n# /search/?q=hello&sort=desc → sort is \"desc\"\n# /search/ → Error: missing q",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Query Parameter Check",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "In FastAPI, how do you define a query parameter?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "By using a function parameter that is not in the path",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "By using a special decorator",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "By extracting from `request.query_params`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Any function parameter not in the path is treated as a query parameter automatically.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Multiple Query Parameters & Types",
+            "content": "# Mixing Types\n\nQuery parameters can be of various types: `int`, `float`, `bool`, `str`, etc.\n\n```python\n@app.get(\"/filter/\")\ndef filter_items(\n    category: str,\n    min_price: float = 0,\n    in_stock: bool = True\n):\n    return {\n        \"category\": category,\n        \"min_price\": min_price,\n        \"in_stock\": in_stock\n    }\n```\n\n- Boolean parameters: `?in_stock=true` or `?in_stock=False` (case-insensitive).\n- FastAPI handles conversion automatically."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Use `Optional` from `typing` for nullable query parameters: `from typing import Optional` then `q: Optional[str] = None`."
+        }
+    ]
+}

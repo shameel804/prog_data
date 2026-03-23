@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_2",
+    "title": "Item API with Path and Query",
+    "description": "Build an API that reads items using path parameters and optional query parameters.",
+    "estimatedMinutes": 15,
+    "problemStatement": "# Item API\n\nCreate a FastAPI app with the following endpoints:\n\n1. `GET /items/{item_id}` – returns a JSON object with the item ID and an optional detail if provided via query parameter `detail` (boolean, default false). If `detail=true`, return `{\"item_id\": item_id, \"detail\": \"This is a detailed description\"}`; otherwise return `{\"item_id\": item_id}`.\n\n2. `GET /items/` – returns a list of all items (hardcoded list: `[\"apple\", \"banana\", \"cherry\"]`). Add query parameters `skip` (int, default 0) and `limit` (int, default 10) to slice the list.\n\n**Requirements:**\n- Use type hints for parameters.\n- Ensure proper handling of query parameters.\n- Test using the interactive docs.",
+    "hints": [
+        "For the detail parameter, use `detail: bool = False`.",
+        "To slice a list: `items[skip:skip+limit]`.",
+        "Remember that path parameters are declared in the decorator path."
+    ],
+    "expectedOutput": "GET /items/5 should return {\"item_id\": 5} or with detail: {\"item_id\": 5, \"detail\": \"This is a detailed description\"}. GET /items/ should return the sliced list based on skip/limit.",
+    "solutionCode": "from fastapi import FastAPI\n\napp = FastAPI()\n\nitems = [\"apple\", \"banana\", \"cherry\", \"date\", \"elderberry\"]\n\n@app.get(\"/items/{item_id}\")\ndef read_item(item_id: int, detail: bool = False):\n    if detail:\n        return {\"item_id\": item_id, \"detail\": \"This is a detailed description\"}\n    return {\"item_id\": item_id}\n\n@app.get(\"/items/\")\ndef list_items(skip: int = 0, limit: int = 10):\n    return items[skip:skip+limit]"
+}
