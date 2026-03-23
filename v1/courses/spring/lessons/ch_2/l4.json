@@ -1,0 +1,73 @@
+{
+    "id": "l4",
+    "chapterId": "ch_2",
+    "title": "Wiring Beans: @Autowired and Constructor Injection",
+    "description": "Connect your beans together using Spring’s automatic wiring.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Hands‑on",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Missing Link: @Autowired 🧵",
+            "content": "# Telling Spring to Inject\n\nOnce you have beans, you need to tell Spring where to inject them. The primary way is using `@Autowired`.\n\n**However**, since Spring 4.3, if a class has a **single constructor**, you can omit `@Autowired` – Spring will use that constructor automatically. This is the modern, cleanest approach."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which injection type does Spring prefer when a class has only one constructor?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Setter injection",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Field injection",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Constructor injection without @Autowired",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It throws an error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Since Spring 4.3, if a bean has a single constructor, Spring automatically uses it for injection, even without @Autowired.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Injecting a Service into a Controller",
+            "content": "Let’s create a controller that uses our `GreetingService`. Update your `HelloController` or create a new one:",
+            "codeSnippet": "package com.example.demo;\n\nimport org.springframework.web.bind.annotation.GetMapping;\nimport org.springframework.web.bind.annotation.PathVariable;\nimport org.springframework.web.bind.annotation.RestController;\n\n@RestController\npublic class GreetingController {\n\n    private final GreetingService greetingService;\n\n    // Constructor injection (no @Autowired needed)\n    public GreetingController(GreetingService greetingService) {\n        this.greetingService = greetingService;\n    }\n\n    @GetMapping(\"/greet/{name}\")\n    public String greet(@PathVariable String name) {\n        return greetingService.greet(name);\n    }\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "What Just Happened? ✨",
+            "content": "# Spring Did the Magic\n\n1. It found `GreetingService` because it’s annotated with `@Service`.\n2. It found `GreetingController` because it’s `@RestController` (which is `@Component`).\n3. It saw the constructor in `GreetingController` taking a `GreetingService`.\n4. It looked up the `GreetingService` bean and passed it in.\n\nNo `new` keywords, no factory classes – just clean, testable code."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "tip",
+            "title": "Testing the Controller 🧪",
+            "content": "Because we used constructor injection, writing a unit test is easy: we can pass a mock `GreetingService` to the controller’s constructor, without needing to start Spring."
+        }
+    ]
+}

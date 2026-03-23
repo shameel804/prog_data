@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_2",
+    "title": "Inject a Service into a Controller",
+    "description": "Create a new service and use it in a controller.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Your task is to extend the application from Chapter 1 by adding a service that returns a message, and then inject that service into a controller.\n\n**Requirements:**\n1. Create a new class `MessageService` in the same package as your main application.\n2. Annotate it with `@Service`.\n3. Add a method `public String getMessage(String name)` that returns a string like `\"Hello, {name}!\"`.\n4. Create a controller `MessageController` (or modify an existing one) with a GET endpoint at `/message/{name}`.\n5. Inject `MessageService` using constructor injection.\n6. The endpoint should call `messageService.getMessage(name)` and return the result.\n\n**Bonus:** Add a second endpoint `/capitalize/{name}` that returns the name in uppercase using a separate method in the service.",
+    "hints": [
+        "Make sure your `MessageService` is in the same package (or a sub‑package) as `DemoApplication` so component scanning finds it.",
+        "Use `@RestController` for the controller and `@GetMapping` for the endpoint.",
+        "Constructor injection: add a constructor with a `MessageService` parameter and assign it to a `final` field.",
+        "For the bonus, add a new method in `MessageService` and a new endpoint in the controller."
+    ],
+    "expectedOutput": "When you visit `http://localhost:8080/message/John`, you should see:\n\n```\nHello, John!\n```\n\nFor the bonus, `http://localhost:8080/capitalize/john` should return `JOHN`.",
+    "solutionCode": "package com.example.demo;\n\nimport org.springframework.stereotype.Service;\n\n@Service\npublic class MessageService {\n    public String getMessage(String name) {\n        return \"Hello, \" + name + \"!\";\n    }\n\n    public String capitalize(String name) {\n        return name.toUpperCase();\n    }\n}\n\n// --------------------------------------------------------------------\n\npackage com.example.demo;\n\nimport org.springframework.web.bind.annotation.GetMapping;\nimport org.springframework.web.bind.annotation.PathVariable;\nimport org.springframework.web.bind.annotation.RestController;\n\n@RestController\npublic class MessageController {\n\n    private final MessageService messageService;\n\n    public MessageController(MessageService messageService) {\n        this.messageService = messageService;\n    }\n\n    @GetMapping(\"/message/{name}\")\n    public String getMessage(@PathVariable String name) {\n        return messageService.getMessage(name);\n    }\n\n    // Bonus\n    @GetMapping(\"/capitalize/{name}\")\n    public String capitalize(@PathVariable String name) {\n        return messageService.capitalize(name);\n    }\n}"
+}

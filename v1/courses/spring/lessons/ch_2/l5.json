@@ -1,0 +1,82 @@
+{
+    "id": "l5",
+    "chapterId": "ch_2",
+    "title": "Bean Scopes & Lifecycle",
+    "description": "Understand singleton, prototype, and how beans are born and destroyed.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Bean Scopes: Singleton vs. Prototype 🎭",
+            "content": "# How Many Instances?\n\nBy default, Spring beans are **singletons** – one instance per Spring container. This is great for stateless services.\n\nBut sometimes you need a new instance every time you ask for the bean. That’s **prototype** scope.\n\n**Common scopes:**\n* `singleton` (default) – one instance per container.\n* `prototype` – new instance each time requested.\n* `request` – one per HTTP request (web apps).\n* `session` – one per HTTP session (web apps)."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the default scope of a Spring bean?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "prototype",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "singleton",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "request",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "session",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "By default, all Spring beans are singletons – one instance per Spring IoC container.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Changing the Scope",
+            "content": "Use `@Scope` to change a bean’s scope. Here’s how to make a bean prototype:",
+            "codeSnippet": "import org.springframework.context.annotation.Scope;\nimport org.springframework.stereotype.Component;\n\n@Component\n@Scope(\"prototype\")\npublic class PrototypeBean {\n    // A new instance is created each time it is injected\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Bean Lifecycle Hooks 🔄",
+            "content": "# From Creation to Destruction\n\nSpring beans go through a lifecycle:\n\n1. **Instantiation** – container creates the bean.\n2. **Populate properties** – dependencies are injected.\n3. **Initialization** – you can run custom code with `@PostConstruct`.\n4. **Ready** – the bean is used.\n5. **Destruction** – container is closed, you can run cleanup with `@PreDestroy`.\n\nThese hooks are useful for setting up resources or releasing them."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Using @PostConstruct and @PreDestroy",
+            "content": "Add these methods to a bean to run code after dependencies are set, or before the bean is destroyed:",
+            "codeSnippet": "import javax.annotation.PostConstruct;\nimport javax.annotation.PreDestroy;\nimport org.springframework.stereotype.Component;\n\n@Component\npublic class MyBean {\n\n    @PostConstruct\n    public void init() {\n        System.out.println(\"Bean is ready!\");\n    }\n\n    @PreDestroy\n    public void cleanup() {\n        System.out.println(\"Bean is being destroyed.\");\n    }\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "Avoid Common Pitfall ⚠️",
+            "content": "If you inject a **prototype** bean into a **singleton** bean, the prototype bean will be created only once (when the singleton is instantiated). To get a fresh prototype each time, you need a provider (like `ObjectFactory` or `@Lookup`). We’ll cover that later in advanced topics."
+        }
+    ]
+}

@@ -1,0 +1,73 @@
+{
+    "id": "l3",
+    "chapterId": "ch_2",
+    "title": "Declaring Beans with Annotations",
+    "description": "Use @Component, @Service, @Repository to let Spring discover your classes.",
+    "xpReward": 30,
+    "estimatedMinutes": 12,
+    "section": "Hands‑on",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Spring’s Stereotype Annotations 🏷️",
+            "content": "# Make Your Classes Beans\n\nSpring can automatically detect and register your classes as beans if you annotate them with one of these stereotypes:\n\n* **`@Component`** – Generic stereotype for any Spring‑managed bean.\n* **`@Service`** – Indicates a service layer bean (business logic).\n* **`@Repository`** – Indicates a DAO (Data Access Object) bean; adds persistence exception translation.\n* **`@Controller`** – Already seen for web layer.\n\nAll of these are meta‑annotated with `@Component`, so Spring treats them the same – but they give hints about the class’s role."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which annotation is best suited for a class that contains business logic?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "@Component",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "@Service",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "@Repository",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "@Bean",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`@Service` is a specialization of `@Component` that indicates a service layer class, making the intent clear.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Creating a Service Bean",
+            "content": "Let’s create a simple service that we’ll later inject into a controller. Create a new class in the same package as your main application:",
+            "codeSnippet": "package com.example.demo;\n\nimport org.springframework.stereotype.Service;\n\n@Service\npublic class GreetingService {\n    public String greet(String name) {\n        return \"Hello, \" + name + \"!\";\n    }\n}",
+            "codeLanguage": "java",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Component Scanning 🔍",
+            "content": "# How Spring Finds Your Beans\n\nSpring Boot automatically scans packages starting from the package of your `@SpringBootApplication` class. That’s why we put our service in `com.example.demo` – it’s inside the scan path.\n\nYou can also specify custom scan packages with `@ComponentScan`. But in most Spring Boot apps, you don’t need to – the default works perfectly."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "tip",
+            "title": "Bean Names 🔤",
+            "content": "By default, Spring uses the class name with the first letter lowercase as the bean name. So `GreetingService` becomes `greetingService`. You can change it by providing a name in the annotation: `@Service(\"customName\")`."
+        }
+    ]
+}
