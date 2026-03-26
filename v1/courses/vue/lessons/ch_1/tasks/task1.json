@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_1",
+    "title": "Build a Simple Counter",
+    "description": "Create a Vue app with a counter that increments, decrements, and resets.",
+    "estimatedMinutes": 10,
+    "problemStatement": "## Problem Statement\n\nCreate a Vue 3 application with a counter. The app should display the current count and provide three buttons:\n\n- **Increment** – increases the count by 1.\n- **Decrement** – decreases the count by 1 (but shouldn't go below 0).\n- **Reset** – resets the count to 0.\n\nAdditionally, the background color of the counter number should change based on the count:\n- Green if count > 5\n- Yellow if count is between 1 and 5\n- Red if count is 0\n\nUse **CDN** setup (you can write everything in a single HTML file).\n\n**Bonus**: Display a message when the count reaches 10 (e.g., \"You've reached the max!\") and disable the increment button.",
+    "hints": [
+        "Use `data` to store the count.",
+        "Create methods for increment, decrement, and reset.",
+        "Use `v-bind:class` or `:class` to conditionally apply a CSS class based on the count.",
+        "To disable the increment button, use `:disabled` with a condition like `count >= 10`."
+    ],
+    "expectedOutput": "A working Vue app with interactive buttons and dynamic styling as described.",
+    "solutionCode": "<!DOCTYPE html>\n<html>\n<head>\n  <title>Counter App</title>\n  <script src=\"https://unpkg.com/vue@3/dist/vue.global.js\"></script>\n  <style>\n    .counter {\n      font-size: 48px;\n      font-weight: bold;\n      margin: 20px;\n    }\n    .green { color: green; }\n    .yellow { color: goldenrod; }\n    .red { color: red; }\n    button { margin: 5px; padding: 8px 16px; font-size: 16px; }\n  </style>\n</head>\n<body>\n  <div id=\"app\">\n    <div class=\"counter\" :class=\"{ green: count > 5, yellow: count > 0 && count <= 5, red: count === 0 }\">\n      {{ count }}\n    </div>\n    <button @click=\"increment\" :disabled=\"count >= 10\">Increment</button>\n    <button @click=\"decrement\" :disabled=\"count === 0\">Decrement</button>\n    <button @click=\"reset\">Reset</button>\n    <p v-if=\"count === 10\">🎉 You've reached the max! 🎉</p>\n  </div>\n\n  <script>\n    const { createApp } = Vue;\n\n    createApp({\n      data() {\n        return {\n          count: 0\n        };\n      },\n      methods: {\n        increment() {\n          if (this.count < 10) this.count++;\n        },\n        decrement() {\n          if (this.count > 0) this.count--;\n        },\n        reset() {\n          this.count = 0;\n        }\n      }\n    }).mount('#app');\n  </script>\n</body>\n</html>"
+}
