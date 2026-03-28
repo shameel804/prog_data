@@ -1,0 +1,73 @@
+{
+    "id": "l5",
+    "chapterId": "ch_7",
+    "title": "Advanced Reactivity: ref, reactive, and Beyond",
+    "description": "Master `ref`, `reactive`, `shallowRef`, `readonly`, and when to use each.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Reactivity",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "ref vs reactive",
+            "content": "# ref\n\n- Wraps a value (primitive or object) into a reactive **ref** object with a `.value` property.\n- Use `ref` for primitives or when you want to pass a single reactive variable.\n\n# reactive\n\n- Makes an object deeply reactive.\n- Only works for objects (including arrays).\n- Cannot be directly used for primitives.\n\n```javascript\nimport { ref, reactive } from 'vue';\n\nconst count = ref(0);       // count.value\nconst state = reactive({    // state.count\n  count: 0\n});\n```\n\nIn templates, `ref` automatically unwraps when used as a top‑level property."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Shallow & Readonly Variants",
+            "content": "# shallowRef / shallowReactive\n\n- `shallowRef` – only the `.value` assignment is reactive; nested properties are not.\n- `shallowReactive` – only the first‑level properties are reactive; deeper properties are not.\n\nUseful for large objects where you don't need deep reactivity, improving performance.\n\n# readonly / shallowReadonly\n\n- `readonly` – makes an object deeply readonly (cannot be mutated).\n- `shallowReadonly` – only first‑level are readonly.\n\n```javascript\nconst original = reactive({ count: 0, nested: { num: 1 } });\nconst copy = readonly(original);\ncopy.count = 1; // warning in console\n```"
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Example: ref vs reactive",
+            "content": "Demonstrating both:",
+            "codeSnippet": "<div id=\"app\">\n  <div>Count (ref): {{ count }}</div>\n  <button @click=\"count++\">Increment ref</button>\n  <div>State (reactive): {{ state.count }}</div>\n  <button @click=\"state.count++\">Increment reactive</button>\n  <div>Shallow: {{ shallowObj.nested }}</div>\n  <button @click=\"shallowObj.nested.value++\">Change nested (will NOT update)</button>\n  <button @click=\"shallowObj = { nested: { value: 100 } }\">Replace whole object (will update)</button>\n</div>\n\n<script>\n  const { createApp, ref, reactive, shallowRef } = Vue;\n\n  createApp({\n    setup() {\n      const count = ref(0);\n      const state = reactive({ count: 0 });\n      const shallowObj = shallowRef({ nested: { value: 0 } });\n\n      return { count, state, shallowObj };\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_4",
+            "type": "tip",
+            "title": "Choosing the Right API",
+            "content": "| Use Case | Recommended |\n|----------|-------------|\n| Primitive value (string, number, boolean) | `ref` |\n| Object that will be mutated deeply | `reactive` |\n| Object that will be reassigned often | `ref` (and use `.value` when reassigning) |\n| Large object where only top‑level changes matter | `shallowReactive` |\n| Expose reactive data without allowing mutations | `readonly` |"
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the main difference between `ref` and `reactive` in Vue 3?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "`ref` is for primitive values; `reactive` is for objects",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "`ref` creates a wrapper with `.value`; `reactive` directly proxies the object",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "There is no difference",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "`reactive` is only for arrays",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`ref` returns a reactive wrapper object with a `.value` property, while `reactive` directly makes the object reactive without a wrapper.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

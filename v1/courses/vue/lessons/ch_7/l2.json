@@ -1,0 +1,73 @@
+{
+    "id": "l2",
+    "chapterId": "ch_7",
+    "title": "Mounting & Updating Hooks in Depth",
+    "description": "Explore `created`, `mounted`, `beforeUpdate`, `updated`, and their use cases.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Lifecycle",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "created()",
+            "content": "# created\n\nCalled **synchronously** after the component instance is created. At this point:\n- Reactive data, computed properties, and methods are available.\n- The template has **not** been rendered yet (DOM not available).\n\n**Use cases**:\n- Fetch initial data from an API.\n- Set up timers, intervals, or event listeners that don't require the DOM.\n\n```javascript\ncreated() {\n  this.fetchUserData();\n}\n```"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "mounted()",
+            "content": "# mounted\n\nCalled after the component's template has been rendered into the DOM. At this point:\n- The component is visible.\n- DOM elements are available (e.g., via `$refs`).\n\n**Use cases**:\n- Access or manipulate DOM elements (e.g., focus an input).\n- Initialize third‑party libraries that need a DOM node (charts, maps).\n\n```javascript\nmounted() {\n  this.$refs.input.focus();\n}\n```"
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "beforeUpdate & updated",
+            "content": "# beforeUpdate / updated\n\n- `beforeUpdate` – called before the DOM is patched after a data change. You can read the current DOM state before updates.\n- `updated` – called after the DOM has been re‑rendered. Avoid modifying state here to prevent infinite loops.\n\n**Use cases**:\n- Perform side effects after the DOM updates (e.g., scroll to a new position).\n- Apply custom DOM manipulations based on new data.\n\n```javascript\nupdated() {\n  // log the new DOM height\n  console.log(this.$el.scrollHeight);\n}\n```"
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Example: Focus on Input after Mount",
+            "content": "Auto‑focus an input field:",
+            "codeSnippet": "<div id=\"app\">\n  <focus-input />\n</div>\n\n<script>\n  const FocusInput = {\n    template: `<input ref=\"input\" placeholder=\"I'll be focused on mount\">`,\n    mounted() {\n      this.$refs.input.focus();\n    }\n  };\n\n  createApp({\n    components: { FocusInput }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "In which lifecycle hook would you safely access the DOM element using `this.$refs`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "created",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "beforeMount",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "mounted",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "beforeUpdate",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "In `mounted`, the template has been rendered and the DOM is available, so `$refs` is populated.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

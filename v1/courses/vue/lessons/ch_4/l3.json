@@ -1,0 +1,67 @@
+{
+    "id": "l3",
+    "chapterId": "ch_4",
+    "title": "Computed Setters",
+    "description": "Learn how to create writable computed properties with getters and setters.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Writable Computed Properties",
+            "content": "# Getter and Setter\n\nBy default, computed properties are **read-only**. But you can provide a setter to make them writable.\n\n```javascript\ncomputed: {\n  fullName: {\n    get() {\n      return this.firstName + ' ' + this.lastName;\n    },\n    set(newValue) {\n      const names = newValue.split(' ');\n      this.firstName = names[0];\n      this.lastName = names[names.length - 1];\n    }\n  }\n}\n```\n\nNow you can use `v-model` on `fullName` or assign a value directly."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Example: Full Name Editor",
+            "content": "A component where you can edit the full name, and it updates the first and last names:",
+            "codeSnippet": "<div id=\"app\">\n  <div>\n    <label>First Name:</label>\n    <input v-model=\"firstName\">\n  </div>\n  <div>\n    <label>Last Name:</label>\n    <input v-model=\"lastName\">\n  </div>\n  <div>\n    <label>Full Name:</label>\n    <input v-model=\"fullName\">\n  </div>\n  <p>First: {{ firstName }} | Last: {{ lastName }}</p>\n</div>\n\n<script>\n  createApp({\n    data() {\n      return {\n        firstName: 'John',\n        lastName: 'Doe'\n      };\n    },\n    computed: {\n      fullName: {\n        get() {\n          return this.firstName + ' ' + this.lastName;\n        },\n        set(value) {\n          const parts = value.split(' ');\n          this.firstName = parts[0];\n          this.lastName = parts[1] || '';\n        }\n      }\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_3",
+            "type": "tip",
+            "title": "When to Use Setters",
+            "content": "Computed setters are great for creating a simplified interface to a complex data model. For example:\n- A date picker that sets separate year/month/day fields.\n- A color picker that sets RGB values from a hex string.\n\nThey keep your template clean and your logic centralized."
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "How do you make a computed property writable?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Use a setter function inside the computed property",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Declare it as a method",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Use the `writable` modifier",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "You cannot make computed properties writable",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "You define a computed property as an object with `get` and `set` methods. The setter is called when the property is assigned a new value.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

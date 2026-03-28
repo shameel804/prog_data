@@ -1,0 +1,67 @@
+{
+    "id": "l1",
+    "chapterId": "ch_4",
+    "title": "What Are Computed Properties?",
+    "description": "Discover how to create derived data that automatically updates when dependencies change.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Introduction",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The Problem with Complex Templates",
+            "content": "# Keep Templates Simple\n\nImagine you have a list of tasks and you want to display the number of completed tasks. You could write something like this in your template:\n\n```html\n<p>Completed: {{ tasks.filter(t => t.completed).length }}</p>\n```\n\nThis works, but it has two problems:\n1. **Readability** – the template becomes cluttered with logic.\n2. **Performance** – this expression is re-evaluated on every render, even if `tasks` hasn't changed.\n\n**Computed properties** solve both issues."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "Enter Computed Properties",
+            "content": "# Computed Properties\n\nA **computed property** is a function that returns a value based on reactive data. Vue caches the result and only recomputes when its dependencies change.\n\n```javascript\ncomputed: {\n  completedCount() {\n    return this.tasks.filter(t => t.completed).length;\n  }\n}\n```\n\nIn the template, you use it like a normal data property:\n```html\n<p>Completed: {{ completedCount }}</p>\n```\n\nNow the logic is in a clean, reusable method, and it's only recalculated when `tasks` changes."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "code",
+            "title": "Example: Filtered List",
+            "content": "A computed property that returns filtered todos:",
+            "codeSnippet": "<div id=\"app\">\n  <input v-model=\"searchTerm\" placeholder=\"Search todos\">\n  <ul>\n    <li v-for=\"todo in filteredTodos\" :key=\"todo.id\">\n      {{ todo.text }}\n    </li>\n  </ul>\n</div>\n\n<script>\n  createApp({\n    data() {\n      return {\n        searchTerm: '',\n        todos: [\n          { id: 1, text: 'Learn Vue' },\n          { id: 2, text: 'Build an app' },\n          { id: 3, text: 'Share with friends' }\n        ]\n      };\n    },\n    computed: {\n      filteredTodos() {\n        if (!this.searchTerm) return this.todos;\n        return this.todos.filter(todo =>\n          todo.text.toLowerCase().includes(this.searchTerm.toLowerCase())\n        );\n      }\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What is the main advantage of using a computed property over a method in the template?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Computed properties can be async",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Computed properties are cached based on dependencies",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Computed properties don't need parentheses",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Computed properties are only for strings",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Computed properties cache their result and only recompute when reactive dependencies change, improving performance and keeping templates clean.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

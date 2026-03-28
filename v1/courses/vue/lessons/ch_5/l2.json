@@ -1,0 +1,67 @@
+{
+    "id": "l2",
+    "chapterId": "ch_5",
+    "title": "Creating and Registering Components",
+    "description": "Learn how to define components using Options API and register them globally or locally.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Basics",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Defining a Component",
+            "content": "# Two Ways to Define Components\n\n1. **Options API** (like we've been doing in the root app)\n2. **Single‑File Components (SFC)** – `.vue` files (we'll use SFC later in advanced chapters)\n\nFor now, we'll define components as JavaScript objects:\n\n```javascript\nconst MyButton = {\n  template: `<button @click=\"count++\">Clicked {{ count }} times</button>`,\n  data() {\n    return { count: 0 }\n  }\n}\n```\n\nThis component can be registered and used anywhere."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Registering Components",
+            "content": "## Global Registration\n\nMake a component available everywhere in your app:\n\n```javascript\nconst app = createApp({...});\napp.component('MyButton', MyButton);\n```\n\nThen use it in any template: `<MyButton />`\n\n## Local Registration\n\nRegister only in a parent component:\n\n```javascript\nconst Parent = {\n  components: { MyButton },\n  template: `<div><MyButton /></div>`\n}\n```\n\nLocal registration is preferred for better performance and clarity."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Example: Reusable Button Component",
+            "content": "Let's create a reusable button component:",
+            "codeSnippet": "<div id=\"app\">\n  <reusable-button></reusable-button>\n  <reusable-button></reusable-button>\n</div>\n\n<script>\n  const { createApp } = Vue;\n\n  // Define the component\n  const ReusableButton = {\n    template: `<button @click=\"count++\">Clicked {{ count }} times</button>`,\n    data() {\n      return { count: 0 };\n    }\n  };\n\n  const app = createApp({\n    // root component (no data needed here)\n  });\n\n  // Register globally\n  app.component('ReusableButton', ReusableButton);\n\n  app.mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the difference between global and local component registration?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Global components are available everywhere; local components are only available in the parent where they are registered",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Local components are faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Global components cannot use props",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "There is no difference",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Global registration makes the component available in any component's template, while local registration limits it to the component where it's imported and registered.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,67 @@
+{
+    "id": "l4",
+    "chapterId": "ch_4",
+    "title": "Watchers: Reacting to Data Changes",
+    "description": "Perform side effects when data changes using watchers.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Watchers",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "What Are Watchers?",
+            "content": "# Watchers: Do Something on Change\n\nWhile computed properties are great for deriving data, sometimes you need to **perform side effects** when data changes – like making an API call, logging, or updating the DOM.\n\nVue provides **watchers** for this:\n\n```javascript\nwatch: {\n  searchTerm(newVal, oldVal) {\n    console.log('Search term changed from', oldVal, 'to', newVal);\n    this.fetchResults(newVal);\n  }\n}\n```\n\nWatchers let you react to changes in any reactive property (data, computed, props)."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Basic Syntax",
+            "content": "You can watch a property by defining a function with the same name inside the `watch` option:\n\n```javascript\nexport default {\n  data() {\n    return { count: 0 };\n  },\n  watch: {\n    // This function runs whenever count changes\n    count(newVal, oldVal) {\n      console.log(`Count changed from ${oldVal} to ${newVal}`);\n    }\n  }\n}\n```\n\nYou can also watch nested properties using dot notation: `'obj.property'(newVal, oldVal) { ... }`."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Example: Debounced Search",
+            "content": "A search box that makes an API call (simulated) only after the user stops typing:",
+            "codeSnippet": "<div id=\"app\">\n  <input v-model=\"searchQuery\" placeholder=\"Search...\">\n  <p>Searching for: {{ searchQuery }}</p>\n  <div v-if=\"loading\">Loading...</div>\n  <div v-else>Results: {{ results }}</div>\n</div>\n\n<script>\n  createApp({\n    data() {\n      return {\n        searchQuery: '',\n        results: [],\n        loading: false,\n        debounceTimer: null\n      };\n    },\n    watch: {\n      searchQuery(newVal) {\n        clearTimeout(this.debounceTimer);\n        if (!newVal) {\n          this.results = [];\n          return;\n        }\n        this.loading = true;\n        this.debounceTimer = setTimeout(() => {\n          // Simulate API call\n          this.results = [\n            `Result for \"${newVal}\" 1`,\n            `Result for \"${newVal}\" 2`\n          ];\n          this.loading = false;\n        }, 500);\n      }\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "When should you use a watcher instead of a computed property?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "When you need to perform side effects like API calls",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "When you need to derive new data from existing data",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "When you need caching",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "When you need to bind to form inputs",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Watchers are designed for side effects (async operations, DOM updates) when data changes. Computed properties are for synchronous derived data.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

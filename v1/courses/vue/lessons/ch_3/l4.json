@@ -1,0 +1,67 @@
+{
+    "id": "l4",
+    "chapterId": "ch_3",
+    "title": "Working with Forms: Beyond v-model",
+    "description": "Handle form submission, reset, and advanced input events.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Forms",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Form Events: submit, reset",
+            "content": "# Handling Form Events\n\nWhile `v-model` handles two‑way binding, you often need to react to the form's submission or reset actions.\n\n- `@submit` – triggered when the form is submitted (user hits Enter inside a field or clicks submit button).\n- `@reset` – triggered when the form is reset (by a `<button type=\"reset\">`).\n\nAlways use `.prevent` with `@submit` to avoid page reloads."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Form with Submit and Reset",
+            "content": "A registration form that logs data on submit and clears on reset:",
+            "codeSnippet": "<div id=\"app\">\n  <form @submit.prevent=\"register\" @reset.prevent=\"resetForm\">\n    <div>\n      <label>Name:</label>\n      <input v-model=\"user.name\" required>\n    </div>\n    <div>\n      <label>Email:</label>\n      <input v-model=\"user.email\" type=\"email\" required>\n    </div>\n    <button type=\"submit\">Register</button>\n    <button type=\"reset\">Reset</button>\n  </form>\n  <p v-if=\"submitted\">✅ Registered: {{ user.name }}</p>\n</div>\n\n<script>\n  createApp({\n    data() {\n      return {\n        user: { name: '', email: '' },\n        submitted: false\n      };\n    },\n    methods: {\n      register() {\n        console.log('Registering', this.user);\n        this.submitted = true;\n        setTimeout(() => { this.submitted = false; }, 2000);\n      },\n      resetForm() {\n        this.user = { name: '', email: '' };\n        this.submitted = false;\n      }\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Input Events: change, input, blur",
+            "content": "Beyond `v-model`, you might want to react to specific input events:\n\n- `@input` – triggered on every keystroke (like `v-model` without modifiers).\n- `@change` – triggered when the element loses focus after a value change.\n- `@blur` – triggered when the element loses focus.\n\nThese give you fine‑grained control over user interaction."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Why should you use `.prevent` on form `@submit`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To prevent the browser from reloading the page",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To stop event propagation",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To submit the form only once",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To disable the form",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`.prevent` calls `event.preventDefault()`, which stops the browser from reloading the page on form submission.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

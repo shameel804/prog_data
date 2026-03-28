@@ -1,0 +1,73 @@
+{
+    "id": "l5",
+    "chapterId": "ch_4",
+    "title": "Advanced Watchers & Use Cases",
+    "description": "Deep watchers, immediate execution, and watching multiple sources.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Deep Watchers",
+            "content": "# Watching Nested Objects\n\nBy default, watchers don't detect changes inside nested objects. To watch deeply, set the `deep` option.\n\n```javascript\nwatch: {\n  user: {\n    handler(newVal, oldVal) {\n      console.log('User changed:', newVal);\n    },\n    deep: true\n  }\n}\n```\n\nThis will trigger whenever any property inside `user` changes (even nested).\n\n⚠️ **Performance note**: Deep watchers can be expensive. Use them sparingly."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Immediate Watchers",
+            "content": "# Run Watcher Immediately\n\nSometimes you want the watcher to run **right away** when the component is created, not just after the first change.\n\n```javascript\nwatch: {\n  searchTerm: {\n    handler(newVal) {\n      this.fetchResults(newVal);\n    },\n    immediate: true\n  }\n}\n```\n\nWith `immediate: true`, the handler runs once during component creation."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Example: Deep & Immediate Watcher",
+            "content": "A watcher that logs changes to a nested object and runs immediately:",
+            "codeSnippet": "<div id=\"app\">\n  <input v-model=\"user.name\" placeholder=\"Name\">\n  <input v-model=\"user.age\" type=\"number\" placeholder=\"Age\">\n  <p>User: {{ user.name }}, {{ user.age }}</p>\n</div>\n\n<script>\n  createApp({\n    data() {\n      return {\n        user: { name: 'Alice', age: 25 }\n      };\n    },\n    watch: {\n      user: {\n        handler(newVal) {\n          console.log('User changed:', newVal);\n        },\n        deep: true,\n        immediate: true\n      }\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_4",
+            "type": "tip",
+            "title": "Watching Multiple Sources",
+            "content": "If you need to watch multiple reactive sources and run a single handler, use a **computed property** that combines them, then watch that computed property.\n\n```javascript\ncomputed: {\n  searchCriteria() {\n    return { query: this.search, category: this.category };\n  }\n},\nwatch: {\n  searchCriteria: {\n    handler() { this.fetch(); },\n    deep: true\n  }\n}\n```"
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What does the `deep: true` option do in a watcher?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It watches for changes in nested properties of an object",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It makes the watcher run asynchronously",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It watches for changes in arrays only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It prevents the watcher from running",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`deep: true` tells Vue to watch for changes inside the object, not just the object reference.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

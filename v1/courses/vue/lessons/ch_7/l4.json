@@ -1,0 +1,73 @@
+{
+    "id": "l4",
+    "chapterId": "ch_7",
+    "title": "Reactivity Fundamentals: How Vue Tracks Changes",
+    "description": "Dive into Vue's reactivity system: proxies, getters, setters, and dependency tracking.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Reactivity",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Magic Behind Reactivity",
+            "content": "# How Does Vue Know When to Update?\n\nVue's reactivity system is based on **proxies** (Vue 3) or getter/setters (Vue 2).\n\n1. When you access a reactive property (like `this.count`), Vue **tracks** that dependency.\n2. When you change that property, Vue **triggers** an update for all dependents.\n\n```javascript\nconst state = reactive({ count: 0 });\n// When count is read, it's tracked\nconsole.log(state.count);\n// When count is written, it triggers updates\nstate.count++;\n```\n\nThink of it as a **subscriber‑publisher** system: each reactive property has a list of effects (like the DOM updates) that depend on it."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Reactive vs. Non‑Reactive",
+            "content": "# What Is Reactive?\n\n- **Reactive data**: Properties defined in `data()` (Options API) or using `ref`/`reactive` (Composition API) are reactive.\n- **Non‑reactive data**: Plain JavaScript objects/arrays not wrapped are **not** reactive. Changes won't trigger updates.\n\n```javascript\n// This will NOT trigger updates\nthis.nonReactive = { count: 0 };\n\n// This will\nthis.reactiveObj = reactive({ count: 0 });\n```\n\nVue can only track changes if the object is reactive. So always use the reactive APIs when you need automatic UI updates."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Reactivity in Action (Options API)",
+            "content": "Even though we use `data()`, Vue creates reactive proxies:",
+            "codeSnippet": "<div id=\"app\">\n  <p>Count: {{ count }}</p>\n  <button @click=\"count++\">Increment</button>\n  <p>Non‑reactive: {{ nonReactiveCount }}</p>\n  <button @click=\"nonReactiveCount++\">Increment non‑reactive</button>\n</div>\n\n<script>\n  createApp({\n    data() {\n      return {\n        count: 0,\n        nonReactiveCount: 0\n      };\n    },\n    // nonReactiveCount is also reactive because it's in data! But let's illustrate.\n    // Actually everything in data is reactive. We can show a non-reactive external variable.\n    mounted() {\n      // This external variable is not tracked\n      window.externalCounter = 0;\n      console.log(window.externalCounter); // changes won't update UI\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_4",
+            "type": "tip",
+            "title": "When Reactivity Fails",
+            "content": "Sometimes you might think a change should be reactive, but it isn't:\n\n- **Adding a new property to an object**: Use `this.$set` (Vue 2) or assign the whole object (Vue 3).\n- **Mutating an array by index**: Use `splice` or reassign the array.\n- **Changing a nested object's property**: If the nested object is not reactive, you need to ensure the whole chain is reactive.\n\nIn Vue 3, proxies handle these cases automatically."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "How does Vue know to update the UI when reactive data changes?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It polls the data every millisecond",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It uses a proxy to intercept get and set operations and tracks dependencies",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It uses `Object.observe()` (deprecated)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It re‑renders the entire app on every change",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Vue 3 uses Proxy to intercept property access and mutation, enabling fine‑grained reactivity.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

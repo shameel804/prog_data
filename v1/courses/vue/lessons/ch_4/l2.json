@@ -1,0 +1,67 @@
+{
+    "id": "l2",
+    "chapterId": "ch_4",
+    "title": "Computed Properties vs Methods",
+    "description": "Understand the caching behavior of computed properties and when to use each.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Comparison",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Caching: The Key Difference",
+            "content": "# Computed Properties are Cached\n\nWhen you call a method in the template, it **always** re-executes every time the component re-renders.\n\nWhen you use a computed property, Vue **caches** the result. It only recomputes when one of its reactive dependencies changes.\n\n```javascript\n// This method runs on every render\nmethods: {\n  getFullName() {\n    return this.firstName + ' ' + this.lastName;\n  }\n}\n\n// This computed property runs only when firstName or lastName changes\ncomputed: {\n  fullName() {\n    return this.firstName + ' ' + this.lastName;\n  }\n}\n```"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "When to Use Which",
+            "content": "| Feature | Computed Property | Method |\n|---------|-------------------|--------|\n| Caching | ✅ Yes | ❌ No |\n| Use for derived data | ✅ | ❌ (can be overkill) |\n| Use for side effects | ❌ (should be pure) | ✅ |\n| Use when arguments needed | ❌ (can't accept arguments directly) | ✅ |\n\n**Guideline**:\n- Use **computed** for data that depends on other reactive data and should be cached.\n- Use **methods** when you need to perform side effects or need to pass arguments."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Performance Example",
+            "content": "This example shows a method vs computed property being called many times:",
+            "codeSnippet": "<div id=\"app\">\n  <div>\n    <button @click=\"counter++\">Increment counter</button>\n    <p>Counter: {{ counter }}</p>\n  </div>\n  <div>\n    <p>Method result (calls: {{ methodCalls }}): {{ expensiveMethod() }}</p>\n    <p>Computed result (calls: {{ computedCalls }}): {{ expensiveComputed }}</p>\n  </div>\n</div>\n\n<script>\n  createApp({\n    data() {\n      return {\n        counter: 0,\n        methodCalls: 0,\n        computedCalls: 0\n      };\n    },\n    methods: {\n      expensiveMethod() {\n        this.methodCalls++;\n        // Simulate heavy calculation\n        return this.counter * 2;\n      }\n    },\n    computed: {\n      expensiveComputed() {\n        this.computedCalls++;\n        return this.counter * 2;\n      }\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "When should you use a method instead of a computed property?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "When the value depends on reactive data",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "When you need to pass arguments to the function",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "When you want caching",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "When you need to display a value in the template",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Computed properties cannot accept arguments. If you need to pass arguments (like `formatDate(date)`), use a method.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

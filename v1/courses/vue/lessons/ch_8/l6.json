@@ -1,0 +1,67 @@
+{
+    "id": "l6",
+    "chapterId": "ch_8",
+    "title": "Navigation Guards & Programmatic Navigation",
+    "description": "Protect routes, redirect users, and navigate using code.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Security & Control",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Navigation Guards",
+            "content": "# Global, Per‑Route, and In‑Component Guards\n\nGuards let you control navigation, check permissions, and redirect.\n\n**Global guards** (beforeEach, beforeResolve, afterEach):\n```javascript\nrouter.beforeEach((to, from) => {\n  if (to.meta.requiresAuth && !isLoggedIn) {\n    return '/login';\n  }\n});\n```\n\n**Per‑route guard**:\n```javascript\n{\n  path: '/admin',\n  component: Admin,\n  beforeEnter: (to, from) => {\n    if (!isAdmin) return '/login';\n  }\n}\n```\n\n**In‑component guards**: `beforeRouteEnter`, `beforeRouteUpdate`, `beforeRouteLeave`."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "Programmatic Navigation",
+            "content": "# Navigating with Code\n\nInstead of using `<router-link>`, you can navigate programmatically:\n\n```javascript\n// push – adds a new entry to history\nrouter.push('/about')\nrouter.push({ path: '/user/1' })\nrouter.push({ name: 'user', params: { id: 1 } })\n\n// replace – replaces the current entry\nrouter.replace('/about')\n\n// go – navigate history\nrouter.go(-1) // back one step\nrouter.go(1)  // forward\n```\n\nIn Options API, use `this.$router`. In Composition API, use `const router = useRouter()`."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Example: Authentication Guard",
+            "content": "A simple guard that checks for a login token:",
+            "codeSnippet": "<div id=\"app\">\n  <router-link to=\"/\">Home</router-link> |\n  <router-link to=\"/dashboard\">Dashboard</router-link> |\n  <button @click=\"login\">Login</button>\n  <router-view></router-view>\n</div>\n\n<script>\n  const Home = { template: '<h2>Home (public)</h2>' };\n  const Dashboard = { template: '<h2>Dashboard (private)</h2>' };\n  const Login = { template: '<h2>Login Page</h2>' };\n\n  // Simulate auth state\n  let isLoggedIn = false;\n\n  const routes = [\n    { path: '/', component: Home },\n    { path: '/dashboard', component: Dashboard, meta: { requiresAuth: true } },\n    { path: '/login', component: Login }\n  ];\n\n  const router = createRouter({\n    history: createWebHashHistory(),\n    routes\n  });\n\n  router.beforeEach((to, from) => {\n    if (to.meta.requiresAuth && !isLoggedIn) {\n      return '/login';\n    }\n  });\n\n  createApp({\n    methods: {\n      login() {\n        isLoggedIn = true;\n        this.$router.push('/dashboard');\n      }\n    }\n  }).use(router).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l6_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "How do you programmatically navigate to a new route in a Vue component?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "this.$route.push('/about')",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "this.$router.push('/about')",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "router.navigate('/about')",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "this.navigate('/about')",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "In Options API, use `this.$router.push()`. The `$router` instance is available in every component.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

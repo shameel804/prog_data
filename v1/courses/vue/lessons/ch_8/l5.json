@@ -1,0 +1,67 @@
+{
+    "id": "l5",
+    "chapterId": "ch_8",
+    "title": "Nested Routes and Layouts",
+    "description": "Organize complex views with nested routes and layout components.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "What Are Nested Routes?",
+            "content": "# Hierarchical Routes\n\nWhen you have components that are children of other components, you can nest routes. The parent component has its own `<router-view>` where child components are rendered.\n\n```javascript\nconst routes = [\n  {\n    path: '/user/:id',\n    component: User,\n    children: [\n      { path: 'profile', component: UserProfile },\n      { path: 'posts', component: UserPosts }\n    ]\n  }\n]\n```\n\nURL `/user/123/profile` renders `<User>` containing `<UserProfile>`."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Nested Layouts",
+            "content": "# Using Nested Routes for Layouts\n\nYou can create a layout component that holds common UI (header, sidebar) and use nested routes for the main content.\n\n```javascript\nconst routes = [\n  {\n    path: '/',\n    component: DefaultLayout,\n    children: [\n      { path: '', component: Home },\n      { path: 'about', component: About },\n      { path: 'contact', component: Contact }\n    ]\n  },\n  {\n    path: '/admin',\n    component: AdminLayout,\n    children: [\n      { path: '', component: AdminDashboard },\n      { path: 'users', component: AdminUsers }\n    ]\n  }\n]\n```"
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Example: User Dashboard with Nested Routes",
+            "content": "A user section with profile and posts subpages:",
+            "codeSnippet": "<div id=\"app\">\n  <router-link to=\"/user/1\">User 1</router-link> |\n  <router-link to=\"/user/1/profile\">Profile</router-link> |\n  <router-link to=\"/user/1/posts\">Posts</router-link>\n  <router-view></router-view>\n</div>\n\n<script>\n  const User = {\n    template: `\n      <div>\n        <h2>User: {{ $route.params.id }}</h2>\n        <router-view></router-view>\n      </div>\n    `\n  };\n  const UserProfile = { template: '<p>Profile information...</p>' };\n  const UserPosts = { template: '<p>User posts...</p>' };\n\n  const routes = [\n    {\n      path: '/user/:id',\n      component: User,\n      children: [\n        { path: 'profile', component: UserProfile },\n        { path: 'posts', component: UserPosts }\n      ]\n    }\n  ];\n\n  const router = createRouter({\n    history: createWebHashHistory(),\n    routes\n  });\n\n  createApp({}).use(router).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of the `children` array in a route definition?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To define routes that are only accessible to logged‑in users",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To nest child routes that render inside the parent's `<router-view>`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To add route metadata",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To define redirects",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `children` option allows you to define routes that will be rendered inside the parent component's `<router-view>`, enabling nested views.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

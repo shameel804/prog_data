@@ -1,0 +1,73 @@
+{
+    "id": "l4",
+    "chapterId": "ch_8",
+    "title": "Dynamic Routes and Route Parameters",
+    "description": "Handle variable segments in URLs and access parameters in components.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Dynamic Routing",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Route Parameters",
+            "content": "# Dynamic Segments\n\nUse a colon `:` to mark a dynamic part of the URL:\n\n```javascript\n{ path: '/user/:id', component: User }\n```\n\nWhen the URL is `/user/123`, `params.id` will be `'123'`.\n\nYou can have multiple parameters: `/user/:userId/post/:postId`."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Accessing Params in Components",
+            "content": "# Using `$route`\n\nIn the component, you can access the current route object:\n\n```javascript\nexport default {\n  data() {\n    return {\n      userId: this.$route.params.id\n    }\n  }\n}\n```\n\nOr with Composition API:\n```javascript\nimport { useRoute } from 'vue-router'\n\nconst route = useRoute()\nconst userId = route.params.id\n```\n\n⚠️ The `$route` object is reactive – when the route changes, your component will update accordingly."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Example: User Profile Page",
+            "content": "A component that displays user ID from the URL:",
+            "codeSnippet": "<div id=\"app\">\n  <router-link to=\"/user/1\">User 1</router-link> |\n  <router-link to=\"/user/2\">User 2</router-link>\n  <router-view></router-view>\n</div>\n\n<script>\n  const User = {\n    template: '<h2>User ID: {{ $route.params.id }}</h2>',\n    // Watch for route changes if needed\n    watch: {\n      '$route.params.id'(newId) {\n        console.log('User changed to', newId);\n      }\n    }\n  };\n\n  const routes = [\n    { path: '/user/:id', component: User }\n  ];\n\n  const router = createRouter({\n    history: createWebHashHistory(),\n    routes\n  });\n\n  createApp({}).use(router).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_4",
+            "type": "tip",
+            "title": "Passing Props to Route Components",
+            "content": "Instead of accessing `$route.params` inside the component, you can **pass props** to the component by setting `props: true` in the route definition.\n\n```javascript\n{ path: '/user/:id', component: User, props: true }\n```\n\nThen in the component, declare `props: ['id']` and use `id` directly.\n\nThis decouples the component from the router and makes it more reusable."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "How do you access the route parameters inside a component using the Composition API?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "this.$route.params",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "useRouter().params",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "useRoute().params",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "$route.params",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "In Composition API, you import `useRoute` from 'vue-router' and call it to get the current route object, then access `params`.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

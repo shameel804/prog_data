@@ -1,0 +1,67 @@
+{
+    "id": "l3",
+    "chapterId": "ch_6",
+    "title": "Provide / Inject: Dependency Injection",
+    "description": "Pass data deep down the component tree without prop drilling.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Dependency Injection",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The Problem: Prop Drilling",
+            "content": "# Prop Drilling\n\nWhen a deeply nested component needs data from a distant ancestor, you might end up passing props through many intermediate components that don't need them.\n\n```html\n<Grandparent :theme=\"theme\">\n  <Parent :theme=\"theme\">\n    <Child :theme=\"theme\">\n      <DeepChild />\n    </Child>\n  </Parent>\n</Grandparent>\n```\n\nThis is verbose and makes refactoring painful."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Provide / Inject to the Rescue",
+            "content": "# Provide / Inject\n\nAn ancestor component **provides** data, and any descendant can **inject** it, regardless of depth.\n\n```javascript\n// Ancestor\nprovide() {\n  return {\n    theme: this.theme,\n    updateTheme: this.updateTheme\n  };\n}\n\n// Descendant\ninject: ['theme', 'updateTheme']\n```\n\nThe data can be reactive if provided using a computed property or a ref.\n\n**Note**: Provide/Inject is not intended for app‑wide state; that's what Pinia is for. Use it for cross‑cutting concerns like theme, locale, or user authentication."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Example: Theme Provider",
+            "content": "A simple theme system using provide/inject:",
+            "codeSnippet": "<div id=\"app\">\n  <theme-provider>\n    <toolbar />\n  </theme-provider>\n</div>\n\n<script>\n  const ThemeProvider = {\n    data() {\n      return { theme: 'light' };\n    },\n    provide() {\n      return {\n        theme: this.theme,\n        toggleTheme: this.toggleTheme\n      };\n    },\n    methods: {\n      toggleTheme() {\n        this.theme = this.theme === 'light' ? 'dark' : 'light';\n      }\n    },\n    template: `<div><slot /></div>`\n  };\n\n  const Toolbar = {\n    inject: ['theme', 'toggleTheme'],\n    template: `\n      <div :style=\"{ backgroundColor: theme === 'light' ? '#fff' : '#333', color: theme === 'light' ? '#000' : '#fff' }\">\n        <button @click=\"toggleTheme\">Toggle Theme</button>\n        <p>Current theme: {{ theme }}</p>\n      </div>\n    `\n  };\n\n  createApp({\n    components: { ThemeProvider, Toolbar }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the primary use case for provide/inject?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Global state management",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Avoiding prop drilling for deeply nested components",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Two‑way binding between components",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Optimizing rendering performance",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Provide/Inject is designed to make data available to deep descendants without having to pass it through intermediate components, solving prop drilling.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

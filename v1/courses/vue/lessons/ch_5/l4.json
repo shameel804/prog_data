@@ -1,0 +1,67 @@
+{
+    "id": "l4",
+    "chapterId": "ch_5",
+    "title": "Emitting Events: Child to Parent Communication",
+    "description": "Let child components talk back to parents using custom events and $emit.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Events",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "From Child to Parent with $emit",
+            "content": "# Custom Events\n\nProps handle parent → child. For child → parent communication, the child **emits an event** that the parent listens to.\n\n```javascript\n// Child component\nthis.$emit('event-name', payload);\n```\n\n```html\n<!-- Parent template -->\n<child-component @event-name=\"parentMethod\" />\n```\n\nThe payload (optional) is passed to the parent's method."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Example: Counter with Parent Notification",
+            "content": "A child counter that notifies the parent when it reaches 10:",
+            "codeSnippet": "<div id=\"app\">\n  <counter :max=\"10\" @reached-max=\"handleReachedMax\" />\n  <p v-if=\"maxMessage\">{{ maxMessage }}</p>\n</div>\n\n<script>\n  const Counter = {\n    props: ['max'],\n    data() {\n      return { count: 0 };\n    },\n    template: `\n      <div>\n        <p>Count: {{ count }}</p>\n        <button @click=\"increment\">Increment</button>\n      </div>\n    `,\n    methods: {\n      increment() {\n        this.count++;\n        if (this.count === this.max) {\n          this.$emit('reached-max', this.count);\n        }\n      }\n    }\n  };\n\n  createApp({\n    components: { Counter },\n    data() {\n      return { maxMessage: '' };\n    },\n    methods: {\n      handleReachedMax(count) {\n        this.maxMessage = `🎉 Counter reached ${count}!`;\n        setTimeout(() => { this.maxMessage = ''; }, 2000);\n      }\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_3",
+            "type": "tip",
+            "title": "Emitting vs. Directly Modifying Props",
+            "content": "**Never modify a prop directly** in the child. Instead, emit an event and let the parent change the prop. This maintains a single source of truth and predictable data flow.\n\n```javascript\n// ❌ Bad\nthis.props.value = newValue;\n\n// ✅ Good\nthis.$emit('update:value', newValue);\n```\n\nFor two‑way binding with `v-model` on components, we'll cover that in the next chapter."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "How does a child component send data to its parent?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "By directly modifying a prop",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "By emitting a custom event with $emit",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "By using a global store",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "By returning data from a method",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The child component uses `$emit` to trigger a custom event that the parent can listen to, optionally passing a payload.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

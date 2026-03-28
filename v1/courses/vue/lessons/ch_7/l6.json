@@ -1,0 +1,67 @@
+{
+    "id": "l6",
+    "chapterId": "ch_7",
+    "title": "Performance & Debugging Reactivity",
+    "description": "Optimize reactive code and use Vue Devtools to debug reactivity issues.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Performance",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Avoid Unnecessary Reactivity",
+            "content": "# Performance Tips\n\n- **Use `shallowRef` / `shallowReactive`** for large objects when deep reactivity isn't needed.\n- **Avoid large reactive objects** – break them into smaller pieces.\n- **Use `computed` for derived state** – it caches results and reduces re‑computations.\n- **Debounce / throttle** frequent updates (e.g., `@input`).\n- **Use `v-once` for static content**.\n\n```javascript\n// Expensive computed that only updates when dependencies change\nconst fullName = computed(() => `${firstName.value} ${lastName.value}`);\n```"
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "Debugging with Vue Devtools",
+            "content": "# Vue Devtools\n\nThe Vue Devtools browser extension is essential for debugging reactivity.\n\n- **Components tab**: Inspect component state (data, props, computed).\n- **Timeline tab**: See when components are created, updated, and unmounted.\n- **Profiler tab**: Measure performance and find slow updates.\n- **Reactivity graph**: Visualize dependencies.\n\n**Pro tip**: Use `__VUE_OPTIONS_API__` and `__VUE_PROD_DEVTOOLS__` flags to enable devtools in production if needed."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Example: Tracking Dependencies",
+            "content": "Using a watcher to see when reactivity triggers:",
+            "codeSnippet": "<div id=\"app\">\n  <input v-model=\"search\" placeholder=\"Search\">\n  <p>Search term: {{ search }}</p>\n</div>\n\n<script>\n  createApp({\n    data() {\n      return { search: '' };\n    },\n    watch: {\n      search(newVal) {\n        console.log('Search changed to:', newVal);\n      }\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l6_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What tool can you use to inspect component state and reactivity in real time?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Chrome DevTools",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Vue Devtools",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Vite Plugin Inspector",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Webpack Bundle Analyzer",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Vue Devtools is specifically designed for Vue applications and provides deep insights into component trees, state, and reactivity.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

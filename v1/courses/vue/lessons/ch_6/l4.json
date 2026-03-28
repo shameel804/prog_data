@@ -1,0 +1,67 @@
+{
+    "id": "l4",
+    "chapterId": "ch_6",
+    "title": "Scoped Slots & Advanced Slots",
+    "description": "Create highly reusable components that pass data back to parent templates.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Advanced Slots",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "What Are Scoped Slots?",
+            "content": "# Scoped Slots: Giving Data Back\n\nSometimes a component needs to provide data to the slot content – for example, a list component that exposes each item to a custom template.\n\n**Scoped slots** allow the child component to pass data to the slot, which the parent can access.\n\n```html\n<!-- Child template -->\n<slot :item=\"item\" :index=\"index\"></slot>\n\n<!-- Parent usage -->\n<template #default=\"{ item, index }\">\n  <div>{{ index }}: {{ item.name }}</div>\n</template>\n```\n\nThe slot props are available in the parent's slot scope."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Practical Example: Data Table",
+            "content": "# Building a Reusable Data Table\n\nA table component that accepts an array of items and a column configuration, using scoped slots to let the parent customize each cell.\n\n```html\n<DataTable :items=\"users\">\n  <template #cell-name=\"{ item }\">\n    <strong>{{ item.name }}</strong>\n  </template>\n  <template #cell-actions=\"{ item }\">\n    <button @click=\"edit(item)\">Edit</button>\n  </template>\n</DataTable>\n```\n\nThis keeps the table logic generic while allowing full customizability."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Example: Scoped Slot for List",
+            "content": "A reusable list component that uses scoped slots:",
+            "codeSnippet": "<div id=\"app\">\n  <reusable-list :items=\"fruits\">\n    <template #default=\"{ item, index }\">\n      <div style=\"padding: 8px; border-bottom: 1px solid #eee;\">\n        <strong>{{ index + 1 }}.</strong> {{ item.name }}\n        <button @click=\"removeItem(index)\">✖</button>\n      </div>\n    </template>\n  </reusable-list>\n</div>\n\n<script>\n  const ReusableList = {\n    props: ['items'],\n    template: `\n      <div class=\"list\">\n        <div v-for=\"(item, idx) in items\" :key=\"idx\">\n          <slot :item=\"item\" :index=\"idx\"></slot>\n        </div>\n      </div>\n    `\n  };\n\n  createApp({\n    components: { ReusableList },\n    data() {\n      return {\n        fruits: [\n          { name: 'Apple' },\n          { name: 'Banana' },\n          { name: 'Orange' }\n        ]\n      };\n    },\n    methods: {\n      removeItem(index) {\n        this.fruits.splice(index, 1);\n      }\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is the main purpose of a scoped slot?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To allow a child component to pass data back to the parent's slot template",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To conditionally render slots",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To style the slot content",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To improve performance",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Scoped slots let the child component expose data to the parent, giving the parent control over how each item is rendered.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,67 @@
+{
+    "id": "l1",
+    "chapterId": "ch_6",
+    "title": "Props & Events: A Deeper Look",
+    "description": "Master prop validation, event naming, and the v-model pattern for two‑way binding.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Review",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Props: More Than Just Names",
+            "content": "# Advanced Prop Validation\n\nYou already know basic props. But you can also:\n\n- **Type checking** – String, Number, Boolean, Array, Object, Date, Function, Symbol.\n- **Required / default** – mark a prop as required or set a default.\n- **Custom validator** – run your own validation logic.\n- **Default factory** – for objects/arrays, use a factory function.\n\n```javascript\nprops: {\n  user: {\n    type: Object,\n    required: true,\n    validator: (value) => value.name && value.email\n  },\n  tags: {\n    type: Array,\n    default: () => []  // factory to avoid shared reference\n  }\n}\n```"
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "Event Naming and Emit Validation",
+            "content": "# Custom Events\n\nIn Vue, custom events follow **kebab-case** naming convention (e.g., `@update:model-value`).\n\nYou can also **validate emitted events** using the `emits` option:\n\n```javascript\nexport default {\n  emits: {\n    // no validation\n    'submit': null,\n    // with validation\n    'update:value': (payload) => {\n      if (typeof payload !== 'string') {\n        console.warn('Value must be a string');\n        return false;\n      }\n      return true;\n    }\n  }\n}\n```\n\nThis helps document the component's interface and catches mistakes early."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "code",
+            "title": "Example: Validated Props & Events",
+            "content": "A form input component with validation:",
+            "codeSnippet": "<div id=\"app\">\n  <validated-input v-model=\"message\" />\n  <p>Message: {{ message }}</p>\n</div>\n\n<script>\n  const ValidatedInput = {\n    props: {\n      modelValue: {\n        type: String,\n        required: true\n      }\n    },\n    emits: {\n      'update:modelValue': (value) => typeof value === 'string'\n    },\n    template: `<input :value=\"modelValue\" @input=\"$emit('update:modelValue', $event.target.value)\">`\n  };\n\n  createApp({\n    components: { ValidatedInput },\n    data() {\n      return { message: 'Hello' };\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of the `emits` option in a component?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To document and validate the events the component can emit",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To define the props the component accepts",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To register child components",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To define computed properties",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `emits` option declares the custom events a component can emit, optionally with validation, improving documentation and debugging.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

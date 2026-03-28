@@ -1,0 +1,67 @@
+{
+    "id": "l5",
+    "chapterId": "ch_5",
+    "title": "Slots: Content Distribution",
+    "description": "Make components flexible with slots – placeholders for content passed from the parent.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Slots",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "What Are Slots?",
+            "content": "# Slots: Placeholders for Content\n\nSometimes you want a component to be more flexible – not just accept data via props, but also accept **template content** from the parent.\n\n**Slots** are the solution. They act as placeholders where the parent can inject HTML or other components.\n\n```html\n<!-- Child component template -->\n<div class=\"card\">\n  <slot></slot>  <!-- content goes here -->\n</div>\n```\n\n```html\n<!-- Parent usage -->\n<Card>\n  <h2>My Title</h2>\n  <p>Some text</p>\n</Card>\n```"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Named Slots",
+            "content": "You can have multiple slots by naming them:\n\n```html\n<!-- Child template -->\n<div class=\"card\">\n  <header><slot name=\"header\"></slot></header>\n  <main><slot></slot></main>\n  <footer><slot name=\"footer\"></slot></footer>\n</div>\n```\n\n```html\n<!-- Parent usage -->\n<Card>\n  <template v-slot:header>\n    <h1>Title</h1>\n  </template>\n\n  <p>Main content</p>\n\n  <template v-slot:footer>\n    <button>Click</button>\n  </template>\n</Card>\n```\n\nShorthand: `#header` for `v-slot:header`."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Example: Card with Header, Body, Footer",
+            "content": "A flexible card component using named slots:",
+            "codeSnippet": "<div id=\"app\">\n  <card>\n    <template #header>\n      <h2>User Profile</h2>\n    </template>\n    <p>Name: Alice</p>\n    <p>Role: Developer</p>\n    <template #footer>\n      <button @click=\"alert('Profile edited')\">Edit</button>\n    </template>\n  </card>\n</div>\n\n<script>\n  const Card = {\n    template: `\n      <div class=\"card\">\n        <div class=\"card-header\">\n          <slot name=\"header\">Default Header</slot>\n        </div>\n        <div class=\"card-body\">\n          <slot>Default body content</slot>\n        </div>\n        <div class=\"card-footer\">\n          <slot name=\"footer\">Default Footer</slot>\n        </div>\n      </div>\n    `\n  };\n\n  createApp({\n    components: { Card },\n    methods: {\n      alert(msg) { alert(msg); }\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of slots in Vue components?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To pass data from parent to child",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To allow the parent to inject template content into specific places in the child's template",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To emit events from child to parent",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To style components",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Slots give the parent control over what content is rendered inside the child, making the component more flexible and reusable.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

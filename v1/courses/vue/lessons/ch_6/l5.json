@@ -1,0 +1,64 @@
+{
+    "id": "l5",
+    "chapterId": "ch_6",
+    "title": "Communication Patterns & Best Practices",
+    "description": "Choose the right communication method and avoid common pitfalls.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Best Practices",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Choosing the Right Pattern",
+            "content": "# Communication Cheat Sheet\n\n| Scenario | Recommended Method |\n|----------|-------------------|\n| Parent → Child | Props |\n| Child → Parent | Events (`$emit`) |\n| Two‑way binding on a component | `v-model` (or `v-model:propName`) |\n| Deep nesting, avoid prop drilling | Provide/Inject (for cross‑cutting concerns) |\n| Sibling components | Lift state up to common parent |\n| Global state (many components, complex) | Pinia (or Vuex) |\n\nAlways prefer explicit props/events over provide/inject for components that are directly related. Provide/Inject is for libraries and cross‑cutting features."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Anti‑Patterns to Avoid",
+            "content": "# Common Mistakes\n\n- **Mutating props directly** – always use events to notify parent.\n- **Using `$parent` or `$root`** – creates tight coupling and is hard to maintain.\n- **Overusing provide/inject** – makes data flow hard to trace; use sparingly.\n- **Too many global components** – prefer local registration for clarity.\n- **Not validating props/events** – missing type checks leads to subtle bugs.\n\n> 💡 **Pro Tip**: Keep components as **stateless** as possible. Move business logic to composables or stores."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "tip",
+            "title": "Testing Communication",
+            "content": "When testing components that communicate via props and events, you can:\n- Set props and assert the rendered output.\n- Trigger events (e.g., `wrapper.find('button').trigger('click')`) and check that the correct event was emitted.\n\n```javascript\ntest('emits add event on button click', () => {\n  const wrapper = mount(ProductCard, { props: { product } });\n  wrapper.find('button').trigger('click');\n  expect(wrapper.emitted('add')).toBeTruthy();\n});\n```"
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the recommended way for sibling components to communicate?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Use a global event bus",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Lift the shared state up to a common parent component",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Use `$parent` to directly access the sibling",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Use provide/inject",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The typical approach is to lift state up to the closest common ancestor and pass it down via props, with events for updates.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

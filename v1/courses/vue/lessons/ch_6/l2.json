@@ -1,0 +1,67 @@
+{
+    "id": "l2",
+    "chapterId": "ch_6",
+    "title": "v-model on Components",
+    "description": "Create custom components that support v-model for two‑way data binding.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Two-Way Binding",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "How v-model Works on Components",
+            "content": "# The Magic Behind `v-model`\n\nOn a native input, `v-model` is syntax sugar for:\n```html\n<input :value=\"data\" @input=\"data = $event.target.value\">\n```\n\nOn a custom component, it becomes:\n```html\n<CustomComponent :modelValue=\"data\" @update:modelValue=\"data = $event\" />\n```\n\nSo your component must:\n- Accept a `modelValue` prop.\n- Emit an `update:modelValue` event with the new value."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Multiple v-model Bindings (Vue 3)",
+            "content": "# Binding Multiple Values\n\nVue 3 allows multiple `v-model` bindings by specifying an argument:\n\n```html\n<ChildComponent v-model:first-name=\"firstName\" v-model:last-name=\"lastName\" />\n```\n\nInside the component, you accept props `firstName` and `lastName`, and emit `update:firstName` and `update:lastName`.\n\n```javascript\n// Child component\nexport default {\n  props: ['firstName', 'lastName'],\n  emits: ['update:firstName', 'update:lastName']\n}\n```"
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Example: Custom Input with v-model",
+            "content": "A custom text input component that supports v-model:",
+            "codeSnippet": "<div id=\"app\">\n  <custom-input v-model=\"username\" />\n  <p>Username: {{ username }}</p>\n</div>\n\n<script>\n  const CustomInput = {\n    props: ['modelValue'],\n    emits: ['update:modelValue'],\n    template: `\n      <div>\n        <input \n          :value=\"modelValue\"\n          @input=\"$emit('update:modelValue', $event.target.value)\"\n          placeholder=\"Enter username\"\n        >\n      </div>\n    `\n  };\n\n  createApp({\n    components: { CustomInput },\n    data() {\n      return { username: '' };\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "To make a custom component work with `v-model`, what must the component do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Accept a `value` prop and emit an `input` event",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Accept a `modelValue` prop and emit an `update:modelValue` event",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Use the `v-model` directive inside its template",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Declare a `v-model` option",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "In Vue 3, the default convention for `v-model` on components is to bind to `modelValue` prop and listen for `update:modelValue` event.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

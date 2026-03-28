@@ -1,0 +1,67 @@
+{
+    "id": "l3",
+    "chapterId": "ch_5",
+    "title": "Props: Passing Data to Components",
+    "description": "Send data from parent to child with props, including types, validation, and defaults.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Props",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "What Are Props?",
+            "content": "# Props: Parent → Child Communication\n\n**Props** (short for properties) are custom attributes you can register on a component to pass data from a parent to a child.\n\n```html\n<!-- Parent template -->\n<child-component :message=\"parentMessage\" />\n```\n\nInside the child, you declare the prop and use it like data:\n\n```javascript\nconst ChildComponent = {\n  props: ['message'],\n  template: `<div>{{ message }}</div>`\n}\n```\n\nProps are **one‑way**: the parent updates them, and the child receives them but should not modify them directly."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Prop Validation",
+            "content": "You can specify prop types and validation rules to catch bugs early:\n\n```javascript\nprops: {\n  title: String,                     // simple type\n  likes: Number,\n  isPublished: Boolean,\n  commentIds: Array,\n  author: Object,\n  callback: Function,\n  contactsPromise: Promise,\n  // with validation\n  age: {\n    type: Number,\n    required: true,\n    default: 18,\n    validator: (value) => value >= 0\n  }\n}\n```\n\nVue will warn you in the console if the passed value doesn't match the expected type."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Example: User Profile Card",
+            "content": "A component that receives user data via props:",
+            "codeSnippet": "<div id=\"app\">\n  <user-card\n    :user=\"currentUser\"\n    :show-email=\"true\"\n  />\n</div>\n\n<script>\n  const UserCard = {\n    props: {\n      user: {\n        type: Object,\n        required: true\n      },\n      showEmail: {\n        type: Boolean,\n        default: false\n      }\n    },\n    template: `\n      <div class=\"card\">\n        <h3>{{ user.name }}</h3>\n        <p v-if=\"showEmail\">{{ user.email }}</p>\n      </div>\n    `\n  };\n\n  createApp({\n    components: { UserCard },\n    data() {\n      return {\n        currentUser: {\n          name: 'Alice',\n          email: 'alice@example.com'\n        }\n      };\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which of the following is true about props in Vue?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Props are two‑way data binding",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Props should be mutated inside the child component",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Props allow a child to receive data from its parent",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Props are only for strings",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Props are a one‑way channel from parent to child. The child should not modify them directly.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

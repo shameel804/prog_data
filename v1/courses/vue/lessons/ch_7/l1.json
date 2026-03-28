@@ -1,0 +1,67 @@
+{
+    "id": "l1",
+    "chapterId": "ch_7",
+    "title": "Lifecycle Hooks: Component Birth to Death",
+    "description": "Understand the component lifecycle and the hooks that let you tap into it.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Lifecycle",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The Component Lifecycle",
+            "content": "# From Creation to Destruction\n\nEvery Vue component goes through a series of stages from when it is created until it is destroyed. Vue provides **lifecycle hooks** – special methods that run at each stage, allowing you to execute your own code.\n\n```\ncreate → mount → update → unmount\n```\n\nThink of it as a **human lifecycle**: birth (created), childhood (mounted), adulthood (updates), and death (unmounted)."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "Hook Diagram",
+            "content": "## Lifecycle Diagram (Simplified)\n\n```\n    beforeCreate\n         ↓\n    created\n         ↓\n    beforeMount\n         ↓\n    mounted\n         ↓\n    beforeUpdate ← data changes\n         ↓\n    updated\n         ↓\n    beforeUnmount\n         ↓\n    unmounted\n```\n\nEach hook gives you a chance to do something at that moment."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "code",
+            "title": "Example: Logging Lifecycle",
+            "content": "A simple component that logs each hook:",
+            "codeSnippet": "<div id=\"app\">\n  <lifecycle-demo v-if=\"show\" />\n  <button @click=\"show = !show\">Toggle Component</button>\n</div>\n\n<script>\n  const LifecycleDemo = {\n    template: '<div>I am alive!</div>',\n    beforeCreate() { console.log('beforeCreate'); },\n    created() { console.log('created'); },\n    beforeMount() { console.log('beforeMount'); },\n    mounted() { console.log('mounted'); },\n    beforeUpdate() { console.log('beforeUpdate'); },\n    updated() { console.log('updated'); },\n    beforeUnmount() { console.log('beforeUnmount'); },\n    unmounted() { console.log('unmounted'); }\n  };\n\n  createApp({\n    components: { LifecycleDemo },\n    data() { return { show: true }; }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What is the correct order of lifecycle hooks when a component is first created?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "beforeCreate → created → beforeMount → mounted",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "created → beforeCreate → mounted → beforeMount",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "beforeMount → mounted → beforeCreate → created",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "mounted → beforeMount → created → beforeCreate",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The correct order is beforeCreate → created → beforeMount → mounted. The component is then ready.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

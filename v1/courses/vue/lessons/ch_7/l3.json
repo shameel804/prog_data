@@ -1,0 +1,67 @@
+{
+    "id": "l3",
+    "chapterId": "ch_7",
+    "title": "Unmounting & Error Hooks",
+    "description": "Clean up with `beforeUnmount`/`unmounted` and handle errors with `errorCaptured`.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Lifecycle",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "beforeUnmount & unmounted",
+            "content": "# Cleaning Up\n\nWhen a component is removed from the DOM, you have two hooks:\n\n- `beforeUnmount` – called right before the component is unmounted. Good for final cleanup.\n- `unmounted` – called after the component is unmounted. The instance is no longer functional.\n\n**Use cases**:\n- Clear timers (`setInterval`, `setTimeout`).\n- Remove event listeners.\n- Cancel network requests.\n- Dispose of third‑party libraries.\n\n```javascript\nbeforeUnmount() {\n  clearInterval(this.intervalId);\n  window.removeEventListener('resize', this.onResize);\n}\n```"
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "errorCaptured",
+            "content": "# errorCaptured\n\nCalled when an error from a descendant component is captured. It receives:\n- `err` – the error object\n- `instance` – the component instance that threw the error\n- `info` – a string with additional info\n\n**Use cases**:\n- Log errors to a service.\n- Display a fallback UI for errors.\n\n```javascript\nerrorCaptured(err, instance, info) {\n  console.error(`Error in ${info}:`, err);\n  // Optionally, return false to stop propagation\n  return false;\n}\n```\n\nIf this hook is not defined, the error will bubble up."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Example: Timer Cleanup",
+            "content": "A component that starts a timer and cleans it up on unmount:",
+            "codeSnippet": "<div id=\"app\">\n  <timer v-if=\"showTimer\" />\n  <button @click=\"showTimer = !showTimer\">Toggle Timer</button>\n</div>\n\n<script>\n  const Timer = {\n    data() {\n      return { count: 0 };\n    },\n    mounted() {\n      this.interval = setInterval(() => {\n        this.count++;\n      }, 1000);\n    },\n    beforeUnmount() {\n      clearInterval(this.interval);\n      console.log('Timer cleaned up');\n    },\n    template: '<div>Seconds: {{ count }}</div>'\n  };\n\n  createApp({\n    components: { Timer },\n    data() { return { showTimer: true }; }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which lifecycle hook is best for cleaning up intervals or event listeners?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "unmounted",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "beforeUnmount",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "beforeDestroy (Vue 2)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "destroyed",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`beforeUnmount` runs right before the component is unmounted, making it ideal for cleanup. `unmounted` also works but occurs after the component is already gone.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

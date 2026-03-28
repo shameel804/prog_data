@@ -1,0 +1,64 @@
+{
+    "id": "l5",
+    "chapterId": "ch_3",
+    "title": "Event Handling Best Practices & Performance",
+    "description": "Tips for writing clean, efficient, and maintainable event handlers.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Keep Templates Clean",
+            "content": "# Best Practice: Keep Logic in Methods\n\nAvoid writing complex JavaScript inside your template. Use methods instead.\n\n**❌ Bad:**\n```html\n<button @click=\"items.push({ id: Date.now(), text: newItem }); newItem = ''\">Add</button>\n```\n\n**✅ Good:**\n```html\n<button @click=\"addItem\">Add</button>\n```\n\nYour template should focus on structure, not logic."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Use Computed Properties for Derived Data",
+            "content": "When an event handler updates data that affects the UI, let **computed properties** handle derived state. This keeps your methods focused and your reactivity predictable.\n\n```javascript\nmethods: {\n  addItem() {\n    this.items.push({ text: this.newItem });\n    this.newItem = '';\n  }\n},\ncomputed: {\n  itemCount() {\n    return this.items.length;\n  }\n}\n```"
+        },
+        {
+            "id": "s_l5_3",
+            "type": "tip",
+            "title": "Debouncing & Throttling",
+            "content": "For events that fire rapidly (like `@input` or `@scroll`), consider **debouncing** or **throttling** to avoid performance issues.\n\n```html\n<input @input=\"debouncedSearch\">\n```\n\n```javascript\nmethods: {\n  debouncedSearch: _.debounce(function() {\n    // search logic\n  }, 300)\n}\n```\n\nLibraries like Lodash provide these utilities."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Why should you avoid writing complex JavaScript inside a template event handler?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It makes the template harder to read and maintain",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It doesn't work with v-on",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's slower than using methods",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It cannot access component data",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Keeping templates declarative and moving logic to methods improves readability, testability, and maintainability.",
+                "xpReward": 10
+            }
+        }
+    ]
+}
