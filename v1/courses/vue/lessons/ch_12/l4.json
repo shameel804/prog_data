@@ -1,0 +1,67 @@
+{
+    "id": "l4",
+    "chapterId": "ch_12",
+    "title": "Async Composables & Caching",
+    "description": "Add caching, retry, and request cancellation to your fetch composable.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Caching Responses",
+            "content": "# Avoid Redundant Requests\n\nIf multiple components fetch the same data, you can cache the result. Use a simple cache map outside the composable.\n\n```javascript\nconst cache = new Map()\n\nexport function useFetch(url) {\n  if (cache.has(url)) {\n    return { data: ref(cache.get(url)), loading: ref(false), error: ref(null) }\n  }\n  // ... fetch and store in cache\n}\n```\n\nMore sophisticated caching can include expiration times."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Request Cancellation with AbortController",
+            "content": "# Canceling In‑Flight Requests\n\nIf the component unmounts or the user triggers a new request before the previous one finishes, you should cancel the pending request to avoid race conditions.\n\n```javascript\nlet controller\n\nconst fetchData = async () => {\n  if (controller) controller.abort() // cancel previous\n  controller = new AbortController()\n  try {\n    const res = await fetch(url, { signal: controller.signal })\n    // ...\n  } catch (err) {\n    if (err.name !== 'AbortError') error.value = err.message\n  }\n}\n```\n\nUse `onUnmounted` to abort if the component is destroyed while fetching."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Example: useFetch with Caching & Abort",
+            "content": "An enhanced useFetch with basic caching and request cancellation:",
+            "codeSnippet": "<div id=\"app\">\n  <input v-model=\"userId\" placeholder=\"User ID\" />\n  <button @click=\"fetchUser\">Fetch User</button>\n  <div v-if=\"loading\">Loading...</div>\n  <div v-else-if=\"error\">{{ error }}</div>\n  <div v-else-if=\"data\">\n    <p>Name: {{ data.name }}</p>\n    <p>Email: {{ data.email }}</p>\n  </div>\n</div>\n\n<script>\n  const { createApp, ref, onUnmounted } = Vue;\n\n  const cache = new Map();\n\n  function useFetch(url) {\n    const data = ref(null);\n    const loading = ref(false);\n    const error = ref(null);\n    let controller = null;\n\n    const fetchData = async () => {\n      if (controller) controller.abort();\n      controller = new AbortController();\n\n      loading.value = true;\n      error.value = null;\n      try {\n        const res = await fetch(url, { signal: controller.signal });\n        if (!res.ok) throw new Error(res.statusText);\n        const json = await res.json();\n        data.value = json;\n        cache.set(url, json);\n      } catch (err) {\n        if (err.name !== 'AbortError') {\n          error.value = err.message;\n        }\n      } finally {\n        loading.value = false;\n        controller = null;\n      }\n    };\n\n    if (cache.has(url)) {\n      data.value = cache.get(url);\n    } else {\n      fetchData();\n    }\n\n    onUnmounted(() => {\n      if (controller) controller.abort();\n    });\n\n    return { data, loading, error, refetch: fetchData };\n  }\n\n  createApp({\n    setup() {\n      const userId = ref('1');\n      const { data, loading, error, refetch } = useFetch('https://jsonplaceholder.typicode.com/users/1');\n\n      const fetchUser = () => {\n        refetch(); // but we need to update URL... not shown for brevity\n      };\n\n      return { userId, data, loading, error, fetchUser };\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Why would you use an `AbortController` in a data‑fetching composable?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To automatically retry failed requests",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To cancel an in‑progress request when a new one starts or the component unmounts",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To cache responses",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To handle JSON parsing errors",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "AbortController allows you to cancel fetch requests, which prevents race conditions and wasted network resources when components unmount or new requests are made.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

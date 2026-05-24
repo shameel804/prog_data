@@ -1,0 +1,13 @@
+{
+    "id": "task1",
+    "chapterId": "ch_14",
+    "title": "Write a Unit Test for a Composable",
+    "description": "Create a composable and write unit tests for it using Vitest.",
+    "estimatedMinutes": 10,
+    "problemStatement": "## Problem Statement\n\nCreate a composable `useCounter` that manages a count with increment, decrement, and reset functions. It should accept an initial value (default 0) and provide:\n- `count` (ref)\n- `increment` (function)\n- `decrement` (function)\n- `reset` (function)\n\nWrite unit tests for this composable using Vitest. Cover at least:\n- Initial count is set correctly.\n- `increment` increases count by 1.\n- `decrement` decreases count by 1 (should not go below 0).\n- `reset` sets count back to initial value.\n\n**Bonus**: Test that `count` is reactive (e.g., changes are reflected).",
+    "hints": [
+        "Use `ref` to create count.\n    For decrement, check `if (count.value > 0)` before decrementing.\n    Write each test in a `describe` block.\n    Use `expect(count.value).toBe(...)`."
+    ],
+    "expectedOutput": "A test file that passes all test cases.",
+    "solutionCode": "// composables/useCounter.js\nimport { ref } from 'vue'\n\nexport function useCounter(initial = 0) {\n  const count = ref(initial)\n\n  const increment = () => {\n    count.value++\n  }\n\n  const decrement = () => {\n    if (count.value > 0) {\n      count.value--\n    }\n  }\n\n  const reset = () => {\n    count.value = initial\n  }\n\n  return { count, increment, decrement, reset }\n}\n\n// composables/useCounter.test.js\nimport { describe, it, expect } from 'vitest'\nimport { useCounter } from './useCounter'\n\ndescribe('useCounter', () => {\n  it('initializes with default value', () => {\n    const { count } = useCounter()\n    expect(count.value).toBe(0)\n  })\n\n  it('initializes with given value', () => {\n    const { count } = useCounter(5)\n    expect(count.value).toBe(5)\n  })\n\n  it('increments count', () => {\n    const { count, increment } = useCounter(2)\n    increment()\n    expect(count.value).toBe(3)\n  })\n\n  it('decrements count', () => {\n    const { count, decrement } = useCounter(2)\n    decrement()\n    expect(count.value).toBe(1)\n  })\n\n  it('does not decrement below zero', () => {\n    const { count, decrement } = useCounter(0)\n    decrement()\n    expect(count.value).toBe(0)\n  })\n\n  it('resets count to initial value', () => {\n    const { count, increment, reset } = useCounter(10)\n    increment()\n    expect(count.value).toBe(11)\n    reset()\n    expect(count.value).toBe(10)\n  })\n})\n"
+}

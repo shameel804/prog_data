@@ -1,0 +1,67 @@
+{
+    "id": "l2",
+    "chapterId": "ch_10",
+    "title": "setup() – The Entry Point",
+    "description": "Learn the setup function and how to use ref, reactive, and computed.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Basics",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The setup() Function",
+            "content": "# Composition API Hook\n\n`setup()` is a new component option that runs **before** the component is created. It serves as the entry point for Composition API code.\n\n- Called **after** `props` are resolved, **before** the component instance is created.\n- No access to `this` (because the instance doesn't exist yet).\n- Returns an object whose properties are exposed to the template and the rest of the Options API.\n\n```javascript\nsetup(props, context) {\n  // props are reactive\n  // context exposes attrs, slots, emit\n  return { /* reactive values */ }\n}\n```"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Reactive State with ref and reactive",
+            "content": "# ref vs reactive\n\n- **ref**: wraps a value (primitive or object) into a reactive reference. Access via `.value` in script, but automatically unwrapped in templates.\n- **reactive**: makes an object deeply reactive. No `.value` needed, but cannot be reassigned.\n\n```javascript\nimport { ref, reactive } from 'vue'\n\nconst count = ref(0)           // { value: 0 }\nconst state = reactive({ count: 0 }) // { count: 0 }\n\n// In template: {{ count }} and {{ state.count }}\n```\n\n**When to use?** `ref` for primitives or when you need to reassign the whole value; `reactive` for objects you'll mutate deeply."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Example: Counter with Composition API",
+            "content": "A simple counter using setup():",
+            "codeSnippet": "<div id=\"app\">\n  <p>Count: {{ count }}</p>\n  <p>Double: {{ doubleCount }}</p>\n  <button @click=\"increment\">+</button>\n</div>\n\n<script>\n  const { createApp, ref, computed } = Vue;\n\n  createApp({\n    setup() {\n      const count = ref(0);\n      const doubleCount = computed(() => count.value * 2);\n      const increment = () => count.value++;\n      return { count, doubleCount, increment };\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "How do you access the value of a ref in the script?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "ref.value",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "ref()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "ref()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "ref",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A ref is an object with a `.value` property. You must use `.value` to read/write its value in script (templates automatically unwrap).",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,67 @@
+{
+    "id": "l2",
+    "chapterId": "ch_11",
+    "title": "Building Complex Forms",
+    "description": "Handle nested objects, arrays, and dynamic form fields with v-model.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Forms",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Binding to Nested Objects",
+            "content": "# v-model on Object Properties\n\nYou can bind `v-model` to properties of a reactive object. This works well for grouping related fields.\n\n```javascript\ndata() {\n  return {\n    user: {\n      firstName: '',\n      lastName: '',\n      address: {\n        street: '',\n        city: ''\n      }\n    }\n  }\n}\n```\n\n```html\n<input v-model=\"user.firstName\">\n<input v-model=\"user.address.city\">\n```\n\nVue's reactivity handles nested objects automatically (in Vue 3, via proxies)."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Dynamic Form Fields",
+            "content": "# Adding Fields Dynamically\n\nSometimes you need to let users add/remove fields – like multiple phone numbers or emails. You can use an array and `v-for`.\n\n```javascript\ndata() {\n  return {\n    emails: ['']\n  }\n}\n```\n\n```html\n<div v-for=\"(email, idx) in emails\" :key=\"idx\">\n  <input v-model=\"emails[idx]\">\n  <button @click=\"emails.splice(idx, 1)\">Remove</button>\n</div>\n<button @click=\"emails.push('')\">Add Email</button>\n```\n\nThis gives you a fully dynamic form."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Example: Address Book Form",
+            "content": "A form with nested object and dynamic phone numbers:",
+            "codeSnippet": "<div id=\"app\">\n  <form @submit.prevent=\"submit\">\n    <input v-model=\"contact.name\" placeholder=\"Name\">\n    <input v-model=\"contact.email\" placeholder=\"Email\">\n\n    <h3>Phone Numbers</h3>\n    <div v-for=\"(phone, idx) in contact.phones\" :key=\"idx\">\n      <input v-model=\"contact.phones[idx]\" placeholder=\"Phone\">\n      <button @click=\"removePhone(idx)\">✖</button>\n    </div>\n    <button type=\"button\" @click=\"addPhone\">+ Add Phone</button>\n\n    <button type=\"submit\">Save</button>\n  </form>\n  <pre>{{ contact }}</pre>\n</div>\n\n<script>\n  createApp({\n    data() {\n      return {\n        contact: {\n          name: '',\n          email: '',\n          phones: ['']\n        }\n      };\n    },\n    methods: {\n      addPhone() {\n        this.contact.phones.push('');\n      },\n      removePhone(idx) {\n        this.contact.phones.splice(idx, 1);\n      },\n      submit() {\n        alert('Submitted: ' + JSON.stringify(this.contact));\n      }\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "How do you handle an array of dynamic input fields in a form?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Use a computed property",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Use v-for on an array and bind each input with v-model to the array element",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Use a separate component for each field",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Use a watcher to update the array",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "You can use `v-for` to iterate over an array of values and bind each input to the corresponding array element, allowing dynamic addition/removal.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

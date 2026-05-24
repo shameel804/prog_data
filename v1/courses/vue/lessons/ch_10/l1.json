@@ -1,0 +1,58 @@
+{
+    "id": "l1",
+    "chapterId": "ch_10",
+    "title": "Why Composition API?",
+    "description": "Understand the motivation behind the Composition API and when to use it.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Introduction",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The Limitations of Options API",
+            "content": "# Options API: Great, but...\n\nThe Options API (`data`, `methods`, `computed`, `watch`) is simple for small components. However, as components grow, related logic can become scattered across different options.\n\n```javascript\nexport default {\n  data() { return { searchQuery: '', results: [] } },\n  computed: { filteredResults() { ... } },\n  watch: { searchQuery() { this.fetchResults() } },\n  methods: { fetchResults() { ... } },\n  mounted() { this.fetchResults() }\n}\n```\n\nFor a single feature, you jump between `data`, `watch`, `methods`, `mounted`. **Code organization by option type** can hurt readability."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "Composition API to the Rescue",
+            "content": "# Composition API\n\nIntroduced in Vue 3, the Composition API lets you group related logic together, making components more maintainable and reusable.\n\n```javascript\nimport { ref, watch, onMounted } from 'vue'\n\nexport default {\n  setup() {\n    const searchQuery = ref('')\n    const results = ref([])\n\n    const fetchResults = async () => { ... }\n\n    watch(searchQuery, fetchResults)\n    onMounted(fetchResults)\n\n    return { searchQuery, results }\n  }\n}\n```\n\nAll code for the search feature is now in one place. Plus, you can extract this logic into a **composable** and reuse it across components."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What is a primary benefit of the Composition API?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It replaces the Options API entirely",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It allows grouping related logic together, improving reusability",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It makes components run faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It removes the need for reactive data",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The Composition API helps organize code by logical concern rather than option type, making components easier to understand and reuse.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

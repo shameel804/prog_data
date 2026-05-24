@@ -1,0 +1,67 @@
+{
+    "id": "l4",
+    "chapterId": "ch_13",
+    "title": "Virtual Scrolling & Large Lists",
+    "description": "Efficiently render thousands of items with virtualization.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Rendering",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Problem with Large Lists",
+            "content": "# Rendering 10,000 Items\n\nIf you use `v-for` to render 10,000 items, the browser creates 10,000 DOM nodes. This can cause slow initial render, memory issues, and sluggish scrolling.\n\n**Virtual scrolling** solves this by rendering only the items visible in the viewport, plus a buffer. As the user scrolls, items are dynamically added and removed."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Implementing Virtual Scrolling",
+            "content": "# Libraries and Approaches\n\n- **Vue Virtual Scroller** – official Vue community library.\n- **vue-virtual-scroller** – popular library with support for grids and lists.\n- **RecycleScroller** – part of `vue-virtual-scroller`, optimized for large lists.\n\nExample with `vue-virtual-scroller`:\n```vue\n<template>\n  <RecycleScroller\n    class=\"scroller\"\n    :items=\"items\"\n    :item-size=\"50\"\n    key-field=\"id\"\n    v-slot=\"{ item }\"\n  >\n    <div class=\"item\">{{ item.text }}</div>\n  </RecycleScroller>\n</template>\n\n<script setup>\nimport { RecycleScroller } from 'vue-virtual-scroller'\nimport 'vue-virtual-scroller/dist/vue-virtual-scroller.css'\n\nconst items = Array.from({ length: 10000 }, (_, i) => ({ id: i, text: `Item ${i}` }))\n</script>\n```"
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Example: Simple Virtual List",
+            "content": "A minimal virtual scroller using CSS and scroll events (simplified):",
+            "codeSnippet": "<div id=\"app\">\n  <div class=\"list-container\" @scroll=\"onScroll\" ref=\"container\">\n    <div :style=\"{ height: totalHeight + 'px', position: 'relative' }\">\n      <div\n        v-for=\"item in visibleItems\"\n        :key=\"item.id\"\n        class=\"list-item\"\n        :style=\"{ position: 'absolute', top: item.top + 'px', height: itemHeight + 'px' }\"\n      >\n        {{ item.text }}\n      </div>\n    </div>\n  </div>\n</div>\n\n<script>\n  createApp({\n    data() {\n      return {\n        items: [],\n        itemHeight: 50,\n        visibleCount: 10,\n        startIndex: 0\n      };\n    },\n    computed: {\n      totalHeight() {\n        return this.items.length * this.itemHeight;\n      },\n      visibleItems() {\n        const end = Math.min(this.startIndex + this.visibleCount, this.items.length);\n        return this.items.slice(this.startIndex, end).map((item, idx) => ({\n          ...item,\n          top: (this.startIndex + idx) * this.itemHeight\n        }));\n      }\n    },\n    mounted() {\n      // Generate 10,000 items\n      this.items = Array.from({ length: 10000 }, (_, i) => ({ id: i, text: `Item ${i}` }));\n    },\n    methods: {\n      onScroll(e) {\n        const scrollTop = e.target.scrollTop;\n        this.startIndex = Math.floor(scrollTop / this.itemHeight);\n      }\n    }\n  }).mount('#app');\n</script>\n<style>\n  .list-container { height: 400px; overflow-y: auto; border: 1px solid #ccc; }\n  .list-item { width: 100%; border-bottom: 1px solid #eee; display: flex; align-items: center; padding: 0 10px; box-sizing: border-box; }\n</style>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is the main benefit of virtual scrolling?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It makes the list look nicer",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It renders only the visible items, reducing DOM nodes",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It automatically sorts the list",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It adds infinite scroll",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Virtual scrolling dramatically reduces the number of DOM elements by rendering only those in the viewport, which improves performance for large lists.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

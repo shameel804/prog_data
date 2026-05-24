@@ -1,0 +1,67 @@
+{
+    "id": "l2",
+    "chapterId": "ch_13",
+    "title": "Lazy Loading & Code Splitting",
+    "description": "Split your app into chunks and load components only when needed.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Loading",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Why Lazy Load?",
+            "content": "# Reduce Initial Bundle Size\n\nBy default, a Vue app bundles all components together. For large apps, the initial load can be heavy. **Code splitting** breaks the bundle into chunks that are loaded only when required.\n\nIn Vue Router, you can lazily load route components:\n\n```javascript\nconst routes = [\n  {\n    path: '/dashboard',\n    component: () => import('./views/Dashboard.vue')\n  }\n]\n```\n\nThe `import()` function returns a promise, and the component is loaded only when the route is visited."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Async Components with defineAsyncComponent",
+            "content": "# defineAsyncComponent\n\nFor components not tied to routes, you can use `defineAsyncComponent`:\n\n```javascript\nimport { defineAsyncComponent } from 'vue'\n\nexport default {\n  components: {\n    HeavyComponent: defineAsyncComponent(() =>\n      import('./HeavyComponent.vue')\n    )\n  }\n}\n```\n\nYou can also define a loading component and error component:\n```javascript\nconst AsyncComponent = defineAsyncComponent({\n  loader: () => import('./Heavy.vue'),\n  loadingComponent: LoadingSpinner,\n  errorComponent: ErrorDisplay,\n  delay: 200,\n  timeout: 3000\n})\n```"
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Example: Lazy Loading a Modal",
+            "content": "Load a modal component only when the button is clicked:",
+            "codeSnippet": "<div id=\"app\">\n  <button @click=\"showModal = true\">Open Modal</button>\n  <async-modal v-if=\"showModal\" @close=\"showModal = false\" />\n</div>\n\n<script>\n  const { createApp, defineAsyncComponent, ref } = Vue;\n\n  const AsyncModal = defineAsyncComponent(() =>\n    new Promise(resolve => {\n      setTimeout(() => {\n        resolve({\n          template: `\n            <div class=\"modal\">\n              <div class=\"modal-content\">\n                <h2>Loaded Lazily!</h2>\n                <button @click=\"$emit('close')\">Close</button>\n              </div>\n            </div>\n          `,\n          emits: ['close']\n        });\n      }, 1000);\n    })\n  );\n\n  createApp({\n    components: { AsyncModal },\n    setup() {\n      const showModal = ref(false);\n      return { showModal };\n    }\n  }).mount('#app');\n</script>\n<style>\n  .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; }\n  .modal-content { background:white; padding:20px; border-radius:8px; }\n</style>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which Vue function is used to create a lazy‑loaded async component?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "defineAsyncComponent",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "defineComponent",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "createAsyncComponent",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "lazyComponent",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`defineAsyncComponent` is the official way to define async components in Vue 3.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

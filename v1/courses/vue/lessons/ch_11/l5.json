@@ -1,0 +1,67 @@
+{
+    "id": "l5",
+    "chapterId": "ch_11",
+    "title": "Form Libraries: VeeValidate & Others",
+    "description": "Integrate popular validation libraries for complex validation needs.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Libraries",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "VeeValidate – The Standard",
+            "content": "# VeeValidate\n\nVeeValidate is the most popular form validation library for Vue. It offers:\n- Declarative validation rules (like `required`, `email`, `min`).\n- Integration with components.\n- Schema validation with Yup.\n- Built‑in error messages.\n\n**Installation**:\n```bash\nnpm install vee-validate yup\n```\n\nExample usage:\n```vue\n<template>\n  <Form @submit=\"onSubmit\">\n    <Field name=\"email\" rules=\"required|email\" v-slot=\"{ field, errors }\">\n      <input v-bind=\"field\" type=\"email\" />\n      <span>{{ errors[0] }}</span>\n    </Field>\n    <button type=\"submit\">Submit</button>\n  </Form>\n</template>\n\n<script setup>\nimport { Form, Field } from 'vee-validate';\nconst onSubmit = (values) => console.log(values);\n</script>\n```"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Other Libraries",
+            "content": "# Alternatives\n\n- **Vuelidate** – Model‑based validation, integrates with Vue's reactivity.\n- **Vue Formulate** – Provides a powerful form building syntax with built‑in validation.\n- **FormKit** – Modern form framework with validation, theming, and more.\n\nChoose based on your project needs: VeeValidate is great for complex validation, Vuelidate is lightweight, FormKit offers a full form building system."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Example: VeeValidate with Yup Schema",
+            "content": "A registration form using Yup schema for validation:",
+            "codeSnippet": "<!DOCTYPE html>\n<html>\n<head>\n  <title>VeeValidate Demo</title>\n  <script src=\"https://unpkg.com/vue@3/dist/vue.global.js\"></script>\n  <script src=\"https://unpkg.com/vee-validate@4\"></script>\n  <script src=\"https://unpkg.com/yup@1\"></script>\n</head>\n<body>\n  <div id=\"app\">\n    <vee-form @submit=\"onSubmit\">\n      <vee-field name=\"email\" as=\"input\" label=\"Email\" />\n      <vee-error-message name=\"email\" />\n      \n      <vee-field name=\"password\" as=\"input\" type=\"password\" label=\"Password\" />\n      <vee-error-message name=\"password\" />\n      \n      <button type=\"submit\">Submit</button>\n    </vee-form>\n  </div>\n\n  <script>\n    const { createApp } = Vue;\n    const { Form, Field, ErrorMessage, configure, defineRule } = VeeValidate;\n    const * as Yup = Yup;\n\n    // Define schema\n    const schema = Yup.object({\n      email: Yup.string().required().email(),\n      password: Yup.string().required().min(6)\n    });\n\n    createApp({\n      components: {\n        VeeForm: Form,\n        VeeField: Field,\n        VeeErrorMessage: ErrorMessage\n      },\n      setup() {\n        const onSubmit = (values) => {\n          alert('Submitted: ' + JSON.stringify(values));\n        };\n        return { onSubmit };\n      }\n    }).mount('#app');\n  </script>\n</body>\n</html>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the benefit of using a validation library like VeeValidate?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It automatically styles forms",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It provides declarative validation rules and error handling",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It replaces Vue Router",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It is only for TypeScript",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "VeeValidate offers a set of pre‑defined validation rules, error messages, and integrates seamlessly with Vue forms, reducing boilerplate.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

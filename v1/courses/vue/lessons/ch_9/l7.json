@@ -1,0 +1,64 @@
+{
+    "id": "l7",
+    "chapterId": "ch_9",
+    "title": "Pinia Patterns & Advanced Features",
+    "description": "Explore store composition, plugins, and integration with Vue Devtools.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l7_1",
+            "type": "text",
+            "title": "Store Composition",
+            "content": "# Composing Stores\n\nStores can use other stores, enabling you to compose complex logic.\n\n```javascript\nexport const useUserStore = defineStore('user', () => {\n  const cartStore = useCartStore();\n  \n  function buy() {\n    // use cartStore\n  }\n  \n  return { buy };\n})\n```\n\nThis creates a dependency tree that works seamlessly."
+        },
+        {
+            "id": "s_l7_2",
+            "type": "text",
+            "title": "Plugins",
+            "content": "# Extending Pinia with Plugins\n\nPlugins allow you to add global features to all stores, like persisting state to localStorage.\n\n```javascript\nconst pinia = createPinia()\n\npinia.use(({ store }) => {\n  // Called for every store\n  store.$subscribe((mutation, state) => {\n    localStorage.setItem(store.$id, JSON.stringify(state))\n  })\n})\n```\n\nPopular plugins: `pinia-plugin-persistedstate`."
+        },
+        {
+            "id": "s_l7_3",
+            "type": "text",
+            "title": "Devtools Integration",
+            "content": "# Vue Devtools with Pinia\n\nPinia automatically integrates with Vue Devtools. You can inspect:\n- The list of stores\n- Their state, getters, actions\n- Time‑travel debugging (undo/redo actions)\n\nMake sure to use the latest Devtools version."
+        },
+        {
+            "id": "s_l7_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of a Pinia plugin?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To add global functionality to all stores",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To define a new store",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To replace the router",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To optimize performance",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Plugins are functions that run for every store, allowing you to extend stores with additional properties, methods, or behavior.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,64 @@
+{
+    "id": "l6",
+    "chapterId": "ch_10",
+    "title": "Composition API Best Practices",
+    "description": "Tips for organizing code and migrating from Options API.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Best Practices",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Organizing Your Code",
+            "content": "# Group by Concern, Not by Type\n\nIn `setup()`, organize code by logical feature, not by reactive type. Use comments or separate composables to group related reactive state, computed, and watchers.\n\n```javascript\nsetup() {\n  // --- Counter feature ---\n  const count = ref(0)\n  const increment = () => count.value++\n\n  // --- Search feature ---\n  const search = ref('')\n  const filteredItems = computed(() => items.value.filter(...))\n  watch(search, () => { ... })\n\n  return { count, increment, search, filteredItems }\n}\n```\n\nBetter: extract each feature into a composable."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "Migration from Options API",
+            "content": "# Gradual Adoption\n\n- You can use Composition API alongside Options API in the same component.\n- Migrate feature by feature: start with one computed property or watcher, move to `setup()`.\n- Use `<script setup>` in Single‑File Components for a cleaner syntax.\n\n**`<script setup>`** is a compile‑time syntactic sugar that makes Composition API more ergonomic. It reduces boilerplate and automatically exposes top‑level bindings to the template.\n\n```vue\n<script setup>\nimport { ref } from 'vue'\nconst count = ref(0)\n</script>\n\n<template>\n  <button @click=\"count++\">{{ count }}</button>\n</template>\n```"
+        },
+        {
+            "id": "s_l6_3",
+            "type": "tip",
+            "title": "TypeScript Integration",
+            "content": "The Composition API is built with TypeScript in mind. When using `ref`, you can specify the type:\n\n```typescript\nconst count = ref<number>(0)\nconst user = ref<User | null>(null)\n```\n\n`reactive` automatically infers types, but you can also annotate the returned object.\n\nWith `<script setup>`, the type system works seamlessly."
+        },
+        {
+            "id": "s_l6_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What is the recommended way to organize code inside `setup()`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Group by data, computed, methods",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Group by logical feature or concern",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Alphabetically",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "There is no recommendation",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Grouping code by logical feature improves readability and maintainability, as related code stays together.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

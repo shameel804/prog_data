@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_10",
+    "title": "Build a useMouse Tracker",
+    "description": "Create a composable that tracks mouse position and use it in a component.",
+    "estimatedMinutes": 10,
+    "problemStatement": "## Problem Statement\n\nCreate a composable called `useMouse` that tracks the mouse position (x, y) on the page. It should:\n\n- Return reactive `x` and `y` refs.\n- Update these values on `mousemove` events.\n- Clean up the event listener on unmount.\n\nThen, in a component, use this composable to display the current mouse coordinates. Optionally, add a circle that follows the mouse position.\n\n**Bonus**: Also track whether the mouse is inside the component's element (use `useMouseInElement`).",
+    "hints": [
+        "Use `ref` for x and y.",
+        "Use `onMounted` to add the event listener and `onUnmounted` to remove it.",
+        "The event handler should update the refs with `event.clientX` and `event.clientY`.",
+        "In the component, call `useMouse()` and destructure x, y."
+    ],
+    "expectedOutput": "A component that shows live mouse coordinates and optionally a moving dot.",
+    "solutionCode": "<!DOCTYPE html>\n<html>\n<head>\n  <title>useMouse Composable</title>\n  <script src=\"https://unpkg.com/vue@3/dist/vue.global.js\"></script>\n</head>\n<body>\n  <div id=\"app\">\n    <h2>Mouse Position</h2>\n    <p>X: {{ x }}, Y: {{ y }}</p>\n    <div class=\"dot\" :style=\"{ left: x + 'px', top: y + 'px' }\"></div>\n  </div>\n\n  <script>\n    const { createApp, ref, onMounted, onUnmounted } = Vue;\n\n    function useMouse() {\n      const x = ref(0);\n      const y = ref(0);\n\n      const update = (e) => {\n        x.value = e.clientX;\n        y.value = e.clientY;\n      };\n\n      onMounted(() => window.addEventListener('mousemove', update));\n      onUnmounted(() => window.removeEventListener('mousemove', update));\n\n      return { x, y };\n    }\n\n    createApp({\n      setup() {\n        const { x, y } = useMouse();\n        return { x, y };\n      }\n    }).mount('#app');\n  </script>\n  <style>\n    .dot {\n      position: fixed;\n      width: 10px;\n      height: 10px;\n      background-color: red;\n      border-radius: 50%;\n      pointer-events: none;\n      transform: translate(-50%, -50%);\n      transition: 0.05s linear;\n    }\n  </style>\n</body>\n</html>"
+}

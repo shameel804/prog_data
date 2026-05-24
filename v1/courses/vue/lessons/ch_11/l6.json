@@ -1,0 +1,67 @@
+{
+    "id": "l6",
+    "chapterId": "ch_11",
+    "title": "Accessibility in Forms",
+    "description": "Ensure your forms are usable for everyone with proper labels, ARIA, and focus management.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Accessibility",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Why Accessibility Matters",
+            "content": "# Forms for Everyone\n\nAccessible forms are essential for users with disabilities (screen readers, keyboard navigation). Key practices:\n- **Use `<label>`** with `for` attribute or wrap input inside label.\n- **Provide focus indicators** (outline) for keyboard users.\n- **Announce errors** with `aria-live` regions.\n- **Use semantic HTML** (buttons, inputs)."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "Managing Focus",
+            "content": "# Focus Management\n\n- Use `ref` to focus an input on mount (e.g., the first field).\n- On form submission, if errors exist, focus the first error field.\n- After successful submission, move focus to a success message.\n\nVue provides `$refs` to access DOM elements and call `.focus()`."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Example: Accessible Form",
+            "content": "A form with proper labels, error announcement, and focus management:",
+            "codeSnippet": "<div id=\"app\">\n  <form @submit.prevent=\"submit\">\n    <div>\n      <label for=\"name\">Name</label>\n      <input id=\"name\" v-model=\"name\" ref=\"firstInput\" aria-describedby=\"name-error\">\n      <div id=\"name-error\" v-if=\"errors.name\" role=\"alert\">{{ errors.name }}</div>\n    </div>\n    <div>\n      <label for=\"email\">Email</label>\n      <input id=\"email\" v-model=\"email\" aria-describedby=\"email-error\">\n      <div id=\"email-error\" v-if=\"errors.email\" role=\"alert\">{{ errors.email }}</div>\n    </div>\n    <button type=\"submit\">Submit</button>\n    <div v-if=\"success\" role=\"status\">Form submitted successfully!</div>\n  </form>\n</div>\n\n<script>\n  createApp({\n    data() {\n      return {\n        name: '',\n        email: '',\n        errors: {},\n        success: false\n      };\n    },\n    mounted() {\n      this.$refs.firstInput.focus();\n    },\n    methods: {\n      submit() {\n        this.errors = {};\n        if (!this.name) this.errors.name = 'Name is required';\n        if (!this.email) this.errors.email = 'Email is required';\n        else if (!this.email.includes('@')) this.errors.email = 'Invalid email';\n\n        if (Object.keys(this.errors).length) {\n          // Focus first error field\n          const firstErrorField = Object.keys(this.errors)[0];\n          this.$refs[firstErrorField]?.focus();\n        } else {\n          this.success = true;\n          setTimeout(() => (this.success = false), 3000);\n        }\n      }\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l6_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What is an important accessibility feature to include with form inputs?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A placeholder only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A `<label>` associated with the input",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A `title` attribute",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A large font size",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Properly associated `<label>`s are essential for screen reader users to understand the purpose of each input.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

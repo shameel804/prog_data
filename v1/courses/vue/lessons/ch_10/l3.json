@@ -1,0 +1,67 @@
+{
+    "id": "l3",
+    "chapterId": "ch_10",
+    "title": "Lifecycle Hooks in Composition API",
+    "description": "Use lifecycle hooks like onMounted, onUnmounted, and others.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Lifecycle",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Lifecycle Hooks as Functions",
+            "content": "# onMounted, onUpdated, onUnmounted, etc.\n\nIn Composition API, lifecycle hooks are imported as functions and called inside `setup()`.\n\n```javascript\nimport { onMounted, onUnmounted, onUpdated } from 'vue'\n\nsetup() {\n  onMounted(() => {\n    console.log('Component mounted')\n  })\n\n  onUnmounted(() => {\n    console.log('Component unmounted')\n  })\n}\n```\n\nThese functions can be called multiple times and the callbacks will run in the order they are registered."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Available Hooks",
+            "content": "| Options API | Composition API |\n|-------------|-----------------|\n| beforeCreate | (not needed, code goes in setup) |\n| created | (not needed, code goes in setup) |\n| beforeMount | onBeforeMount |\n| mounted | onMounted |\n| beforeUpdate | onBeforeUpdate |\n| updated | onUpdated |\n| beforeUnmount | onBeforeUnmount |\n| unmounted | onUnmounted |\n| errorCaptured | onErrorCaptured |\n| renderTracked | onRenderTracked |\n| renderTriggered | onRenderTriggered |\n\nNote: `beforeCreate` and `created` are replaced by the `setup()` function itself."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Example: Timer with Cleanup",
+            "content": "A component that logs lifecycle events:",
+            "codeSnippet": "<div id=\"app\">\n  <timer v-if=\"showTimer\" />\n  <button @click=\"showTimer = !showTimer\">Toggle</button>\n</div>\n\n<script>\n  const { createApp, ref, onMounted, onUnmounted } = Vue;\n\n  const Timer = {\n    setup() {\n      const seconds = ref(0);\n      let interval;\n\n      onMounted(() => {\n        console.log('Timer mounted');\n        interval = setInterval(() => seconds.value++, 1000);\n      });\n\n      onUnmounted(() => {\n        console.log('Timer unmounted');\n        clearInterval(interval);\n      });\n\n      return { seconds };\n    },\n    template: '<div>Seconds: {{ seconds }}</div>'\n  };\n\n  createApp({\n    components: { Timer },\n    setup() {\n      const showTimer = ref(true);\n      return { showTimer };\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "In Composition API, where do you put code that would go in the `created` hook of Options API?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Inside the setup() function",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Inside onCreated()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Inside beforeCreate()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "There is no equivalent",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `setup()` function runs after props are resolved but before the component instance is created, essentially combining beforeCreate and created.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

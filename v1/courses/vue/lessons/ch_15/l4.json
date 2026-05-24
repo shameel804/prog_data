@@ -1,0 +1,66 @@
+{
+    "id": "l4",
+    "chapterId": "ch_15",
+    "title": "Continuous Deployment & Automation",
+    "description": "Set up automatic deploys from your Git repository.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "CI/CD",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "What is Continuous Deployment?",
+            "content": "# Automate Your Deployments\n\nContinuous Deployment (CD) means that every time you push code to a specific branch (e.g., `main`), your site is automatically built and deployed. This eliminates manual steps and ensures your live site is always up‑to‑date.\n\n**Benefits**:\n- No risk of forgetting to deploy.\n- Immediate feedback for collaborators.\n- Easy rollbacks (just revert the commit)."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Git‑Based Deployment on Netlify",
+            "content": "# Netlify Continuous Deployment\n\n1. Push your code to GitHub/GitLab/Bitbucket.\n2. In Netlify, choose \"New site from Git\".\n3. Authorize and select your repository.\n4. Configure build settings:\n   - Build command: `npm run build`\n   - Publish directory: `dist`\n5. Click \"Deploy site\".\n\nNow, every `git push` to the main branch will trigger a new deployment. Netlify also gives you preview deployments for pull requests, so you can see changes before merging."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "GitHub Actions Example",
+            "content": "If you prefer more control, you can use GitHub Actions to deploy to any host. Here's a simple workflow for deploying to GitHub Pages:\n\n```yaml\nname: Deploy to GitHub Pages\n\non:\n  push:\n    branches: [ main ]\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v3\n      - uses: actions/setup-node@v3\n        with:\n          node-version: 18\n      - run: npm ci\n      - run: npm run build\n      - uses: peaceiris/actions-gh-pages@v3\n        with:\n          github_token: ${{ secrets.GITHUB_TOKEN }}\n          publish_dir: ./dist\n```\n\nThis workflow builds the app and pushes the `dist` folder to the `gh-pages` branch, which GitHub Pages serves.",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is the main advantage of continuous deployment?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It makes the app faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It automatically deploys the latest code on every push",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It replaces the need for testing",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It only works with Netlify",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Continuous deployment automates the deployment process, so the latest changes are always live without manual intervention.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

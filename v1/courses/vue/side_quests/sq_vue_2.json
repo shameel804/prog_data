@@ -1,0 +1,70 @@
+{
+    "id": "sq_vue_2",
+    "title": "Components & Communication",
+    "triggerChapterIndex": 5,
+    "metadata": {
+        "type": "debug"
+    },
+    "questions": [
+        {
+            "id": "sq_vue_2_q1",
+            "type": "debug",
+            "question": "The child component does not receive the prop correctly. Find the bug.",
+            "codeSnippet": "// Parent template\n<child-component :userData=\"user\" />\n\n// Child component\nprops: ['userData'],\ntemplate: `<p>{{ user.name }}</p>`",
+            "bugLineIndex": 4,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The child expects a prop named `userData`, but in the template it uses `user.name`. It should be `userData.name` or rename the prop.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_vue_2_q2",
+            "type": "debug",
+            "question": "The child component tries to modify a prop directly, causing a warning. Find the bug.",
+            "codeSnippet": "// Child component\nprops: ['count'],\nmethods: {\n  increment() {\n    this.count++\n  }\n}",
+            "bugLineIndex": 4,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "Props should not be mutated directly. The child should emit an event to notify the parent to change the prop.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_vue_2_q3",
+            "type": "debug",
+            "question": "The slot content is not displayed. Find the bug.",
+            "codeSnippet": "// Parent\n<my-card><h2>Title</h2></my-card>\n\n// MyCard component template\n<div class=\"card\">\n  <slot name=\"header\"></slot>\n</div>",
+            "bugLineIndex": 6,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The slot is named `header`, but the parent does not specify a slot. Either remove the `name` attribute or wrap parent content in `<template #header>`.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_vue_2_q4",
+            "type": "debug",
+            "question": "The provide/inject does not work. Find the bug.",
+            "codeSnippet": "// Ancestor\nprovide() {\n  return { theme: 'dark' }\n}\n\n// Descendant\ninject: ['theme'],\nmounted() {\n  console.log(theme)\n}",
+            "bugLineIndex": 8,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "In the descendant, `theme` is accessed directly in the `mounted` hook, but `inject`ed values are available on `this.theme`. The code should be `console.log(this.theme)`.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_vue_2_q5",
+            "type": "debug",
+            "question": "The custom component does not update when the parent's v-model changes. Find the bug.",
+            "codeSnippet": "// Parent\n<custom-input v-model=\"text\" />\n\n// CustomInput component\nprops: ['modelValue'],\ntemplate: '<input :value=\"modelValue\" @input=\"updateValue\">',\nmethods: {\n  updateValue(e) {\n    this.$emit('input', e.target.value)\n  }\n}",
+            "bugLineIndex": 6,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "In Vue 3, the event for `v-model` is `update:modelValue`, not `input`. The component should emit `update:modelValue`.",
+            "xpReward": 20,
+            "difficulty": 2
+        }
+    ]
+}

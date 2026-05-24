@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_10",
+    "title": "Create a useDebounce Composable",
+    "description": "Build a composable that debounces a value and use it to delay search input.",
+    "estimatedMinutes": 12,
+    "problemStatement": "## Problem Statement\n\nCreate a composable called `useDebounce` that takes a `ref` and a delay (ms) and returns a new ref that updates only after the source has stopped changing for the specified delay.\n\n- The debounced ref should initially have the same value as the source.\n- When the source changes, the debounced value should update only after `delay` milliseconds of no further changes.\n\nUse this composable in a search component:\n- An input bound to a `search` ref.\n- A debounced search term `debouncedSearch` created with `useDebounce(search, 500)`.\n- Display both the immediate search value and the debounced value.\n- Simulate an API call when the debounced value changes (e.g., console log or update a message).\n\n**Bonus**: Add an abort controller to cancel pending requests on new debounce.",
+    "hints": [
+        "Inside `useDebounce`, create a new ref `debouncedValue`.\n    Use `watch` on the source to set a timeout and update the debounced value after the delay.",
+        "Clear the timeout if the source changes again within the delay.",
+        "Return the debouncedValue ref."
+    ],
+    "expectedOutput": "A search input showing live and debounced values, with simulated search when debounced changes.",
+    "solutionCode": "<!DOCTYPE html>\n<html>\n<head>\n  <title>useDebounce Composable</title>\n  <script src=\"https://unpkg.com/vue@3/dist/vue.global.js\"></script>\n</head>\n<body>\n  <div id=\"app\">\n    <input v-model=\"search\" placeholder=\"Type something...\">\n    <p>Immediate: {{ search }}</p>\n    <p>Debounced (500ms): {{ debouncedSearch }}</p>\n    <p v-if=\"searching\">Searching for \"{{ debouncedSearch }}\"...</p>\n    <p v-else>Last searched: {{ lastSearched }}</p>\n  </div>\n\n  <script>\n    const { createApp, ref, watch } = Vue;\n\n    function useDebounce(source, delay) {\n      const debouncedValue = ref(source.value);\n      let timeout;\n\n      watch(source, (newVal) => {\n        if (timeout) clearTimeout(timeout);\n        timeout = setTimeout(() => {\n          debouncedValue.value = newVal;\n        }, delay);\n      }, { immediate: true });\n\n      return debouncedValue;\n    }\n\n    createApp({\n      setup() {\n        const search = ref('');\n        const debouncedSearch = useDebounce(search, 500);\n        const searching = ref(false);\n        const lastSearched = ref('');\n\n        watch(debouncedSearch, async (newVal) => {\n          if (newVal === '') return;\n          searching.value = true;\n          // Simulate API call\n          await new Promise(resolve => setTimeout(resolve, 800));\n          searching.value = false;\n          lastSearched.value = newVal;\n        });\n\n        return { search, debouncedSearch, searching, lastSearched };\n      }\n    }).mount('#app');\n  </script>\n</body>\n</html>"
+}

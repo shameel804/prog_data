@@ -1,0 +1,67 @@
+{
+    "id": "l3",
+    "chapterId": "ch_9",
+    "title": "Setting Up Pinia",
+    "description": "Install and configure Pinia in your Vue 3 app.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Setup",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Installation",
+            "content": "# Add Pinia to Your Project\n\nUsing npm/yarn:\n```bash\nnpm install pinia\n# or\nyarn add pinia\n```\n\nUsing CDN:\n```html\n<script src=\"https://unpkg.com/pinia@2/dist/pinia.iife.js\"></script>\n```"
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Creating the Pinia Instance",
+            "content": "# main.js Setup\n\n```javascript\nimport { createApp } from 'vue'\nimport { createPinia } from 'pinia'\nimport App from './App.vue'\n\nconst pinia = createPinia()\nconst app = createApp(App)\n\napp.use(pinia)\napp.mount('#app')\n```\n\nThe `createPinia()` function creates the store root. All stores will be automatically registered and available in components."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Minimal CDN Example",
+            "content": "Basic HTML with Pinia CDN:",
+            "codeSnippet": "<!DOCTYPE html>\n<html>\n<head>\n  <title>Pinia Setup</title>\n  <script src=\"https://unpkg.com/vue@3/dist/vue.global.js\"></script>\n  <script src=\"https://unpkg.com/pinia@2/dist/pinia.iife.js\"></script>\n</head>\n<body>\n  <div id=\"app\">\n    <p>Counter: {{ counter }}</p>\n    <button @click=\"increment\">+</button>\n  </div>\n\n  <script>\n    const { createApp } = Vue;\n    const { createPinia, defineStore } = Pinia;\n\n    // Define a store\n    const useCounterStore = defineStore('counter', {\n      state: () => ({ count: 0 }),\n      actions: {\n        increment() {\n          this.count++;\n        }\n      }\n    });\n\n    const pinia = createPinia();\n    const app = createApp({\n      setup() {\n        const store = useCounterStore();\n        return {\n          counter: store.count,\n          increment: store.increment\n        };\n      }\n    });\n\n    app.use(pinia);\n    app.mount('#app');\n  </script>\n</body>\n</html>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of `createPinia()`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To define a new store",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To create the Pinia root instance and enable the plugin",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To register a component",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To set up routing",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`createPinia()` creates the Pinia instance, which must be installed via `app.use()` to make stores available.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

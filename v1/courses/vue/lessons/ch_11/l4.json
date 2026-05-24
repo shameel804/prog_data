@@ -1,0 +1,67 @@
+{
+    "id": "l4",
+    "chapterId": "ch_11",
+    "title": "Creating Custom Input Components",
+    "description": "Build reusable form components that support v-model.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Components",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Custom Input with v-model",
+            "content": "# Implementing v-model on a Component\n\nTo make a custom component work with `v-model`, it must:\n- Accept a `modelValue` prop.\n- Emit an `update:modelValue` event with the new value.\n\n```javascript\n// CustomInput.vue\nexport default {\n  props: ['modelValue'],\n  emits: ['update:modelValue'],\n  template: `\n    <input \n      :value=\"modelValue\"\n      @input=\"$emit('update:modelValue', $event.target.value)\"\n    >\n  `\n}\n```\n\nThen use it: `<CustomInput v-model=\"text\" />`"
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Multiple v-model Bindings",
+            "content": "# v-model with Arguments\n\nFor components that need multiple two‑way bindings, you can use `v-model:propName`.\n\n```html\n<CustomForm v-model:firstName=\"first\" v-model:lastName=\"last\" />\n```\n\nInside the component, accept `firstName` and `lastName` as props, and emit `update:firstName`, `update:lastName`."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Example: Custom Text Input with Error Display",
+            "content": "A reusable input that also shows validation errors:",
+            "codeSnippet": "<div id=\"app\">\n  <custom-input v-model=\"username\" label=\"Username\" :error=\"usernameError\" />\n  <p>Username: {{ username }}</p>\n</div>\n\n<script>\n  const CustomInput = {\n    props: ['modelValue', 'label', 'error'],\n    emits: ['update:modelValue'],\n    template: `\n      <div>\n        <label>{{ label }}</label>\n        <input \n          :value=\"modelValue\"\n          @input=\"$emit('update:modelValue', $event.target.value)\"\n          :class=\"{ error: error }\"\n        >\n        <span v-if=\"error\" class=\"error-message\">{{ error }}</span>\n      </div>\n    `\n  };\n\n  createApp({\n    components: { CustomInput },\n    data() {\n      return { username: '' };\n    },\n    computed: {\n      usernameError() {\n        if (!this.username) return 'Username is required';\n        if (this.username.length < 3) return 'Minimum 3 characters';\n        return '';\n      }\n    }\n  }).mount('#app');\n</script>\n<style>\n  .error { border: 1px solid red; }\n  .error-message { color: red; font-size: 0.8em; display: block; }\n</style>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does a custom component need to support `v-model`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A `value` prop and an `input` event",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A `modelValue` prop and an `update:modelValue` event",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A `v-model` directive in its template",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A `model` option",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "In Vue 3, the default contract is a `modelValue` prop and an `update:modelValue` event. Vue 2 used `value` and `input`.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

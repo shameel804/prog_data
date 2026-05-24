@@ -1,0 +1,67 @@
+{
+    "id": "l5",
+    "chapterId": "ch_13",
+    "title": "Memoization & Caching",
+    "description": "Cache expensive calculations with computed properties and memoization.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Caching",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Caching with Computed Properties",
+            "content": "# Computed Properties Are Cached\n\nA computed property only recomputes when its reactive dependencies change. Use them for expensive calculations derived from state.\n\n```javascript\nconst filteredList = computed(() => {\n  return hugeList.value.filter(item => item.active)\n})\n```\n\nIf `hugeList` doesn't change, the filter runs only once."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Memoizing Functions",
+            "content": "# Memoization for Functions with Arguments\n\nFor functions that take arguments and have expensive logic, you can implement a manual memoization cache.\n\n```javascript\nimport { ref } from 'vue'\n\nfunction useExpensiveCalculation() {\n  const cache = new Map()\n\n  function calculate(input) {\n    if (cache.has(input)) return cache.get(input)\n    const result = expensiveComputation(input)\n    cache.set(input, result)\n    return result\n  }\n\n  return { calculate }\n}\n```\n\nUse this in components to avoid repeating work."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Example: Memoized Fibonacci",
+            "content": "A component that calculates Fibonacci numbers with memoization:",
+            "codeSnippet": "<div id=\"app\">\n  <input v-model.number=\"n\" type=\"number\" min=\"0\" max=\"40\">\n  <p>Fibonacci({{ n }}) = {{ fib }}</p>\n</div>\n\n<script>\n  const { createApp, ref, computed } = Vue;\n\n  const cache = new Map();\n  function fib(n) {\n    if (cache.has(n)) return cache.get(n);\n    let result;\n    if (n <= 1) result = n;\n    else result = fib(n-1) + fib(n-2);\n    cache.set(n, result);\n    return result;\n  }\n\n  createApp({\n    setup() {\n      const n = ref(10);\n      const fibValue = computed(() => fib(n.value));\n      return { n, fib: fibValue };\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Why do computed properties improve performance?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They run in a separate thread",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They cache results and only recompute when dependencies change",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They are written in C++",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They use the GPU",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Computed properties are memoized based on their reactive dependencies, avoiding unnecessary recalculations.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

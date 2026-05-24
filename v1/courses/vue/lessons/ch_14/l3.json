@@ -1,0 +1,66 @@
+{
+    "id": "l3",
+    "chapterId": "ch_14",
+    "title": "Writing Unit Tests for Composables & Functions",
+    "description": "Learn to test pure functions, composables, and reactive logic.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Unit Tests",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Testing Pure Functions",
+            "content": "# Functions with No Side Effects\n\nPure functions are easy to test – give them input, assert output.\n\n```javascript\n// utils/format.js\nexport function formatCurrency(amount) {\n  return `$${amount.toFixed(2)}`\n}\n\n// utils/format.test.js\nimport { formatCurrency } from './format'\n\ndescribe('formatCurrency', () => {\n  it('formats positive numbers', () => {\n    expect(formatCurrency(5)).toBe('$5.00')\n  })\n  it('handles zero', () => {\n    expect(formatCurrency(0)).toBe('$0.00')\n  })\n})\n```"
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Testing Composables with Reactive State",
+            "content": "# Composables Need a Vue Context\n\nComposables that use `ref`, `computed`, or lifecycle hooks need to run inside a Vue component context. Use `@vue/test-utils`'s `mount` or create a test component.\n\n```javascript\n// composables/useCounter.js\nimport { ref } from 'vue'\nexport function useCounter(initial = 0) {\n  const count = ref(initial)\n  const increment = () => count.value++\n  return { count, increment }\n}\n\n// composables/useCounter.test.js\nimport { describe, it, expect } from 'vitest'\nimport { useCounter } from './useCounter'\n\ndescribe('useCounter', () => {\n  it('initializes with default value', () => {\n    const { count } = useCounter()\n    expect(count.value).toBe(0)\n  })\n  it('increments count', () => {\n    const { count, increment } = useCounter(5)\n    increment()\n    expect(count.value).toBe(6)\n  })\n})\n```\n\nNo special setup needed because `ref` and `computed` work standalone."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Testing Composables with Lifecycle Hooks",
+            "content": "If your composable uses `onMounted`, you need to mount it in a component:\n\n```javascript\n// composables/useMounted.js\nimport { onMounted, ref } from 'vue'\nexport function useMounted() {\n  const isMounted = ref(false)\n  onMounted(() => { isMounted.value = true })\n  return { isMounted }\n}\n\n// composables/useMounted.test.js\nimport { mount } from '@vue/test-utils'\nimport { defineComponent } from 'vue'\nimport { useMounted } from './useMounted'\n\ndescribe('useMounted', () => {\n  it('sets isMounted to true after mount', () => {\n    const TestComponent = defineComponent({\n      setup() {\n        const { isMounted } = useMounted()\n        return { isMounted }\n      },\n      template: '<div>{{ isMounted }}</div>'\n    })\n    const wrapper = mount(TestComponent)\n    expect(wrapper.vm.isMounted).toBe(true)\n  })\n})\n```",
+            "codeLanguage": "javascript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the main challenge when testing composables that use lifecycle hooks like `onMounted`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They cannot be tested at all",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They need to be used inside a mounted component",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They require mocking the entire Vue runtime",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They must be tested with E2E tests",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Lifecycle hooks are only called when a component is mounted, so you need to mount a component that uses the composable.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

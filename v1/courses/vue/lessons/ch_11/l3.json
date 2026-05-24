@@ -1,0 +1,67 @@
+{
+    "id": "l3",
+    "chapterId": "ch_11",
+    "title": "Form Validation Strategies",
+    "description": "Learn client‑side validation techniques: built‑in, custom, and real‑time feedback.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Validation",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Validation Approaches",
+            "content": "# Three Levels of Validation\n\n1. **Built‑in HTML5 validation** – `required`, `pattern`, `minlength`, etc. Quick and easy, but styling is limited.\n2. **Custom validation in Vue** – computed properties or methods that check field values and show errors.\n3. **Third‑party libraries** – VeeValidate, vuelidate – for complex validation rules and schemas.\n\nMost real‑world apps combine custom validation (for business logic) and HTML5 (for basic constraints)."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Custom Validation with Computed",
+            "content": "# Using Computed Properties for Validation\n\nFor each field, create a computed property that returns an error message or `null` if valid. Then conditionally display it.\n\n```javascript\ncomputed: {\n  emailError() {\n    if (!this.email) return 'Email is required';\n    if (!this.email.includes('@')) return 'Please enter a valid email';\n    return '';\n  },\n  isFormValid() {\n    return !this.emailError && !this.passwordError;\n  }\n}\n```\n\nThen disable submit button: `<button :disabled=\"!isFormValid\">Submit</button>`"
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Example: Registration Form with Validation",
+            "content": "A complete validation example:",
+            "codeSnippet": "<div id=\"app\">\n  <form @submit.prevent=\"submit\">\n    <div>\n      <label>Username (min 3 chars):</label>\n      <input v-model=\"username\" @blur=\"touched.username = true\">\n      <div v-if=\"touched.username && usernameError\" class=\"error\">{{ usernameError }}</div>\n    </div>\n    <div>\n      <label>Email:</label>\n      <input v-model=\"email\" @blur=\"touched.email = true\">\n      <div v-if=\"touched.email && emailError\" class=\"error\">{{ emailError }}</div>\n    </div>\n    <div>\n      <label>Password (min 6):</label>\n      <input type=\"password\" v-model=\"password\" @blur=\"touched.password = true\">\n      <div v-if=\"touched.password && passwordError\" class=\"error\">{{ passwordError }}</div>\n    </div>\n    <button type=\"submit\" :disabled=\"!isFormValid\">Register</button>\n  </form>\n</div>\n\n<script>\n  createApp({\n    data() {\n      return {\n        username: '',\n        email: '',\n        password: '',\n        touched: { username: false, email: false, password: false }\n      };\n    },\n    computed: {\n      usernameError() {\n        if (!this.username) return 'Username is required';\n        if (this.username.length < 3) return 'Username must be at least 3 characters';\n        return '';\n      },\n      emailError() {\n        if (!this.email) return 'Email is required';\n        if (!this.email.includes('@')) return 'Email must contain @';\n        return '';\n      },\n      passwordError() {\n        if (!this.password) return 'Password is required';\n        if (this.password.length < 6) return 'Password must be at least 6 characters';\n        return '';\n      },\n      isFormValid() {\n        return !this.usernameError && !this.emailError && !this.passwordError;\n      }\n    },\n    methods: {\n      submit() {\n        alert('Form submitted!');\n      }\n    }\n  }).mount('#app');\n</script>\n<style>.error { color: red; font-size: 0.8em; }</style>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is a common pattern for showing validation errors only after the user has interacted with a field?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Always show errors",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Use a `touched` flag that is set on blur or input",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Show errors only on submit",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Use CSS to hide errors",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A `touched` flag (set on blur) allows you to display errors only after the user has visited and left the field, providing a better UX.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

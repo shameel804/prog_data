@@ -1,0 +1,66 @@
+{
+    "id": "l6",
+    "chapterId": "ch_14",
+    "title": "End‑to‑End Testing with Cypress",
+    "description": "Overview of E2E testing: simulating user interactions in a real browser.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "E2E",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "What is E2E Testing?",
+            "content": "# Full Application Testing\n\nE2E tests run your app in a real browser and simulate user actions (click, type, navigate). They give you the highest confidence but are slower to run and maintain.\n\n**Cypress** is the most popular E2E testing framework for Vue apps. It provides:\n- Time travel debugging\n- Automatic waiting\n- Real‑time reloading\n- Screenshots and videos"
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "Writing a Cypress Test",
+            "content": "# Example: Testing a Login Flow\n\n```javascript\n// cypress/e2e/login.cy.js\ndescribe('Login', () => {\n  it('logs in successfully', () => {\n    cy.visit('/login')\n    cy.get('[data-test=\"email\"]').type('user@example.com')\n    cy.get('[data-test=\"password\"]').type('secret')\n    cy.get('[data-test=\"submit\"]').click()\n    cy.url().should('include', '/dashboard')\n    cy.contains('Welcome, User').should('be.visible')\n  })\n})\n```\n\nUse `data-test` attributes to select elements; they are more resilient to styling changes."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Setup with Vite",
+            "content": "In a Vite project, you can add Cypress easily:\n\n```bash\nnpm install -D cypress\nnpx cypress open\n```\n\nAdd a test script in `package.json`:\n```json\n\"test:e2e\": \"cypress run\"\n```\n\nFor CI, you can run headless tests.\n\nNote: Cypress tests run against your built app, so you need to serve it first (or use `cypress` with `vite` plugin).",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What is a key difference between unit/component tests and E2E tests?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "E2E tests run faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "E2E tests test the entire application in a real browser",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "E2E tests cannot test user interactions",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "E2E tests are written in a different language",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "E2E tests simulate real user interactions in a browser, testing the full stack.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

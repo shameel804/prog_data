@@ -1,0 +1,67 @@
+{
+    "id": "l1",
+    "chapterId": "ch_11",
+    "title": "v-model: A Deeper Look",
+    "description": "Explore v-model modifiers and how it works with different input types.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Basics",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "v-model Recap",
+            "content": "# Two‑Way Binding Made Easy\n\n`v-model` creates a two‑way binding between a form input and a data property. It works with:\n- `<input>` (text, checkbox, radio)\n- `<textarea>`\n- `<select>`\n\nFor text inputs, it's syntactic sugar for `:value` + `@input`:\n```html\n<input :value=\"text\" @input=\"text = $event.target.value\">\n```\n\nBut `v-model` also works with other input types, each with its own handling."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "v-model Modifiers",
+            "content": "# Modifiers: .lazy, .number, .trim\n\n- **`.lazy`** – sync after `change` event instead of `input` (useful for performance).\n- **`.number`** – automatically cast input to a number.\n- **`.trim`** – strip leading/trailing whitespace.\n\n```html\n<input v-model.lazy=\"msg\">\n<input v-model.number=\"age\">\n<input v-model.trim=\"name\">\n```\n\nModifiers can be chained: `v-model.lazy.trim=\"text\"`."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "code",
+            "title": "Example: Modifiers in Action",
+            "content": "A form using all three modifiers:",
+            "codeSnippet": "<div id=\"app\">\n  <input v-model.lazy=\"lazyText\" placeholder=\"Lazy update on change\">\n  <p>Lazy: {{ lazyText }}</p>\n\n  <input v-model.number=\"age\" type=\"number\" placeholder=\"Age\">\n  <p>Age (number): {{ age }} (type: {{ typeof age }})</p>\n\n  <input v-model.trim=\"name\" placeholder=\"Name\">\n  <p>Name: \"{{ name }}\"</p>\n</div>\n\n<script>\n  createApp({\n    data() {\n      return {\n        lazyText: '',\n        age: 0,\n        name: ''\n      };\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Which modifier would you use to update the bound property only after the input loses focus?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": ".number",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": ".trim",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": ".lazy",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": ".debounce",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`.lazy` makes `v-model` sync on `change` events instead of `input`, which occurs when the input loses focus.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

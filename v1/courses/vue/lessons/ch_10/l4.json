@@ -1,0 +1,67 @@
+{
+    "id": "l4",
+    "chapterId": "ch_10",
+    "title": "Creating Reusable Composables",
+    "description": "Extract and share logic with composable functions.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Composables",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "What is a Composable?",
+            "content": "# Composables: Logic That Reuses\n\nA **composable** is a function that leverages Vue's Composition API to encapsulate and reuse stateful logic. By convention, composable names start with `use` (e.g., `useMouse`, `useFetch`).\n\n```javascript\n// composables/useCounter.js\nimport { ref } from 'vue'\n\nexport function useCounter(initialValue = 0) {\n  const count = ref(initialValue)\n  const increment = () => count.value++\n  const decrement = () => count.value--\n  return { count, increment, decrement }\n}\n```\n\nThen use it in any component: `const { count, increment } = useCounter()`."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Why Composables?",
+            "content": "# Benefits\n\n- **Reusability**: Share logic across components without code duplication.\n- **Separation of concerns**: Keep components focused on presentation.\n- **Testability**: Composables can be tested independently.\n- **Collaboration**: Team members can share composables as utilities.\n\nComposables are like custom hooks in React, but with Vue's reactivity system."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Example: useLocalStorage Composable",
+            "content": "A composable that syncs a ref with localStorage:",
+            "codeSnippet": "<div id=\"app\">\n  <input v-model=\"name\" placeholder=\"Your name\">\n  <p>Hello, {{ name }}!</p>\n  <button @click=\"clearName\">Clear</button>\n</div>\n\n<script>\n  const { createApp, ref, watch } = Vue;\n\n  function useLocalStorage(key, defaultValue) {\n    const stored = localStorage.getItem(key);\n    const data = ref(stored ? JSON.parse(stored) : defaultValue);\n    watch(data, (val) => {\n      localStorage.setItem(key, JSON.stringify(val));\n    }, { deep: true });\n    return data;\n  }\n\n  createApp({\n    setup() {\n      const name = useLocalStorage('username', '');\n      const clearName = () => name.value = '';\n      return { name, clearName };\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is the naming convention for composable functions?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They start with `use`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They end with `Composable`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They are PascalCase",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "There is no convention",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "By convention, composables are named with the `use` prefix (e.g., `useMouse`, `useFetch`) to indicate they are composables.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

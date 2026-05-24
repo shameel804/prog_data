@@ -1,0 +1,67 @@
+{
+    "id": "l5",
+    "chapterId": "ch_9",
+    "title": "Defining a Store (Setup Store Style)",
+    "description": "Create a store using the Composition API style with ref, computed, and functions.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Stores",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Setup Store Structure",
+            "content": "# defineStore with Setup Function\n\n```javascript\nimport { defineStore } from 'pinia'\nimport { ref, computed } from 'vue'\n\nexport const useCounterStore = defineStore('counter', () => {\n  // state\n  const count = ref(0)\n  const name = ref('Pinia')\n  \n  // getters (computed)\n  const doubleCount = computed(() => count.value * 2)\n  \n  // actions (functions)\n  function increment() {\n    count.value++\n  }\n  \n  async function fetchData() {\n    const res = await fetch('/api/data')\n    // ...\n  }\n  \n  return { count, name, doubleCount, increment, fetchData }\n})\n```\n\nThis style uses the Composition API and is more flexible."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Benefits of Setup Stores",
+            "content": "# Why Use Setup Stores?\n\n- **Better TypeScript inference** – no need to annotate getters.\n- **Easier to compose** – you can use composables inside the store.\n- **Reactive utilities** – use `ref`, `reactive`, `computed` directly.\n- **Flexible** – you can return any reactive object or function.\n\nBoth styles are equally valid; choose based on preference."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Example: Setup Store",
+            "content": "The same counter store written as a setup store:",
+            "codeSnippet": "<div id=\"app\">\n  <p>Count: {{ store.count }}</p>\n  <p>Double: {{ store.doubleCount }}</p>\n  <button @click=\"store.increment()\">+</button>\n</div>\n\n<script>\n  const { createApp, ref, computed } = Vue;\n  const { createPinia, defineStore } = Pinia;\n\n  const useCounterStore = defineStore('counter', () => {\n    const count = ref(0);\n    const doubleCount = computed(() => count.value * 2);\n    function increment() {\n      count.value++;\n    }\n    return { count, doubleCount, increment };\n  });\n\n  const pinia = createPinia();\n  const app = createApp({\n    setup() {\n      const store = useCounterStore();\n      return { store };\n    }\n  });\n\n  app.use(pinia);\n  app.mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the main difference between Options stores and Setup stores?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Setup stores cannot have actions",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Options stores use the Composition API, Setup stores use the Options API",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Setup stores are defined with a function and use ref/computed; Options stores use an object",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "There is no difference",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Setup stores are defined with a function that returns reactive data and actions, using Composition API utilities. Options stores use an object with `state`, `getters`, `actions`.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

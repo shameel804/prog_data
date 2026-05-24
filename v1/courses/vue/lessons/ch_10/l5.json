@@ -1,0 +1,73 @@
+{
+    "id": "l5",
+    "chapterId": "ch_10",
+    "title": "Advanced Composables & Patterns",
+    "description": "Build complex composables for data fetching, storage, and more.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "useFetch – Data Fetching Composable",
+            "content": "# A Generic Data Fetcher\n\nCreate a composable that handles loading, error, and data states for any API call.\n\n```javascript\nimport { ref } from 'vue'\n\nexport function useFetch(url) {\n  const data = ref(null)\n  const loading = ref(false)\n  const error = ref(null)\n\n  const fetchData = async () => {\n    loading.value = true\n    try {\n      const res = await fetch(url)\n      data.value = await res.json()\n    } catch (err) {\n      error.value = err\n    } finally {\n      loading.value = false\n    }\n  }\n\n  fetchData() // execute immediately\n\n  return { data, loading, error, refetch: fetchData }\n}\n```\n\nThis can be reused for any API endpoint."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Composing Composables",
+            "content": "# Combining Composables\n\nComposables can call other composables, enabling powerful compositions.\n\n```javascript\nexport function useUserProfile(userId) {\n  const { data: user, loading, error } = useFetch(`/api/users/${userId}`)\n  const { data: posts } = useFetch(`/api/users/${userId}/posts`)\n  // ... additional logic\n  return { user, posts, loading, error }\n}\n```\n\nThis keeps each composable focused and testable."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Example: useFetch in Action",
+            "content": "A component that fetches a random joke using useFetch:",
+            "codeSnippet": "<div id=\"app\">\n  <div v-if=\"loading\">Loading...</div>\n  <div v-else-if=\"error\">Error: {{ error.message }}</div>\n  <div v-else>\n    <p>{{ data?.joke }}</p>\n    <button @click=\"refetch\">New Joke</button>\n  </div>\n</div>\n\n<script>\n  const { createApp, ref } = Vue;\n\n  function useFetch(url) {\n    const data = ref(null);\n    const loading = ref(false);\n    const error = ref(null);\n\n    const fetchData = async () => {\n      loading.value = true;\n      try {\n        const res = await fetch(url);\n        data.value = await res.json();\n      } catch (err) {\n        error.value = err;\n      } finally {\n        loading.value = false;\n      }\n    };\n\n    fetchData();\n\n    return { data, loading, error, refetch: fetchData };\n  }\n\n  createApp({\n    setup() {\n      const { data, loading, error, refetch } = useFetch('https://api.chucknorris.io/jokes/random');\n      return { data, loading, error, refetch };\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_4",
+            "type": "tip",
+            "title": "Async Composables",
+            "content": "Composables can return promises, but remember that `setup()` cannot be async. Instead, handle async operations inside the composable and expose reactive state that updates when the promise resolves.\n\nFor async initialization, you can use `onMounted` inside the composable.\n\n```javascript\nexport function useAsyncData(loader) {\n  const data = ref(null)\n  const loading = ref(true)\n  onMounted(async () => {\n    data.value = await loader()\n    loading.value = false\n  })\n  return { data, loading }\n}\n```"
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is a benefit of composing composables (calling one composable inside another)?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It allows building complex logic from smaller, reusable pieces",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It makes code run faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It is required for TypeScript",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It replaces Vuex",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Composing composables enables you to combine smaller, focused pieces of logic into larger, more powerful ones, promoting reusability.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

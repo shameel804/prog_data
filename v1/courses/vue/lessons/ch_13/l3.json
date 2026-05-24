@@ -1,0 +1,67 @@
+{
+    "id": "l3",
+    "chapterId": "ch_13",
+    "title": "Optimizing Reactivity",
+    "description": "Use shallowRef, shallowReactive, and avoid unnecessary reactivity.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Reactivity",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "When Too Much Reactivity Hurts",
+            "content": "# Avoid Deep Reactivity When Not Needed\n\nDeep reactive objects (`reactive`) track changes at all nested levels. For large objects where only the top‑level changes matter, this overhead is unnecessary.\n\n**Shallow variants**:\n- `shallowRef` – only `.value` assignment is reactive; nested properties are not.\n- `shallowReactive` – only first‑level properties are reactive.\n\nUse them for large static data or when you only replace the whole object, not mutate it deeply."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "MarkRaw and readonly",
+            "content": "# Other Tools\n\n- `markRaw` – marks an object so that it will never be converted to a proxy. Useful for large third‑party objects or data that should remain static.\n- `readonly` – creates a reactive object that is read‑only, preventing mutations. This can help avoid unintended changes and reduce reactivity overhead.\n\n```javascript\nimport { markRaw } from 'vue'\n\nconst externalData = markRaw(heavyObject)\n// now externalData is not reactive\n```"
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Example: Shallow vs Deep",
+            "content": "Compare reactivity overhead:",
+            "codeSnippet": "<div id=\"app\">\n  <div>Deep: {{ deepObj.nested.count }}</div>\n  <button @click=\"deepObj.nested.count++\">Deep mutate</button>\n  <div>Shallow: {{ shallowObj.nested.count }}</div>\n  <button @click=\"shallowObj.nested.count++\">Shallow mutate (no update)</button>\n  <button @click=\"shallowObj = { nested: { count: shallowObj.nested.count + 1 } }\">Replace whole shallow</button>\n</div>\n\n<script>\n  const { createApp, reactive, shallowReactive } = Vue;\n\n  createApp({\n    setup() {\n      const deepObj = reactive({ nested: { count: 0 } });\n      const shallowObj = shallowReactive({ nested: { count: 0 } });\n\n      return { deepObj, shallowObj };\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of `shallowReactive`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It makes an object deeply reactive",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It makes only the first‑level properties reactive",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It makes an object read‑only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It prevents the object from being reactive at all",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`shallowReactive` creates a proxy that only tracks property access at the root level; nested properties are not reactive.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

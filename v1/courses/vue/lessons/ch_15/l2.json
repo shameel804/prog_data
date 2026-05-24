@@ -1,0 +1,66 @@
+{
+    "id": "l2",
+    "chapterId": "ch_15",
+    "title": "Environment Variables & Configuration",
+    "description": "Manage API keys and settings with environment variables in Vite.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Config",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Why Environment Variables?",
+            "content": "# Keep Secrets Out of Source Code\n\nEnvironment variables allow you to configure your app differently depending on the environment (development, staging, production). Common uses:\n\n- API base URLs\n- API keys (only for client‑side, but still better to separate)\n- Feature flags\n\nVite uses `.env` files and exposes variables prefixed with `VITE_` to the client."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Using .env Files",
+            "content": "# Create `.env` and `.env.production`\n\n```bash\n# .env (loaded in all environments)\nVITE_API_URL=https://api.dev.example.com\n\n# .env.production (loaded only in production)\nVITE_API_URL=https://api.example.com\n```\n\nIn your code, access them via `import.meta.env`:\n```javascript\nconst apiUrl = import.meta.env.VITE_API_URL\n```\n\nVite also provides built‑in variables: `import.meta.env.MODE`, `import.meta.env.PROD`, `import.meta.env.DEV`."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Example: Dynamic API Base URL",
+            "content": "In a composable or service:\n```javascript\n// api.js\nexport const api = {\n  baseURL: import.meta.env.VITE_API_URL,\n  async fetch(endpoint) {\n    const res = await fetch(`${this.baseURL}${endpoint}`)\n    return res.json()\n  }\n}\n```\n\nDuring build, Vite replaces `import.meta.env.VITE_API_URL` with the actual string value, so it's safe for production.",
+            "codeLanguage": "javascript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "How do you access a custom environment variable in a Vite‑powered Vue app?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "process.env.VITE_MY_VAR",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "import.meta.env.VITE_MY_VAR",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "window.VITE_MY_VAR",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "VITE_MY_VAR",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Vite exposes environment variables on `import.meta.env`, and only variables prefixed with `VITE_` are exposed to the client.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

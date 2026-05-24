@@ -1,0 +1,67 @@
+{
+    "id": "l4",
+    "chapterId": "ch_14",
+    "title": "Testing Vue Components with Vue Test Utils",
+    "description": "Mount components, interact with them, and assert on output.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Component Tests",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Mounting a Component",
+            "content": "# Using mount and shallowMount\n\n```javascript\nimport { mount } from '@vue/test-utils'\nimport Counter from './Counter.vue'\n\ndescribe('Counter', () => {\n  it('renders initial count', () => {\n    const wrapper = mount(Counter, {\n      props: { initial: 5 }\n    })\n    expect(wrapper.text()).toContain('5')\n  })\n})\n```\n\n`mount` renders all child components. Use `shallowMount` to stub child components for isolation."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Interacting with Components",
+            "content": "# Simulating User Actions\n\n```javascript\nit('increments count on button click', async () => {\n  const wrapper = mount(Counter, { props: { initial: 0 } })\n  const button = wrapper.find('button')\n  await button.trigger('click')\n  expect(wrapper.text()).toContain('1')\n})\n```\n\nUse `await` for asynchronous operations (like DOM updates).\n\nFind elements with `find`, `findAll`, `get`, `findComponent`."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Example: Testing a TodoItem Component",
+            "content": "A complete test for a simple todo item:",
+            "codeSnippet": "// TodoItem.vue\n<template>\n  <li>\n    <input type=\"checkbox\" v-model=\"todo.completed\" />\n    <span :class=\"{ completed: todo.completed }\">{{ todo.text }}</span>\n    <button @click=\"$emit('delete')\">✖</button>\n  </li>\n</template>\n\n<script setup>\ndefineProps(['todo'])\ndefineEmits(['delete'])\n</script>\n\n// TodoItem.test.js\nimport { mount } from '@vue/test-utils'\nimport TodoItem from './TodoItem.vue'\n\ndescribe('TodoItem', () => {\n  const todo = { id: 1, text: 'Learn Vue', completed: false }\n\n  it('renders todo text', () => {\n    const wrapper = mount(TodoItem, { props: { todo } })\n    expect(wrapper.text()).toContain('Learn Vue')\n  })\n\n  it('emits delete when button is clicked', async () => {\n    const wrapper = mount(TodoItem, { props: { todo } })\n    await wrapper.find('button').trigger('click')\n    expect(wrapper.emitted()).toHaveProperty('delete')\n  })\n\n  it('applies completed class when completed is true', async () => {\n    const completedTodo = { ...todo, completed: true }\n    const wrapper = mount(TodoItem, { props: { todo: completedTodo } })\n    const span = wrapper.find('span')\n    expect(span.classes()).toContain('completed')\n  })\n})\n",
+            "codeLanguage": "javascript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is the difference between `mount` and `shallowMount` in Vue Test Utils?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "`shallowMount` renders child components as stubs, isolating the component under test",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "`mount` is faster than `shallowMount`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "`shallowMount` cannot trigger events",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "There is no difference",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`shallowMount` stubs child components, which prevents them from being fully rendered, making the test more isolated.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

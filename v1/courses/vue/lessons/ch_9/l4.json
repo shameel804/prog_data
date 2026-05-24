@@ -1,0 +1,67 @@
+{
+    "id": "l4",
+    "chapterId": "ch_9",
+    "title": "Defining a Store (Options API Style)",
+    "description": "Create a store using the Options API style with state, getters, and actions.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Stores",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Options Store Structure",
+            "content": "# defineStore with Options Object\n\n```javascript\nimport { defineStore } from 'pinia'\n\nexport const useCounterStore = defineStore('counter', {\n  state: () => ({\n    count: 0,\n    name: 'Pinia'\n  }),\n  getters: {\n    doubleCount: (state) => state.count * 2,\n    // Use `this` for other getters\n    tripleCount() {\n      return this.count * 3\n    }\n  },\n  actions: {\n    increment() {\n      this.count++\n    },\n    async fetchData() {\n      const res = await fetch('/api/data')\n      this.data = await res.json()\n    }\n  }\n})\n```\n\nThe first argument is a unique store ID, used internally."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "State, Getters, Actions",
+            "content": "# Understanding the Parts\n\n- **State** – a function returning the initial reactive state.\n- **Getters** – similar to computed properties; they receive the state as first parameter and can use `this` to access other getters.\n- **Actions** – methods that can be synchronous or asynchronous; they can mutate state directly (no mutations).\n\nActions are the only way to modify state (though you could technically modify state directly, but it's not recommended for predictable mutations)."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Example: Counter Store",
+            "content": "A simple counter store with state, getter, and action:",
+            "codeSnippet": "<div id=\"app\">\n  <p>Count: {{ store.count }}</p>\n  <p>Double: {{ store.doubleCount }}</p>\n  <button @click=\"store.increment()\">+</button>\n</div>\n\n<script>\n  const { createApp } = Vue;\n  const { createPinia, defineStore } = Pinia;\n\n  const useCounterStore = defineStore('counter', {\n    state: () => ({ count: 0 }),\n    getters: {\n      doubleCount: (state) => state.count * 2\n    },\n    actions: {\n      increment() {\n        this.count++;\n      }\n    }\n  });\n\n  const pinia = createPinia();\n  const app = createApp({\n    setup() {\n      const store = useCounterStore();\n      return { store };\n    }\n  });\n\n  app.use(pinia);\n  app.mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "In an Options store, where do you define computed properties that depend on the state?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "state",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "getters",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "actions",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "computed",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Getters are the equivalent of computed properties for a Pinia store. They are cached and update when state changes.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

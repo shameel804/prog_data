@@ -1,0 +1,64 @@
+{
+    "id": "l5",
+    "chapterId": "ch_12",
+    "title": "Best Practices & Performance",
+    "description": "Optimize async data handling, avoid race conditions, and use Suspense.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Best Practices",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Avoiding Race Conditions",
+            "content": "# Ensuring the Latest Request Wins\n\nWhen a component fetches data based on a prop or user input that changes quickly (e.g., a search box), you must ensure that the final result matches the latest request. Use a unique request ID or abort previous requests.\n\n**Pattern**: Use a `requestId` or `abortController` and compare the ID when the response arrives.\n\n```javascript\nlet requestId = 0\n\nasync function fetchData(query) {\n  const id = ++requestId\n  const data = await fetch(`/search?q=${query}`)\n  if (id === requestId) this.results = data\n}\n```"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Suspense for Async Components",
+            "content": "# Vue's Experimental Suspense\n\nVue 3 provides a `<Suspense>` component that lets you orchestrate async dependencies (like data fetching) in your component tree. It renders fallback content while waiting for nested async components to resolve.\n\n```vue\n<template>\n  <Suspense>\n    <template #default>\n      <AsyncComponent />\n    </template>\n    <template #fallback>\n      <LoadingSpinner />\n    </template>\n  </Suspense>\n</template>\n```\n\nAsync components can use `setup` that returns a promise, or use the new `<script setup>` with top‑level `await`."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Performance Tips",
+            "content": "# Optimize Data Fetching\n\n- **Debounce** search inputs to avoid excessive requests.\n- **Cache** responses (as shown) to reduce network calls.\n- **Use lazy loading** for data that isn't immediately needed.\n- **Consider using a library** like `@vueuse/core` which includes `useFetch` with many built‑in features.\n- **Leverage HTTP caching headers** for static data."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is a common technique to avoid race conditions when fetching data based on rapidly changing input?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Use a global loading state",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Cancel previous requests using an AbortController or a request ID",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Set a timeout before fetching",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Use a Promise.all",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Canceling previous requests or ignoring outdated responses (via request ID) ensures that the final data matches the latest input.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

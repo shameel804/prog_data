@@ -1,0 +1,67 @@
+{
+    "id": "l6",
+    "chapterId": "ch_9",
+    "title": "Using Stores in Components",
+    "description": "Access state, getters, and actions from components, with reactivity and best practices.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Usage",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Accessing the Store",
+            "content": "# Using the Store in a Component\n\nIn the component's `setup()` (or `<script setup>`), call the store function to get a store instance.\n\n```javascript\nimport { useCounterStore } from './stores/counter'\n\nexport default {\n  setup() {\n    const store = useCounterStore()\n    \n    // Access state and getters directly\n    return { store }\n  }\n}\n```\n\nThen in the template: `{{ store.count }}` and `@click=\"store.increment()\"`."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "Destructuring and Reactivity",
+            "content": "# Preserving Reactivity\n\nIf you destructure the store, you lose reactivity. Use `storeToRefs` to extract reactive properties while keeping them reactive.\n\n```javascript\nimport { storeToRefs } from 'pinia'\n\nconst store = useCounterStore()\nconst { count, doubleCount } = storeToRefs(store)\nconst { increment } = store // actions can be destructured directly\n```\n\nNow `count` is a ref, and you can use it like `count.value` in setup, or in template directly."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Example: Using a Store in Multiple Components",
+            "content": "Two components sharing the same store:",
+            "codeSnippet": "<div id=\"app\">\n  <counter-display />\n  <counter-control />\n</div>\n\n<script>\n  const { createApp, ref, computed } = Vue;\n  const { createPinia, defineStore, storeToRefs } = Pinia;\n\n  const useCounterStore = defineStore('counter', () => {\n    const count = ref(0);\n    const double = computed(() => count.value * 2);\n    function increment() { count.value++; }\n    return { count, double, increment };\n  });\n\n  const CounterDisplay = {\n    setup() {\n      const store = useCounterStore();\n      const { count, double } = storeToRefs(store);\n      return { count, double };\n    },\n    template: `<div>Count: {{ count }} | Double: {{ double }}</div>`\n  };\n\n  const CounterControl = {\n    setup() {\n      const store = useCounterStore();\n      return { increment: store.increment };\n    },\n    template: `<button @click=\"increment\">+</button>`\n  };\n\n  const pinia = createPinia();\n  const app = createApp({\n    components: { CounterDisplay, CounterControl }\n  });\n  app.use(pinia);\n  app.mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l6_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "How do you keep reactivity when destructuring a store?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Use `destructureStore`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Use `storeToRefs` from Pinia",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Destructure normally, reactivity is automatic",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Use `toRefs` from Vue",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`storeToRefs` extracts all reactive properties (state, getters) as refs while keeping them linked to the store. Actions are functions and can be destructured directly.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,67 @@
+{
+    "id": "l2",
+    "chapterId": "ch_12",
+    "title": "Managing Loading & Error States",
+    "description": "Provide visual feedback during async operations with reactive states.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "State",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Loading and Error Indicators",
+            "content": "# Keeping Users Informed\n\nWhen fetching data, users need to know what's happening:\n- **Loading** – show a spinner or skeleton while waiting.\n- **Error** – display a message if something goes wrong.\n- **Success** – show the data when it arrives.\n\n```javascript\ndata() {\n  return {\n    users: [],\n    loading: false,\n    error: null\n  }\n}\n```\n\nUpdate these states before and after the fetch."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Handling Errors",
+            "content": "# Try/Catch and Response Checking\n\nAlways use `try/catch` and check `response.ok`.\n\n```javascript\nasync fetchUsers() {\n  this.loading = true;\n  this.error = null;\n  try {\n    const res = await fetch('/api/users');\n    if (!res.ok) throw new Error(`HTTP ${res.status}`);\n    this.users = await res.json();\n  } catch (err) {\n    this.error = err.message;\n  } finally {\n    this.loading = false;\n  }\n}\n```\n\nThen in template:\n```html\n<div v-if=\"loading\">Loading...</div>\n<div v-else-if=\"error\">Error: {{ error }}</div>\n<div v-else>{{ users }}</div>\n```"
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Example: Users with Loading & Error",
+            "content": "Complete example with all states:",
+            "codeSnippet": "<div id=\"app\">\n  <div v-if=\"loading\">⏳ Loading users...</div>\n  <div v-else-if=\"error\">❌ {{ error }}</div>\n  <ul v-else>\n    <li v-for=\"user in users\" :key=\"user.id\">{{ user.name }}</li>\n  </ul>\n</div>\n\n<script>\n  createApp({\n    data() {\n      return {\n        users: [],\n        loading: false,\n        error: null\n      };\n    },\n    mounted() {\n      this.fetchUsers();\n    },\n    methods: {\n      async fetchUsers() {\n        this.loading = true;\n        this.error = null;\n        try {\n          const res = await fetch('https://jsonplaceholder.typicode.com/users');\n          if (!res.ok) throw new Error('Failed to fetch');\n          this.users = await res.json();\n        } catch (err) {\n          this.error = err.message;\n        } finally {\n          this.loading = false;\n        }\n      }\n    }\n  }).mount('#app');\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Why is it important to check `response.ok` after using `fetch()`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It ensures the response is JSON",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It detects HTTP errors like 404 or 500",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It automatically retries failed requests",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It caches the response",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`fetch` only rejects on network failures, not on HTTP error statuses. `response.ok` is `false` for 4xx/5xx statuses, allowing you to handle them.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

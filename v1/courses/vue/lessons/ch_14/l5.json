@@ -1,0 +1,67 @@
+{
+    "id": "l5",
+    "chapterId": "ch_14",
+    "title": "Mocking & Advanced Testing Patterns",
+    "description": "Mock external dependencies, timers, and components for isolated tests.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Mocking API Calls",
+            "content": "# Mocking with vi.spyOn or vi.mock\n\n```javascript\nimport { describe, it, expect, vi } from 'vitest'\nimport { mount } from '@vue/test-utils'\nimport UserProfile from './UserProfile.vue'\n\n// Mock global fetch\nvi.stubGlobal('fetch', vi.fn(() =>\n  Promise.resolve({\n    json: () => Promise.resolve({ name: 'John' })\n  })\n))\n\nit('fetches and displays user', async () => {\n  const wrapper = mount(UserProfile, { props: { userId: 1 } })\n  await wrapper.vm.$nextTick() // wait for async\n  expect(wrapper.text()).toContain('John')\n})\n```"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Mocking Components and Provide/Inject",
+            "content": "# Mocking Child Components\n\nUse `global.components` to provide a mock for a child component:\n\n```javascript\nconst wrapper = mount(Parent, {\n  global: {\n    components: {\n      ChildComponent: {\n        template: '<div>Mocked Child</div>'\n      }\n    }\n  }\n})\n```\n\nTo mock provide/inject, use `global.provide`:\n```javascript\nconst wrapper = mount(Component, {\n  global: {\n    provide: {\n      theme: 'dark'\n    }\n  }\n})\n```"
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Example: Testing with a Mocked Store",
+            "content": "Mocking a Pinia store:",
+            "codeSnippet": "import { mount } from '@vue/test-utils'\nimport { createTestingPinia } from '@pinia/testing'\nimport { useCounterStore } from './stores/counter'\nimport CounterDisplay from './CounterDisplay.vue'\n\nit('displays count from store', () => {\n  const wrapper = mount(CounterDisplay, {\n    global: {\n      plugins: [createTestingPinia({\n        initialState: { counter: { count: 42 } }\n      })]\n    }\n  })\n  expect(wrapper.text()).toContain('42')\n})\n\n// To spy on actions\nit('calls increment action on button click', async () => {\n  const wrapper = mount(CounterDisplay, {\n    global: {\n      plugins: [createTestingPinia()]\n    }\n  })\n  const store = useCounterStore()\n  await wrapper.find('button').trigger('click')\n  expect(store.increment).toHaveBeenCalled()\n})\n",
+            "codeLanguage": "javascript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "How can you mock a global function like `fetch` in Vitest?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "vi.mock('fetch')",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "vi.stubGlobal('fetch', mockFn)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "window.fetch = mockFn",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "mock('fetch')",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`vi.stubGlobal` is the recommended way to mock global variables like `fetch`.",
+                "xpReward": 10
+            }
+        }
+    ]
+}
