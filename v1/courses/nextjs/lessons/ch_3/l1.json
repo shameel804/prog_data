@@ -1,0 +1,120 @@
+{
+    "id": "l1",
+    "chapterId": "ch_3",
+    "title": "Introduction to Pre‑rendering",
+    "description": "Understand the three rendering modes: CSR, SSG, SSR and why Next.js defaults to pre‑rendering.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Core Concepts",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The Rendering Spectrum 🌈",
+            "content": "# Where Does the HTML Come From?\n\nEvery web page needs HTML. *When* and *where* it's generated makes all the difference.\n\n1. **Client‑Side Rendering (CSR)** – empty HTML, JS builds everything in the browser.\n2. **Server‑Side Rendering (SSR)** – HTML is generated on the server for every request.\n3. **Static Generation (SSG)** – HTML is built once, at build time, and reused.\n\nNext.js lets you **choose per page**."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "CSR – The Old Way 🐌",
+            "content": "# Plain React (Create React App)\n\n* Server sends an almost empty `<div id=\"root\"></div>`.\n* Browser downloads, parses, and executes JavaScript.\n* JavaScript renders the UI and fetches data.\n* **Problem:** Slow initial load, poor SEO, flash of empty page.\n\nAnalogy: A restaurant where the chef starts cooking only after you order. 🍽️"
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What is the main disadvantage of Client‑Side Rendering (CSR)?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It requires a Node.js server",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Slow initial page load and poor SEO",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Too much server load",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It doesn't support JavaScript",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "CSR sends empty HTML. Browsers and search engines must wait for JavaScript to execute before seeing any content.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "SSG & SSR – The Next.js Way ⚡",
+            "content": "# Pre‑rendering = HTML at Build or Request Time\n\nNext.js **pre‑renders every page by default**. It generates HTML in advance:\n\n* **SSG (Static Site Generation):** HTML is built **once at build time**.\n* **SSR (Server‑Side Rendering):** HTML is built **on each request**.\n\nBoth send fully rendered HTML to the browser. Then React **hydrates** it, adding interactivity.\n\nNo more empty `<div>`! 🎉"
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "Example: Plain React vs Next.js HTML Output (View Page Source)",
+            "content": "Compare what the server sends. The difference is huge for SEO and perceived performance.",
+            "codeSnippet": "<!-- Plain React (CSR) -->\n<div id=\"root\"></div>\n<script src=\"/bundle.js\"></script>\n\n<!-- Next.js (SSG/SSR) -->\n<div id=\"__next\">\n  <h1>Welcome to Next.js!</h1>\n  <p>All content pre‑rendered.</p>\n</div>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "Pre‑rendering Truth 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "Which statement about Next.js pre‑rendering is correct?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Next.js only supports static pages",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Next.js pre‑renders every page by default, but you can opt out",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Pre‑rendering always happens on the client",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Next.js never sends HTML, only JSON",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "All pages are pre‑rendered automatically. You can still use client‑side fetching for dynamic parts.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_7",
+            "type": "text",
+            "title": "Hydration – Making It Interactive 💧",
+            "content": "# What Happens After HTML Loads?\n\n1. The pre‑rendered HTML is displayed instantly (fast First Contentful Paint).\n2. React loads in the background.\n3. React **hydrates** the DOM: it attaches event listeners and state without re‑rendering the whole page.\n\nThink of it as a dry sponge (HTML) that absorbs water (JavaScript) and becomes functional. 🧽"
+        },
+        {
+            "id": "s_l1_8",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "Pre‑rendering doesn't mean the page is static forever. You can still fetch new data on the client, use WebSockets, or update parts of the page with React state. Pre‑rendering just gives you a fast, SEO‑friendly **starting point**."
+        }
+    ]
+}

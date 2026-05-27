@@ -1,0 +1,114 @@
+{
+    "id": "l1",
+    "chapterId": "ch_9",
+    "title": "Preparing for Production",
+    "description": "Learn how to build your Next.js app, understand the build output, and run production checks.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Production Basics",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Beyond `npm run dev` 🏗️",
+            "content": "# Development vs Production\n\nThe dev server is slow and unoptimised on purpose (Fast Refresh, sourcemaps). In production you need:\n\n* Minified code\n* Optimised images and fonts\n* Pre‑rendered pages (SSG/ISR)\n* Caching headers\n\nYou prepare everything with a single command:\n\n```bash\nnpm run build\n```\n\nThis creates a `.next` folder containing the production build."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "code",
+            "title": "Build Command (Terminal)",
+            "content": "Run this in your project root.",
+            "codeSnippet": "npm run build",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Build Purpose 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What does `npm run build` primarily do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Starts the development server",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Creates an optimised production build by compiling, minifying, and pre‑rendering",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Installs all dependencies",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only generates static pages",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`next build` creates a production bundle: it compiles JS, optimises assets, runs data fetching methods, and generates static HTML where applicable.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "Understanding the Build Output 📊",
+            "content": "# What You See in the Terminal\n\nAfter build, Next.js prints a report:\n\n```\nPage                              Size     First Load JS\n┌ ○ /                             5.1 kB          86.2 kB\n├ ○ /about                        2.3 kB          83.4 kB\n├ λ /dashboard                    3.1 kB          84.1 kB\n└ ● /posts/[id]                   2.7 kB          83.8 kB\n```\n\n* **○** = Static (SSG) – no server needed.\n* **λ** = Server‑Side Rendering (SSR) – needs Node.js server.\n* **●** = ISR (static with revalidation) – self‑revalidating.\n\nUse this to verify every page is using the strategy you intended."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "quiz",
+            "title": "Symbols 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "A hollow circle (○) next to a page in build output means?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The page is empty",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The page uses Server‑Side Rendering",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The page is statically generated (SSG)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The page is under development",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A static page (no runtime server) is marked with a hollow circle. Lambda (λ) means SSR.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_6",
+            "type": "text",
+            "title": "The Production Server 💻",
+            "content": "# Running the Build Locally\n\n```bash\nnpm start\n```\n\nThis starts a Node.js server on port 3000 that serves the optimised build.\n\n* No hot reload – it's a production environment.\n* Environment variables are loaded from `.env.production`.\n\nAlways test `npm run build && npm start` before deploying to catch build‑time errors and missing env vars."
+        },
+        {
+            "id": "s_l1_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Add a `next.config.js` option `output: 'standalone'` if you plan to deploy to Docker or a custom Node.js server. This produces a self‑contained build that doesn't need `node_modules`."
+        }
+    ]
+}

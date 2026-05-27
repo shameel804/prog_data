@@ -1,0 +1,117 @@
+{
+    "id": "l5",
+    "chapterId": "ch_4",
+    "title": "API Routes Deep Dive",
+    "description": "Handle different HTTP methods, parse request bodies and query strings, and send proper responses.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Backend",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Working with Query Strings 🔍",
+            "content": "# Reading Query Parameters\n\nQuery strings like `/api/search?term=nextjs` are automatically parsed into `req.query`.\n\n```js\n// URL: /api/search?term=nextjs&limit=10\nconsole.log(req.query); // { term: 'nextjs', limit: '10' }\n```\n\nNo extra parsing needed – Next.js uses the same URL parsing as pages.\n\n**Note:** `req.query` is an object with values always as strings or arrays of strings."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Query Example (pages/api/search.js)",
+            "content": "Search endpoint that returns filtered results.",
+            "codeSnippet": "// pages/api/search.js\nexport default function handler(req, res) {\n  const { q } = req.query;\n  if (!q) {\n    return res.status(400).json({ error: 'Missing search term' });\n  }\n  // Simulate database search\n  const results = [{ id: 1, name: q }];\n  res.status(200).json({ results });\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Query Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What type is `req.query.page` if the URL is `/api/posts?page=2`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Number",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "String",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Boolean",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Array",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "All query parameters are received as strings. Convert to numbers if needed.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Parsing the Request Body 🧳",
+            "content": "# Handling POST Data\n\n`req.body` is not available by default. You need to parse the incoming stream.\n\n**Simple way:** Use a helper or the built‑in `req` events.\n\nNext.js doesn't include a body parser out of the box, but you can write a small middleware or use the following pattern:\n\n```js\nconst body = await new Promise((resolve) => {\n  let data = '';\n  req.on('data', chunk => data += chunk);\n  req.on('end', () => resolve(JSON.parse(data)));\n});\n```\n\n*For convenience, many use `micro` or other tiny libraries.*"
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Full POST Handler with Body Parsing (pages/api/feedback.js)",
+            "content": "A complete example that accepts JSON and saves it (in‑memory for demo).",
+            "codeSnippet": "// pages/api/feedback.js\nconst feedbacks = [];\n\nexport default async function handler(req, res) {\n  if (req.method === 'POST') {\n    // Parse JSON body\n    let body = '';\n    req.on('data', chunk => body += chunk);\n    req.on('end', () => {\n      const { message } = JSON.parse(body);\n      feedbacks.push({ id: Date.now(), message });\n      res.status(201).json({ success: true });\n    });\n  } else {\n    res.status(200).json(feedbacks);\n  }\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Body Parsing 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "Why isn't `req.body` directly available like in Express?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Because Next.js doesn't support POST",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Because Next.js keeps the API surface minimal and doesn't include built‑in middleware",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Because `req` is a browser Request object",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "You need to install a special package to use POST",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Next.js provides the raw Node.js request object. You can parse the body manually or use a library like `micro`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_7",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "Use the `next-connect` library to add Express‑like middleware (`req.body`, cors) to your API routes. It makes the code cleaner for complex cases."
+        }
+    ]
+}

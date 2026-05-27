@@ -1,0 +1,111 @@
+{
+    "id": "l4",
+    "chapterId": "ch_3",
+    "title": "Server‑Side Rendering with getServerSideProps",
+    "description": "Generate fresh HTML on every request. Perfect for personalised dashboards and real‑time data.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Data Fetching",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Always Fresh Data 🍃",
+            "content": "# getServerSideProps (SSR)\n\nThis function runs **on every request** to the page. Use it when:\n\n* The page needs data that changes frequently.\n* The content depends on the user (authentication, cookies).\n* You need access to request context (`req`, `res`).\n\n```js\nexport async function getServerSideProps(context) {\n  const data = await fetch('https://...');\n  return { props: { data } };\n}\n```\n\n**Downside:** Slower Time to First Byte (TTFB) because the server must fetch data on every hit."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Dashboard with SSR (pages/dashboard.js)",
+            "content": "Fetch user‑specific data on every request. The `context` object contains `req`, `res`, `params`, `query`.",
+            "codeSnippet": "// pages/dashboard.js\nexport default function Dashboard({ user }) {\n  return <h1>Welcome, {user.name}</h1>;\n}\n\nexport async function getServerSideProps(context) {\n  // Read cookies from the request\n  const { req } = context;\n  const token = req.cookies.token;\n\n  const res = await fetch('https://api.example.com/me', {\n    headers: { Authorization: `Bearer ${token}` }\n  });\n  const user = await res.json();\n\n  return { props: { user } };\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "SSR Context 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does `getServerSideProps` receive that `getStaticProps` does not?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The page component",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Access to the request object (req, res)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Static path params",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A faster build time",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`getServerSideProps` runs per request, so it receives the HTTP request and response objects, allowing you to read headers, cookies, etc.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Performance Considerations ⚖️",
+            "content": "# SSR vs SSG Speed\n\n* **SSG**: Pages served from CDN, extremely fast TTFB. Best for public content.\n* **SSR**: Server must compute on every request. Higher TTFB. Can be mitigated with caching (CDN, `Cache-Control` headers).\n\nNext.js also supports **ISR** (Incremental Static Regeneration) as a middle ground – we’ll cover that soon.\n\nUse SSR only when you truly need real‑time or user‑specific data on the initial HTML."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Return Redirect from getServerSideProps (pages/old-page.js)",
+            "content": "You can also return `redirect` or `notFound` just like in `getStaticProps`.",
+            "codeSnippet": "// pages/old-page.js\nexport async function getServerSideProps() {\n  return {\n    redirect: {\n      destination: '/new-page',\n      permanent: true, // 301 redirect\n    },\n  };\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "When to SSR? 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Which of these is the best use case for `getServerSideProps`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A marketing landing page that rarely changes",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A real‑time stock ticker dashboard that must show user‑specific data",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A blog post published once",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "An about page",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "SSR is ideal for pages that change frequently or depend on the user making the request, like dashboards.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

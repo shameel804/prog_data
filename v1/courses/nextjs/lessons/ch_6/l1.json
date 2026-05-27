@@ -1,0 +1,117 @@
+{
+    "id": "l1",
+    "chapterId": "ch_6",
+    "title": "Shared Layouts: The _app.js Pattern",
+    "description": "Wrap every page with a persistent header and footer using the custom App component.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Layouts",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Why Do We Need Layouts? 🏗️",
+            "content": "# The Repetition Problem\n\nEvery page likely needs a common **Header**, **Footer**, or **Sidebar**.\n\nWithout layouts, you'd repeat code in every page file – terrible for maintenance.\n\nNext.js gives you a special component: **`pages/_app.js`**, which wraps every page automatically.\n\nThink of it as the **outer shell** of your application. 🐚"
+        },
+        {
+            "id": "s_l1_2",
+            "type": "code",
+            "title": "A Simple Layout in _app.js (pages/_app.js)",
+            "content": "Add a Header and Footer that appear on every single page.",
+            "codeSnippet": "// pages/_app.js\nimport '../styles/globals.css';\nimport Header from '../components/Header';\nimport Footer from '../components/Footer';\n\nexport default function MyApp({ Component, pageProps }) {\n  return (\n    <>\n      <Header />\n      <Component {...pageProps} />\n      <Footer />\n    </>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "App Wrapper 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What is the role of `pages/_app.js`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It defines the homepage",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It initializes pages and can wrap them with common layout components or global state",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's a special page for the app dashboard",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It handles API routes",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`_app.js` is the top-level component that persists across page changes. It’s the perfect place for layouts, global CSS, and context providers.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "The Component Prop 🧩",
+            "content": "# Understanding Component & pageProps\n\n* `Component` – the active page (the file in `pages/` that matches the route).\n* `pageProps` – an object with the props that the page's data fetching methods returned.\n\nWhen you navigate, `Component` changes, but the wrapping `Header` and `Footer` stay the same. That's why React doesn't remount them – it's only the inner content that updates."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "A Header Component (components/Header.js)",
+            "content": "Simple navigation bar that sits on top of every page.",
+            "codeSnippet": "// components/Header.js\nimport Link from 'next/link';\n\nexport default function Header() {\n  return (\n    <nav>\n      <Link href=\"/\">Home</Link>\n      <Link href=\"/about\">About</Link>\n    </nav>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "State Persistence 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "When you navigate from / to /about, what happens to the Header component defined in _app.js?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It gets destroyed and recreated",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It stays mounted and doesn't re‑render",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It only renders on the home page",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It converts to a different component",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Since the layout is around the `<Component>`, React sees only the inner component changed. The wrapping UI remains mounted, preserving state and avoiding extra work.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "You can also use `_app.js` to inject global context providers (Redux, Theme) or to trigger page transition animations. It's the central orchestrator of your app."
+        }
+    ]
+}

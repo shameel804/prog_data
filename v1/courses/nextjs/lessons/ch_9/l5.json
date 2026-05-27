@@ -1,0 +1,164 @@
+{
+    "id": "l5",
+    "chapterId": "ch_9",
+    "title": "Caching, ISR & CDN Strategies",
+    "description": "Understand the full Next.js cache system, on‑demand ISR, and edge caching for ultra‑fast delivery.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "Performance",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "The Next.js Cache Layer 🎂",
+            "content": "# Multiple Levels of Caching\n\nNext.js caches data at several levels:\n\n1. **Router Cache** – client‑side, stores visited pages in memory.\n2. **Full Route Cache** – server‑side, stores rendered HTML and RSC payload.\n3. **Data Cache** – persists fetch results across requests and builds.\n4. **Static Assets Cache** – images, fonts, JS bundles cached for a year.\n\nUnderstanding these helps you design the perfect caching strategy."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "ISR & Time‑based Revalidation ⏰",
+            "content": "# Stale‑While‑Revalidate\n\nWith ISR, you set a `revalidate` time on `getStaticProps`:\n\n```js\nreturn { props: { posts }, revalidate: 60 };\n```\n\n* The first request after 60 seconds triggers a background regeneration.\n* Users see the stale (cached) page while the new one builds.\n* Once built, the cache is swapped atomically.\n\nThis gives you static speed with dynamic freshness."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Revalidate Flow 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "During ISR, what does the user see when a revalidation is triggered?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A loading spinner",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The previous (stale) version of the page",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A 404 error",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The page immediately updates",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "ISR serves the cached page first, then regenerates in the background. The next visitor gets the fresh page.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "On‑Demand ISR 🔄",
+            "content": "# Revalidate by Webhook\n\nInstead of time‑based, you can trigger revalidation from an API route when data changes.\n\n```js\n// pages/api/revalidate.js\nexport default async function handler(req, res) {\n  await res.revalidate('/posts');\n  return res.json({ revalidated: true });\n}\n```\n\nCall this endpoint from your CMS webhook, database trigger, or after a Server Action.\n\nYou can also revalidate by **tag**: `revalidateTag('posts')`."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Tag‑based Revalidation (app/actions.js)",
+            "content": "Use tags to revalidate multiple paths at once.",
+            "codeSnippet": "// app/actions.js\n'use server';\nimport { revalidateTag } from 'next/cache';\n\nexport async function updatePost(id) {\n  // ... update post in DB\n  revalidateTag('posts'); // any fetch tagged with 'posts' will be revalidated\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Tags vs Paths 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What is the advantage of `revalidateTag` over `revalidatePath`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It can revalidate multiple paths associated with the same tag at once",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It only works on Vercel",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It automatically generates tags",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Tags group caches across different routes. Revalidating a tag clears all related cached data, useful for collections like a product catalog.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "CDN & Edge Caching 🌍",
+            "content": "# Serving from the Edge\n\nWhen deployed to Vercel (or any platform with a CDN), your static pages and assets are distributed globally.\n\n* **Static files** (JS, CSS, images) are cached for a year (immutable).\n* **SSG pages** are cached at the edge until revalidated.\n* **ISR pages** are cached at the edge and updated atomically.\n* **`Cache-Control` headers** can be customised in `next.config.js`.\n\nThis means visitors from Tokyo, London, and New York all get content from a server near them – no extra work."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "code",
+            "title": "Custom Cache-Control in next.config.js",
+            "content": "Set default headers for static assets or pages.",
+            "codeSnippet": "// next.config.js\nmodule.exports = {\n  async headers() {\n    return [\n      {\n        source: '/images/:path*',\n        headers: [\n          {\n            key: 'Cache-Control',\n            value: 'public, max-age=31536000, immutable',\n          },\n        ],\n      },\n    ];\n  },\n};",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_9",
+            "type": "quiz",
+            "title": "Edge Benefit 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_3",
+                "type": "multiple_choice",
+                "question": "Why do CDN‑cached static assets improve Core Web Vitals?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They reduce JavaScript execution time",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They are served from a server geographically close to the user, reducing latency",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They automatically compress images",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They prevent layout shifts",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A CDN stores copies of your files in multiple locations, so users download them from the nearest server, cutting download time and improving LCP.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_10",
+            "type": "tip",
+            "title": "Cache Debugging 🔍",
+            "content": "Use the `Cache-Control` and `X-Nextjs-Cache` headers in the Network tab to understand cache hits and misses. Set `NEXT_PRIVATE_DEBUG_CACHE=1` as an env var for verbose logs."
+        }
+    ]
+}

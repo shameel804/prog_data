@@ -1,0 +1,120 @@
+{
+    "id": "l3",
+    "chapterId": "ch_9",
+    "title": "Other Deployment Options",
+    "description": "Deploy Next.js anywhere: Node.js server, Docker, AWS, Netlify, or static export.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Deployment",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "You're Not Locked In 🗝️",
+            "content": "# Beyond Vercel\n\nNext.js is a standard Node.js application. You can deploy it anywhere that runs Node.js.\n\nOptions:\n\n* **Self‑hosted Node.js** – run `npm start` behind a reverse proxy (Nginx).\n* **Docker** – containerize your app.\n* **AWS / Google Cloud / Azure** – use their compute services.\n* **Netlify** – native Next.js support via Essential Next.js plugin.\n* **Static Export** – if your app is fully static (no SSR/API routes).\n\nNext.js gives you flexibility."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Docker Deployment 🐳",
+            "content": "# Containerize Next.js\n\nNext.js provides an official Docker image and sample Dockerfile.\n\n```dockerfile\nFROM node:18-alpine\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci --only=production\nCOPY . .\nRUN npm run build\nCMD [\"npm\", \"start\"]\n```\n\nOr use `output: 'standalone'` in `next.config.js` for a smaller image:\n\n```js\nmodule.exports = { output: 'standalone' };\n```\n\nThis produces a self‑contained `.next/standalone` folder that includes only the necessary files."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Standalone Output 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What does the `output: 'standalone'` option do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It makes the app run without a server",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It creates a self‑contained build with only necessary dependencies, perfect for Docker",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It generates static HTML only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It disables server‑side rendering",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`standalone` mode bundles only the files needed to run, omitting dev dependencies and source files, resulting in a smaller production image.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Deploying to a VPS (Node.js + PM2) 💻",
+            "content": "# Traditional Hosting\n\nYou can deploy to a Linux server with Nginx as a reverse proxy and PM2 to manage the Node.js process.\n\n1. Clone your repo, run `npm install`, `npm run build`.\n2. Use PM2: `pm2 start npm --name \"next-app\" -- start`.\n3. Configure Nginx to proxy `localhost:3000`.\n\nThis gives you full control, but you must handle SSL, monitoring, and scaling yourself."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "PM2 Start (Terminal)",
+            "content": "Keep the Next.js server alive across reboots.",
+            "codeSnippet": "npm install -g pm2\npm2 start npm --name \"next-app\" -- start\npm2 save\npm2 startup",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "Netlify & Static Export 🌐",
+            "content": "# Netlify\n\nNetlify has an **Essential Next.js** plugin that automatically detects Next.js and configures serverless functions for SSR/API routes. You just connect your repo.\n\n# Static Export\n\nIf your app uses only `getStaticProps` and no API routes, you can export static HTML:\n\n```bash\nnext build && next export\n```\n\nThis creates an `out` folder that you can host on any static hosting (S3, GitHub Pages).\n\n**Limitation:** No SSR, ISR, API routes, or middleware."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "quiz",
+            "title": "Static Export 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "When can you use `next export`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Only on Vercel",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "When your app is fully static (no SSR, no API routes, no middleware)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "When you have a database",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Always, it's an alternative to `npm start`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`next export` turns your app into a static site. It only works if every page can be rendered at build time without a server.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_8",
+            "type": "tip",
+            "title": "Cloud Providers 🏢",
+            "content": "AWS Amplify, Google Cloud Run, and Azure Static Web Apps all have guides for Next.js. Many use a combination of CloudFront/CDN + Lambda or their own serverless offerings. Choose based on your existing infrastructure."
+        }
+    ]
+}

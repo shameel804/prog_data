@@ -1,0 +1,120 @@
+{
+    "id": "l4",
+    "chapterId": "ch_9",
+    "title": "Core Web Vitals & Performance",
+    "description": "Master LCP, FID, CLS metrics and learn how Next.js automatically optimizes them.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Performance",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "What Are Core Web Vitals? 📏",
+            "content": "# Google's Performance Metrics\n\nGoogle uses three main metrics to rank page experience:\n\n* **LCP (Largest Contentful Paint)** – loading speed. Should be < 2.5s.\n* **FID (First Input Delay)** – interactivity. Should be < 100ms.\n* **CLS (Cumulative Layout Shift)** – visual stability. Should be < 0.1.\n\nGood scores improve SEO and user satisfaction.\n\nNext.js has built‑in features to optimize all three."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "LCP: Pre‑rendering & Image Optimisation ⚡",
+            "content": "# How Next.js Helps LCP\n\n* **SSG/ISR** – pages are pre‑built, so the HTML arrives instantly.\n* **`next/image`** – lazy‑loads images, serves WebP/AVIF, sizes correctly, and uses `priority` for hero images.\n* **`next/font`** – self‑hosts fonts, eliminating extra round trips.\n* **CDN Caching** – static assets are served from edge locations.\n\nAll these reduce the time until the largest element (often a hero image or headline) appears."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "LCP Targets 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is the recommended maximum LCP time according to Google?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "1 second",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "2.5 seconds",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "5 seconds",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "10 seconds",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "LCP should occur within 2.5 seconds from when the page first starts loading. Above 4 seconds is considered poor.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "FID: JavaScript & Hydration 🧠",
+            "content": "# Making the Page Interactive Fast\n\n* Next.js **code‑splits** by page – only the JS for the current page loads.\n* **`next/dynamic`** – lazy‑load heavy components.\n* **Server Components (App Router)** – zero client‑side JavaScript for static parts.\n* **Hydration is optimised** – React 18's selective hydration.\n\nFID is being replaced by **INP (Interaction to Next Paint)**, but the principle is the same: keep the main thread free."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Dynamic Import with next/dynamic (components/HeavyChart.js)",
+            "content": "Defer loading a large chart library until it's needed.",
+            "codeSnippet": "// components/HeavyChart.js\nimport dynamic from 'next/dynamic';\n\nconst Chart = dynamic(() => import('./Chart'), {\n  loading: () => <p>Loading chart...</p>,\n  ssr: false, // disable server‑side rendering for client‑only library\n});\n\nexport default function HeavyChart() {\n  return <Chart />;\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Dynamic Imports 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What does `ssr: false` in `next/dynamic` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Disables the component on the server, loading it only on the client",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Forces server‑side rendering",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Makes the component static",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Removes the component from the bundle",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`ssr: false` tells Next.js to skip rendering this component on the server, useful for libraries that access browser APIs.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "CLS: Layout Stability 🏗️",
+            "content": "# No More Janky Layouts\n\n* **`next/image`** reserves space with `width`/`height` – no layout shift.\n* **`next/font`** adjusts fallback font metrics to match the custom font.\n* **Statically generated pages** have known dimensions.\n\nCLS is often caused by dynamically injected ads or embeds. Reserve their space with aspect ratio boxes or `min‑height`."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "tip",
+            "title": "Measuring Performance 📊",
+            "content": "Use Lighthouse in Chrome DevTools, the Vercel Analytics dashboard, or the `web-vitals` library to track Core Web Vitals in production. Next.js provides a built‑in `next/analytics` on Vercel."
+        }
+    ]
+}

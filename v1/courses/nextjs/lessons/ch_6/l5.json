@@ -1,0 +1,167 @@
+{
+    "id": "l5",
+    "chapterId": "ch_6",
+    "title": "Middleware: Run Code Before a Request",
+    "description": "Execute logic at the edge before a request completes – perfect for auth, redirects, and A/B testing.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "Middleware",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "What is Middleware? 🪝",
+            "content": "# Code That Runs Before the Response\n\nMiddleware allows you to execute code **before** a request is completed.\n\nIt sits at the edge (closer to the user) and can modify the response, redirect, rewrite, or add headers.\n\nYou create a `middleware.js` (or `.ts`) file at the root of your project (same level as `pages` or `app`).\n\n```js\n// middleware.js\nexport function middleware(request) {\n  // Your logic here\n}\n```\n\nIt intercepts every incoming request and can decide what to do."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Simple Redirect Middleware (middleware.js)",
+            "content": "Redirect all requests from `/old-blog` to `/blog`.",
+            "codeSnippet": "// middleware.js\nimport { NextResponse } from 'next/server';\n\nexport function middleware(request) {\n  if (request.nextUrl.pathname.startsWith('/old-blog')) {\n    return NextResponse.redirect(new URL('/blog', request.url));\n  }\n  // Continue to the requested page\n  return NextResponse.next();\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Middleware Location 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Where do you place the middleware file in a Next.js project?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Inside `pages/api`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "At the root of the project (next to `pages` or `app`)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Inside `components`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Inside `public`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Create `middleware.js` at the project root. Next.js automatically picks it up and runs it at the edge.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Authentication Middleware 🔐",
+            "content": "# Protecting Routes\n\nA common use case: check for an authentication token and redirect if missing.\n\n```js\nimport { NextResponse } from 'next/server';\n\nexport function middleware(request) {\n  const token = request.cookies.get('token');\n  if (!token && request.nextUrl.pathname.startsWith('/dashboard')) {\n    return NextResponse.redirect(new URL('/login', request.url));\n  }\n  return NextResponse.next();\n}\n```\n\nMiddleware runs at the Edge, making auth checks fast and secure."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Full Auth Guard (middleware.js)",
+            "content": "Check for a cookie. If missing, redirect to login with a callback URL.",
+            "codeSnippet": "// middleware.js\nimport { NextResponse } from 'next/server';\n\nexport function middleware(request) {\n  const token = request.cookies.get('token')?.value;\n  const { pathname } = request.nextUrl;\n\n  if (pathname.startsWith('/dashboard') && !token) {\n    const loginUrl = new URL('/login', request.url);\n    loginUrl.searchParams.set('from', pathname);\n    return NextResponse.redirect(loginUrl);\n  }\n\n  return NextResponse.next();\n}\n\nexport const config = {\n  matcher: '/dashboard/:path*',\n};",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Middleware Config 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What does the `config.matcher` property do in middleware?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It limits the middleware to run only on matching paths",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It transforms the response body",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It sets the allowed HTTP methods",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It defines the authentication provider",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`matcher` tells Next.js which paths the middleware should apply to, avoiding unnecessary execution on public assets.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "More Middleware Powers ✨",
+            "content": "# Beyond Redirects\n\nMiddleware can:\n\n* **Rewrite** URLs (e.g., proxy to a different URL without changing the browser address bar).\n* **Add custom headers** (security, CORS).\n* **Geolocation** – redirect based on the user's country (`request.geo.country`).\n* **A/B Testing** – randomly assign a cookie and serve different pages.\n\nBecause it runs on the Edge, it's extremely low latency."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "code",
+            "title": "Adding Headers (middleware.js)",
+            "content": "Enhance security with custom response headers.",
+            "codeSnippet": "// middleware.js\nimport { NextResponse } from 'next/server';\n\nexport function middleware(request) {\n  const response = NextResponse.next();\n  response.headers.set('X-Frame-Options', 'DENY');\n  response.headers.set('X-Content-Type-Options', 'nosniff');\n  return response;\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_9",
+            "type": "quiz",
+            "title": "Edge Advantage 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_3",
+                "type": "multiple_choice",
+                "question": "Why is it beneficial that middleware runs at the Edge?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It can access the database directly",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It runs closer to the user, reducing latency and improving performance",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It only works in production",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It replaces the need for any backend",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Edge functions run in data centers close to users, making redirects, rewrites, and header checks nearly instantaneous.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_10",
+            "type": "tip",
+            "title": "Middleware vs API Routes 🤔",
+            "content": "Use middleware for **pre‑request logic** (auth, rewrites). Use API routes for **data operations** (CRUD, form handling). They complement each other. Middleware cannot send a response body directly; it only controls routing and headers."
+        }
+    ]
+}

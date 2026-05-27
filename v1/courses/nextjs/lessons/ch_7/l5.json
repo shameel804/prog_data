@@ -1,0 +1,117 @@
+{
+    "id": "l5",
+    "chapterId": "ch_7",
+    "title": "Introduction to Server Actions",
+    "description": "Write server‑side functions directly in your components to handle form submissions securely.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "Server Actions",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "The Old Way: API Routes 🔄",
+            "content": "# Traditionally\n\nWhen a user submits a form:\n\n1. You prevent the default event.\n2. Send a `fetch` to an API route.\n3. Handle the response on the client.\n\nThis means:\n* Extra API endpoint file.\n* Manual data validation on both ends.\n* More client‑side code.\n\nServer Actions change this by letting you run server code **directly from a component**."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "What Are Server Actions? ⚡",
+            "content": "# Server‑Side Functions in React\n\nServer Actions are `async` functions marked with `'use server'`. They:\n\n* Run only on the server.\n* Can be called from Client Components (like event handlers) or Server Components (form action).\n* Have access to server‑side context (database, secrets).\n* Can revalidate cached data, redirect, set cookies.\n\nThink of them as API routes embedded directly in your UI code."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Your First Server Action (app/actions.js)",
+            "content": "Define a function with `'use server'` and import it into a client component.",
+            "codeSnippet": "// app/actions.js\n'use server';\n\nexport async function createPost(formData) {\n  const title = formData.get('title');\n  // Save to database...\n  console.log('Creating post:', title);\n  // Revalidate cache if needed\n}\n\n// In a Client Component\nimport { createPost } from './actions';\n\nexport default function NewPost() {\n  return (\n    <form action={createPost}>\n      <input name=\"title\" />\n      <button type=\"submit\">Create</button>\n    </form>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Server Action Directive 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What does the `'use server'` directive do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It marks a file to be executed only on the client",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It marks a function or file to be run exclusively on the server",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It enables caching",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's a shorthand for `getServerSideProps`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `'use server'` directive tells Next.js that the following code should never be sent to the client and must run server‑side.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Progressive Enhancement 📈",
+            "content": "# Works Without JavaScript\n\nServer Actions can be used directly in a `<form action={serverAction}>`. This means if JavaScript fails or hasn't loaded yet, the form still submits and works.\n\nUnder the hood, Next.js POSTs the form data to the same endpoint, executes the server action, and returns a redirect or revalidated page.\n\nThis is **progressive enhancement** at its finest – no extra effort required."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "code",
+            "title": "Form with Validation (app/actions.js)",
+            "content": "Server‑side validation using Zod. Throw errors that are caught by the UI.",
+            "codeSnippet": "// app/actions.js\n'use server';\nimport { z } from 'zod';\n\nconst schema = z.object({\n  email: z.string().email(),\n});\n\nexport async function subscribe(formData) {\n  const email = formData.get('email');\n  const result = schema.safeParse({ email });\n  if (!result.success) {\n    return { error: 'Invalid email' };\n  }\n  // store in database\n  return { success: true };\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Progressive Enhancement 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "Why are Server Actions considered 'progressively enhanced'?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They require React 18",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They work even with JavaScript disabled because they rely on standard form POST",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They automatically add polyfills",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They only work in newer browsers",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Since Server Actions can be attached to a native `<form>` element, the browser will submit the form as usual even without JS, and Next.js processes it on the server.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

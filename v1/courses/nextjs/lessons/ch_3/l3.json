@@ -1,0 +1,117 @@
+{
+    "id": "l3",
+    "chapterId": "ch_3",
+    "title": "getStaticProps in Depth",
+    "description": "Master dynamic parameters, revalidation, notFound, and redirects for static pages.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Data Fetching",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Dynamic Routes & getStaticPaths 🛤️",
+            "content": "# Static Generation for Dynamic Pages\n\nIf a page has dynamic segments like `[id].js`, you need to tell Next.js **which paths** to pre‑render.\n\nExport `getStaticPaths` to return a list of possible values.\n\nThen `getStaticProps` receives the params to fetch data for that specific instance.\n\n```\npages/posts/[id].js\n```"
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Dynamic Static Page (pages/posts/[id].js)",
+            "content": "Pre‑render a specific set of posts at build time.",
+            "codeSnippet": "// pages/posts/[id].js\nexport default function Post({ post }) {\n  return <article><h1>{post.title}</h1><p>{post.body}</p></article>;\n}\n\nexport async function getStaticPaths() {\n  const res = await fetch('https://jsonplaceholder.typicode.com/posts');\n  const posts = await res.json();\n  const paths = posts.slice(0, 10).map(post => ({\n    params: { id: post.id.toString() }\n  }));\n  return { paths, fallback: false };\n}\n\nexport async function getStaticProps({ params }) {\n  const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${params.id}`);\n  const post = await res.json();\n  return { props: { post } };\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Paths Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of `getStaticPaths`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To generate dynamic CSS",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To define which dynamic routes should be pre‑rendered at build time",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To fetch data for the current page",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To handle API requests",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "For dynamic routes, `getStaticPaths` tells Next.js which instances to generate during the build.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "fallback: false, true, or 'blocking' 🔀",
+            "content": "# Handling Paths Not Returned by getStaticPaths\n\n* **`fallback: false`** – any path not listed returns 404.\n* **`fallback: true`** – Next.js will generate the page on the first request (client‑side).\n* **`fallback: 'blocking'`** – server‑side generate on first request, then cache (no loading state).\n\nChoose based on how many pages you have and how often new content appears."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "fallback: true with Loading State (pages/posts/[id].js)",
+            "content": "When `fallback: true`, the page component must handle the loading state with `router.isFallback`.",
+            "codeSnippet": "// pages/posts/[id].js\nimport { useRouter } from 'next/router';\n\nexport default function Post({ post }) {\n  const router = useRouter();\n  if (router.isFallback) {\n    return <div>Loading...</div>;\n  }\n  return <article><h1>{post.title}</h1><p>{post.body}</p></article>;\n}\n\nexport async function getStaticPaths() {\n  return { paths: [], fallback: true };\n}\n\nexport async function getStaticProps({ params }) {\n  const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${params.id}`);\n  const post = await res.json();\n  return { props: { post }, revalidate: 10 };\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Fallback Choices 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "When would you use `fallback: 'blocking'`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "When you want a custom loading spinner",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "When you want to return a 404 immediately",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "When you don't want to show a loading state and prefer to wait for the page to be generated on the server",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "When the page is static and never changes",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`'blocking'` tells Next.js to SSR the first request completely before sending the response. No loading state needed.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "Combine `revalidate` with `fallback: 'blocking'` for large e‑commerce sites: you can pre‑build top products and generate the rest on demand, then cache them."
+        }
+    ]
+}

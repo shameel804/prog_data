@@ -1,0 +1,123 @@
+{
+    "id": "l2",
+    "chapterId": "ch_12",
+    "title": "Building the Blog Pages",
+    "description": "Create the public blog list, post detail, and category pages using App Router, Prisma, and Static Generation with ISR.",
+    "xpReward": 40,
+    "estimatedMinutes": 14,
+    "section": "Core Features",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Public Blog Faces 📄",
+            "content": "# Three Main Pages\n\n1. **Blog List** (`/posts`) – shows all published posts with title, excerpt, date.\n2. **Post Detail** (`/posts/[slug]`) – full post content, author, comments.\n3. **Homepage** (`/`) – featured posts, intro.\n\nWe'll build them as Server Components that directly query Prisma. No API routes needed for reading data!"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Blog List Page (app/posts/page.js)",
+            "content": "Fetch published posts, order by date, display titles and excerpts.",
+            "codeSnippet": "// app/posts/page.js\nimport Link from 'next/link';\nimport { prisma } from '@/lib/prisma';\n\nexport default async function PostsPage() {\n  const posts = await prisma.post.findMany({\n    where: { published: true },\n    orderBy: { createdAt: 'desc' },\n    select: { slug: true, title: true, createdAt: true, content: true },\n  });\n\n  return (\n    <div>\n      <h1>Blog</h1>\n      <ul>\n        {posts.map(post => (\n          <li key={post.slug}>\n            <Link href={`/posts/${post.slug}`}>\n              <h2>{post.title}</h2>\n            </Link>\n            <p>{post.content.slice(0, 150)}...</p>\n            <time>{post.createdAt.toLocaleDateString()}</time>\n          </li>\n        ))}\n      </ul>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Select Query 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Why do we use `select` in the Prisma query instead of fetching all fields?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's required by Next.js",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To reduce data transfer and only retrieve the needed columns",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To hide the post content from users",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Because Prisma doesn't support fetching all fields",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`select` limits the columns returned, improving performance and security by not exposing unnecessary fields.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Static Generation with ISR ⚡",
+            "content": "# Making the Blog Fast\n\nWe want the post list and individual posts to be statically generated but stay fresh.\n\nAdd `revalidate` to the page level. In App Router, we can set `revalidate` in `fetch` options or use `export const revalidate = 60`.\n\nSince we query Prisma directly, we'll use the page‑level export:\n\n```js\nexport const revalidate = 60; // seconds\n```\n\nThis tells Next.js to regenerate the page at most every 60 seconds when a request comes in (ISR)."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Post Detail Page (app/posts/[slug]/page.js)",
+            "content": "Dynamic route, fetches post by slug, shows full content.",
+            "codeSnippet": "// app/posts/[slug]/page.js\nimport { prisma } from '@/lib/prisma';\nimport { notFound } from 'next/navigation';\n\nexport const revalidate = 60;\n\nexport default async function PostPage({ params }) {\n  const post = await prisma.post.findUnique({\n    where: { slug: params.slug },\n    include: { author: true },\n  });\n\n  if (!post || !post.published) {\n    notFound();\n  }\n\n  return (\n    <article>\n      <h1>{post.title}</h1>\n      <p>By {post.author.name}</p>\n      <div dangerouslySetInnerHTML={{ __html: post.content }} />\n    </article>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "ISR & notFound 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What happens when a post is not found or not published?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A blank page is shown",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "`notFound()` triggers the custom 404 page",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The page shows a 500 error",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It redirects to the homepage",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`notFound()` from `next/navigation` will render the nearest `not-found.js` and set a 404 status.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "Pagination & Metadata 📇",
+            "content": "# Loading More Posts\n\nWe can implement simple pagination using query params.\n\n```jsx\n// app/posts/page.js\nconst page = Number(searchParams.page) || 1;\nconst skip = (page - 1) * PAGE_SIZE;\nconst posts = await prisma.post.findMany({ skip, take: PAGE_SIZE });\n```\n\nAlso, we can add metadata for SEO:\n\n```js\nexport const metadata = {\n  title: 'Blog',\n  description: 'Latest posts from our team',\n};\n```\n\nWe'll cover SEO in depth in Lesson 4."
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "Dynamic Metadata 🏷️",
+            "content": "For individual posts, use `generateMetadata` to fetch the post title and excerpt. This gives each page unique SEO tags."
+        }
+    ]
+}

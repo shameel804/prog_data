@@ -1,0 +1,26 @@
+{
+    "id": "project2",
+    "title": "Full‑Stack Task Manager",
+    "description": "Create a secure task management app with user authentication, database storage, and real‑time updates using Server Actions.",
+    "difficulty": "Intermediate",
+    "estimatedHours": "6-10",
+    "problemStatement": "## Goal\nBuild a task manager where users can sign in, create/update/delete tasks, and see them only when logged in. The app should be full‑stack: NextAuth for authentication, Prisma for the database, and Server Actions for mutations.\n\nYou will use the App Router, Edge Middleware for route protection, and Zod for server‑side validation.\n\n## Core Concepts\n- NextAuth.js for GitHub (or Credentials) authentication.\n- Prisma with SQLite (development) / PostgreSQL (production).\n- Server Actions for CRUD operations with `useFormState` for error handling.\n- Edge Middleware to protect `/dashboard` routes.\n- `revalidatePath` / `revalidateTag` for cache invalidation.\n- Tailwind CSS for styling.\n- App Router with layouts, loading skeletons, and error boundaries.\n\n## Detailed Requirements\n1. **Authentication**\n   - Set up NextAuth.js with a GitHub OAuth provider (or Credentials for testing).\n   - Create `app/api/auth/[...nextauth]/route.js` and wrap the app with `SessionProvider`.\n   - Add a sign‑in button and user display in the header.\n\n2. **Database Schema**\n   - Use Prisma models: `User`, `Task`.\n   - `Task`: `id`, `title`, `completed`, `createdAt`, `userId` (foreign key to User).\n   - Run migrations.\n\n3. **Dashboard Page (`/dashboard`)**\n   - Protected by Middleware: if no session, redirect to `/api/auth/signin`.\n   - Server Component that fetches the current user's tasks from Prisma.\n   - Display tasks with a checkbox to toggle `completed` status.\n   - Add a form to create a new task (Client Component with `useFormState` and Server Action).\n   - Edit and delete buttons for each task (inline editing or separate modal).\n   - Each mutation uses a Server Action that validates, mutates DB, and revalidates `/dashboard`.\n\n4. **UX Details**\n   - Loading skeletons (`loading.js`) while dashboard data loads.\n   - Error boundary (`error.js`) in case of a crash.\n   - Optimistic UI update for toggling task status (use `useOptimistic`).\n   - Show validation errors next to the input fields.\n\n5. **Deployment**\n   - Prepare for production: set `output: 'standalone'` or configure for Vercel.\n   - Switch to a cloud database (e.g., Vercel Postgres, Supabase) for production.\n   - Set environment variables (`DATABASE_URL`, `NEXTAUTH_SECRET`, OAuth keys) on Vercel.\n\n## Deliverables\n- GitHub repository.\n- Live demo on Vercel.\n- (Optional) Unit test for the Server Action using Jest.\n",
+    "requirements": [
+        "User authentication with NextAuth (GitHub or Credentials).",
+        "Prisma database with `Task` model.",
+        "Protected `/dashboard` route using Edge Middleware.",
+        "Server Actions for create, update (toggle), delete tasks.",
+        "Client‑side form with `useFormState` and Zod validation.",
+        "Optimistic UI using `useOptimistic` for toggling completion.",
+        "Loading and error boundaries per route segment.",
+        "Responsive UI with Tailwind CSS."
+    ],
+    "hints": [
+        "Store the `authOptions` in a separate `lib/auth.js` file so you can import it in both the auth route and middleware.",
+        "In the middleware, use `withAuth` or `getToken` from `next-auth/jwt` for a quick session check.",
+        "For optimistic updates, call `startTransition` and update the local state before calling the Server Action.",
+        "Use `revalidatePath('/dashboard')` after each mutation to refresh the task list.",
+        "To toggle a task, create a Server Action that receives the task ID and new completed status, and use `prisma.task.update`."
+    ],
+    "expectedOutput": "A secure, full‑stack task manager app where users can log in and manage their own tasks, with optimistic UI and proper error handling."
+}

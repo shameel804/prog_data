@@ -1,0 +1,132 @@
+{
+    "id": "l5",
+    "chapterId": "ch_8",
+    "title": "Updating & Deleting Records",
+    "description": "Create edit forms, handle deletes, and use revalidation to keep the UI fresh.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "CRUD Operations",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Edit and Delete ✏️🗑️",
+            "content": "# Beyond Creation\n\nA complete application needs to update and delete existing records.\n\nWe'll add two new Server Actions:\n* `updatePost(id, formData)`\n* `deletePost(id)`\n\nThese follow the same pattern: validate (for update), call Prisma, revalidate the path.\n\nWe'll also create an edit form that pre‑fills existing data."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Update Action (app/actions.js)",
+            "content": "Similar to create but accepts an ID.",
+            "codeSnippet": "// app/actions.js\nexport async function updatePost(id, prevState, formData) {\n  const result = postSchema.safeParse({\n    title: formData.get('title'),\n    content: formData.get('content'),\n  });\n  if (!result.success) return { errors: result.error.flatten().fieldErrors };\n\n  await prisma.post.update({\n    where: { id },\n    data: result.data,\n  });\n  revalidatePath('/posts');\n  return { success: true };\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Update Prisma 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which Prisma method changes an existing record?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "`prisma.post.change()`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "`prisma.post.update()`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "`prisma.post.edit()`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "`prisma.post.set()`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`update` takes a `where` clause and the new `data` to modify the record.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Delete Action (app/actions.js)",
+            "content": "A simple delete by ID, then revalidate.",
+            "codeSnippet": "// app/actions.js\nexport async function deletePost(id) {\n  await prisma.post.delete({ where: { id } });\n  revalidatePath('/posts');\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Edit Form with Pre‑filled Data 📄",
+            "content": "# Passing the Existing Post to the Form\n\nThe edit form needs the current values. We can fetch the post in a Server Component and pass it to a client form.\n\n```jsx\n// app/posts/[id]/edit/page.js\nimport EditPostForm from '@/components/EditPostForm';\nimport { prisma } from '@/lib/prisma';\n\nexport default async function EditPost({ params }) {\n  const post = await prisma.post.findUnique({ where: { id: Number(params.id) } });\n  return <EditPostForm post={post} />;\n}\n```\n\nInside `EditPostForm`, use `defaultValue` on inputs."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "code",
+            "title": "Edit Form Component (components/EditPostForm.js)",
+            "content": "Client component that uses the update action and shows defaults.",
+            "codeSnippet": "// components/EditPostForm.js\n'use client';\nimport { useFormState } from 'react-dom';\nimport { updatePost } from '@/app/actions';\n\nexport default function EditPostForm({ post }) {\n  const updatePostWithId = updatePost.bind(null, post.id);\n  const [state, formAction] = useFormState(updatePostWithId, {});\n\n  return (\n    <form action={formAction}>\n      <input name=\"title\" defaultValue={post.title} />\n      {state?.errors?.title && <span className=\"error\">{state.errors.title[0]}</span>}\n      <textarea name=\"content\" defaultValue={post.content} />\n      {state?.errors?.content && <span className=\"error\">{state.errors.content[0]}</span>}\n      <button type=\"submit\">Update</button>\n      {state?.success && <p className=\"success\">Post updated!</p>}\n    </form>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Binding Arguments 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "Why do we use `updatePost.bind(null, post.id)`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To create a new function with the first argument (id) pre‑filled",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To delay the execution",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Because Server Actions require `.bind`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To access the database connection",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`.bind()` creates a new function where `id` is already set as the first argument. The form will then pass `prevState` and `formData` after that.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_8",
+            "type": "text",
+            "title": "Delete with a Button & Confirmation ⚠️",
+            "content": "# Safe Deletes\n\nSince `deletePost` doesn't need form data, we can call it directly with a button click using a client component.\n\n```jsx\n<button onClick={() => deletePost(post.id)}>Delete</button>\n```\n\nBut we should add a confirmation dialog:\n\n```jsx\n<button onClick={() => {\n  if (confirm('Are you sure?')) deletePost(post.id);\n}}>Delete</button>\n```\n\nAfter deletion, `revalidatePath` will refresh the list automatically."
+        },
+        {
+            "id": "s_l5_9",
+            "type": "tip",
+            "title": "Optimistic Delete ✨",
+            "content": "You can use `useOptimistic` to immediately remove the post from the list while the delete action runs. This makes the UI feel instant. If the delete fails, rollback happens automatically."
+        }
+    ]
+}

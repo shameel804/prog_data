@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_8",
+    "title": "Set Up Prisma and Create a Post Model",
+    "description": "Initialize Prisma with SQLite, define a Post model, run a migration, and verify the database with Prisma Studio.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Goal\nYou will integrate Prisma into your Next.js project, define a `Post` model, and confirm the database is working.\n\n### Steps\n1. Install Prisma as a dev dependency: `npm install prisma --save-dev`.\n2. Initialize Prisma with SQLite: `npx prisma init --datasource-provider sqlite`.\n3. Open `prisma/schema.prisma` and define a `Post` model with:\n   - `id` (Int, primary key, autoincrement)\n   - `title` (String)\n   - `content` (String)\n   - `createdAt` (DateTime, default now)\n4. Run the migration: `npx prisma migrate dev --name init`.\n5. Create the Prisma Client singleton as shown in the lesson (file `lib/prisma.js`).\n6. Launch Prisma Studio: `npx prisma studio` and add a sample post manually.\n7. Verify that the database file `dev.db` was created inside the `prisma` folder.\n\n### Verification\nPrisma Studio opens in the browser showing an empty `Post` table; you can add a row. The project now has a working database.",
+    "hints": [
+        "The `prisma` folder is created at the project root.",
+        "The `DATABASE_URL` in `.env` should point to `file:./dev.db`.",
+        "Use the singleton pattern from the lesson to avoid multiple clients."
+    ],
+    "expectedOutput": "A `prisma/schema.prisma` with the Post model, a migration folder, and a SQLite database file. Prisma Studio can browse the Post table.",
+    "solutionCode": "// prisma/schema.prisma\ngenerator client {\n  provider = \"prisma-client-js\"\n}\n\ndatasource db {\n  provider = \"sqlite\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Post {\n  id        Int      @id @default(autoincrement())\n  title     String\n  content   String\n  createdAt DateTime @default(now())\n}\n\n// lib/prisma.js\nimport { PrismaClient } from '@prisma/client';\n\nconst globalForPrisma = global;\n\nexport const prisma = globalForPrisma.prisma ?? new PrismaClient();\n\nif (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;"
+}

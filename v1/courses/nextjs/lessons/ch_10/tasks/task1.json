@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_10",
+    "title": "Implement Streaming with Suspense",
+    "description": "Add a loading skeleton and a Suspense boundary to a page that fetches product data.",
+    "estimatedMinutes": 12,
+    "problemStatement": "## Goal\nConvert a traditional product listing page to use streaming with Suspense, so the page shell loads instantly while the product list streams in.\n\n### Requirements\n1. Create an App Router page at `app/products/page.js`.\n2. Move the product fetching logic into a separate Server Component `components/ProductList.js` that returns a `<ul>` of products.\n3. In `app/products/page.js`, render a `<h1>Products</h1>` and wrap `<ProductList />` in a `<Suspense>` boundary with a fallback of `<p>Loading products...</p>`.\n4. Also create a `loading.js` file at `app/products/loading.js` that renders a styled skeleton (e.g., a grid of gray boxes).\n5. Verify: when you navigate to `/products`, the header appears immediately, the loading skeleton shows, and then the product list replaces it.\n\n### Notes\n- Use `fetch` to a public API like `https://fakestoreapi.com/products` with a delay simulation (`?delay=2000`) to see the streaming effect.\n- The `loading.js` covers the entire page; the manual `<Suspense>` is for additional granularity. You can remove one to test the other.",
+    "hints": [
+        "The `ProductList` component should be `async` and directly fetch data.",
+        "Use `export default async function ProductList() { ... }`.",
+        "Add `export const dynamic = 'force-dynamic'` to prevent static generation during dev (optional).",
+        "The `loading.js` file goes in the same folder as `page.js`."
+    ],
+    "expectedOutput": "The page loads the title and skeleton instantly; the product list appears after the simulated delay without blocking the rest of the page.",
+    "solutionCode": "// app/products/page.js\nimport { Suspense } from 'react';\nimport ProductList from './ProductList';\n\nexport default function ProductsPage() {\n  return (\n    <div>\n      <h1>Products</h1>\n      <Suspense fallback={<p>Loading products...</p>}>\n        <ProductList />\n      </Suspense>\n    </div>\n  );\n}\n\n// app/products/ProductList.js\nexport default async function ProductList() {\n  const res = await fetch('https://fakestoreapi.com/products');\n  const products = await res.json();\n  return (\n    <ul>\n      {products.map(p => <li key={p.id}>{p.title}</li>)}\n    </ul>\n  );\n}\n\n// app/products/loading.js (optional, shows whole page fallback)\nexport default function ProductsLoading() {\n  return (\n    <div>\n      <h1>Products</h1>\n      <div className=\"skeleton-grid\">\n        {[...Array(8)].map((_, i) => <div key={i} className=\"skeleton-box\" />)}\n      </div>\n    </div>\n  );\n}"
+}

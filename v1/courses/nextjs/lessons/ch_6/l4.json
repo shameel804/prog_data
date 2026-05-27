@@ -1,0 +1,123 @@
+{
+    "id": "l4",
+    "chapterId": "ch_6",
+    "title": "Internationalization (i18n) Routing",
+    "description": "Serve your app in multiple languages with built-in i18n routing and automatic locale detection.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Advanced Routing",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Going Global 🌍",
+            "content": "# Next.js Internationalized Routing\n\nNext.js has built‑in support for i18n since version 10.\n\nConfigure `i18n` in `next.config.js`:\n\n```js\nmodule.exports = {\n  i18n: {\n    locales: ['en', 'fr', 'de'],\n    defaultLocale: 'en',\n  },\n};\n```\n\nThis automatically:\n\n* Creates locale subpaths (`/fr/about`).\n* Adds a `locale` to the router.\n* Handles automatic locale detection (based on `Accept-Language` header).\n* Adds `lang` attribute to HTML."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Configuring i18n (next.config.js)",
+            "content": "Define your supported languages and the default one.",
+            "codeSnippet": "// next.config.js\nmodule.exports = {\n  i18n: {\n    locales: ['en', 'es', 'pt'],\n    defaultLocale: 'en',\n  },\n};",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Locale Subpaths 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "With i18n enabled, what URL will serve the French version of the /about page?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "/about?lang=fr",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "/fr/about",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "/fr-about",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "/about/fr",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Next.js automatically prefixes routes with the locale, e.g., `/fr/about`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Accessing the Locale 🗣️",
+            "content": "# In Components & Data Fetching\n\n* `router.locale` – the active locale (e.g., `'fr'`).\n* `router.locales` – all configured locales.\n* `router.defaultLocale` – the default.\n\nYou can use these to load translation files or switch languages.\n\nIn `getStaticProps` / `getServerSideProps`, the locale is available in `context.locale`.\n\n```js\nexport async function getStaticProps({ locale }) {\n  const translations = await import(`../locales/${locale}.json`);\n  return { props: { translations } };\n}\n```"
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Locale Switcher (components/LanguageSwitcher.js)",
+            "content": "A dropdown to change language, navigating to the same page in the new locale.",
+            "codeSnippet": "// components/LanguageSwitcher.js\nimport { useRouter } from 'next/router';\n\nexport default function LanguageSwitcher() {\n  const router = useRouter();\n\n  const changeLocale = (locale) => {\n    router.push(router.pathname, router.asPath, { locale });\n  };\n\n  return (\n    <select onChange={(e) => changeLocale(e.target.value)} value={router.locale}>\n      {router.locales.map(loc => (\n        <option key={loc} value={loc}>{loc.toUpperCase()}</option>\n      ))}\n    </select>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Switching Locale 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "How do you navigate to the same page but in a different locale?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "`router.push('/fr/about')`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "`router.push(router.pathname, router.asPath, { locale: 'fr' })`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "`window.location = '/fr'`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's automatic",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Passing the `locale` option to `router.push` changes the locale while keeping the same page.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Domain‑Based Localization 📌",
+            "content": "# Using Different Domains\n\nYou can also serve locales under different domains:\n\n```js\nmodule.exports = {\n  i18n: {\n    locales: ['en', 'fr'],\n    defaultLocale: 'en',\n    domains: [\n      { domain: 'example.com', defaultLocale: 'en' },\n      { domain: 'example.fr', defaultLocale: 'fr' },\n    ],\n  },\n};\n```\n\nNow `example.com` serves English, `example.fr` serves French. Next.js handles the mapping."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "tip",
+            "title": "Static Generation & i18n ✨",
+            "content": "For static generation, Next.js automatically builds all locale versions of each page. A page at `pages/about.js` will generate `/en/about`, `/fr/about`, etc., if locales are configured. You can use `getStaticProps` to load locale‑specific data."
+        }
+    ]
+}

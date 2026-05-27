@@ -1,0 +1,117 @@
+{
+    "id": "l3",
+    "chapterId": "ch_8",
+    "title": "Creating Records with Server Actions",
+    "description": "Build a form that creates database records using Server Actions and Zod validation.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Forms & Mutations",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "From Form to Database 📝",
+            "content": "# Server Actions + Prisma\n\nWe learned Server Actions in Chapter 7. Now we connect them to Prisma.\n\nThe flow:\n1. User fills a form (title, content).\n2. Form `action` points to a Server Action.\n3. Action validates input with Zod.\n4. If valid, `prisma.post.create()` inserts into the database.\n5. `revalidatePath('/posts')` refreshes the list.\n6. Redirect or show success.\n\nAll without a single API route file."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "The Create Action (app/actions.js)",
+            "content": "A single file exporting server functions.",
+            "codeSnippet": "// app/actions.js\n'use server';\n\nimport { prisma } from '@/lib/prisma';\nimport { revalidatePath } from 'next/cache';\nimport { z } from 'zod';\n\nconst postSchema = z.object({\n  title: z.string().min(1, 'Title is required'),\n  content: z.string().min(1, 'Content is required'),\n});\n\nexport async function createPost(formData) {\n  const { title, content } = postSchema.parse({\n    title: formData.get('title'),\n    content: formData.get('content'),\n  });\n\n  await prisma.post.create({ data: { title, content } });\n  revalidatePath('/posts');\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Action Steps 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What does `postSchema.parse()` do in the Server Action?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It creates the database record",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It validates the form data and throws an error if invalid",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It formats the date",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It sends a response to the client",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Zod's `.parse()` method checks the data against the schema. If validation fails, it throws a `ZodError`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "The Form Component 📋",
+            "content": "# Using the Action in a Client Component\n\nWe need a client component to handle `useFormState` for error feedback. But we can use a hybrid: the form can be a client component wrapping the action.\n\n```jsx\n'use client';\nimport { useFormState } from 'react-dom';\nimport { createPost } from '@/app/actions';\n\nexport default function NewPostForm() {\n  const [state, formAction] = useFormState(createPost, null);\n  return (\n    <form action={formAction}>\n      <input name=\"title\" />\n      <textarea name=\"content\" />\n      <button type=\"submit\">Create</button>\n      {state?.error && <p className=\"error\">{state.error}</p>}\n    </form>\n  );\n}\n```"
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Full Client Form Component (components/NewPostForm.js)",
+            "content": "Combine with a redirect after success using the redirect function from next/navigation.",
+            "codeSnippet": "// components/NewPostForm.js\n'use client';\n\nimport { useFormState } from 'react-dom';\nimport { createPost } from '@/app/actions';\n\nexport default function NewPostForm() {\n  const [state, formAction] = useFormState(createPost, null);\n\n  return (\n    <form action={formAction}>\n      <div>\n        <label>Title</label>\n        <input name=\"title\" />\n      </div>\n      <div>\n        <label>Content</label>\n        <textarea name=\"content\" rows={4} />\n      </div>\n      <button type=\"submit\">Publish</button>\n      {state?.error && <p className=\"error\">{state.error}</p>}\n    </form>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Form Submission 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Why is the form component a Client Component (`'use client'`)?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Because it uses `useFormState`, a React hook that only works on the client",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Because forms only work on the client",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To make the page faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It doesn't need to be a client component",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Hooks like `useFormState` require client‑side interactivity, so the component must be marked `'use client'`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "tip",
+            "title": "Error Handling 💡",
+            "content": "If Zod validation fails, you can catch the error and return an object with error details. Use `safeParse` instead of `parse` to avoid throwing:\n\n```js\nconst result = postSchema.safeParse(data);\nif (!result.success) return { error: result.error.issues[0].message };\n```\n\nThen `useFormState` receives `{ error: '...' }` and you can display it."
+        }
+    ]
+}

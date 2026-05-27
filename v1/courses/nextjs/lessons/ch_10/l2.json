@@ -1,0 +1,123 @@
+{
+    "id": "l2",
+    "chapterId": "ch_10",
+    "title": "Streaming & Suspense",
+    "description": "Deliver HTML incrementally with streaming and Suspense boundaries – no more waiting for slow data.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "Performance Patterns",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Waterfall Problem 🌊",
+            "content": "# Waiting for Everything\n\nIn traditional SSR, the server must fetch all data, render the entire page, and then send the HTML. If one component needs slow data, the whole page is blocked.\n\n**Streaming** allows the server to send HTML piece by piece as it becomes ready.\n\n* The page shell (layout, nav) is sent instantly.\n* Slower components are replaced by a **fallback** (loading spinner).\n* When their data arrives, the server streams the updated HTML and React swaps it in.\n\nIt's like a restaurant serving bread and drinks while the main course is still cooking. 🥖"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Streaming with loading.js (app/dashboard/loading.js)",
+            "content": "Create a loading file next to a page – it becomes the Suspense boundary automatically.",
+            "codeSnippet": "// app/dashboard/loading.js\nexport default function DashboardLoading() {\n  return <div>Loading dashboard data...</div>;\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Streaming Default 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What does placing a `loading.js` file next to a `page.js` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It preloads the page data",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It automatically wraps the page in a Suspense boundary, showing the loading component while the page fetches data",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It disables the page",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's just a naming convention with no effect",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The App Router treats a `loading.js` in the same directory as a Suspense fallback for the `page.js` component, enabling streaming.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Suspense for Granular Control 🎯",
+            "content": "# Manual Suspense Boundaries\n\n`loading.js` wraps the entire page. But you can also use `<Suspense>` directly to wrap specific slow components.\n\n```jsx\nimport { Suspense } from 'react';\n\n<Suspense fallback={<p>Loading products...</p>}>\n  <ProductList />\n</Suspense>\n```\n\nThis allows the rest of the page to load while the product list waits. It's also used with Server Components that fetch their own data."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Suspense with a Data‑Fetching Component (app/page.js)",
+            "content": "ProductList fetches its own data. The rest of the page loads without waiting for it.",
+            "codeSnippet": "// app/page.js\nimport { Suspense } from 'react';\nimport ProductList from './ProductList';\nimport Header from './Header';\n\nexport default function Home() {\n  return (\n    <div>\n      <Header />\n      <Suspense fallback={<p>Loading products...</p>}>\n        <ProductList />\n      </Suspense>\n    </div>\n  );\n}\n\n// app/ProductList.js (Server Component)\nexport default async function ProductList() {\n  const products = await fetch('https://.../products');\n  return <ul>{products.map(p => <li key={p.id}>{p.name}</li>)}</ul>;\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Suspense Scope 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What is the advantage of using a `<Suspense>` boundary over a page‑level `loading.js`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It allows different parts of the page to stream independently, showing content as soon as it's ready",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It disables JavaScript for that component",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It replaces the need for `loading.js` entirely",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "With multiple Suspense boundaries, the user sees interactive parts of the page sooner, while slower sections render later.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "Streaming SSR in Action 💧",
+            "content": "# How Streaming Works Under the Hood\n\nNext.js uses React's `renderToReadableStream` to send HTML in chunks.\n\n1. The server starts sending the layout and static parts immediately.\n2. When it hits a Suspense boundary, it sends the fallback.\n3. In the background, it fetches the data and renders the component.\n4. It streams the resolved HTML and replaces the fallback in the browser.\n\nThis happens without any client‑side routing – it's pure HTTP streaming."
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "Best Practice ✨",
+            "content": "Wrap every component that does its own data fetching in a Suspense boundary. This maximizes parallelism and ensures a fast First Contentful Paint."
+        }
+    ]
+}

@@ -1,0 +1,170 @@
+{
+    "id": "l3",
+    "chapterId": "ch_11",
+    "title": "Unit Testing with Jest & React Testing Library",
+    "description": "Write reliable unit tests for components, hooks, and data fetching – your safety net for refactoring.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Testing",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Why Unit Tests? 🧪",
+            "content": "# Confidence When Changing Code\n\nUnit tests verify that a small piece of code (a function, a component) behaves as expected.\n\n* Catch regressions early.\n* Document expected behavior.\n* Enable fearless refactoring.\n\nNext.js works seamlessly with **Jest** (test runner) and **React Testing Library** (component renderer)."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Setup: Install & Configure (Terminal)",
+            "content": "Add Jest, React Testing Library, and the Next.js Jest plugin.",
+            "codeSnippet": "npm install --save-dev jest @testing-library/react @testing-library/jest-dom jest-environment-jsdom\n# Optional: TypeScript types\nnpm install --save-dev @types/jest",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Testing Library 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the philosophy of React Testing Library?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Test implementation details like state and props",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Test components as the user would interact with them (by role, text, label)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only test server‑side rendering",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Use snapshot testing exclusively",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "React Testing Library encourages tests that resemble how users find and interact with elements, making tests more resilient.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Jest Config (jest.config.js)",
+            "content": "Minimal configuration for Next.js.",
+            "codeSnippet": "// jest.config.js\nconst nextJest = require('next/jest');\n\nconst createJestConfig = nextJest({ dir: './' });\n\nmodule.exports = createJestConfig({\n  testEnvironment: 'jsdom',\n  moduleNameMapper: {\n    '^@/(.*)$': '<rootDir>/$1',\n  },\n});",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "First Component Test (__tests__/Button.test.js)",
+            "content": "Test a simple button renders and handles click.",
+            "codeSnippet": "// __tests__/Button.test.js\nimport { render, screen, fireEvent } from '@testing-library/react';\nimport Button from '../components/Button';\n\ndescribe('Button', () => {\n  it('renders children text', () => {\n    render(<Button>Click me</Button>);\n    expect(screen.getByText('Click me')).toBeInTheDocument();\n  });\n\n  it('calls onClick when clicked', () => {\n    const handleClick = jest.fn();\n    render(<Button onClick={handleClick}>Click</Button>);\n    fireEvent.click(screen.getByText('Click'));\n    expect(handleClick).toHaveBeenCalledTimes(1);\n  });\n});",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Test Structure 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "What does `screen.getByText('Click me')` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A boolean",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The DOM element containing the text, or throws an error if not found",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "An array of elements",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A promise",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`getByText` queries the DOM for an element with the given text and returns it. If not found, it throws immediately.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Testing Data Fetching with MSW 🎭",
+            "content": "# Mocking API Calls\n\nTo test components that fetch data, use **MSW (Mock Service Worker)** to intercept network requests.\n\n```js\nimport { rest } from 'msw';\nimport { setupServer } from 'msw/node';\n\nconst server = setupServer(\n  rest.get('/api/posts', (req, res, ctx) => {\n    return res(ctx.json([{ id: 1, title: 'Test' }]));\n  })\n);\n```\n\nThis avoids real HTTP calls and gives you full control over responses."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "code",
+            "title": "Testing a Page with MSW (__tests__/PostsPage.test.js)",
+            "content": "Mock the fetch and test that the list renders.",
+            "codeSnippet": "// __tests__/PostsPage.test.js\nimport { render, screen } from '@testing-library/react';\nimport { rest } from 'msw';\nimport { setupServer } from 'msw/node';\nimport PostsPage from '../app/posts/page';\n\nconst server = setupServer(\n  rest.get('https://api.example.com/posts', (req, res, ctx) =>\n    res(ctx.json([{ id: 1, title: 'Hello World' }]))\n  )\n);\n\nbeforeAll(() => server.listen());\nafterEach(() => server.resetHandlers());\nafterAll(() => server.close());\n\ndescribe('PostsPage', () => {\n  it('renders posts', async () => {\n    render(await PostsPage()); // Server Component: call directly\n    expect(screen.getByText('Hello World')).toBeInTheDocument();\n  });\n});",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_9",
+            "type": "quiz",
+            "title": "MSW Purpose 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_3",
+                "type": "multiple_choice",
+                "question": "Why use MSW instead of mocking `fetch` directly?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It intercepts real network requests at the service worker level, providing more realistic tests",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's built into Next.js",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It only works on the server",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "MSW simulates a real HTTP server, so your code uses actual `fetch` calls without modification, making tests closer to production.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_10",
+            "type": "tip",
+            "title": "Testing Best Practices ✨",
+            "content": "Focus on behavior, not implementation. Test what the user sees and does. Use `findByText` for async elements. For Server Components, you can import and await them directly in tests (they are just functions)."
+        }
+    ]
+}

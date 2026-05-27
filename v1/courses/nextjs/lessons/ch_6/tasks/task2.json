@@ -1,0 +1,16 @@
+{
+    "id": "task2",
+    "chapterId": "ch_6",
+    "title": "Auth Middleware",
+    "description": "Create an Edge Middleware that protects a /dashboard route from unauthenticated users.",
+    "estimatedMinutes": 12,
+    "problemStatement": "## Goal\nWrite a middleware that redirects users to `/login` if they try to access any `/dashboard` route without a `token` cookie.\n\n### Requirements\n1. Create a `middleware.js` file at the root of your project.\n2. In the middleware, check for the existence of a cookie named `token` (or read its value).\n3. If the request path starts with `/dashboard` and there is NO `token`, redirect to `/login`. Add a `?from=` query parameter with the original path so you can redirect back after login.\n4. If the user already has a token (or is not accessing dashboard), let the request through with `NextResponse.next()`.\n5. Use the `config.matcher` to limit the middleware to `/dashboard/:path*` (optional but good for performance).\n6. Test by manually setting a cookie `token=abc` in the browser console (or use browser dev tools) and trying to access `/dashboard`. Without the cookie, you should be redirected to `/login?from=%2Fdashboard`.\n\n### Notes\n- Middleware runs at the edge, so you can't use Node.js specific APIs; rely on the `request` object.\n- Don't forget to import `NextResponse` from `next/server`.",
+    "hints": [
+        "Read the cookie: `request.cookies.get('token')?.value`.",
+        "Redirect: `NextResponse.redirect(new URL('/login', request.url))`.",
+        "Add `from` param: `loginUrl.searchParams.set('from', request.nextUrl.pathname)`.",
+        "Export the config: `export const config = { matcher: '/dashboard/:path*' };`."
+    ],
+    "expectedOutput": "Visiting /dashboard without a token cookie redirects to /login with a from parameter. With the token, the dashboard loads normally.",
+    "solutionCode": "// middleware.js\nimport { NextResponse } from 'next/server';\n\nexport function middleware(request) {\n  const token = request.cookies.get('token')?.value;\n  const { pathname } = request.nextUrl;\n\n  if (pathname.startsWith('/dashboard') && !token) {\n    const loginUrl = new URL('/login', request.url);\n    loginUrl.searchParams.set('from', pathname);\n    return NextResponse.redirect(loginUrl);\n  }\n\n  return NextResponse.next();\n}\n\nexport const config = {\n  matcher: '/dashboard/:path*',\n};"
+}

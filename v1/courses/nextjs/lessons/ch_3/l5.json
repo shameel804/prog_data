@@ -1,0 +1,111 @@
+{
+    "id": "l5",
+    "chapterId": "ch_3",
+    "title": "Client‑Side Data Fetching",
+    "description": "Fetch data inside components using useEffect, SWR, or React Query for user‑specific interactions.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Advanced Patterns",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "When Pre‑rendering Isn’t Enough 🧩",
+            "content": "# Client‑Side Fetching\n\nSometimes you need data that:\n\n* Depends on user interaction (search, filters).\n* Is not needed for SEO (e.g., user profile settings).\n* Changes too rapidly (real‑time chat).\n\nYou can **combine** pre‑rendering with client‑side fetching. The page loads instantly with static shell, then fetches dynamic data on the client."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Traditional useEffect Fetch (components/UserProfile.js)",
+            "content": "A simple client‑side fetch inside a component. Not a page – a component used inside a page.",
+            "codeSnippet": "// components/UserProfile.js\nimport { useState, useEffect } from 'react';\n\nexport default function UserProfile() {\n  const [user, setUser] = useState(null);\n\n  useEffect(() => {\n    fetch('/api/user')\n      .then(res => res.json())\n      .then(setUser);\n  }, []);\n\n  if (!user) return <div>Loading...</div>;\n  return <div>{user.name}</div>;\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Effect Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Why might you use client‑side fetching even when pre‑rendering is available?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Client‑side is always faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To fetch data that is user‑specific and not needed for SEO",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To avoid writing API routes",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Next.js doesn't support pre‑rendering",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Client‑side fetching is great for private, user‑specific data that doesn't benefit from being pre‑rendered in HTML.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "SWR – The Modern Way 💧",
+            "content": "# Stale‑While‑Revalidate\n\n[SWR](https://swr.vercel.app/) is a React Hook library from the Next.js team. It handles caching, revalidation, and more.\n\n```bash\nnpm install swr\n```\n\n```jsx\nimport useSWR from 'swr';\n\nconst { data, error } = useSWR('/api/user', fetcher);\n```\n\n* Shows cached data first (fast).\n* Fetches in background, then updates automatically.\n* Built‑in retry, pagination, suspense."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "SWR Example (components/Dashboard.js)",
+            "content": "Cleaner, fewer lines, and automatic updates.",
+            "codeSnippet": "// components/Dashboard.js\nimport useSWR from 'swr';\n\nconst fetcher = (...args) => fetch(...args).then(res => res.json());\n\nexport default function Dashboard() {\n  const { data: user, error } = useSWR('/api/user', fetcher);\n\n  if (error) return <div>Failed to load</div>;\n  if (!user) return <div>Loading...</div>;\n  return <div>Welcome, {user.name}</div>;\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "SWR Advantage 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What does SWR stand for and what is its main benefit?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Server Web Requests – handles SSR",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Stale‑While‑Revalidate – returns cached data first, then fetches fresh data in background",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Static Web Resources – pre‑loads pages",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Simple Web Rendering – lightweight rendering",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "SWR strategy: show the cached (stale) data immediately, then revalidate in the background and update the UI seamlessly.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

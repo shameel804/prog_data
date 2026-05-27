@@ -1,0 +1,117 @@
+{
+    "id": "l5",
+    "chapterId": "ch_5",
+    "title": "Font Optimisation with next/font",
+    "description": "Eliminate layout shift and performance hits by loading fonts the right way.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Assets & Performance",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "The Problem with Web Fonts 🔠",
+            "content": "# Flash of Unstyled Text (FOUT) & Layout Shift\n\nWeb fonts often load late, causing:\n\n* FOUT: text appears in a fallback font then swaps.\n* Layout shift: the page jumps when the font loads because the fallback has different metrics.\n\nNext.js offers `next/font` to fix this. It self‑hosts Google Fonts (or local fonts) and inlines the CSS, so the font is loaded as part of the page request. No extra network round trips!"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Using Google Fonts (pages/_app.js)",
+            "content": "Import the font, create a variable, and apply it to the body.",
+            "codeSnippet": "// pages/_app.js\nimport { Inter } from 'next/font/google';\n\nconst inter = Inter({\n  subsets: ['latin'],\n  display: 'swap',\n});\n\nexport default function App({ Component, pageProps }) {\n  return (\n    <main className={inter.className}>\n      <Component {...pageProps} />\n    </main>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Font Loading 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "How does `next/font/google` improve performance?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It downloads fonts from Google's CDN",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It self‑hosts the font files at build time, eliminating extra network requests",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It uses system fonts instead",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It defers font loading until user interaction",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "At build time, Next.js downloads the Google font files and serves them from your own domain, along with inlined CSS, preventing layout shift and FOUT.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Local Fonts & Variable Fonts 🖋️",
+            "content": "# Using Your Own Fonts\n\n```jsx\nimport localFont from 'next/font/local';\n\nconst myFont = localFont({\n  src: './fonts/MyFont.woff2',\n  weight: '400',\n});\n```\n\nVariable fonts: if your font is variable, you can specify multiple weights without multiple files.\n\n```jsx\nconst inter = Inter({ subsets: ['latin'], variable: '--font-inter' });\n// then use `--font-inter` in CSS\n```\n\nThis gives you both the class name and a CSS variable for custom selectors."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Applying Font to Specific Elements (pages/index.js)",
+            "content": "Use the font on a heading, leaving body with the global font.",
+            "codeSnippet": "// pages/index.js\nimport { Inter, Roboto_Mono } from 'next/font/google';\n\nconst inter = Inter({ subsets: ['latin'] });\nconst robotoMono = Roboto_Mono({ subsets: ['latin'] });\n\nexport default function Home() {\n  return (\n    <div className={inter.className}>\n      <h1 className={robotoMono.className}>Code Title</h1>\n      <p>Body text in Inter.</p>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Local Fonts 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "Which module do you import to use a font file from your project folder?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "`next/font/google`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "`next/font/local`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "`next/font`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "`css`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Use `next/font/local` to load custom font files bundled with your project.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_7",
+            "type": "tip",
+            "title": "Zero Layout Shift ✨",
+            "content": "`next/font` automatically adjusts font fallback metrics to match the custom font, so the text never jumps. Combined with `next/image`, your page can achieve a perfect 100 Lighthouse score on Core Web Vitals."
+        }
+    ]
+}

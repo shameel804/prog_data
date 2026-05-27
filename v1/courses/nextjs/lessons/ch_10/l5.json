@@ -1,0 +1,109 @@
+{
+    "id": "l5",
+    "chapterId": "ch_10",
+    "title": "Putting It All Together: Advanced Patterns",
+    "description": "Combine Server Components, parallel routes, and intercepting routes to build a photo gallery with a modal.",
+    "xpReward": 40,
+    "estimatedMinutes": 12,
+    "section": "Mastery",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "The Photo Gallery Blueprint 🖼️",
+            "content": "# Integrating Three Advanced Features\n\nWe'll build:\n\n* **Server Component** gallery page (`app/gallery/page.js`) that fetches photos from a database.\n* **Parallel Route** slot for a sidebar with recent comments (`@sidebar`).\n* **Intercepted Route** for clicking a photo to open a modal overlay (`(..)photo/[id]`).\n\nAll within the same layout, each independent and streaming."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "The Layout (app/gallery/layout.js)",
+            "content": "Defines the slots: children (the main gallery) and sidebar.",
+            "codeSnippet": "// app/gallery/layout.js\nexport default function GalleryLayout({ children, sidebar }) {\n  return (\n    <div style={{ display: 'flex' }}>\n      <main style={{ flex: 3 }}>{children}</main>\n      <aside style={{ flex: 1, borderLeft: '1px solid #ccc', padding: '1rem' }}>\n        {sidebar}\n      </aside>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "The Gallery Page (app/gallery/page.js)",
+            "content": "Server Component that fetches photos and renders links.",
+            "codeSnippet": "// app/gallery/page.js\nimport Link from 'next/link';\nimport { prisma } from '@/lib/prisma';\n\nexport default async function Gallery() {\n  const photos = await prisma.photo.findMany({ take: 12 });\n  return (\n    <div className=\"grid\">\n      {photos.map(photo => (\n        <Link key={photo.id} href={`/photo/${photo.id}`}>\n          <img src={photo.url} alt={photo.title} />\n        </Link>\n      ))}\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "The Intercepted Modal (app/gallery/(..)photo/[id]/page.js)",
+            "content": "Intercepts navigation to /photo/[id] from the gallery and renders a modal.",
+            "codeSnippet": "// app/gallery/(..)photo/[id]/page.js\nimport Modal from '@/components/Modal';\nimport { prisma } from '@/lib/prisma';\n\nexport default async function PhotoModal({ params }) {\n  const photo = await prisma.photo.findUnique({ where: { id: Number(params.id) } });\n  if (!photo) return <div>Not found</div>;\n  return (\n    <Modal>\n      <img src={photo.url} alt={photo.title} />\n      <h2>{photo.title}</h2>\n    </Modal>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "The Full Photo Page (app/photo/[id]/page.js)",
+            "content": "When accessed directly or on refresh.",
+            "codeSnippet": "// app/photo/[id]/page.js\nimport { prisma } from '@/lib/prisma';\nimport { notFound } from 'next/navigation';\n\nexport default async function PhotoPage({ params }) {\n  const photo = await prisma.photo.findUnique({ where: { id: Number(params.id) } });\n  if (!photo) notFound();\n  return (\n    <div>\n      <img src={photo.url} alt={photo.title} />\n      <h1>{photo.title}</h1>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "code",
+            "title": "The Parallel Sidebar Slot (app/gallery/@sidebar/page.js)",
+            "content": "Fetches recent comments independently.",
+            "codeSnippet": "// app/gallery/@sidebar/page.js\nimport { prisma } from '@/lib/prisma';\n\nexport default async function Sidebar() {\n  const comments = await prisma.comment.findMany({ take: 5, orderBy: { createdAt: 'desc' } });\n  return (\n    <div>\n      <h3>Recent Comments</h3>\n      <ul>\n        {comments.map(c => <li key={c.id}>{c.text}</li>)}\n      </ul>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Integrated Pattern 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "In the photo gallery, what ensures that clicking a photo from the gallery opens a modal, but refreshing the page shows the full photo?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A client‑side state flag",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The combination of an intercepted route (`(..)photo/[id]`) for navigation and the actual page route (`photo/[id]`) for direct access",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A special `modal` prop on the Link",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The browser's built‑in behavior",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Next.js intelligently routes to the intercepted page on client‑side navigation from the gallery, and to the actual page on hard navigation, giving a seamless modal experience.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_8",
+            "type": "text",
+            "title": "Architecture Decisions 🏛️",
+            "content": "# When to Use Each Pattern\n\n* **Server Components**: Always default. Switch to Client Component only when you need interactivity.\n* **Streaming/Suspense**: Whenever a component fetches its own data.\n* **Parallel Routes**: When a single view needs multiple independent sections.\n* **Intercepting Routes**: When you want modal/overlay patterns with shareable URLs.\n\nMixing them creates seamless, high‑performance experiences."
+        },
+        {
+            "id": "s_l5_9",
+            "type": "tip",
+            "title": "The Future is Streamed 🌊",
+            "content": "These patterns aren't just for complex apps. Even a simple blog can benefit from streaming comments and using parallel routes for author info. Start simple, then sprinkle in advanced patterns as needed."
+        }
+    ]
+}

@@ -1,0 +1,111 @@
+{
+    "id": "l6",
+    "chapterId": "ch_3",
+    "title": "Incremental Static Regeneration (ISR)",
+    "description": "Update static pages after they’ve been built without redeploying. The best of both worlds!",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Advanced Patterns",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Static but Up‑to‑Date 🔄",
+            "content": "# The Problem\n\nSSG is fast but the data can become stale until you rebuild.\n\nSSR is fresh but slower and more expensive.\n\n**ISR** gives you the speed of static with the freshness of server‑side. 🥇\n\nYou enable it by adding the `revalidate` key to the return of `getStaticProps`."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "ISR in Action (pages/posts.js)",
+            "content": "Set `revalidate: 60` to regenerate the page at most once every 60 seconds.",
+            "codeSnippet": "// pages/posts.js\nexport default function Posts({ posts }) {\n  return (\n    <ul>\n      {posts.map(post => <li key={post.id}>{post.title}</li>)}\n    </ul>\n  );\n}\n\nexport async function getStaticProps() {\n  const res = await fetch('https://jsonplaceholder.typicode.com/posts');\n  const posts = await res.json();\n  return {\n    props: { posts },\n    revalidate: 60 // seconds\n  };\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "Revalidate Time 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "If `revalidate: 10`, how often will the page be regenerated?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Every 10 seconds, constantly",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "At most once every 10 seconds when a request comes in",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only after 10 requests",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Never, it's static forever",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "ISR regenerates the page in the background when a request arrives and the cached page is older than `revalidate` seconds. It's not a constant rebuild.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "On‑Demand ISR (Stable Since v12.2) 🎉",
+            "content": "# Revalidate by API\n\nInstead of time‑based revalidation, you can trigger regeneration **programmatically** via an API route.\n\n```jsx\n// pages/api/revalidate.js\nexport default async function handler(req, res) {\n  await res.revalidate('/posts');\n  return res.json({ revalidated: true });\n}\n```\n\nPerfect for headless CMS webhooks: when content changes, just call this endpoint."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "code",
+            "title": "On‑Demand Revalidation API (pages/api/revalidate.js)",
+            "content": "Secure this with a secret token so only your CMS can trigger it.",
+            "codeSnippet": "// pages/api/revalidate.js\nexport default async function handler(req, res) {\n  if (req.query.secret !== process.env.REVALIDATE_SECRET) {\n    return res.status(401).json({ message: 'Invalid token' });\n  }\n\n  try {\n    await res.revalidate('/posts');\n    return res.json({ revalidated: true });\n  } catch (err) {\n    return res.status(500).send('Error revalidating');\n  }\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_6",
+            "type": "quiz",
+            "title": "ISR Use Case 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "multiple_choice",
+                "question": "Which scenario is best for ISR?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A static blog that never changes",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A product listing page that updates a few times per day",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A real‑time chat interface",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A user's personal settings page",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "ISR shines for pages that are mostly static but occasionally need updates, like product catalogs or blog indexes.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

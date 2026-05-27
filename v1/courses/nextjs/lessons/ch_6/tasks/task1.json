@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_6",
+    "title": "Dashboard Layout & Per‑Page Layout",
+    "description": "Build a persistent sidebar layout and apply it only to dashboard pages.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Goal\nYou will create a reusable Dashboard layout with a sidebar and apply it using the per‑page layout pattern.\n\n### Requirements\n1. Create a `components/DashboardLayout.js` component that renders a sidebar (a simple `<nav>` with links like \"Overview\" and \"Settings\") and a main content area where the page content goes (use `{children}`).\n2. In `pages/_app.js`, implement the per‑page layout logic: if a page has `getLayout`, use it; otherwise, just render the page as‑is.\n3. Create `pages/dashboard/index.js` (Dashboard home) and `pages/dashboard/settings.js`.\n4. Both dashboard pages should export `getLayout` that wraps the page in `<DashboardLayout>`.\n5. Add a separate page `pages/about.js` that does NOT use the dashboard layout.\n6. Verify that navigating between Dashboard pages keeps the sidebar mounted (no flicker), and the About page has no sidebar.\n\n### Bonus\nAdd a \"Go to About\" link in the Dashboard sidebar.",
+    "hints": [
+        "For `_app.js`, use `const getLayout = Component.getLayout || ((page) => page);` and then `return getLayout(<Component {...pageProps} />);`.",
+        "In each dashboard page, add: `Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;`",
+        "Make sure the sidebar links use `next/link`."
+    ],
+    "expectedOutput": "Dashboard pages share the sidebar layout; About page has no sidebar. Sidebar stays mounted when switching between Overview and Settings.",
+    "solutionCode": "// components/DashboardLayout.js\nimport Link from 'next/link';\n\nexport default function DashboardLayout({ children }) {\n  return (\n    <div style={{ display: 'flex' }}>\n      <nav style={{ width: 200, background: '#f0f0f0', padding: '1rem' }}>\n        <h3>Dashboard</h3>\n        <Link href=\"/dashboard\">Overview</Link><br />\n        <Link href=\"/dashboard/settings\">Settings</Link><br />\n        <Link href=\"/about\">About (public)</Link>\n      </nav>\n      <main style={{ flex: 1, padding: '1rem' }}>{children}</main>\n    </div>\n  );\n}\n\n// pages/_app.js\nimport '../styles/globals.css';\n\nexport default function MyApp({ Component, pageProps }) {\n  const getLayout = Component.getLayout || ((page) => page);\n  return getLayout(<Component {...pageProps} />);\n}\n\n// pages/dashboard/index.js\nimport DashboardLayout from '../../components/DashboardLayout';\n\nexport default function Dashboard() {\n  return <h1>Overview</h1>;\n}\nDashboard.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;\n\n// pages/dashboard/settings.js\nimport DashboardLayout from '../../components/DashboardLayout';\n\nexport default function Settings() {\n  return <h1>Settings</h1>;\n}\nSettings.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;\n\n// pages/about.js\nexport default function About() {\n  return <h1>About</h1>;\n}\n// No getLayout, so no sidebar"
+}

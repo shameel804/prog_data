@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_3",
+    "title": "Static Blog with getStaticProps",
+    "description": "Fetch posts from an API at build time and display them on a page.",
+    "estimatedMinutes": 12,
+    "problemStatement": "## Goal\nBuild a page that lists blog posts fetched from JSONPlaceholder at build time.\n\n### Requirements\n1. Create a new page at `pages/posts.js`.\n2. Export a default component that receives `posts` as a prop and renders an unordered list (`<ul>`) of post titles.\n3. Export an `async function getStaticProps()` that:\n   - Fetches `https://jsonplaceholder.typicode.com/posts`\n   - Returns `{ props: { posts } }` where `posts` is the array from the API.\n4. Verify the page displays a list of 100 titles when running `npm run build` and `npm start` (or `npm run dev`).\n\n### Bonus\n- Add a link from the homepage (`/`) to `/posts`.",
+    "hints": [
+        "Use `fetch` inside `getStaticProps`. Since it runs on the server, you don't need a full URL with domain; you can also just use an external one like the placeholder.",
+        "Don't forget to return an object with `props`.",
+        "The component should map over the array and render `<li key={post.id}>{post.title}</li>`."
+    ],
+    "expectedOutput": "A page at `/posts` listing 100 post titles. When viewing the page source, the HTML should contain the titles (pre‑rendered).",
+    "solutionCode": "// pages/posts.js\nexport default function Posts({ posts }) {\n  return (\n    <div>\n      <h1>Posts</h1>\n      <ul>\n        {posts.map(post => <li key={post.id}>{post.title}</li>)}\n      </ul>\n    </div>\n  );\n}\n\nexport async function getStaticProps() {\n  const res = await fetch('https://jsonplaceholder.typicode.com/posts');\n  const posts = await res.json();\n  return { props: { posts } };\n}"
+}

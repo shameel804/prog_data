@@ -1,0 +1,29 @@
+{
+    "id": "project3",
+    "title": "E‑Commerce Storefront",
+    "description": "Develop a production‑ready online shop with a product catalogue, cart, admin dashboard, payments, and advanced caching.",
+    "difficulty": "Advanced",
+    "estimatedHours": "12-20",
+    "problemStatement": "## Goal\nCreate a fully‑fledged e‑commerce store using Next.js App Router, combining server‑side rendering, static generation, Edge Middleware, and third‑party services (Stripe for payments).\n\nThis project synthesises almost every concept from the course: routing, data fetching, authentication, database, Server Actions, caching, and deployment.\n\n## Core Concepts\n- Advanced App Router patterns: parallel routes, intercepting routes, layouts.\n- Prisma with PostgreSQL (or SQLite for development).\n- NextAuth for admin and customer authentication.\n- ISR, on‑demand revalidation, and tag‑based caching.\n- Edge Middleware for bot protection and A/B testing.\n- Stripe Checkout integration for payments.\n- Testing with Playwright (E2E) and Jest (unit).\n- SEO with dynamic metadata and `next-sitemap`.\n\n## Detailed Requirements\n1. **Storefront Pages**\n   - **Homepage**: featured products, categories, SEO.\n   - **Product Listing** (`/products`): paginated, filterable by category/price, ISR with revalidation.\n   - **Product Detail** (`/products/[slug]`): images, description, add‑to‑cart button. Server Component, ISR.\n   - **Cart** (parallel route `@cart` or separate page): shows items, quantities, total, checkout button.\n   - **Checkout**: redirect to Stripe Checkout (or a mock payment page).\n   - **Order Confirmation**: thank‑you page after successful payment.\n\n2. **Admin Dashboard**\n   - Protected by NextAuth and role‑based middleware (admin role).\n   - CRUD for products (title, description, price, images, category).\n   - Use Server Actions with Zod validation and image upload (can use a service like Cloudinary or just local).\n   - On‑demand ISR: after a product is updated, revalidate `/products` and `/products/[slug]`.\n\n3. **Shopping Cart Logic**\n   - Use a combination of local state (React Context) and Server Actions.\n   - Cart data can be stored in `localStorage` for guests and synced to the database for logged‑in users.\n   - Ensure cart quantities are validated on the server before checkout.\n\n4. **Caching & Performance**\n   - Use tag‑based revalidation: tag product listings with `'products'`, product detail with `'product-${id}'`.\n   - Set appropriate `Cache-Control` headers via `next.config.js`.\n   - Use `next/image` for all product images with responsive sizes and blur placeholder.\n   - Implement a loading skeleton for product pages.\n\n5. **Authentication & Authorization**\n   - NextAuth with Credentials or GitHub for customers; admin role assigned via database.\n   - Middleware protects `/admin/*` routes and redirects non‑admin users.\n\n6. **Testing**\n   - Unit tests for product validation schemas and utility functions.\n   - Playwright E2E test: visit homepage, navigate to a product, add to cart, go to checkout.\n\n7. **Deployment & Monitoring**\n   - Deploy to Vercel with environment variables (database URL, Stripe keys, NextAuth secrets).\n   - Enable Vercel Analytics.\n   - Set up CI/CD with GitHub Actions to run tests on pull requests.\n\n## Deliverables\n- GitHub repository with clear folder structure.\n- Live production URL.\n- Documentation (README) covering setup, env vars, and architecture.\n- Test reports.\n",
+    "requirements": [
+        "Public storefront: homepage, product listing, product detail, cart, checkout.",
+        "Admin dashboard: manage products with full CRUD and image upload.",
+        "Authentication: customers (sign up/in) and admins (role‑based).",
+        "Cart: guest and authenticated user flows.",
+        "Database: Prisma models for User, Product, Order, OrderItem.",
+        "ISR with on‑demand revalidation using tags.",
+        "Edge Middleware for admin route protection.",
+        "Responsive UI with Tailwind CSS, dark mode optional.",
+        "E2E and unit tests.",
+        "Deploy to Vercel with Stripe (test mode)."
+    ],
+    "hints": [
+        "Use `next-auth` callbacks to add a `role` field to the session from the database.",
+        "For the cart, you can use React Context with a reducer and persist to `localStorage` using a custom hook.",
+        "Implement Stripe Checkout by creating a Server Action that creates a Stripe session and returns the URL.",
+        "For on‑demand revalidation, create an API route that receives a product ID and calls `revalidateTag('product-${id}')`.",
+        "Use Playwright's `test.use({ storageState })` for authenticated admin tests.",
+        "When deploying to Vercel, set `NEXTAUTH_URL` to your production domain and update OAuth callback URLs."
+    ],
+    "expectedOutput": "A fully functional e‑commerce platform with a polished UI, admin backend, secure payments, and automated tests, deployed live."
+}

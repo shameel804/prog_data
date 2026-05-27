@@ -1,0 +1,117 @@
+{
+    "id": "l3",
+    "chapterId": "ch_6",
+    "title": "Advanced useRouter: Shallow Routing & URL Manipulation",
+    "description": "Update the URL without triggering data re-fetching and preserve page state.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Navigation",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Beyond Simple Navigation 🧭",
+            "content": "# What is Shallow Routing?\n\nNormally, `router.push('/post/123')` runs data fetching methods again (if using SSR).\n\nShallow routing lets you change the URL **without** re‑running `getServerSideProps`, `getStaticProps`, or `getInitialProps`.\n\n```jsx\nrouter.push('/?counter=10', undefined, { shallow: true });\n```\n\nYou keep the same page component mounted, but the URL updates and you can read the new query params."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Shallow Routing Example (pages/search.js)",
+            "content": "Add a filter to the URL without fetching new data.",
+            "codeSnippet": "// pages/search.js\nimport { useRouter } from 'next/router';\nimport { useState } from 'react';\n\nexport default function Search() {\n  const router = useRouter();\n  const [query, setQuery] = useState('');\n\n  const updateFilter = () => {\n    router.push(`/search?q=${query}`, undefined, { shallow: true });\n  };\n\n  return (\n    <div>\n      <input value={query} onChange={(e) => setQuery(e.target.value)} />\n      <button onClick={updateFilter}>Search</button>\n      <p>Active filter: {router.query.q}</p>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Shallow Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the main effect of setting `shallow: true` in `router.push`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It makes the navigation faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It changes the URL without re‑running data fetching methods",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It only works on the client",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It replaces the current page with an empty one",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Shallow routing updates the URL and makes the new query available, but Next.js skips calling `getServerSideProps`/`getStaticProps` for that page.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Manipulating Query Params 🧪",
+            "content": "# Updating a Single Query Parameter\n\nYou often need to add or change just one filter without losing others.\n\nUse `router.replace` with a shallow route to update the query object.\n\n```jsx\nrouter.replace({\n  pathname: router.pathname,\n  query: { ...router.query, sort: 'price' },\n}, undefined, { shallow: true });\n```\n\nThis merges the new query with the existing ones and updates the URL."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Multiple Filters (pages/products.js)",
+            "content": "Keep all active filters in the URL without page refresh.",
+            "codeSnippet": "// pages/products.js\nimport { useRouter } from 'next/router';\n\nexport default function Products() {\n  const router = useRouter();\n  const { category, sort } = router.query;\n\n  const applySort = (sortValue) => {\n    router.push({\n      pathname: '/products',\n      query: { ...router.query, sort: sortValue },\n    }, undefined, { shallow: true });\n  };\n\n  return (\n    <div>\n      <p>Category: {category || 'All'}, Sort: {sort || 'none'}</p>\n      <button onClick={() => applySort('price')}>Sort by Price</button>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Query Merging 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "When using shallow routing to update a query parameter, what must you do to keep the existing params?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Use a special `merge` option",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Spread the existing `router.query` into the new query object",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It happens automatically",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "You can't keep them; shallow routing resets all params",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "You must manually spread `router.query` into the new query object to preserve existing parameters.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "warning",
+            "title": "Shallow Routing Limitations ⚠️",
+            "content": "Shallow routing only works for URL changes on the **same page**. If you navigate to a different page (different pathname), it will still run data fetching. It's meant for in‑page parameter updates, not cross‑page navigation."
+        }
+    ]
+}

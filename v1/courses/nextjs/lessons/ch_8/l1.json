@@ -1,0 +1,167 @@
+{
+    "id": "l1",
+    "chapterId": "ch_8",
+    "title": "Setting Up Prisma & SQLite",
+    "description": "Add a database to your Next.js app – install Prisma, define your first model, and run a migration.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "Database Core",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Why a Real Database? 🗃️",
+            "content": "# Beyond In‑Memory Arrays\n\nSo far we've stored data in arrays (API routes) or mocked it. In production you need a real database that persists data across restarts, handles concurrency, and offers querying power.\n\nNext.js works great with **Prisma**, a modern ORM for Node.js that supports PostgreSQL, MySQL, and SQLite.\n\nWe'll use SQLite – a lightweight file‑based database perfect for learning and small projects."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "code",
+            "title": "Install Prisma & Initialise (Terminal)",
+            "content": "Inside your Next.js project, run these commands.",
+            "codeSnippet": "npm install prisma --save-dev\nnpx prisma init --datasource-provider sqlite",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Prisma Setup 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What does `npx prisma init --datasource-provider sqlite` create?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A new React component",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A `prisma/schema.prisma` file and a `.env` file with DATABASE_URL",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A running database server",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A sample blog app",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Prisma init scaffolds the Prisma folder, the schema file, and configures the database connection string.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "The Prisma Schema 📜",
+            "content": "# `prisma/schema.prisma`\n\nThis file defines your database connection and data models.\n\n```prisma\ndatasource db {\n  provider = \"sqlite\"\n  url      = env(\"DATABASE_URL\")\n}\n\ngenerator client {\n  provider = \"prisma-client-js\"\n}\n\nmodel Post {\n  id        Int      @id @default(autoincrement())\n  title     String\n  content   String\n  createdAt DateTime @default(now())\n}\n```\n\nEach model becomes a table. Prisma then generates a type‑safe client."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "Define the Post Model (prisma/schema.prisma)",
+            "content": "Add this to the schema and run a migration.",
+            "codeSnippet": "model Post {\n  id        Int      @id @default(autoincrement())\n  title     String\n  content   String\n  createdAt DateTime @default(now())\n}",
+            "codeLanguage": "prisma",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "Schema Fields 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "What does `@default(autoincrement())` do on the `id` field?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Makes the id a random string",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Automatically generates increasing integer IDs for new records",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Links to another table",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Allows manual ID input",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`autoincrement()` ensures each new row gets a unique sequential integer ID.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_7",
+            "type": "text",
+            "title": "Running a Migration 🚀",
+            "content": "# Create the Database Tables\n\n```bash\nnpx prisma migrate dev --name init\n```\n\nThis:\n1. Creates the SQLite database file (`dev.db` in `/prisma`).\n2. Applies the schema to create the `Post` table.\n3. Generates the Prisma Client (type‑safe query builder).\n\nNow you can import `@prisma/client` and start querying!"
+        },
+        {
+            "id": "s_l1_8",
+            "type": "code",
+            "title": "Prisma Client Singleton (lib/prisma.js)",
+            "content": "Create a single Prisma Client instance to reuse across your app.",
+            "codeSnippet": "// lib/prisma.js\nimport { PrismaClient } from '@prisma/client';\n\nconst globalForPrisma = global;\n\nexport const prisma = globalForPrisma.prisma ?? new PrismaClient();\n\nif (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;",
+            "codeLanguage": "js",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_9",
+            "type": "quiz",
+            "title": "Migration Command 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_3",
+                "type": "multiple_choice",
+                "question": "What is the purpose of `prisma migrate dev`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To start a development server",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To apply your Prisma schema changes to the actual database",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To deploy the app to Vercel",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To generate TypeScript types",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Migrations create and update database tables to match your Prisma schema, keeping them in sync.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_10",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "Always use a singleton pattern for Prisma Client in Next.js to avoid creating multiple instances during hot reload. The code above prevents connection exhaustion."
+        }
+    ]
+}

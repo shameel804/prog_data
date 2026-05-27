@@ -1,0 +1,111 @@
+{
+    "id": "l2",
+    "chapterId": "ch_4",
+    "title": "Catch‑All Routes",
+    "description": "Handle multiple URL segments with [...slug].js – ideal for nested categories or file browsers.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Routing",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Beyond a Single Parameter 🚋",
+            "content": "# Catch‑All Routes `[...slug].js`\n\nSometimes you need to match **any number** of path segments:\n\n* `/blog/a`\n* `/blog/a/b`\n* `/blog/a/b/c`\n\nCreate `pages/blog/[...slug].js`.\n\n`router.query.slug` will be an **array** of segments: `['a', 'b', 'c']`."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Catch‑All Blog Page (pages/blog/[...slug].js)",
+            "content": "Displays the full slug array.",
+            "codeSnippet": "// pages/blog/[...slug].js\nimport { useRouter } from 'next/router';\n\nexport default function BlogPost() {\n  const router = useRouter();\n  const { slug } = router.query;\n  return (\n    <div>\n      <h1>Blog Post</h1>\n      <p>Slug: {JSON.stringify(slug)}</p>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Catch Match 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "A file `pages/shop/[...categories].js` with URL `/shop/electronics/phones`. What is `router.query.categories`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "`'electronics/phones'`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "`['electronics', 'phones']`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "`'electronics'`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "`undefined`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Catch‑all routes collect all segments into an array. The query parameter name is whatever you put inside the brackets (here `categories`).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Data Fetching with Catch‑All Params 🛠️",
+            "content": "# In `getStaticProps` / `getServerSideProps`\n\nThe slug array is available in `context.params`.\n\n```js\nexport async function getStaticProps({ params }) {\n  const { slug } = params; // ['a', 'b', 'c']\n  // use slug to fetch data\n}\n```\n\nIn `getStaticPaths`, you return paths as arrays:\n\n```js\npaths: [\n  { params: { slug: ['2024', 'hello-world'] } },\n  { params: { slug: ['2024'] } }\n]\n```"
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Static Catch‑All Example (pages/blog/[...slug].js)",
+            "content": "Pre‑render a few paths. Notice how paths are defined.",
+            "codeSnippet": "// pages/blog/[...slug].js\nexport default function BlogPost({ content }) {\n  return <article>{content}</article>;\n}\n\nexport async function getStaticPaths() {\n  return {\n    paths: [\n      { params: { slug: ['2024', 'my-post'] } },\n      { params: { slug: ['2023'] } }\n    ],\n    fallback: false\n  };\n}\n\nexport async function getStaticProps({ params }) {\n  const { slug } = params; // e.g. ['2024', 'my-post']\n  return { props: { content: `You are viewing: ${slug.join('/')}` } };\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Catch Paths 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What does a path object for `[...slug]` look like in `getStaticPaths`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "`{ params: { slug: 'a/b' } }`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "`{ params: { slug: ['a', 'b'] } }`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "`{ params: { slug: { a: 'b' } } }`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "`{ params: ['a', 'b'] }`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The slug must be an array of strings matching the URL segments.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

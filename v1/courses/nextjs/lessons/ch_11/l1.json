@@ -1,0 +1,132 @@
+{
+    "id": "l1",
+    "chapterId": "ch_11",
+    "title": "Error Boundaries: Catching UI Crashes",
+    "description": "Learn how React error boundaries prevent the whole app from crashing and how Next.js makes them easy.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Error Handling",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The White Screen of Death 💀",
+            "content": "# When React Components Throw\n\nIf a component throws an error during rendering, React unmounts the entire tree. Users see a blank white page.\n\nIn vanilla React, you wrap components in an **error boundary** class component that catches errors and shows a fallback UI.\n\nNext.js takes this further with built‑in `error.js` files and the `reset()` function for recovery."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "code",
+            "title": "Classic React Error Boundary (components/ErrorBoundary.js)",
+            "content": "A class component implementing `componentDidCatch` and `getDerivedStateFromError`.",
+            "codeSnippet": "// components/ErrorBoundary.js\nimport React from 'react';\n\nexport default class ErrorBoundary extends React.Component {\n  constructor(props) {\n    super(props);\n    this.state = { hasError: false };\n  }\n\n  static getDerivedStateFromError() {\n    return { hasError: true };\n  }\n\n  componentDidCatch(error, errorInfo) {\n    console.error('Caught by boundary:', error, errorInfo);\n  }\n\n  render() {\n    if (this.state.hasError) {\n      return <h2>Something went wrong.</h2>;\n    }\n    return this.props.children;\n  }\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Error Boundary Scope 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What errors do React error boundaries catch?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "All errors in the app, including event handlers and async code",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Errors during rendering, in lifecycle methods, and in constructors of child components",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only network errors",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only errors thrown in `useEffect`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Error boundaries catch errors in the render phase. They don't catch errors in event handlers, async code, or on the server.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "Next.js App Router: `error.js` 📄",
+            "content": "# File‑based Error Boundaries\n\nIn the App Router, create an `error.js` file next to a route segment. It wraps the page and its children.\n\n```jsx\n'use client';\nexport default function Error({ error, reset }) {\n  return <button onClick={() => reset()}>Try again</button>;\n}\n```\n\n* Must be a Client Component.\n* Receives the error object and a `reset` function to retry rendering.\n* Errors bubble up to the nearest parent error boundary."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "Segment Error Page (app/dashboard/error.js)",
+            "content": "Shows a friendly message and a retry button.",
+            "codeSnippet": "// app/dashboard/error.js\n'use client';\n\nexport default function DashboardError({ error, reset }) {\n  return (\n    <div>\n      <h2>Dashboard crashed!</h2>\n      <p>{error.message}</p>\n      <button onClick={() => reset()}>Try again</button>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "error.js Features 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "What does the `reset` function in an error boundary do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Reloads the entire page",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Re‑renders the error boundary's children, attempting recovery",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Clears the console",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Redirects to the homepage",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`reset()` re‑mounts the error boundary’s content, giving the component a second chance (e.g., after a network hiccup).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_7",
+            "type": "text",
+            "title": "Granular vs Global Boundaries 🪆",
+            "content": "# Nesting Errors\n\n* Place `error.js` at the segment level to catch errors only in that segment.\n* Place it in the root `app/error.js` as a global fallback.\n* Layouts and templates don't catch errors from their children automatically – use a separate boundary.\n\nA well‑designed app has multiple boundaries: the layout stays functional even if a specific panel crashes."
+        },
+        {
+            "id": "s_l1_8",
+            "type": "code",
+            "title": "Manual ErrorBoundary for Client Components (components/RiskyChart.js)",
+            "content": "Wrap a third‑party chart that might fail.",
+            "codeSnippet": "// components/RiskyChart.js\nimport { ErrorBoundary } from 'react-error-boundary';\n\nfunction ChartFallback({ error }) {\n  return <div>Chart unavailable: {error.message}</div>;\n}\n\nexport default function RiskyChart({ data }) {\n  return (\n    <ErrorBoundary FallbackComponent={ChartFallback}>\n      <HeavyChart data={data} />\n    </ErrorBoundary>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_9",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "Combine `error.js` with `global-error.js` (for the root layout) to handle errors that crash the entire app, like those in the root layout itself."
+        }
+    ]
+}

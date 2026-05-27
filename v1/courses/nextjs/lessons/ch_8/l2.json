@@ -1,0 +1,123 @@
+{
+    "id": "l2",
+    "chapterId": "ch_8",
+    "title": "Querying Data: Server vs Client",
+    "description": "Fetch data using Prisma Client inside Server Components, getServerSideProps, and understand when to use each.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Data Access",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Right Place to Query 🎯",
+            "content": "# Server‑Side Data Fetching\n\nPrisma Client should **never** be imported into client components or sent to the browser. It can only run in:\n\n* `getServerSideProps` / `getStaticProps` (Pages Router)\n* Server Components (App Router)\n* API Routes\n* Server Actions\n\nThis keeps your database credentials secure and leverages server‑side rendering."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Fetching Posts with getServerSideProps (pages/index.js)",
+            "content": "Query all posts and pass them as props.",
+            "codeSnippet": "// pages/index.js\nimport { prisma } from '../lib/prisma';\n\nexport default function Home({ posts }) {\n  return (\n    <ul>\n      {posts.map(post => <li key={post.id}>{post.title}</li>)}\n    </ul>\n  );\n}\n\nexport async function getServerSideProps() {\n  const posts = await prisma.post.findMany({\n    orderBy: { createdAt: 'desc' },\n  });\n  return { props: { posts } };\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Prisma Client Safety 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Why can't Prisma Client be used directly in a client component?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's too slow for the browser",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It would expose database connection details and the query engine only works in Node.js",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It requires a special license",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's against Next.js rules but technically possible",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Prisma Client contains database credentials and uses Node.js APIs that don't exist in the browser, making it a server‑only module.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Server Components in App Router 🧬",
+            "content": "# Direct Database Queries\n\nIn the App Router, you can query directly in a Server Component (no need for `getServerSideProps`).\n\n```jsx\n// app/posts/page.js\nexport default async function PostsPage() {\n  const posts = await prisma.post.findMany();\n  return <ul>{posts.map(p => <li key={p.id}>{p.title}</li>)}</ul>;\n}\n```\n\nNo client code, no API route, no data fetching wrapper. It's just a function that runs on the server."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "App Router Example (app/page.js)",
+            "content": "The simplest possible page with database data.",
+            "codeSnippet": "// app/page.js\nimport { prisma } from '@/lib/prisma';\n\nexport default async function Home() {\n  const posts = await prisma.post.findMany({\n    take: 5,\n    orderBy: { createdAt: 'desc' },\n  });\n\n  return (\n    <main>\n      <h1>Latest Posts</h1>\n      <ul>\n        {posts.map(post => <li key={post.id}>{post.title}</li>)}\n      </ul>\n    </main>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "App Router Query 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "In an App Router Server Component, where does the database query run?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "In the browser after JavaScript loads",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "On the server at request time (or build time for static)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Inside a `useEffect` hook",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "In a Web Worker",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Server Components execute exclusively on the server, so Prisma queries happen there and never reach the client.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "API Routes for Client‑Side Queries 🌉",
+            "content": "# When the Client Needs Data\n\nIf you need to fetch data after user interaction (search, filter), you still create an API route that internally uses Prisma.\n\n```js\n// pages/api/posts.js\nimport { prisma } from '@/lib/prisma';\n\nexport default async function handler(req, res) {\n  const posts = await prisma.post.findMany();\n  res.json(posts);\n}\n```\n\nThen the client calls `/api/posts` with fetch or SWR. The API route acts as a secure bridge."
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "Deciding Strategy ✨",
+            "content": "Use Server Components (or getServerSideProps) for initial page data. Use API routes for client‑side mutations or data that changes based on client state. This keeps your app fast and secure."
+        }
+    ]
+}

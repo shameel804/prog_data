@@ -1,0 +1,123 @@
+{
+    "id": "l4",
+    "chapterId": "ch_10",
+    "title": "Intercepting Routes",
+    "description": "Open a modal without changing the URL background – intercept navigation to show overlay content.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Advanced Routing",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Modal Dilemma 🪟",
+            "content": "# Traditional Modal Problems\n\nYou want to open a login modal when clicking \"Sign In\", but you also want the modal to be shareable via URL (`/login`).\n\n* If you use client‑side state, the URL doesn't change – no sharing, no back button.\n* If you navigate to `/login`, the whole page changes – you lose the context behind the modal.\n\n**Intercepting Routes** solve this by \"intercepting\" the navigation to `/login` and showing the modal on top of the existing page, while still updating the URL."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "The Intercepting Convention 📂",
+            "content": "# `(.)` and `(..)` Folders\n\nUse special folder names to intercept routes:\n\n* `(.)folder` – intercept the same level.\n* `(..)folder` – intercept one level up.\n* `(..)(..)folder` – intercept two levels up.\n* `(...)folder` – intercept from the root.\n\nExample: In `app/feed/`, to intercept navigation to `app/photo/[id]`, create `app/feed/(..)photo/[id]/page.js`.\n\nThat page renders when you navigate from `/feed` to `/photo/123` – it becomes the modal."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Intercepted Modal (app/feed/(..)photo/[id]/page.js)",
+            "content": "This page is shown as an overlay when navigating from /feed.",
+            "codeSnippet": "// app/feed/(..)photo/[id]/page.js\nimport Modal from '@/components/Modal';\nimport PhotoView from '@/components/PhotoView';\n\nexport default function PhotoModal({ params }) {\n  return (\n    <Modal>\n      <PhotoView id={params.id} />\n    </Modal>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Intercepting Convention 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does the folder `(..)photo` in `app/feed/(..)photo/page.js` mean?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Create a route at `/feed/photo`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Intercept navigation to `/photo` from within `/feed`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Redirect all traffic to `/photo`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's a parallel route slot named photo",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`(..)` means 'go up one level' from the current segment. So from `app/feed/`, it intercepts the `photo` route at the parent level.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "The Two Viewports 👁️👁️",
+            "content": "# How Interception Works\n\nYou still need the actual `/photo/[id]` page for when a user navigates directly (or refreshes).\n\n* `app/photo/[id]/page.js` – the full page view (when accessed directly).\n* `app/feed/(..)photo/[id]/page.js` – the modal view (when intercepted from feed).\n\nNext.js detects the navigation source and decides which page to render.\n\nThis gives you the best of both worlds: the modal pattern with real, shareable URLs."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "code",
+            "title": "The Hard Link to the Full Page (app/feed/page.js)",
+            "content": "Normally, a `<Link>` to `/photo/1` from feed will trigger the intercepted route. To force the full page, you can add `target=\"_self\"` or use a regular `<a>`.",
+            "codeSnippet": "// app/feed/page.js\nimport Link from 'next/link';\n\nexport default function Feed() {\n  return (\n    <div>\n      <h1>Feed</h1>\n      <Link href=\"/photo/1\">Open Photo (modal)</Link>\n      {/* Hard reload: <a href=\"/photo/1\">Full Page</a> */}\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "Direct vs Intercepted 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What happens when a user refreshes the browser while viewing the modal (URL is /photo/1)?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The modal stays open",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The full page version of `/photo/1` renders, because there's no navigation source to intercept",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A 404 error occurs",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The feed page loads with a broken modal",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Interception only happens on client‑side navigation from a specific route. A hard refresh or direct URL access always renders the actual page.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_8",
+            "type": "tip",
+            "title": "Modal Best Practice 💡",
+            "content": "Use a client component for the modal wrapper that calls `router.back()` on close. When the modal unmounts, the URL returns to the previous route. Also add a `default.js` file for unmatched parallel routes to avoid 404."
+        }
+    ]
+}

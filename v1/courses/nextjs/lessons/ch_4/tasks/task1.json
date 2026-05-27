@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_4",
+    "title": "Dynamic Product Catalog",
+    "description": "Create a catch-all route to handle product categories and display the category path.",
+    "estimatedMinutes": 12,
+    "problemStatement": "## Goal\nBuild a dynamic product listing page that handles nested categories like `/products/electronics/phones`.\n\n### Requirements\n1. Create a file `pages/products/[...categories].js`.\n2. The component should:\n   - Use `useRouter` to get `categories` from the query.\n   - Display `<h1>Products</h1>` and then show the category path (e.g., \"Category: electronics > phones\").\n   - If no categories (which can't happen with `[...]` but might with `[[...]]`), display \"All Products\".\n3. Add a link from the homepage to `/products/electronics/phones` to test the route.\n4. Ensure navigating to `/products/books` or `/products/clothing/shirts` all work and display the correct path.\n\n### Bonus\nConvert it to optional catch-all `[[...categories]].js` and handle `/products` (root) showing \"All Products\".",
+    "hints": [
+        "`categories` will be an array. Use `.join(' > ')` to display a breadcrumb.",
+        "For optional catch‑all, check if `categories` is undefined or empty.",
+        "Remember to import `useRouter` from `next/router`."
+    ],
+    "expectedOutput": "Page at `/products/electronics/phones` shows 'Category: electronics > phones'. The bonus root path `/products` shows 'All Products'.",
+    "solutionCode": "// pages/products/[[...categories]].js (optional version)\nimport { useRouter } from 'next/router';\n\nexport default function Products() {\n  const router = useRouter();\n  const { categories } = router.query;\n\n  if (!categories || categories.length === 0) {\n    return <h1>All Products</h1>;\n  }\n\n  return (\n    <div>\n      <h1>Products</h1>\n      <p>Category: {categories.join(' > ')}</p>\n    </div>\n  );\n}\n\n// For the non‑optional version, remove the empty check (it will never be empty)."
+}

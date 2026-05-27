@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_4",
+    "title": "Feedback API & Form",
+    "description": "Build an API endpoint that stores feedback and a frontend form to submit it.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Goal\nCreate a simple feedback system using API routes and a form.\n\n### Requirements\n1. Create an API route at `pages/api/feedback.js`.\n   - On `GET`, return a JSON array of feedback messages (hardcoded or in‑memory array).\n   - On `POST`, read the JSON body `{ message }`, add it to the array, and return `{ success: true }`.\n   - For POST, parse the body manually using the `req.on('data', ...)` method.\n2. Create a page at `pages/feedback.js`.\n   - Include a `<textarea>` and a submit button.\n   - On button click, send a POST to `/api/feedback` with the message.\n   - Display a success message after submission.\n   - Also fetch the existing feedback on mount (GET) and display as a list.\n3. Test: submit a message, see it added to the list.\n\n### Note\nData persists only in memory; it will reset on server restart. That's fine for learning.",
+    "hints": [
+        "For body parsing: use a Promise and `req.on('data')` and `req.on('end')`. Remember to parse JSON.",
+        "Use `fetch('/api/feedback', { method: 'POST', body: JSON.stringify({ message }) })`.",
+        "Manage state with `useState` for the feedback list and input."
+    ],
+    "expectedOutput": "A working feedback form that submits and displays messages.",
+    "solutionCode": "// pages/api/feedback.js\nlet feedbacks = [];\n\nexport default async function handler(req, res) {\n  if (req.method === 'GET') {\n    res.status(200).json(feedbacks);\n  } else if (req.method === 'POST') {\n    // Parse body\n    let body = '';\n    req.on('data', chunk => body += chunk);\n    req.on('end', () => {\n      const { message } = JSON.parse(body);\n      feedbacks.push({ id: Date.now(), message });\n      res.status(201).json({ success: true });\n    });\n  } else {\n    res.status(405).end();\n  }\n}\n\n// pages/feedback.js\nimport { useState, useEffect } from 'react';\n\nexport default function Feedback() {\n  const [message, setMessage] = useState('');\n  const [feedbacks, setFeedbacks] = useState([]);\n  const [status, setStatus] = useState('');\n\n  const fetchFeedbacks = async () => {\n    const res = await fetch('/api/feedback');\n    const data = await res.json();\n    setFeedbacks(data);\n  };\n\n  useEffect(() => { fetchFeedbacks(); }, []);\n\n  const submit = async () => {\n    const res = await fetch('/api/feedback', {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify({ message })\n    });\n    if (res.ok) {\n      setMessage('');\n      setStatus('Thanks!');\n      fetchFeedbacks(); // refresh list\n    }\n  };\n\n  return (\n    <div>\n      <h1>Feedback</h1>\n      <textarea value={message} onChange={e => setMessage(e.target.value)} />\n      <button onClick={submit}>Send</button>\n      <p>{status}</p>\n      <ul>\n        {feedbacks.map(fb => <li key={fb.id}>{fb.message}</li>)}\n      </ul>\n    </div>\n  );\n}"
+}

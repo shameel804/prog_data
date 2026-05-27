@@ -1,0 +1,132 @@
+{
+    "id": "l4",
+    "chapterId": "ch_11",
+    "title": "End-to-End Testing with Playwright",
+    "description": "Simulate real user flows across multiple pages and catch integration bugs before they reach production.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Testing",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Beyond Unit Tests 🌐",
+            "content": "# Testing the Whole App\n\nUnit tests verify pieces in isolation. End‑to‑end (E2E) tests simulate a real browser environment:\n\n* Clicking navigation links.\n* Filling and submitting forms.\n* Checking that the correct page content appears.\n\n**Playwright** is a powerful E2E testing tool from Microsoft that supports Chromium, Firefox, and WebKit."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Install Playwright (Terminal)",
+            "content": "Add Playwright and install browsers.",
+            "codeSnippet": "npm init playwright@latest",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Playwright vs Jest 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is the key difference between Playwright and Jest?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Playwright is faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Jest is for unit/integration tests; Playwright is for browser‑based E2E tests",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Playwright only works with Chrome",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Jest requires a browser",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Jest runs in Node.js (simulated DOM). Playwright controls real browsers, testing the full stack from user perspective.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "First E2E Test: Homepage Loads (tests/home.spec.js)",
+            "content": "Navigate to the homepage and check the title.",
+            "codeSnippet": "// tests/home.spec.js\nimport { test, expect } from '@playwright/test';\n\ntest('homepage has correct title', async ({ page }) => {\n  await page.goto('http://localhost:3000');\n  await expect(page).toHaveTitle(/My Next.js App/);\n  await expect(page.locator('h1')).toHaveText('Welcome');\n});",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Testing User Flows 🧑‍💻",
+            "content": "# Simulating Navigation & Forms\n\nPlaywright's API is intuitive:\n\n* `page.click('text=About')` – click a link.\n* `page.fill('input[name=\"email\"]', 'test@example.com')` – type into fields.\n* `page.click('button[type=\"submit\"]')` – submit.\n* `page.waitForURL('**/thank-you')` – wait for navigation.\n\nYou can test the entire journey from login to dashboard."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "code",
+            "title": "Form Submission Test (tests/feedback.spec.js)",
+            "content": "Fill out a feedback form and verify success message.",
+            "codeSnippet": "// tests/feedback.spec.js\nimport { test, expect } from '@playwright/test';\n\ntest('submit feedback form', async ({ page }) => {\n  await page.goto('http://localhost:3000/feedback');\n  await page.fill('textarea[name=\"message\"]', 'Great site!');\n  await page.click('button[type=\"submit\"]');\n  await expect(page.locator('.success')).toHaveText('Thanks!');\n});",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "Playwright Assertions 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What does `expect(page.locator('.success')).toHaveText('Thanks!')` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Checks that the element contains any text",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Waits for the element to appear and verifies its exact text content is 'Thanks!'",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Immediately fails if the element is not in the DOM",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Sets the text of the element",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Playwright's `toHaveText` assertion waits for the locator to be visible and have the exact text, making tests robust against async updates.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_8",
+            "type": "text",
+            "title": "Debugging Failed Tests 🐞",
+            "content": "# Playwright Superpowers\n\n* **Trace Viewer**: `npx playwright show-trace test-results/...` – see a timeline, screenshots, DOM snapshot.\n* **UI Mode**: `npx playwright test --ui` – interactive test runner.\n* **Codegen**: `npx playwright codegen` – record actions and generate test code.\n* **Screenshots & Videos**: automatically captured on failure.\n\nThese tools turn headless failures into debuggable stories."
+        },
+        {
+            "id": "s_l4_9",
+            "type": "tip",
+            "title": "Integration with CI/CD 🚀",
+            "content": "Run Playwright tests on every PR using GitHub Actions. Vercel preview deployments provide a unique URL to test against. This ensures no visual regression slips through."
+        }
+    ]
+}

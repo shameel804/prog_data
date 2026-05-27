@@ -1,0 +1,111 @@
+{
+    "id": "l4",
+    "chapterId": "ch_4",
+    "title": "Introduction to API Routes",
+    "description": "Write server‑side code right inside your Next.js app. Create your first endpoint in pages/api.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Backend",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Serverless Backend ☁️",
+            "content": "# What are API Routes?\n\nNext.js lets you create API endpoints **without a separate server**.\n\nAny file inside `pages/api/` is treated as an API endpoint instead of a React page.\n\n* `pages/api/hello.js` → `/api/hello`\n* Runs on the server (Node.js).\n* You can access databases, APIs, secrets — anything you'd do in a backend.\n\nIt's like having a mini Express.js app baked in!"
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Your First API Route (pages/api/hello.js)",
+            "content": "Export a default function that receives `req` and `res`.",
+            "codeSnippet": "// pages/api/hello.js\nexport default function handler(req, res) {\n  res.status(200).json({ message: 'Hello from Next.js!' });\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "API File Location 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Where do you create API routes?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "In `components/api/`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "In `pages/api/`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "In `api/` at root",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "In `server/`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `pages/api` directory is special. Any file inside automatically becomes an API endpoint.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Request & Response Objects 📨",
+            "content": "# `req` and `res`\n\n* **`req`**: An instance of `http.IncomingMessage`, plus some helpers.\n  * `req.method` – GET, POST, etc.\n  * `req.query` – the query string parameters.\n  * `req.body` – the parsed request body (only after you parse it).\n* **`res`**: An instance of `http.ServerResponse`, plus helpers.\n  * `res.status(code)` – set HTTP status.\n  * `res.json(data)` – send JSON response.\n  * `res.send()` – send plain text.\n\nNo need for Express – but the pattern feels very similar."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Handling Different Methods (pages/api/echo.js)",
+            "content": "Use `req.method` to determine the HTTP verb.",
+            "codeSnippet": "// pages/api/echo.js\nexport default function handler(req, res) {\n  if (req.method === 'GET') {\n    res.status(200).json({ message: 'You did a GET!' });\n  } else if (req.method === 'POST') {\n    res.status(201).json({ message: 'You posted!' });\n  } else {\n    res.setHeader('Allow', ['GET', 'POST']);\n    res.status(405).end(`Method ${req.method} Not Allowed`);\n  }\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Method Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "How do you handle a POST request in an API route?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Create a file called `pages/api/post.js`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Check `req.method === 'POST'` inside the handler",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Use `export const POST = ...`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Next.js API routes only support GET",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "You write a single handler and branch based on `req.method`.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,22 @@
+{
+    "id": "sq_nextjs_1",
+    "title": "The Bug Hunt: Routing & Data",
+    "triggerChapterIndex": 2,
+    "metadata": {
+        "type": "debug"
+    },
+    "questions": [
+        {
+            "id": "sq_nextjs_1_q1",
+            "type": "multiple_choice",
+            "question": "Find the bug that prevents this dynamic page from fetching the correct post data.",
+            "codeSnippet": "export default function Post({ post }) {\n  return <h1>{post.title}</h1>;\n}\n\nexport async function getStaticProps(context) {\n  const res = await fetch(`https://api.example.com/posts/${context.query.id}`);\n  const post = await res.json();\n  return { props: { post } };\n}",
+            "bugLineIndex": 5,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "Inside `getStaticProps`, dynamic route parameters are accessed via `context.params.id`, not `context.query.id`. Using `context.query` will return `undefined`, causing the fetch to fail.",
+            "xpReward": 20,
+            "difficulty": 2
+        }
+    ]
+}

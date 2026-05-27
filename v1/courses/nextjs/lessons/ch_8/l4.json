@@ -1,0 +1,126 @@
+{
+    "id": "l4",
+    "chapterId": "ch_8",
+    "title": "Advanced Form Validation with Zod",
+    "description": "Master Zod schemas, custom error messages, refinements, and showing validation feedback on the client.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Validation",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Beyond Required Fields 🔍",
+            "content": "# Zod Superpowers\n\nZod is a TypeScript‑first schema declaration and validation library. It can:\n\n* Validate types: strings, numbers, booleans, enums.\n* Add constraints: `min`, `max`, `email`, `url`.\n* Transform data: `trim`, `toLowerCase`.\n* Refine with custom logic: `superRefine`.\n* Provide custom error messages.\n\nWe'll use these to create robust form validation."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "A Robust Post Schema (lib/schemas.js)",
+            "content": "Add length constraints, trimming, and custom messages.",
+            "codeSnippet": "// lib/schemas.js\nimport { z } from 'zod';\n\nexport const postSchema = z.object({\n  title: z.string()\n    .min(1, 'Title is required')\n    .max(100, 'Title must be under 100 characters')\n    .trim(),\n  content: z.string()\n    .min(10, 'Content must be at least 10 characters')\n    .max(5000, 'Content too long'),\n  published: z.boolean().optional(),\n});",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Schema Chaining 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does `.trim()` do in a Zod string schema?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Checks that the string has no spaces",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Automatically removes leading and trailing whitespace before validation",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Converts the string to uppercase",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's not a valid Zod method",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`.trim()` is a Zod transform that strips extra whitespace, so validation runs on the cleaned string.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Displaying Field‑Level Errors 🔖",
+            "content": "# Better User Experience\n\nInstead of a single error message, you can return an object with errors for each field.\n\n```js\nif (!result.success) {\n  const fieldErrors = result.error.flatten().fieldErrors;\n  return { errors: fieldErrors };\n}\n```\n\nThen in the form, you can show errors next to each input:\n\n```jsx\n{state?.errors?.title && <span>{state.errors.title[0]}</span>}\n```"
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Updated Action with Field Errors (app/actions.js)",
+            "content": "Return field‑specific errors to display under inputs.",
+            "codeSnippet": "// app/actions.js\n'use server';\nimport { prisma } from '@/lib/prisma';\nimport { revalidatePath } from 'next/cache';\nimport { postSchema } from '@/lib/schemas';\n\nexport async function createPost(prevState, formData) {\n  const result = postSchema.safeParse({\n    title: formData.get('title'),\n    content: formData.get('content'),\n  });\n\n  if (!result.success) {\n    return { errors: result.error.flatten().fieldErrors };\n  }\n\n  await prisma.post.create({ data: result.data });\n  revalidatePath('/posts');\n  return { success: true };\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "code",
+            "title": "Form with Field Errors (components/NewPostForm.js)",
+            "content": "Read the errors and show them per field.",
+            "codeSnippet": "// components/NewPostForm.js\n'use client';\nimport { useFormState } from 'react-dom';\nimport { createPost } from '@/app/actions';\n\nconst initialState = {};\n\nexport default function NewPostForm() {\n  const [state, formAction] = useFormState(createPost, initialState);\n\n  return (\n    <form action={formAction}>\n      <div>\n        <input name=\"title\" placeholder=\"Title\" />\n        {state?.errors?.title && <span className=\"error\">{state.errors.title[0]}</span>}\n      </div>\n      <div>\n        <textarea name=\"content\" placeholder=\"Content\" />\n        {state?.errors?.content && <span className=\"error\">{state.errors.content[0]}</span>}\n      </div>\n      <button type=\"submit\">Create</button>\n      {state?.success && <p className=\"success\">Post created!</p>}\n    </form>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "Field Errors 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What does `result.error.flatten().fieldErrors` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A single string with all errors combined",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "An object where keys are field names and values are arrays of error messages",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The original form data",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A boolean indicating success",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`flatten()` organizes errors by field, making it easy to display validation messages next to the relevant input.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_8",
+            "type": "tip",
+            "title": "Refinements & SuperRefine 🧙",
+            "content": "You can add custom validation logic. For example, ensure the title isn't a duplicate:\n\n```js\nz.string().superRefine(async (val, ctx) => {\n  const existing = await prisma.post.findUnique({ where: { title: val } });\n  if (existing) ctx.addIssue({ code: 'custom', message: 'Title already exists' });\n});\n```\n\nZod can even run async checks!"
+        }
+    ]
+}

@@ -1,0 +1,117 @@
+{
+    "id": "l2",
+    "chapterId": "ch_5",
+    "title": "CSS Modules for Scoped Styles",
+    "description": "Write styles that only affect one component – no more class name collisions!",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Core Styling",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Problem: Class Name Collisions 💥",
+            "content": "# Imagine...\n\nYou have a `.button` class in `Header.css` and another `.button` in `Footer.css`. The last one loaded wins and styles get mixed up.\n\nIn large apps, keeping track of unique class names becomes a nightmare.\n\n**CSS Modules** solve this by automatically scoping class names to the component.\n\nFile naming: `Button.module.css`\n\n```jsx\nimport styles from './Button.module.css';\n<button className={styles.primary}>Click</button>\n```\n\nNext.js compiles the class to something like `Button_primary__abc123`."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "A Scoped Button (components/Button.js)",
+            "content": "Import the module and use the generated class names.",
+            "codeSnippet": "// components/Button.module.css\n.primary {\n  background-color: #0070f3;\n  color: white;\n  border: none;\n  padding: 0.5rem 1rem;\n  border-radius: 4px;\n}\n\n// components/Button.js\nimport styles from './Button.module.css';\n\nexport default function Button({ children }) {\n  return <button className={styles.primary}>{children}</button>;\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Module Specifics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the main benefit of CSS Modules?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They run on the server",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They automatically scope class names to a component, preventing conflicts",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They make CSS faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They allow inline styles in JS",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "CSS Modules generate unique class names, so styles are local by default and never clash with others.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Composing & Dynamic Styles 🎨",
+            "content": "# Multiple Classes and Dynamic Names\n\nYou can combine classes:\n\n```jsx\n<button className={`${styles.btn} ${styles.primary}`}>\n```\n\nOr use the `composes` keyword in CSS:\n\n```css\n/* Button.module.css */\n.base {\n  border-radius: 5px;\n}\n.primary {\n  composes: base;\n  background: blue;\n}\n```\n\nYou can also conditionally apply classes based on props."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Conditional Styling (components/Alert.js)",
+            "content": "Use a prop to decide the class.",
+            "codeSnippet": "// components/Alert.module.css\n.success { color: green; }\n.error { color: red; }\n\n// components/Alert.js\nimport styles from './Alert.module.css';\n\nexport default function Alert({ type, children }) {\n  return <div className={styles[type]}>{children}</div>;\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Module Syntax 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "How do you apply two CSS Module classes to the same element?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "`className='styles.class1 styles.class2'`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "`className={styles.class1 + ' ' + styles.class2}`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "`className={styles.class1, styles.class2}`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "`className={[styles.class1, styles.class2]}`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "You concatenate the generated class names with a space, e.g., `${styles.a} ${styles.b}`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "CSS Modules are supported out of the box. No config needed. You can also use Sass (`*.module.scss`) if you install `sass`."
+        }
+    ]
+}

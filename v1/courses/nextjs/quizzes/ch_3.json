@@ -1,0 +1,262 @@
+{
+    "id": "quiz_ch_3",
+    "chapterId": "ch_3",
+    "title": "Chapter 3 Quiz",
+    "description": "Test your knowledge of Pre‑rendering & Data Fetching!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "Which rendering mode sends an almost empty HTML page and relies on JavaScript to build the UI?",
+            "options": [
+                "Static Generation (SSG)",
+                "Server‑Side Rendering (SSR)",
+                "Client‑Side Rendering (CSR)",
+                "Incremental Static Regeneration (ISR)"
+            ],
+            "correctAnswer": 2,
+            "explanation": "CSR sends a bare HTML shell and all rendering happens in the browser."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "What must `getStaticProps` return at minimum?",
+            "options": [
+                "{ props: { ... } }",
+                "{ revalidate: 10 }",
+                "{ notFound: true }",
+                "{ redirect: { destination: '/' } }"
+            ],
+            "correctAnswer": 0,
+            "explanation": "The `props` object is mandatory; everything else is optional."
+        },
+        {
+            "id": "q3",
+            "type": "true_false",
+            "question": "`getStaticProps` runs on the client side.",
+            "correctAnswer": false,
+            "explanation": "It runs only at build time on the server, never in the browser."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "What does `getStaticPaths` do?",
+            "options": [
+                "Defines all available dynamic routes for static generation",
+                "Fetches data for the page",
+                "Redirects users",
+                "Handles API requests"
+            ],
+            "correctAnswer": 0,
+            "explanation": "It tells Next.js which paths to pre‑render for a dynamic page."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "Which `fallback` option shows a loading state while the page is being generated?",
+            "options": [
+                "false",
+                "true",
+                "'blocking'",
+                "none"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`fallback: true` allows the page to show a loading state using `router.isFallback` before the content arrives."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "When does `getServerSideProps` run?",
+            "options": [
+                "At build time",
+                "On every request",
+                "Only in the browser",
+                "Once, then cached forever"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It runs server‑side on each incoming request, giving fresh data every time."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "What extra information does `getServerSideProps` receive compared to `getStaticProps`?",
+            "options": [
+                "Static paths",
+                "The request and response objects (req, res)",
+                "A list of pages",
+                "Redux store"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It gets the `context` object containing `req`, `res`, `params`, `query`, etc., because it runs per request."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "What is the main advantage of SWR over `useEffect` + `fetch`?",
+            "options": [
+                "It works only on the server",
+                "It automatically caches data, revalidates, and updates the UI",
+                "It requires no installation",
+                "It replaces Next.js completely"
+            ],
+            "correctAnswer": 1,
+            "explanation": "SWR provides caching, background revalidation, error retry, and a simpler API."
+        },
+        {
+            "id": "q9",
+            "type": "fill_blank",
+            "question": "To enable Incremental Static Regeneration, you add the ______ key to the return object of `getStaticProps`.",
+            "options": [],
+            "correctAnswer": "revalidate",
+            "explanation": "`revalidate: 60` tells Next.js to regenerate the page at most once every 60 seconds."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "How can you trigger ISR manually?",
+            "options": [
+                "By restarting the server",
+                "By calling an API route that uses `res.revalidate()`",
+                "By editing the file",
+                "By running `npm run build`"
+            ],
+            "correctAnswer": 1,
+            "explanation": "On‑demand ISR uses `res.revalidate('/path')` inside an API route, often secured by a secret."
+        },
+        {
+            "id": "q11",
+            "type": "true_false",
+            "question": "You can use `getStaticProps` and `getServerSideProps` on the same page.",
+            "correctAnswer": false,
+            "explanation": "You can only use one data fetching method per page. They are mutually exclusive."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "Which scenario is NOT a good use case for client‑side data fetching?",
+            "options": [
+                "Real‑time chat messages",
+                "User profile dropdown menu",
+                "A blog post that needs to rank in search engines",
+                "Search suggestions"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Blog posts benefit from being pre‑rendered for SEO; client‑side fetching would hide content from crawlers."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "What does `notFound: true` return from `getStaticProps` do?",
+            "options": [
+                "Redirects to home",
+                "Shows a 500 error",
+                "Renders the 404 page",
+                "Hides the component"
+            ],
+            "correctAnswer": 2,
+            "explanation": "It triggers the 404 page with a 404 status code."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "When using ISR, when does the regeneration happen?",
+            "options": [
+                "Immediately after the `revalidate` period expires",
+                "On the next request after the cached page is older than the revalidate time",
+                "Continuously in the background",
+                "Only when the developer pushes new code"
+            ],
+            "correctAnswer": 1,
+            "explanation": "ISR triggers regeneration when a request arrives and the page is older than the `revalidate` interval."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "What is the primary performance advantage of SSG over SSR?",
+            "options": [
+                "It can handle more users",
+                "Pages are served from a CDN, resulting in very low Time to First Byte",
+                "It doesn't require a database",
+                "It uses less JavaScript"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Static pages can be cached on edge networks, giving instant responses without server processing."
+        },
+        {
+            "id": "q16",
+            "type": "true_false",
+            "question": "You should always use `getServerSideProps` because data freshness is more important than performance.",
+            "correctAnswer": false,
+            "explanation": "Performance matters; use SSR only when you truly need request‑time data. Otherwise SSG or ISR is preferred."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "In the `getStaticPaths` return object, what does `paths` contain?",
+            "options": [
+                "An array of all possible URLs",
+                "An array of objects with a `params` key matching the dynamic segment",
+                "A list of API endpoints",
+                "The page component's props"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`paths: [{ params: { id: '1' } }, { params: { id: '2' } }]` defines which instances to pre‑render."
+        },
+        {
+            "id": "q18",
+            "type": "fill_blank",
+            "question": "The React Hook library recommended by the Next.js team for client‑side data fetching is ______.",
+            "options": [],
+            "correctAnswer": "SWR",
+            "explanation": "SWR (Stale‑While‑Revalidate) is created by the same team and integrates seamlessly."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "Which method would you use to fetch data on a page where the URL parameter `id` determines the content, and the page can be statically generated?",
+            "options": [
+                "getServerSideProps only",
+                "getStaticProps + getStaticPaths",
+                "useEffect",
+                "SWR"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Dynamic static pages need both: `getStaticPaths` to specify which `id` values to build, and `getStaticProps` to fetch data for each."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "What is 'hydration' in the context of Next.js?",
+            "options": [
+                "Adding water to the server",
+                "The process where React attaches event listeners to pre‑rendered HTML",
+                "Re‑rendering the page on every click",
+                "Minifying JavaScript"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Hydration makes the static HTML interactive by linking it to the React component tree."
+        },
+        {
+            "id": "q21",
+            "type": "true_false",
+            "question": "You can use `getStaticProps` with `revalidate` on a page that uses `getServerSideProps`.",
+            "correctAnswer": false,
+            "explanation": "These are different data fetching strategies and cannot coexist on the same page."
+        },
+        {
+            "id": "q22",
+            "type": "mcq",
+            "question": "Which of the following is true about `fallback: 'blocking'`?",
+            "options": [
+                "The user sees a loading spinner",
+                "The page is generated on the server on the first request, then cached",
+                "All paths must be defined at build time",
+                "It returns a 404 immediately"
+            ],
+            "correctAnswer": 1,
+            "explanation": "'blocking' means the server will wait until the page is generated before sending a response – no loading state on the client."
+        }
+    ]
+}

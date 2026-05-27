@@ -1,0 +1,117 @@
+{
+    "id": "l4",
+    "chapterId": "ch_7",
+    "title": "Building Login & Logout UI",
+    "description": "Use React hooks to show user info, login buttons, and a custom sign‑in page.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Frontend",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Session on the Client 👤",
+            "content": "# `useSession` Hook\n\nNextAuth provides a React hook to access the session state on the client.\n\n```jsx\nimport { useSession } from 'next-auth/react';\n\nconst { data: session, status } = useSession();\n```\n\n* `status` can be `'loading'`, `'authenticated'`, `'unauthenticated'`.\n* `session` contains user info (name, email, image) if authenticated.\n\nNo need to manually fetch user data!"
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "A Navbar with Login/Logout (components/Navbar.js)",
+            "content": "Show a link to sign in or the user's name and a sign‑out button.",
+            "codeSnippet": "// components/Navbar.js\nimport { useSession, signIn, signOut } from 'next-auth/react';\nimport Link from 'next/link';\n\nexport default function Navbar() {\n  const { data: session, status } = useSession();\n\n  return (\n    <nav>\n      <Link href=\"/\">Home</Link>\n      {status === 'authenticated' ? (\n        <>\n          <span>{session.user.name}</span>\n          <button onClick={() => signOut()}>Sign out</button>\n        </>\n      ) : (\n        <button onClick={() => signIn()}>Sign in</button>\n      )}\n    </nav>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "useSession 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does `signIn()` do when called without arguments?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Signs in with a default provider",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Redirects to the default sign‑in page",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Automatically uses a saved session",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It throws an error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Calling `signIn()` without a provider ID takes the user to the generic sign‑in page where they can choose a provider.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Custom Sign‑In Page 🎨",
+            "content": "# Your Own Design\n\nYou can create a custom sign‑in page instead of the default one.\n\nCreate `pages/auth/signin.js`. Inside, use `signIn('github')` to trigger GitHub OAuth directly, or render a form for credentials.\n\nThen update the NextAuth options:\n\n```js\nexport const authOptions = {\n  pages: {\n    signIn: '/auth/signin',\n  },\n};\n```\n\nNow every time NextAuth needs a sign‑in, it'll route to your page."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Custom Sign‑In Page (pages/auth/signin.js)",
+            "content": "A branded page with a GitHub login button.",
+            "codeSnippet": "// pages/auth/signin.js\nimport { getProviders, signIn } from 'next-auth/react';\n\nexport default function SignIn({ providers }) {\n  return (\n    <div>\n      <h1>Welcome Back</h1>\n      {Object.values(providers).map(provider => (\n        <div key={provider.name}>\n          <button onClick={() => signIn(provider.id)}>\n            Sign in with {provider.name}\n          </button>\n        </div>\n      ))}\n    </div>\n  );\n}\n\nexport async function getServerSideProps() {\n  const providers = await getProviders();\n  return { props: { providers } };\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Custom Pages 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "How do you tell NextAuth.js to use your custom sign‑in page?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "By naming the file `custom-signin.js`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "By setting the `pages.signIn` option in the NextAuth config",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "By redirecting in middleware",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's automatic if the file exists in `pages/auth/`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `pages` option in `authOptions` allows overriding default NextAuth pages like signIn, signOut, error, etc.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "tip",
+            "title": "Session Provider 🏥",
+            "content": "Wrap your app in `<SessionProvider>` in `_app.js` to make the session available to all components. Then `useSession` works everywhere.\n\n```jsx\nimport { SessionProvider } from 'next-auth/react';\n\nexport default function App({ Component, pageProps: { session, ...pageProps } }) {\n  return (\n    <SessionProvider session={session}>\n      <Component {...pageProps} />\n    </SessionProvider>\n  );\n}\n```"
+        }
+    ]
+}

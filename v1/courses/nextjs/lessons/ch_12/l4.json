@@ -1,0 +1,132 @@
+{
+    "id": "l4",
+    "chapterId": "ch_12",
+    "title": "Styling, Images & SEO",
+    "description": "Polish the UI with Tailwind, add responsive images with next/image, and implement full metadata for every page.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Polish",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Tailwind: From Scratch to Styled 🎨",
+            "content": "# Utility Classes Everywhere\n\nSince we used `--tailwind` during creation, Tailwind is already set up.\n\nWe'll add:\n\n* A responsive navbar with mobile menu.\n* Card layout for post list.\n* Prose typography for post content.\n* A dark mode toggle (optional).\n\nTailwind's utility classes make it easy to build a cohesive design without leaving JSX."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Navbar Component (components/Navbar.js)",
+            "content": "Responsive header with Tailwind classes.",
+            "codeSnippet": "// components/Navbar.js\nimport Link from 'next/link';\nimport { useSession, signIn, signOut } from 'next-auth/react';\n\nexport default function Navbar() {\n  const { data: session } = useSession();\n  return (\n    <nav className=\"flex justify-between items-center p-4 bg-gray-800 text-white\">\n      <Link href=\"/\" className=\"text-xl font-bold\">MyBlog</Link>\n      <div className=\"flex gap-4\">\n        <Link href=\"/posts\">Posts</Link>\n        {session ? (\n          <>\n            <span>{session.user.name}</span>\n            <button onClick={() => signOut()}>Sign out</button>\n          </>\n        ) : (\n          <button onClick={() => signIn()}>Sign in</button>\n        )}\n      </div>\n    </nav>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Optimised Images with next/image 🖼️",
+            "content": "# Adding Hero Images to Posts\n\nIf a post has a cover image, we can use the `Image` component:\n\n```jsx\nimport Image from 'next/image';\n\n<Image src={post.image} alt={post.title} width={800} height={400} priority />\n```\n\n* `priority` loads it eagerly (above the fold).\n* Automatic WebP conversion.\n* Lazy loading for off‑screen images.\n\nDon't forget to add the domain to `next.config.js` if the image comes from an external source."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Image Domain Config (next.config.js)",
+            "content": "Allow images from a CDN or external source.",
+            "codeSnippet": "// next.config.js\nmodule.exports = {\n  images: {\n    domains: ['images.unsplash.com', 'cdn.myblog.com'],\n  },\n};",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Image Optimization 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does the `priority` prop on `next/image` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Crops the image",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Preloads the image, disables lazy loading, and marks it as high priority for LCP",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Downloads the image before the page loads",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's required for all images",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`priority` is used for the largest contentful paint image to ensure it loads quickly and avoids layout shift.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "SEO with Metadata API 🔍",
+            "content": "# Dynamic Page Titles & Descriptions\n\nWe'll implement `generateMetadata` for the post detail page:\n\n```jsx\nexport async function generateMetadata({ params }) {\n  const post = await prisma.post.findUnique({ where: { slug: params.slug } });\n  return {\n    title: post.title,\n    description: post.content.slice(0, 160),\n    openGraph: {\n      images: [post.image || '/default-og.jpg'],\n    },\n  };\n}\n```\n\nThis makes every post shareable with a custom image and description."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "code",
+            "title": "Root Layout Metadata (app/layout.js)",
+            "content": "Set a default title template for all pages.",
+            "codeSnippet": "// app/layout.js\nexport const metadata = {\n  title: {\n    template: '%s | MyBlog',\n    default: 'MyBlog – A Next.js Blog',\n  },\n  description: 'A blog about web development and design.',\n};",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_8",
+            "type": "quiz",
+            "title": "Metadata Template 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "If a child page sets `title: 'About'`, what will the final `<title>` tag be using the template above?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "About",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "About | MyBlog",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "MyBlog – About",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "MyBlog | About",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `template` replaces `%s` with the child's title. So `About | MyBlog` is produced.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_9",
+            "type": "tip",
+            "title": "Progressive Enhancement ✨",
+            "content": "Even with Tailwind and JavaScript, the core content is pre‑rendered. Search engines and users without JS still see all text. The styling is just the cherry on top."
+        }
+    ]
+}

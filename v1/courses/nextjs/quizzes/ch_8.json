@@ -1,0 +1,236 @@
+{
+    "id": "quiz_ch_8",
+    "chapterId": "ch_8",
+    "title": "Chapter 8 Quiz",
+    "description": "Test your knowledge of Database Integration & Forms!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "Which command initialises a new Prisma project with a SQLite database?",
+            "options": [
+                "`npx create-prisma-app`",
+                "`npx prisma init --datasource-provider sqlite`",
+                "`npm install prisma sqlite`",
+                "`npx prisma generate`"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The `init` command scaffolds the Prisma folder and configures the datasource. The `--datasource-provider` flag sets the database type."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "In a Prisma schema, what does `@id @default(autoincrement())` define?",
+            "options": [
+                "A required string field",
+                "A primary key that automatically increases with each new record",
+                "A foreign key to another table",
+                "A timestamp that defaults to now"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`@id` marks the field as the primary key. `@default(autoincrement())` makes it an auto‑incrementing integer."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "Where should you never import `@prisma/client`?",
+            "options": [
+                "Server Components",
+                "getServerSideProps",
+                "Client Components",
+                "API Routes"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Prisma Client contains database credentials and Node.js code, so it must stay on the server. Client Components run in the browser."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "What does `npx prisma migrate dev --name init` do?",
+            "options": [
+                "Starts a development server",
+                "Creates a migration file and applies it to the database",
+                "Generates the Prisma Client only",
+                "Seeds the database with sample data"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It generates SQL based on your schema, creates a migration file, and executes it against the database to create tables."
+        },
+        {
+            "id": "q5",
+            "type": "fill_blank",
+            "question": "To avoid multiple instances of Prisma Client during hot reload, we create a single instance and store it on the `______` object.",
+            "options": [],
+            "correctAnswer": "global",
+            "explanation": "Storing the client on `global` prevents creating a new connection every time the module is re‑evaluated in development."
+        },
+        {
+            "id": "q6",
+            "type": "true_false",
+            "question": "You can call `prisma.post.findMany()` directly in a client component if you mark it `'use client'`.",
+            "correctAnswer": false,
+            "explanation": "Marking a component as client doesn't make Prisma work in the browser. Prisma always requires the Node.js server environment."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "In a Server Action, how do you refresh the cached page after a database mutation?",
+            "options": [
+                "`revalidatePage()`",
+                "`res.revalidate()`",
+                "`revalidatePath()`",
+                "`refreshCache()`"
+            ],
+            "correctAnswer": 2,
+            "explanation": "`revalidatePath('/posts')` tells Next.js to purge the cache for that route and regenerate it on the next visit."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "What is the role of `useFormState` in a form that uses a Server Action?",
+            "options": [
+                "It manages client‑side form validation",
+                "It binds the Server Action to the form and captures the action's return value as state",
+                "It replaces the need for `useState` in forms",
+                "It creates a new route for the form"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`useFormState` takes a Server Action and an initial state, providing the current state and an action function to pass to the `<form>`."
+        },
+        {
+            "id": "q9",
+            "type": "true_false",
+            "question": "Zod's `.parse()` method returns a nicely formatted error object if validation fails.",
+            "correctAnswer": false,
+            "explanation": "`.parse()` throws an error on failure. Use `.safeParse()` to get an object with `success` and `error` without throwing."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "How do you pre‑fill an edit form with existing data in a Client Component?",
+            "options": [
+                "Use `value` prop on inputs",
+                "Use `defaultValue` prop on inputs",
+                "Fetch the data again inside `useEffect`",
+                "You can't; edit forms can't have defaults"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`defaultValue` sets the initial value without making the input controlled. The server component fetches the post and passes it as a prop."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "Why use `.bind(null, post.id)` when calling `updatePost` in the form action?",
+            "options": [
+                "To delay the action until the form is submitted",
+                "To pre‑fill the first argument (`id`) so the form automatically passes the rest",
+                "Because Server Actions require binding",
+                "To avoid using JavaScript"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`.bind()` creates a new function with the `id` already set. The form then sends `prevState` and `formData` as the subsequent arguments."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "What does `z.string().min(1, 'Title is required')` do?",
+            "options": [
+                "Converts the string to a number",
+                "Makes the string optional",
+                "Validates that the string has at least 1 character and sets a custom error message",
+                "Trims whitespace"
+            ],
+            "correctAnswer": 2,
+            "explanation": "`.min()` enforces a minimum length. The second argument is the error message shown if validation fails."
+        },
+        {
+            "id": "q13",
+            "type": "fill_blank",
+            "question": "To delete a record with Prisma, you call `prisma.post.______({ where: { id } })`.",
+            "options": [],
+            "correctAnswer": "delete",
+            "explanation": "The `delete` method removes a record matching the `where` condition."
+        },
+        {
+            "id": "q14",
+            "type": "true_false",
+            "question": "Server Actions can be called directly from a button's `onClick` without a form.",
+            "correctAnswer": true,
+            "explanation": "You can call a Server Action in a click handler (in a client component) as long as the function is imported from a server action module."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "What is the advantage of using `safeParse` over `parse` in a Server Action?",
+            "options": [
+                "It's faster",
+                "It returns an object with `success` and `error` instead of throwing, making error handling cleaner",
+                "It automatically revalidates the cache",
+                "It generates SQL queries"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`safeParse` never throws; you can check `result.success` and conditionally return errors, which is perfect for Server Actions that must return a serializable state."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "In the full‑stack blog example, how does the list page automatically show new posts after creation?",
+            "options": [
+                "It polls the server every second",
+                "The Server Action calls `revalidatePath('/posts')` and the client navigates or re‑renders",
+                "The form uses WebSockets to push updates",
+                "Posts appear because the form directly manipulates the DOM"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`revalidatePath` invalidates the cache for the posts route. When the user visits or the page re‑renders, it fetches fresh data from the database."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "Which of the following is NOT a valid Prisma model attribute?",
+            "options": [
+                "`@id`",
+                "`@default`",
+                "`@unique`",
+                "`@autoincrement`"
+            ],
+            "correctAnswer": 3,
+            "explanation": "The correct spelling is `@default(autoincrement())`. `@autoincrement` is not a standalone attribute."
+        },
+        {
+            "id": "q18",
+            "type": "true_false",
+            "question": "You must create an API route to handle form submissions when using Server Actions.",
+            "correctAnswer": false,
+            "explanation": "Server Actions replace the need for a separate API route for mutations. They run directly on the server from a form or button."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "How can you add a custom validation rule in Zod, like checking uniqueness?",
+            "options": [
+                "Use a `transform`",
+                "Use `.refine()` or `.superRefine()` with a callback",
+                "Use a separate if statement before the schema",
+                "Zod doesn't support custom rules"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`.refine()` takes a custom predicate; `.superRefine()` gives access to the context to add custom issues, even async."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "In the edit form, why is `updatePost.bind(null, post.id)` placed before `useFormState`?",
+            "options": [
+                "Because `useFormState` expects a function with only two arguments (prevState, formData)",
+                "To create a unique action instance for each post",
+                "To make the action synchronous",
+                "It's not necessary; you can pass `id` directly"
+            ],
+            "correctAnswer": 0,
+            "explanation": "The action passed to `useFormState` must have the signature `(prevState, formData)`. By binding the `id`, we create a new function that still accepts those two arguments."
+        }
+    ]
+}

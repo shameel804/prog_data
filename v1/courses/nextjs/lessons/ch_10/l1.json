@@ -1,0 +1,167 @@
+{
+    "id": "l1",
+    "chapterId": "ch_10",
+    "title": "React Server Components: The Philosophy",
+    "description": "Deeply understand what Server Components are, why they exist, and how they change the component mental model.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "Core Internals",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The Two Component Types 🧩",
+            "content": "# A New Mental Model\n\nIn the Next.js App Router, components are **either** Server Components or Client Components.\n\n* **Server Components** – render only on the server. Never sent to the client as JavaScript. Can directly access databases, files, secrets.\n* **Client Components** – rendered on the server (for initial HTML) and in the browser. They have interactivity (useState, useEffect, onClick).\n\nAll components are Server Components by default. You opt into Client Components by adding `'use client'` at the top of the file.\n\nAnalogy: Server Components are the chef preparing the meal; Client Components are the waiter adding the final touch at the table. 🍽️"
+        },
+        {
+            "id": "s_l1_2",
+            "type": "code",
+            "title": "Server Component Example (app/page.js)",
+            "content": "This component runs on the server, fetches data, and sends ready‑made HTML.",
+            "codeSnippet": "// app/page.js (Server Component by default)\nimport { prisma } from '@/lib/prisma';\n\nexport default async function Home() {\n  const posts = await prisma.post.findMany();\n  return (\n    <ul>\n      {posts.map(post => <li key={post.id}>{post.title}</li>)}\n    </ul>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Default Type 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "In the App Router, what is the default type of a new component?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Client Component",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Server Component",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Hybrid Component",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Depends on the file extension",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Every component in the App Router is a Server Component unless you add the `'use client'` directive at the top of the file.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "The Server‑Only Power 🧠",
+            "content": "# What Server Components Can Do\n\n* Access databases directly (no API route needed).\n* Read the filesystem.\n* Use Node.js built‑ins.\n* Keep large dependencies on the server (zero client bundle impact).\n* Fetch data at the component level.\n\nThey **cannot** use state, effects, or browser‑only APIs.\n\nThis means your heavy markdown parser or database query never reaches the user's browser."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "Client Component Example (components/Counter.js)",
+            "content": "Add `'use client'` to enable interactivity.",
+            "codeSnippet": "// components/Counter.js\n'use client';\n\nimport { useState } from 'react';\n\nexport default function Counter() {\n  const [count, setCount] = useState(0);\n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={() => setCount(count + 1)}>+</button>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "RSC Boundaries 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "A Server Component can be imported and used inside a Client Component in which way?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Directly as a child passed via props (composition pattern)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "By importing and rendering it normally",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Server Components can't appear inside Client Components at all",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only if it's wrapped in Suspense",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "You cannot import a Server Component into a Client Component file. However, you can pass a Server Component as `children` or via a prop from a parent Server Component. This is the allowed interleaving.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_7",
+            "type": "text",
+            "title": "The Interleaving Rule ↔️",
+            "content": "# The Golden Rule of RSC Composition\n\n* A Server Component can import and render both Server and Client Components.\n* A Client Component can import and render only other Client Components (and some third‑party components that are client‑side).\n* To use a Server Component inside a Client Component, pass it as `children` from a Server Component parent.\n\nThis ensures that the server‑side code stays on the server, and the client bundle stays minimal."
+        },
+        {
+            "id": "s_l1_8",
+            "type": "code",
+            "title": "Composition Pattern (app/layout.js and app/page.js)",
+            "content": "Server Component passes a Server Component as children to a Client Component.",
+            "codeSnippet": "// app/page.js (Server Component)\nimport ClientWrapper from '@/components/ClientWrapper';\nimport ServerWidget from '@/components/ServerWidget';\n\nexport default function Page() {\n  return (\n    <ClientWrapper>\n      <ServerWidget />\n    </ClientWrapper>\n  );\n}\n\n// components/ClientWrapper.js (Client Component)\n'use client';\n\nexport default function ClientWrapper({ children }) {\n  return <div className=\"client-box\">{children}</div>;\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_9",
+            "type": "quiz",
+            "title": "Composition Rule 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_3",
+                "type": "multiple_choice",
+                "question": "How can you safely include a Server Component inside a Client Component?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Import it directly in the Client Component file",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Pass it as `children` from a parent Server Component",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Wrap it in `use client`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's impossible",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The parent Server Component renders the Client Component and places the Server Component inside via children or props. The boundary prevents the server code from entering the client bundle.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_10",
+            "type": "tip",
+            "title": "Why This Matters 🚀",
+            "content": "Server Components can reduce your client‑side JavaScript dramatically. A complex component with a heavy library (e.g., syntax highlighter) can stay entirely on the server, sending only the highlighted HTML to the client."
+        }
+    ]
+}

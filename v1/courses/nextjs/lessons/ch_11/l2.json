@@ -1,0 +1,123 @@
+{
+    "id": "l2",
+    "chapterId": "ch_11",
+    "title": "Custom 404, 500 & not-found Pages",
+    "description": "Delight users with branded error pages and understand the difference between not-found and error boundaries.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Error Handling",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "HTTP Errors ≠ Component Errors 🚦",
+            "content": "# Different Error Types\n\n* **Rendering errors** (crashes) → caught by error boundaries (`error.js`).\n* **Not Found (404)** → resource doesn't exist, handled by `not-found.js` or `pages/404.js`.\n* **Server errors (500)** → catch‑all for unexpected failures on the server.\n\nNext.js provides dedicated files for each, plus the programmatic `notFound()` function to trigger them."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "App Router: `not-found.js` (app/not-found.js)",
+            "content": "This renders for any unmatched route or when `notFound()` is called.",
+            "codeSnippet": "// app/not-found.js\nexport default function NotFound() {\n  return (\n    <div>\n      <h1>404 – Lost in Space 🚀</h1>\n      <p>Could not find the requested page.</p>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "notFound Function 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "How do you programmatically trigger the 404 page from a Server Component?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Throw a custom 404 error",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Call `notFound()` imported from `next/navigation`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Return `{ notFound: true }` from getStaticProps",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Use `res.status(404).end()`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`notFound()` from `next/navigation` triggers the nearest `not-found.js` page in the App Router.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Pages Router Error Pages 📚",
+            "content": "# Custom 404 & _error.js\n\n* `pages/404.js` – replaces the built‑in 404 page.\n* `pages/_error.js` – handles server‑side errors (500, etc.). Receives `statusCode`.\n\n```jsx\n// pages/_error.js\nfunction Error({ statusCode }) {\n  return (\n    <p>\n      {statusCode\n        ? `An error ${statusCode} occurred on server`\n        : 'An error occurred on client'}\n    </p>\n  );\n}\n```\n\nThese still work perfectly in existing Pages Router projects."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Pages Router 404 (pages/404.js)",
+            "content": "A classic custom 404 with a link home.",
+            "codeSnippet": "// pages/404.js\nimport Link from 'next/link';\n\nexport default function Custom404() {\n  return (\n    <div>\n      <h1>404 – Page Not Found</h1>\n      <Link href=\"/\">Go back home</Link>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "_error vs 404 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "When is `pages/_error.js` rendered instead of `pages/404.js`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "For any error on the server, including 500 errors",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Only for 404 errors",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "When the user is offline",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It replaces 404.js completely",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`_error.js` is a catch‑all for server errors, including 500, while `404.js` specifically handles Not Found.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "Programmatic notFound in Data Fetching 📦",
+            "content": "# In getStaticProps / getServerSideProps\n\nYou can return `{ notFound: true }` to immediately show the 404 page.\n\n```js\nexport async function getStaticProps({ params }) {\n  const post = await fetchPost(params.id);\n  if (!post) return { notFound: true };\n  return { props: { post } };\n}\n```\n\nThis is the Pages Router way to trigger a 404 before rendering."
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "User Experience ✨",
+            "content": "Make your error pages helpful: include a search bar, link to popular pages, or a dash of humor. A good 404 can turn frustration into a smile."
+        }
+    ]
+}

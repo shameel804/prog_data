@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_7",
+    "title": "Set Up NextAuth with GitHub",
+    "description": "Install and configure NextAuth.js, create a login page, and show user info in a navbar.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Goal\nIntegrate NextAuth.js with a GitHub OAuth provider and create a UI that reacts to authentication state.\n\n### Steps\n1. Install `next-auth`.\n2. Create an OAuth App on GitHub (use `http://localhost:3000/api/auth/callback/github` as callback URL).\n3. Set environment variables: `GITHUB_ID`, `GITHUB_SECRET`, `NEXTAUTH_SECRET`.\n4. Create `pages/api/auth/[...nextauth].js` with a GitHub provider.\n5. In `pages/_app.js`, wrap your app with `<SessionProvider session={pageProps.session}>`.\n6. Create a `components/Navbar.js` that uses `useSession` to show:\n   - If unauthenticated: a \"Sign in\" button that calls `signIn()`.\n   - If authenticated: user's name and a \"Sign out\" button that calls `signOut()`.\n7. Add the Navbar to a layout or directly in `_app.js` so it appears on all pages.\n8. Visit `/` and verify you can sign in with GitHub.\n\n### Note\nIf you cannot create a GitHub OAuth App, you can use the **Credentials** provider for testing (see NextAuth docs). But the GitHub flow is the real experience.",
+    "hints": [
+        "The catch‑all route MUST be `pages/api/auth/[...nextauth].js`.",
+        "In `_app.js`, the component receives `pageProps.session` – pass it to `SessionProvider`.",
+        "Use `signIn` and `signOut` from `next-auth/react`, not the server module.",
+        "The default sign‑in page is available at `/api/auth/signin`."
+    ],
+    "expectedOutput": "A working authentication system. Clicking 'Sign in' shows the GitHub sign‑in page; after success, the navbar displays your GitHub name and a sign‑out button.",
+    "solutionCode": "// .env.local\nGITHUB_ID=your_github_client_id\nGITHUB_SECRET=your_github_secret\nNEXTAUTH_SECRET=some_random_string\nNEXTAUTH_URL=http://localhost:3000\n\n// pages/api/auth/[...nextauth].js\nimport NextAuth from 'next-auth';\nimport GitHubProvider from 'next-auth/providers/github';\n\nexport const authOptions = {\n  providers: [\n    GitHubProvider({\n      clientId: process.env.GITHUB_ID,\n      clientSecret: process.env.GITHUB_SECRET,\n    }),\n  ],\n  secret: process.env.NEXTAUTH_SECRET,\n};\n\nexport default NextAuth(authOptions);\n\n// pages/_app.js\nimport { SessionProvider } from 'next-auth/react';\nimport Navbar from '../components/Navbar';\nimport '../styles/globals.css';\n\nexport default function App({ Component, pageProps: { session, ...pageProps } }) {\n  return (\n    <SessionProvider session={session}>\n      <Navbar />\n      <Component {...pageProps} />\n    </SessionProvider>\n  );\n}\n\n// components/Navbar.js\nimport { useSession, signIn, signOut } from 'next-auth/react';\n\nexport default function Navbar() {\n  const { data: session, status } = useSession();\n\n  return (\n    <nav style={{ display: 'flex', gap: '1rem', padding: '1rem', background: '#eee' }}>\n      <a href=\"/\">Home</a>\n      {status === 'authenticated' ? (\n        <>\n          <span>Hello, {session.user.name}</span>\n          <button onClick={() => signOut()}>Sign out</button>\n        </>\n      ) : (\n        <button onClick={() => signIn()}>Sign in</button>\n      )}\n    </nav>\n  );\n}"
+}

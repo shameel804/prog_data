@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_9",
+    "title": "Implement On‑Demand ISR",
+    "description": "Add a revalidation API route and trigger it when content changes.",
+    "estimatedMinutes": 10,
+    "problemStatement": "## Goal\nYou will enable on‑demand Incremental Static Regeneration for a posts page, so it updates instantly when content changes, without rebuilding the whole site.\n\n### Requirements\n1. Create an API route at `pages/api/revalidate.js`.\n2. In the handler, check for a secret query parameter (e.g., `?secret=mysecret`). If missing, return 401.\n3. Call `res.revalidate('/posts')` to purge the cache for the posts listing page.\n4. Return a JSON response `{ revalidated: true }`.\n5. In your `getStaticProps` on the posts page (`pages/posts.js`), add `revalidate: 60` (or remove it; on‑demand works alongside time‑based).\n6. Test: after building and starting the production server (`npm run build && npm start`), make a change to your data (e.g., add a post directly in the database or via another API).\n7. Visit `/posts` – you see the stale data.\n8. Call `http://localhost:3000/api/revalidate?secret=mysecret` (in browser or curl).\n9. Refresh `/posts` – you should now see the updated data.\n\n### Notes\n- In a real app, you'd call this endpoint from a CMS webhook or after a Server Action.\n- The secret should be a strong random string stored in an environment variable.\n\n### Bonus\n- Revalidate a specific post page dynamically: `res.revalidate(`/posts/${id}`)`.",
+    "hints": [
+        "The API route must use `export default async function handler(req, res)`.",
+        "`res.revalidate` is available on the response object in Next.js API routes.",
+        "Remember to use `process.env.REVALIDATE_SECRET` instead of a hardcoded secret."
+    ],
+    "expectedOutput": "Calling the revalidation endpoint updates the cached `/posts` page without a full rebuild.",
+    "solutionCode": "// pages/api/revalidate.js\nexport default async function handler(req, res) {\n  if (req.query.secret !== process.env.REVALIDATE_SECRET) {\n    return res.status(401).json({ message: 'Invalid secret' });\n  }\n\n  try {\n    await res.revalidate('/posts');\n    return res.json({ revalidated: true });\n  } catch (err) {\n    return res.status(500).send('Error revalidating');\n  }\n}\n\n// pages/posts.js (excerpt) – add revalidate option\nexport async function getStaticProps() {\n  const res = await fetch('https://...');\n  const posts = await res.json();\n  return {\n    props: { posts },\n    revalidate: 60, // optional fallback\n  };\n}"
+}

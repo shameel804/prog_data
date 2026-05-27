@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_3",
+    "title": "Dynamic Post Page with getStaticPaths",
+    "description": "Create a dynamic route that statically generates individual post pages.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Goal\nExtend the blog to have individual post pages using dynamic routing and static generation.\n\n### Requirements\n1. Create a file `pages/posts/[id].js`.\n2. Export a default component that receives `post` as a prop and renders its `title` and `body`.\n3. Export `async function getStaticPaths()` that:\n   - Fetches the list of posts (same URL).\n   - Maps the first 10 posts to `params: { id: post.id.toString() }`.\n   - Returns `{ paths, fallback: false }`.\n4. Export `async function getStaticProps({ params })` that:\n   - Fetches `https://jsonplaceholder.typicode.com/posts/${params.id}`.\n   - Returns `{ props: { post } }`.\n5. From the posts list page (`pages/posts.js`), change each `<li>` to include a `<Link>` to `/posts/[id]` (e.g., `/posts/1`).\n\n### Verification\n- Build the app (`npm run build`). You should see static pages generated for `/posts/1` through `/posts/10`.\n- Visit `/posts/1` – it should display the first post.\n- Visiting `/posts/11` should show a 404 (since `fallback: false`).",
+    "hints": [
+        "Use `params.id` in the fetch URL.",
+        "For the links in the list page, use `import Link from 'next/link'` and `<Link href={`/posts/${post.id}`}>{post.title}</Link>`.",
+        "Remember to convert `id` to string because URL params are strings."
+    ],
+    "expectedOutput": "Ten static individual post pages, accessible from the blog list. Build output shows these static paths.",
+    "solutionCode": "// pages/posts/[id].js\nexport default function Post({ post }) {\n  return (\n    <article>\n      <h1>{post.title}</h1>\n      <p>{post.body}</p>\n    </article>\n  );\n}\n\nexport async function getStaticPaths() {\n  const res = await fetch('https://jsonplaceholder.typicode.com/posts');\n  const posts = await res.json();\n  const paths = posts.slice(0, 10).map(post => ({\n    params: { id: post.id.toString() }\n  }));\n  return { paths, fallback: false };\n}\n\nexport async function getStaticProps({ params }) {\n  const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${params.id}`);\n  const post = await res.json();\n  return { props: { post } };\n}\n\n// Updated pages/posts.js (relevant part)\nimport Link from 'next/link';\n\nexport default function Posts({ posts }) {\n  return (\n    <div>\n      <h1>Posts</h1>\n      <ul>\n        {posts.map(post => (\n          <li key={post.id}>\n            <Link href={`/posts/${post.id}`}>{post.title}</Link>\n          </li>\n        ))}\n      </ul>\n    </div>\n  );\n}"
+}

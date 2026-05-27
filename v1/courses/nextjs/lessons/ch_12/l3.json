@@ -1,0 +1,123 @@
+{
+    "id": "l3",
+    "chapterId": "ch_12",
+    "title": "Comments & Authentication",
+    "description": "Add user comments to posts using NextAuth‑protected Server Actions and real‑time revalidation.",
+    "xpReward": 40,
+    "estimatedMinutes": 14,
+    "section": "User Interaction",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The Conversation Layer 💬",
+            "content": "# Adding Comments\n\nWe want users to add comments to a blog post. Requirements:\n\n* Must be logged in.\n* Server Action to submit the comment.\n* After submission, the comment list refreshes.\n* Display comments sorted by time.\n\nWe'll use the Server Action from Chapter 8, but now integrate with NextAuth to get the current user."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "The Add Comment Action (app/actions.js)",
+            "content": "Marked `'use server'`, validates input, and inserts into database.",
+            "codeSnippet": "// app/actions.js\n'use server';\n\nimport { prisma } from '@/lib/prisma';\nimport { revalidatePath } from 'next/cache';\nimport { getServerSession } from 'next-auth';\nimport { authOptions } from '@/lib/auth';\nimport { z } from 'zod';\n\nconst commentSchema = z.object({\n  text: z.string().min(1, 'Comment cannot be empty').max(500),\n});\n\nexport async function addComment(postSlug, formData) {\n  const session = await getServerSession(authOptions);\n  if (!session) {\n    return { error: 'You must be signed in to comment.' };\n  }\n\n  const text = formData.get('text');\n  const result = commentSchema.safeParse({ text });\n  if (!result.success) {\n    return { errors: result.error.flatten().fieldErrors };\n  }\n\n  const post = await prisma.post.findUnique({ where: { slug: postSlug } });\n  if (!post) return { error: 'Post not found.' };\n\n  await prisma.comment.create({\n    data: {\n      text: result.data.text,\n      postId: post.id,\n      userId: session.user.id,\n    },\n  });\n\n  revalidatePath(`/posts/${postSlug}`);\n  return { success: true };\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Session in Action 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Why do we need `getServerSession` inside the Server Action?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's required by Prisma",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To identify the authenticated user making the comment",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To validate the form data",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To connect to the database",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The action runs on the server and can read the session cookie to get the current user, ensuring the comment is attached to the right account.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "The Comment Form Component 📝",
+            "content": "# Client Component with useFormState\n\nWe'll create a `CommentForm` that:\n\n* If not logged in, shows a link to sign in.\n* If logged in, shows a textarea and submit button.\n* Uses `useFormState` to display errors or success.\n\nThe `addComment` action is bound to the post slug."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "CommentForm Client Component (components/CommentForm.js)",
+            "content": "Receives the post slug and renders the form.",
+            "codeSnippet": "// components/CommentForm.js\n'use client';\n\nimport { useSession, signIn } from 'next-auth/react';\nimport { useFormState } from 'react-dom';\nimport { addComment } from '@/app/actions';\n\nconst initialState = {};\n\nexport default function CommentForm({ postSlug }) {\n  const { data: session, status } = useSession();\n  const addCommentWithSlug = addComment.bind(null, postSlug);\n  const [state, formAction] = useFormState(addCommentWithSlug, initialState);\n\n  if (status === 'loading') return <p>Loading...</p>;\n  if (!session) {\n    return (\n      <button onClick={() => signIn()}>\n        Sign in to leave a comment\n      </button>\n    );\n  }\n\n  return (\n    <form action={formAction}>\n      <textarea name=\"text\" placeholder=\"Write a comment...\" />\n      {state?.errors?.text && <span className=\"error\">{state.errors.text[0]}</span>}\n      <button type=\"submit\">Post Comment</button>\n      {state?.success && <p className=\"success\">Comment added!</p>}\n      {state?.error && <p className=\"error\">{state.error}</p>}\n    </form>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Form Flow 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "How does the `addComment` function receive the post slug?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Through a hidden input",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "By binding the slug as the first argument using `.bind()`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "From the URL params",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It doesn't need the slug",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`addComment.bind(null, postSlug)` creates a new function where the first argument (`postSlug`) is pre‑filled; the form then passes `prevState` and `formData`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Displaying Comments 🗣️",
+            "content": "# Render Comments in Post Detail\n\nWe'll fetch comments in the post page and include them below the content.\n\n```jsx\nconst comments = await prisma.comment.findMany({\n  where: { postId: post.id },\n  include: { user: true },\n  orderBy: { createdAt: 'asc' },\n});\n```\n\nThen map them to show username and comment text. Since the page revalidates after a comment is posted, the new comment appears."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "tip",
+            "title": "Security Reminder 🔒",
+            "content": "Always validate on the server, even if the form requires login. The `getServerSession` check ensures that an attacker cannot forge a comment without a valid session."
+        }
+    ]
+}

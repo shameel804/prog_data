@@ -1,0 +1,135 @@
+{
+    "id": "l5",
+    "chapterId": "ch_12",
+    "title": "Deployment & Final Checklist",
+    "description": "Deploy the blog to Vercel, set up CI/CD, monitor performance, and ensure everything is production‑ready.",
+    "xpReward": 50,
+    "estimatedMinutes": 10,
+    "section": "Ship",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Ready for the World 🌍",
+            "content": "# Time to Deploy!\n\nWe'll use Vercel because it provides:\n\n* Zero‑config Next.js deployment.\n* Automatic SSL and CDN.\n* Preview deployments for PRs.\n* Analytics and Core Web Vitals.\n\nBut the same principles apply to Docker, AWS, or any Node.js host."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Step 1: Push to GitHub & Import to Vercel 🔄",
+            "content": "# Deployment Steps\n\n1. Make sure all env vars are set in Vercel dashboard (or via CLI).\n2. Connect your GitHub repository.\n3. Vercel detects Next.js; simply click Deploy.\n4. After deployment, set your custom domain.\n\nYour blog is live!"
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Vercel CLI Deployment (optional)",
+            "content": "You can also deploy from the terminal.",
+            "codeSnippet": "npm install -g vercel\nvercel --prod",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Step 2: Environment Variables 🔑",
+            "content": "# Secrets in Production\n\nIn Vercel dashboard (or via `vercel env add`), add:\n\n* `DATABASE_URL` – if using PostgreSQL (on Vercel, you might use `vercel-postgres`).\n* `GITHUB_ID` & `GITHUB_SECRET` – OAuth credentials.\n* `NEXTAUTH_SECRET` – strong random string.\n* `NEXTAUTH_URL` – `https://yourdomain.com`.\n\n**Important:** For SQLite, Vercel's serverless environment has a read‑only filesystem. You must switch to a hosted database (like PlanetScale, Supabase, or Vercel Postgres) for production."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "SQLite on Vercel 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Why can't you use SQLite in production on Vercel?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "SQLite is not supported by Next.js",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Vercel's serverless functions have an ephemeral, read‑only filesystem that resets",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "SQLite is too slow for production",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Prisma doesn't support SQLite in production",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Vercel uses serverless functions with a temporary filesystem. Any file written (like the SQLite DB) is lost and cannot be shared across instances.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Step 3: CI/CD & Monitoring 🧪",
+            "content": "# Automate & Observe\n\n* **Preview Deployments**: Every PR creates a unique URL; test changes before merging.\n* **Branch Protection**: Set up rules to require passing builds before merging.\n* **Vercel Analytics**: Monitor Core Web Vitals, page views, and error rates.\n* **Logs**: Check runtime and build logs to debug issues.\n\nYou can also integrate Sentry for error tracking."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Final Production Checklist ✅",
+            "content": "# Before You Go Live\n\n- [ ] Environment variables set correctly.\n- [ ] Database migrated and seeded.\n- [ ] Authentication callback URL points to production.\n- [ ] Custom 404 and error pages in place.\n- [ ] Images served from a whitelisted domain.\n- [ ] `robots.txt` and `sitemap.xml` generated (next‑sitemap).\n- [ ] Analytics/tracking added (optional).\n- [ ] Test all flows: sign in, add comment, create post.\n\nOnce checked, your blog is ready for the world!"
+        },
+        {
+            "id": "s_l5_8",
+            "type": "code",
+            "title": "Sitemap Generation (next-sitemap.config.js)",
+            "content": "Automatically create a sitemap for SEO.",
+            "codeSnippet": "// next-sitemap.config.js\nmodule.exports = {\n  siteUrl: 'https://yourdomain.com',\n  generateRobotsTxt: true,\n};\n// Then run: npx next-sitemap",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_9",
+            "type": "quiz",
+            "title": "Checklist Item 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What does `next-sitemap` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Generates a dynamic sitemap.xml and robots.txt for better search engine crawling",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Creates a sitemap of component dependencies",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Monitors site uptime",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Generates TypeScript types",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`next-sitemap` is a popular package that scans your Next.js pages and generates a sitemap to submit to search engines.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_10",
+            "type": "tip",
+            "title": "Congratulations 🎉",
+            "content": "You have built a full‑stack, production‑ready blog with Next.js! From routing to database, authentication to deployment, you now possess the skills to bring any web application idea to life. Keep building, keep learning!"
+        }
+    ]
+}

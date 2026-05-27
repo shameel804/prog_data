@@ -1,0 +1,231 @@
+{
+    "id": "quiz_ch_6",
+    "chapterId": "ch_6",
+    "title": "Chapter 6 Quiz",
+    "description": "Test your knowledge of Layouts, Navigation & Middleware!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the primary purpose of `pages/_app.js`?",
+            "options": [
+                "To define API routes",
+                "To initialize pages and wrap them with layout components or global state providers",
+                "To store global CSS variables",
+                "To handle routing configuration"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`_app.js` is the top-level component that persists across pages, making it the ideal place for layouts, global CSS, and context providers."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "Layout components placed in `_app.js` re-mount every time the user navigates to a different page.",
+            "correctAnswer": false,
+            "explanation": "Only the `<Component>` changes; the wrapping layout stays mounted, preserving its state."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "In the per‑page layout pattern, how does a page specify its own layout?",
+            "options": [
+                "By exporting a `layout` component",
+                "By attaching a `getLayout` function to the component",
+                "By importing the layout in `_app.js`",
+                "By using a special naming convention"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Pages define a `Component.getLayout` function, and `_app.js` checks for it to wrap the page dynamically."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "What is the biggest advantage of nested layouts in the App Router?",
+            "options": [
+                "They can be written in Python",
+                "Child layouts preserve state when navigating between sibling routes",
+                "They automatically generate API endpoints",
+                "They eliminate the need for CSS"
+            ],
+            "correctAnswer": 1,
+            "explanation": "App Router layouts are persistent; navigating between routes under the same layout does not remount the layout component."
+        },
+        {
+            "id": "q5",
+            "type": "fill_blank",
+            "question": "To update the URL without re‑running data fetching methods, use ________ routing by passing `{ shallow: true }` to `router.push`.",
+            "options": [],
+            "correctAnswer": "shallow",
+            "explanation": "Shallow routing changes the URL but keeps the same page instance and skips `getServerSideProps`/`getStaticProps`."
+        },
+        {
+            "id": "q6",
+            "type": "true_false",
+            "question": "Shallow routing works for navigating to a completely different page (different pathname).",
+            "correctAnswer": false,
+            "explanation": "Shallow routing only works for same‑page URL changes. Different pathnames will always trigger data fetching."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "Which Next.js configuration enables internationalized routing?",
+            "options": [
+                "`export const i18n = true` in next.config.js",
+                "`module.exports = { i18n: { locales: ['en','fr'], defaultLocale: 'en' } }` in next.config.js",
+                "`import i18n from 'next-i18n'`",
+                "`export function getLocale()` in pages"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The i18n configuration is set inside `next.config.js` under the `i18n` key."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "With i18n enabled, how would a user access the French version of the homepage?",
+            "options": [
+                "`/home?lang=fr`",
+                "`/fr`",
+                "`/fr/index`",
+                "`/home/fr`"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The default locale (en) has no prefix; other locales like French get a subpath `/fr`."
+        },
+        {
+            "id": "q9",
+            "type": "fill_blank",
+            "question": "To switch locale programmatically, use `router.push(router.pathname, router.asPath, { locale: 'fr' })`. The locale is passed as a property of the ______ argument.",
+            "options": [],
+            "correctAnswer": "options",
+            "explanation": "The third argument to `router.push` is an options object where you can set `locale`."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "Where is the middleware file placed in a Next.js project?",
+            "options": [
+                "Inside `pages/api/middleware.js`",
+                "At the root of the project (same level as `pages` or `app`)",
+                "Inside `components/middleware.js`",
+                "Inside `lib/middleware.js`"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`middleware.js` must be at the project root (or `src` root if using `src` directory) to be automatically detected."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "What does `NextResponse.next()` do in middleware?",
+            "options": [
+                "Redirects the user",
+                "Stops the request",
+                "Passes the request through to the next handler (the actual page or API route)",
+                "Rewrites the URL"
+            ],
+            "correctAnswer": 2,
+            "explanation": "`NextResponse.next()` continues the request without modification, allowing the page to render normally."
+        },
+        {
+            "id": "q12",
+            "type": "true_false",
+            "question": "Middleware can access cookies and headers from the incoming request.",
+            "correctAnswer": true,
+            "explanation": "The `request` object in middleware provides `cookies` and `headers` for reading auth tokens, user preferences, etc."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "What is the purpose of the `matcher` config in middleware?",
+            "options": [
+                "To set the middleware timeout",
+                "To restrict middleware execution to specific paths",
+                "To define the middleware version",
+                "To enable middleware only in production"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`matcher` filters the paths on which the middleware should run, improving performance by skipping public files or irrelevant routes."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "Which of the following is a valid use case for middleware?",
+            "options": [
+                "Fetching data from a database",
+                "Authenticating a user and redirecting unauthenticated requests",
+                "Rendering a React component",
+                "Sending a JSON response"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Middleware can read cookies and redirect, making it ideal for authentication guards. It cannot send response bodies directly."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "How do you add a custom response header using middleware?",
+            "options": [
+                "`request.headers.set('X-Custom', 'value')`",
+                "`response = NextResponse.next(); response.headers.set('X-Custom', 'value'); return response;`",
+                "`res.setHeader('X-Custom', 'value')` in the page",
+                "It is not possible"
+            ],
+            "correctAnswer": 1,
+            "explanation": "You create a response with `NextResponse.next()`, modify its headers, and return it."
+        },
+        {
+            "id": "q16",
+            "type": "true_false",
+            "question": "Middleware can be used to implement A/B testing by randomly assigning a cookie and rewriting the URL.",
+            "correctAnswer": true,
+            "explanation": "Yes, middleware runs at the edge and can inspect/set cookies, then rewrite to different pages based on random assignment."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "What is the main benefit of edge middleware over traditional server middleware?",
+            "options": [
+                "It can hold open database connections",
+                "It runs closer to the user, reducing latency",
+                "It has access to the file system",
+                "It can run for several minutes"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Edge functions execute in data centers near the user, resulting in much faster responses for tasks like redirects."
+        },
+        {
+            "id": "q18",
+            "type": "fill_blank",
+            "question": "To redirect from `/old` to `/new` in middleware, you return `NextResponse.______(new URL('/new', request.url))`.",
+            "options": [],
+            "correctAnswer": "redirect",
+            "explanation": "`NextResponse.redirect()` sends a 307 (or 308) redirect response."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "In the i18n routing, how does Next.js determine which locale to serve if the user visits the root URL without a prefix?",
+            "options": [
+                "It always serves the default locale",
+                "It checks the `Accept-Language` header and matches it with the configured locales",
+                "It picks the first locale in the array",
+                "It shows a locale selection page"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Next.js uses the browser's `Accept-Language` header to automatically detect the preferred locale and redirects accordingly."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "When using per‑page layouts, what is the purpose of the fallback `|| ((page) => page)` in `_app.js`?",
+            "options": [
+                "To provide a default layout for pages that don't define their own",
+                "To handle pages that are empty",
+                "To skip rendering for some pages",
+                "To make the code run faster"
+            ],
+            "correctAnswer": 0,
+            "explanation": "If a page does not have a `getLayout` function, the fallback just returns the page as‑is, effectively no extra layout."
+        }
+    ]
+}

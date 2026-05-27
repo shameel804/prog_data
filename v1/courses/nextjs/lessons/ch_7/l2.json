@@ -1,0 +1,123 @@
+{
+    "id": "l2",
+    "chapterId": "ch_7",
+    "title": "Setting Up NextAuth.js",
+    "description": "Add NextAuth.js to your app, configure a GitHub provider, and create your first session.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Implementation",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Installation & First Config 📦",
+            "content": "# Get NextAuth.js\n\n```bash\nnpm install next-auth\n```\n\nWe'll start with a GitHub provider (you need a GitHub OAuth App). But you can test locally with dummy credentials.\n\nCreate the API route file: `pages/api/auth/[...nextauth].js`.\n\nThis catch‑all handles all auth actions (login, logout, callback)."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "pages/api/auth/[...nextauth].js",
+            "content": "The minimal configuration with a GitHub provider.",
+            "codeSnippet": "// pages/api/auth/[...nextauth].js\nimport NextAuth from 'next-auth';\nimport GitHubProvider from 'next-auth/providers/github';\n\nexport const authOptions = {\n  providers: [\n    GitHubProvider({\n      clientId: process.env.GITHUB_ID,\n      clientSecret: process.env.GITHUB_SECRET,\n    }),\n  ],\n  secret: process.env.NEXTAUTH_SECRET,\n};\n\nexport default NextAuth(authOptions);",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Catch‑all Route 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Why does the NextAuth route file use `[...nextauth].js`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To capture all sub‑paths like /api/auth/signin, /api/auth/callback, etc.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It's just a naming convention; any name works",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To make it a dynamic route for user IDs",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To support multiple authentication providers",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "NextAuth uses a single catch‑all route to handle many endpoints like signin, signout, callbacks, and session retrieval.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Environment Variables & OAuth 🔑",
+            "content": "# Create a GitHub OAuth App\n\n1. Go to GitHub Settings → Developer settings → OAuth Apps.\n2. Create a new app.\n3. Homepage URL: `http://localhost:3000`\n4. Authorization callback URL: `http://localhost:3000/api/auth/callback/github`\n\nCopy the Client ID and Client Secret into `.env.local`:\n\n```\nGITHUB_ID=your_id\nGITHUB_SECRET=your_secret\nNEXTAUTH_SECRET=a_random_secret_string\nNEXTAUTH_URL=http://localhost:3000\n```\n\nGenerate a secret with `openssl rand -base64 32`."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": ".env.local",
+            "content": "Never commit this file. Store secrets securely.",
+            "codeSnippet": "// .env.local\nGITHUB_ID=abc123\nGITHUB_SECRET=xyz789\nNEXTAUTH_SECRET=super_secret\nNEXTAUTH_URL=http://localhost:3000",
+            "codeLanguage": "plaintext",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Callback URL 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What must you set as the Authorization callback URL for a GitHub provider?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "http://localhost:3000",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "http://localhost:3000/api/auth/callback/github",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "http://localhost:3000/auth/github",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "http://localhost:3000/api/auth/signin",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The callback URL follows the pattern `/api/auth/callback/{provider}`. GitHub redirects here after authentication.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "First Sign‑In ✨",
+            "content": "# Start the dev server\n\nVisit `http://localhost:3000/api/auth/signin`.\n\nYou'll see a default sign‑in page listing your configured providers. Click \"Sign in with GitHub\", authorize, and you're done!\n\nNow your user session is stored in a secure HTTP‑only cookie."
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "For local development without a real OAuth app, use the **Credentials provider** or create a dummy GitHub app. Never skip the secret – it's used to encrypt the session cookie."
+        }
+    ]
+}

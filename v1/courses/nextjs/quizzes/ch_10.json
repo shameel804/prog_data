@@ -1,0 +1,210 @@
+{
+    "id": "quiz_ch_10",
+    "chapterId": "ch_10",
+    "title": "Chapter 10 Quiz",
+    "description": "Test your knowledge of Advanced Patterns & Internals!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "In the App Router, what directive marks a component as a Client Component?",
+            "options": [
+                "'use client'",
+                "'use state'",
+                "'client-only'",
+                "'use browser'"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Add `'use client'` at the top of the file to make it a Client Component."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "Which of the following can a Server Component do?",
+            "options": [
+                "Use `useState`",
+                "Access a database directly",
+                "Attach `onClick` handlers",
+                "Use `useEffect`"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Server Components run on the server and can directly query databases, read files, etc. They cannot use state or effects."
+        },
+        {
+            "id": "q3",
+            "type": "true_false",
+            "question": "A Client Component can directly import and render a Server Component.",
+            "correctAnswer": false,
+            "explanation": "A Client Component cannot import a Server Component. However, it can receive one as children from a parent Server Component."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "What is the purpose of the `loading.js` file in the App Router?",
+            "options": [
+                "To define a global loading state for the entire app",
+                "To automatically wrap the corresponding page in a Suspense boundary, showing a fallback while the page content loads",
+                "To configure the loading spinner animation",
+                "To preload data for a page"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`loading.js` acts as a Suspense fallback for the page, enabling streaming of the page shell before data arrives."
+        },
+        {
+            "id": "q5",
+            "type": "fill_blank",
+            "question": "To stream a specific component independently, you manually wrap it in a `<______>` tag with a fallback prop.",
+            "options": [],
+            "correctAnswer": "Suspense",
+            "explanation": "`<Suspense fallback={...}>` allows you to define a loading state for a specific part of the page, enabling granular streaming."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "What is a key benefit of streaming SSR?",
+            "options": [
+                "It reduces the total server processing time",
+                "Users see the page shell and static content immediately, without waiting for slow data fetches",
+                "It eliminates the need for a loading state",
+                "It works only on Vercel"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Streaming sends the HTML in chunks, so the browser can start rendering the page while waiting for slower components."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "How are parallel routes defined in the file system?",
+            "options": [
+                "By creating files with a `parallel.` prefix",
+                "By creating folders with an `@` prefix",
+                "By exporting a `parallel` configuration",
+                "By using the `next/parallel` package"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Folders named `@something` in a segment act as parallel route slots, and the layout receives a prop with that name."
+        },
+        {
+            "id": "q8",
+            "type": "true_false",
+            "question": "An error in one parallel route slot causes all slots to show the error.",
+            "correctAnswer": false,
+            "explanation": "Each slot is an independent tree. An error in one slot triggers only that slot's error boundary, leaving other slots intact."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "Which folder convention intercepts navigation to a route one level up from the current segment?",
+            "options": [
+                "`(.)photo`",
+                "`(..)photo`",
+                "`(...)photo`",
+                "`photo.intercept`"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`(..)` goes up one level. So from `app/feed/`, `(..)photo` would intercept `app/photo`."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "What is the primary use case for intercepting routes?",
+            "options": [
+                "To speed up page transitions",
+                "To implement modal/overlay patterns that update the URL without losing the underlying page context",
+                "To redirect users based on authentication",
+                "To create dynamic sitemaps"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Intercepting routes show a different UI (like a modal) when navigating from a specific context, while still keeping the URL shareable."
+        },
+        {
+            "id": "q11",
+            "type": "fill_blank",
+            "question": "When a user refreshes the browser on an intercepted route URL, Next.js renders the ______ page because there is no navigation source to intercept.",
+            "options": [],
+            "correctAnswer": "actual",
+            "explanation": "Hard navigations (refresh, direct URL) always render the real page file, not the intercepted one."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "In the photo gallery example, which file renders the modal when navigating from the gallery to a photo?",
+            "options": [
+                "`app/photo/[id]/page.js`",
+                "`app/gallery/(..)photo/[id]/page.js`",
+                "`app/gallery/photo/[id]/page.js`",
+                "`app/gallery/@modal/(..)photo/[id]/page.js`"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The intercepted route is placed inside the gallery segment using `(..)photo` to catch navigation to `/photo/[id]`."
+        },
+        {
+            "id": "q13",
+            "type": "true_false",
+            "question": "You can use `useState` inside a Server Component if you wrap it in a `<Suspense>` boundary.",
+            "correctAnswer": false,
+            "explanation": "Server Components cannot contain hooks that manage state or effects. Interactivity must be in a Client Component."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "Which of the following is a valid way to pass a Server Component into a Client Component?",
+            "options": [
+                "Import it in the Client Component file",
+                "Render it as a children prop from a parent Server Component",
+                "Use the `server` attribute on the component",
+                "Wrap it in `React.lazy`"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The parent Server Component can render the Client Component and place the Server Component inside it via `children`, keeping the boundary intact."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "What happens when a page wrapped by a `loading.js` finishes fetching its data during streaming?",
+            "options": [
+                "The entire page reloads",
+                "The server sends the resolved HTML chunk and React replaces the fallback in the DOM",
+                "The loading spinner stays forever",
+                "The user is redirected to the new page"
+            ],
+            "correctAnswer": 1,
+            "explanation": "React on the client listens for streamed updates and seamlessly swaps the fallback with the actual content."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "What is the advantage of combining parallel routes with intercepting routes?",
+            "options": [
+                "They cannot be combined",
+                "You can have a modal (intercepted route) inside a slot that renders alongside other independent page sections",
+                "It makes the build faster",
+                "It automatically optimizes images"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Parallel routes and intercepting routes are independent but complementary. For example, a sidebar slot can exist alongside an intercepted modal route."
+        },
+        {
+            "id": "q17",
+            "type": "true_false",
+            "question": "Streaming requires a Vercel deployment to work.",
+            "correctAnswer": false,
+            "explanation": "Streaming uses standard HTTP and React's `renderToReadableStream`. It works on any Node.js server that supports streaming responses."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "Which of the following is NOT a valid parallel route slot pattern?",
+            "options": [
+                "`@analytics`",
+                "`@team`",
+                "`@(..)panel`",
+                "`@sidebar`"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Slot names cannot contain path‑like segments or parentheses that clash with route grouping/intercepting conventions. They should be simple identifiers."
+        }
+    ]
+}

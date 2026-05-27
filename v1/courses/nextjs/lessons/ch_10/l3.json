@@ -1,0 +1,123 @@
+{
+    "id": "l3",
+    "chapterId": "ch_10",
+    "title": "Parallel Routes",
+    "description": "Render multiple independent page sections in the same view using slots – perfect for complex dashboards.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Advanced Routing",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Breaking the Single Page Mold 🔀",
+            "content": "# What Are Parallel Routes?\n\nNormally, a layout renders a single `children` slot (the page). Parallel routes let you define multiple named slots that render simultaneously.\n\nThey are defined using the `@folder` convention inside a layout's segment.\n\n```\napp/\n  dashboard/\n    layout.js\n    @analytics/page.js\n    @team/page.js\n```\n\nIn `layout.js`, you receive `analytics` and `team` as props (along with `children`). Each renders independently, with its own loading and error states."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Dashboard Layout with Slots (app/dashboard/layout.js)",
+            "content": "The layout receives props for each slot defined by `@` folders.",
+            "codeSnippet": "// app/dashboard/layout.js\nexport default function DashboardLayout({ children, analytics, team }) {\n  return (\n    <div>\n      <nav>Sidebar</nav>\n      <main>\n        {children}\n        <div className=\"panels\">\n          {analytics}\n          {team}\n        </div>\n      </main>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Slot Definition 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "How do you define a parallel route named `@profile`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Create a folder `profile` inside the layout",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Create a folder `@profile` at the same level as the layout, containing its own `page.js`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Add a `profile` prop to the layout",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Use `export const slot = 'profile'`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Parallel routes are created by naming a folder with an `@` prefix. The layout receives a prop with the same name (without `@`).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Independent Loading & Error States 🚦",
+            "content": "# Each Slot is Independent\n\nEvery slot can have its own `loading.js` and `error.js`.\n\n* If `@analytics` is slow, its fallback shows while `@team` loads immediately.\n* Errors in one slot don't crash the entire page.\n\nThis makes them perfect for dashboards where each panel fetches its own data from different sources."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Slot Loading & Error (app/dashboard/@analytics/loading.js)",
+            "content": "Each slot can define its own loading fallback.",
+            "codeSnippet": "// app/dashboard/@analytics/loading.js\nexport default function AnalyticsLoading() {\n  return <div>Loading analytics chart...</div>;\n}\n\n// app/dashboard/@analytics/error.js\n'use client';\nexport default function AnalyticsError() {\n  return <div>Failed to load analytics.</div>;\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Slot Independence 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "What happens if one parallel route slot throws an error?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The entire page crashes and shows the error",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Only that slot shows its error UI; other slots render normally",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Next.js redirects to the homepage",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The slot becomes invisible",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Each slot is a separate React tree, so errors are contained within that boundary, leaving the rest of the layout intact.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Conditional Slot Rendering 🔀",
+            "content": "# Showing Slots Based on State\n\nYou can use `useSelectedLayoutSegment(s)` from `next/navigation` to determine which sub‑route is active and conditionally render a slot.\n\nFor example, show the `@team` panel only when on `/dashboard/team`.\n\nBut the real power is that slots can be rendered at the same URL without client‑side state – they are just part of the layout."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "tip",
+            "title": "Use Case 🏢",
+            "content": "Parallel routes shine in admin panels, social media feeds (main content + trending sidebar), or analytics dashboards where multiple independent data sources feed different sections."
+        }
+    ]
+}

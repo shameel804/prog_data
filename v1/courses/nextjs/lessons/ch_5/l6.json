@@ -1,0 +1,123 @@
+{
+    "id": "l6",
+    "chapterId": "ch_5",
+    "title": "The Metadata API for SEO",
+    "description": "Control your page’s title, description, and social share cards directly from React components.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "SEO & Head",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Why Metadata Matters 🔍",
+            "content": "# SEO & Social Sharing\n\nSearch engines and social networks look for special `<meta>` tags in your HTML:\n\n* `<title>` – tab title and search result title.\n* `<meta name=\"description\">` – snippet in search results.\n* `<meta property=\"og:image\">` – image when sharing on social media.\n\nIn plain React, you'd need a library like `react-helmet`. Next.js provides a built‑in Metadata API that works both statically and dynamically."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Static Metadata (pages/about.js)",
+            "content": "Export a `metadata` object (or use `generateMetadata`) to set page‑level SEO.",
+            "codeSnippet": "// pages/about.js\nexport const metadata = {\n  title: 'About Us | My Site',\n  description: 'Learn about our team and mission.',\n  openGraph: {\n    title: 'About Us',\n    description: 'We are a great company.',\n    images: ['/og-about.jpg'],\n  },\n};\n\nexport default function About() {\n  return <h1>About</h1>;\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "Metadata Export 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Where do you define the static metadata for a page?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Inside the component with a `<meta>` tag",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "By exporting a `metadata` variable from the page file",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "In `next.config.js`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "In `_document.js`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Export a constant named `metadata` (or an async `generateMetadata` function) from any page or layout.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Dynamic Metadata 🔄",
+            "content": "# `generateMetadata` Function\n\nWhen metadata depends on fetched data or route params, use `generateMetadata`.\n\n```jsx\n// pages/posts/[id].js\nexport async function generateMetadata({ params }) {\n  const post = await fetch(`https://.../posts/${params.id}`).then(r => r.json());\n  return {\n    title: post.title,\n    description: post.excerpt,\n  };\n}\n```\n\nThis runs on the server, so the metadata is injected into the final HTML."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "code",
+            "title": "Dynamic Metadata Example (pages/posts/[id].js)",
+            "content": "Generate SEO tags based on the actual post content.",
+            "codeSnippet": "// pages/posts/[id].js\nexport async function generateMetadata({ params }) {\n  const post = await fetch(`https://jsonplaceholder.typicode.com/posts/${params.id}`).then(r => r.json());\n  return {\n    title: post.title,\n    description: post.body.slice(0, 150),\n    openGraph: {\n      images: [`/og-posts/${params.id}.jpg`],\n    },\n  };\n}\n\nexport default function Post({ post }) { /* ... */ }",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_6",
+            "type": "quiz",
+            "title": "Dynamic Meta 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "multiple_choice",
+                "question": "What does `generateMetadata` allow you to do that static `metadata` doesn't?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Add Open Graph images",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Set metadata based on asynchronous data like a database query",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Change the favicon",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Render a different page",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`generateMetadata` is an async function that can fetch data and dynamically construct the metadata object per request.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_7",
+            "type": "text",
+            "title": "Template & Default Metadata 🗂️",
+            "content": "# Setting Global Defaults\n\nIn your root layout (`app/layout.js` in App Router, or `_app.js` with Head in Pages Router), you can set a `metadataBase` and a `title` template.\n\n```jsx\n// In layout.js (App Router)\nexport const metadata = {\n  title: {\n    template: '%s | My Site',\n    default: 'My Site',\n  },\n  description: 'Welcome to my site',\n};\n```\n\nThen in child pages, just set `title: 'About'` and it becomes \"About | My Site\"."
+        },
+        {
+            "id": "s_l6_8",
+            "type": "tip",
+            "title": "Remember the Head Component 🧩",
+            "content": "If you're using the older Pages Router and not the Metadata API, you can still use the `<Head>` component from `next/head` to inject tags into the `<head>` of the document. The Metadata API is the newer, more declarative approach."
+        }
+    ]
+}

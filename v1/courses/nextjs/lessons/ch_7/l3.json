@@ -1,0 +1,111 @@
+{
+    "id": "l3",
+    "chapterId": "ch_7",
+    "title": "Protecting Routes with Middleware",
+    "description": "Combine NextAuth and Edge Middleware to guard pages and redirect unauthenticated users.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Security",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The Guard at the Edge 🛡️",
+            "content": "# Middleware + NextAuth\n\nWe previously wrote middleware to check for a cookie. With NextAuth, we can use its built‑in `getToken` helper to verify the JWT from the request.\n\nAlternatively, NextAuth provides a dedicated middleware function `withAuth` that wraps our middleware or can be used directly.\n\nThis runs at the edge, so redirections happen before the page even loads."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Using next-auth/middleware (middleware.js)",
+            "content": "Export a default middleware using `withAuth`. It automatically redirects unauthenticated users to the sign‑in page.",
+            "codeSnippet": "// middleware.js\nexport { default } from 'next-auth/middleware';\n\nexport const config = {\n  matcher: ['/dashboard/:path*'],\n};",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "withAuth 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What does exporting `{ default } from 'next-auth/middleware'` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It adds authentication to all API routes",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It creates a middleware that checks for a valid NextAuth session and redirects if missing",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It generates a sign‑in page",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It disables middleware for auth routes",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`next-auth/middleware` exports a function that wraps the default middleware, adding session verification. It's the fastest way to protect pages.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Custom Middleware with getToken 🛠️",
+            "content": "# More Control\n\nIf you need custom logic, use `getToken` to manually decode the session JWT.\n\n```js\nimport { getToken } from 'next-auth/jwt';\n\nexport async function middleware(req) {\n  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });\n  if (!token) {\n    return NextResponse.redirect(new URL('/api/auth/signin', req.url));\n  }\n}\n```\n\nThis lets you check roles, redirect to different pages, or log events."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Role‑Based Middleware (middleware.js)",
+            "content": "Only allow users with an 'admin' role to access /admin.",
+            "codeSnippet": "// middleware.js\nimport { getToken } from 'next-auth/jwt';\nimport { NextResponse } from 'next/server';\n\nexport async function middleware(req) {\n  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });\n  if (!token || token.role !== 'admin') {\n    return NextResponse.redirect(new URL('/unauthorized', req.url));\n  }\n  return NextResponse.next();\n}\n\nexport const config = { matcher: '/admin/:path*' };",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "getToken vs withAuth 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "When would you use `getToken` instead of the `withAuth` middleware?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "When you need to check for authentication only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "When you need access to the full token payload (e.g., roles) and custom redirect logic",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "When you want to bypass authentication",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "getToken is deprecated",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`getToken` returns the decoded JWT with any custom data you stored, enabling fine‑grained access control.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

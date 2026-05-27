@@ -1,0 +1,111 @@
+{
+    "id": "l3",
+    "chapterId": "ch_4",
+    "title": "Optional Catch‑All Routes",
+    "description": "Make catch‑all routes that also match the parent path with [[...slug]].js for ultimate flexibility.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Routing",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The Missing Piece 🧩",
+            "content": "# Double Brackets `[[...slug]].js`\n\nA normal catch‑all route (`[...slug]`) **must** have at least one segment. `/blog` won't match `pages/blog/[...slug].js`.\n\nOptional catch‑all routes fix this. Use **double brackets**:\n\n* `pages/blog/[[...slug]].js` → matches both `/blog` and `/blog/a/b`.\n\nWhen there are no segments, `router.query.slug` will be `undefined` (not an empty array)."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Optional Catch‑All (pages/blog/[[...slug]].js)",
+            "content": "Handles the blog index and all nested paths.",
+            "codeSnippet": "// pages/blog/[[...slug]].js\nimport { useRouter } from 'next/router';\n\nexport default function Blog() {\n  const router = useRouter();\n  const { slug } = router.query;\n\n  if (!slug) {\n    return <h1>Blog Home</h1>;\n  }\n\n  return <h1>Viewing: {slug.join(' / ')}</h1>;\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Optional Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which file would match both `/docs` and `/docs/getting-started/setup`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "pages/docs/[...slug].js",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "pages/docs/[[...slug]].js",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "pages/docs/[slug].js",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "pages/docs/index.js and pages/docs/[slug].js",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`[[...slug]]` is optional, so it catches the base path `/docs` (slug undefined) and nested paths (slug array).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Pre‑rendering with Optional Catch‑All 🔧",
+            "content": "# In Data Fetching\n\nSame concept: `slug` may be `undefined` or an array.\n\nIn `getStaticPaths`, you must now return a path for the **empty slug** as well:\n\n```js\npaths: [\n  { params: { slug: false } }, // or [] — represents /blog\n  { params: { slug: ['a'] } }\n]\n```\n\nFor the root case, use an empty array `[]`."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "getStaticPaths for Optional Catch‑All (pages/blog/[[...slug]].js)",
+            "content": "Notice the empty array for the root route.",
+            "codeSnippet": "// pages/blog/[[...slug]].js\nexport async function getStaticPaths() {\n  return {\n    paths: [\n      { params: { slug: [] } },  // matches /blog\n      { params: { slug: ['2024'] } },\n      { params: { slug: ['2024', 'hello'] } }\n    ],\n    fallback: false\n  };\n}\n\nexport async function getStaticProps({ params }) {\n  const { slug } = params; // [] or ['2024', ...]\n  const isRoot = slug.length === 0;\n  return { props: { isRoot, slug } };\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Root Slug 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "In `getStaticPaths` for `[[...slug]]`, how do you represent the base path `/blog`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "`{ params: { slug: null } }`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "`{ params: { slug: [] } }`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "`{ params: { slug: '' } }`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "`{ params: {} }`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "An empty array signifies no path segments. That's the root of the catch‑all.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

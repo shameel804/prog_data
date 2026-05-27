@@ -1,0 +1,111 @@
+{
+    "id": "l2",
+    "chapterId": "ch_3",
+    "title": "Static Generation with getStaticProps",
+    "description": "Fetch data at build time to create blazing‑fast, fully‑rendered HTML pages.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Data Fetching",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Magic Function: getStaticProps 🪄",
+            "content": "# Fetch Data at Build Time\n\n`getStaticProps` is a special **async function** you export from a page file. Next.js calls it:\n\n* **At build time** (production).\n* On the server (never in the browser).\n* It returns props that are passed to your page component.\n\n```jsx\nexport async function getStaticProps() {\n  const data = await fetch('https://api.example.com/posts');\n  return { props: { data } };\n}\n```\n\nThe page will be **pre‑rendered** with the fetched data – ready to ship! 📦"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Simple Blog Page (pages/posts.js)",
+            "content": "Fetch a list of posts at build time and render them. The data is embedded in the HTML.",
+            "codeSnippet": "// pages/posts.js\nexport default function Posts({ posts }) {\n  return (\n    <ul>\n      {posts.map(post => <li key={post.id}>{post.title}</li>)}\n    </ul>\n  );\n}\n\nexport async function getStaticProps() {\n  const res = await fetch('https://jsonplaceholder.typicode.com/posts');\n  const posts = await res.json();\n  return { props: { posts } };\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Static Props Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Where does `getStaticProps` run?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "In the browser",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Only at build time on the server",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "On both client and server",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Every time the page loads in the browser",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`getStaticProps` runs at build time in the Node.js environment. It's never sent to the client.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "The Return Object 🔙",
+            "content": "# What getStaticProps Must Return\n\n```js\nreturn {\n  props: { ... },   // required – passed to page component\n  revalidate: 60,   // optional – enable ISR (seconds)\n  notFound: true,   // optional – show 404 page\n  redirect: {       // optional – redirect to another URL\n    destination: '/new',\n    permanent: false\n  }\n};\n```\n\nAt minimum, you need `props`. Everything else is optional superpowers!"
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "404 via notFound (pages/product.js)",
+            "content": "If a product doesn't exist, return `notFound: true` to show the 404 page.",
+            "codeSnippet": "// pages/product.js\nexport default function Product({ product }) {\n  return <h1>{product.name}</h1>;\n}\n\nexport async function getStaticProps() {\n  const res = await fetch('https://api.example.com/product/123');\n  if (res.status === 404) {\n    return { notFound: true };\n  }\n  const product = await res.json();\n  return { props: { product } };\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Return Values 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What happens if you return `{ notFound: true }` from `getStaticProps`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The page shows a 500 error",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Next.js renders the 404 page",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The page is empty",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The user is redirected to the home page",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`notFound: true` triggers the built‑in or custom 404 page with a 404 status code.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

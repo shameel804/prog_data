@@ -1,0 +1,117 @@
+{
+    "id": "l7",
+    "chapterId": "ch_7",
+    "title": "Securing API Routes with Authentication",
+    "description": "Protect your own endpoints using NextAuth sessions and share the user context.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Security",
+    "slides": [
+        {
+            "id": "s_l7_1",
+            "type": "text",
+            "title": "API Routes Need Love Too 🫂",
+            "content": "# Protecting Your Backend\n\nAPI routes in `pages/api/` are public by default. You must add authentication checks manually.\n\nWith NextAuth, you can import `getServerSession` (or `unstable_getServerSession` in older versions) to get the session on the server side.\n\n```js\nimport { getServerSession } from 'next-auth';\nimport { authOptions } from './auth/[...nextauth]';\n\nconst session = await getServerSession(req, res, authOptions);\nif (!session) return res.status(401).end();\n```"
+        },
+        {
+            "id": "s_l7_2",
+            "type": "code",
+            "title": "Protected API Route (pages/api/protected.js)",
+            "content": "Returns user data only if authenticated.",
+            "codeSnippet": "// pages/api/protected.js\nimport { getServerSession } from 'next-auth';\nimport { authOptions } from './auth/[...nextauth]';\n\nexport default async function handler(req, res) {\n  const session = await getServerSession(req, res, authOptions);\n  if (!session) {\n    return res.status(401).json({ error: 'Unauthorized' });\n  }\n  res.status(200).json({ message: 'Secret data', user: session.user });\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_3",
+            "type": "quiz",
+            "title": "Server Session 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_1",
+                "type": "multiple_choice",
+                "question": "How do you retrieve the session inside an API route?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Using `useSession` hook",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Using `getServerSession` with the request and response objects",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Reading cookies directly",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's automatically injected in the request",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`getServerSession(req, res, authOptions)` returns the session in server‑side contexts like API routes.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l7_4",
+            "type": "text",
+            "title": "Sharing authOptions 🧹",
+            "content": "# Keep It DRY\n\nDefine your `authOptions` in a separate file (e.g., `lib/auth.js`) and import it in both the `[...nextauth]` route and your API routes.\n\n```js\n// lib/auth.js\nexport const authOptions = { /* config */ };\n\n// pages/api/auth/[...nextauth].js\nimport NextAuth from 'next-auth';\nimport { authOptions } from '@/lib/auth';\nexport default NextAuth(authOptions);\n\n// Any API route\nimport { getServerSession } from 'next-auth';\nimport { authOptions } from '@/lib/auth';\n```\n\nThis avoids duplication and potential mismatches."
+        },
+        {
+            "id": "s_l7_5",
+            "type": "code",
+            "title": "Example: User‑Specific To‑Do API (pages/api/todos.js)",
+            "content": "Fetch todos only for the authenticated user.",
+            "codeSnippet": "// pages/api/todos.js\nimport { getServerSession } from 'next-auth';\nimport { authOptions } from '@/lib/auth';\n\nexport default async function handler(req, res) {\n  const session = await getServerSession(req, res, authOptions);\n  if (!session) return res.status(401).end();\n\n  // Fetch todos for session.user.id\n  const todos = await db.todo.findMany({ where: { userId: session.user.id } });\n  res.status(200).json(todos);\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_6",
+            "type": "quiz",
+            "title": "Session Data 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_2",
+                "type": "multiple_choice",
+                "question": "What does `session.user` typically contain?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Only the username",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "name, email, image – standard OAuth profile fields",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The database connection string",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The user's password hash",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "NextAuth populates the session with the profile data from the OAuth provider, which you can extend.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l7_7",
+            "type": "tip",
+            "title": "Extending the Session 🧬",
+            "content": "You can add custom fields (like `role` or `id`) to the session by using `callbacks` in the NextAuth config:\n\n```js\nexport const authOptions = {\n  callbacks: {\n    async session({ session, token }) {\n      session.user.id = token.sub;\n      return session;\n    },\n  },\n};\n```\n\nNow `session.user.id` is available everywhere."
+        }
+    ]
+}

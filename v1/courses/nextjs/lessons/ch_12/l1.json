@@ -1,0 +1,138 @@
+{
+    "id": "l1",
+    "chapterId": "ch_12",
+    "title": "Project Setup & Architecture",
+    "description": "Plan the full‑stack blog, install dependencies, set up Prisma with models, and configure NextAuth.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Foundation",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The Capstone: A Complete Blog Platform 🎯",
+            "content": "# What We'll Build\n\nA public‑facing blog with:\n\n* **Posts** list with pagination.\n* **Individual post** page with full content.\n* **Comments** section under each post (authenticated users only).\n* **Admin dashboard** (previous chapter) for managing posts.\n* **Authentication** via GitHub (NextAuth).\n* **Database** with Prisma and SQLite (or PostgreSQL).\n* **Styling** with Tailwind CSS.\n* **SEO** with Metadata API.\n* **Deployment** to Vercel.\n\nThis pulls together every concept from the course."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "Step 1: Create the Project & Dependencies 📦",
+            "content": "# Setup Commands\n\n```bash\nnpx create-next-app@latest my-blog --tailwind --eslint\ncd my-blog\nnpm install next-auth prisma @prisma/client zod\nnpm install --save-dev prisma\nnpx prisma init --datasource-provider sqlite\n```\n\nWe'll add more packages later. The `--tailwind` flag sets up Tailwind CSS automatically."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "code",
+            "title": "Initial Project Structure",
+            "content": "Here's our target folder structure (App Router).",
+            "codeSnippet": "my-blog/\n├── app/\n│   ├── layout.js\n│   ├── page.js\n│   ├── posts/\n│   │   ├── page.js         (list)\n│   │   └── [slug]/page.js  (detail)\n│   └── admin/ ... (from Ch8)\n├── components/\n├── lib/\n│   ├── prisma.js\n│   └── auth.js\n├── prisma/\n│   └── schema.prisma\n├── .env.local\n└── next.config.js",
+            "codeLanguage": "plaintext",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "Step 2: Database Schema 🗃️",
+            "content": "# Prisma Models\n\nWe need three models:\n* `User` – managed by NextAuth (or we can let NextAuth create it).\n* `Post` – blog posts with slug, title, content, published, and author.\n* `Comment` – linked to a post and a user.\n\nWe'll also add a `Category` model if we want. For simplicity, we'll start with Post and Comment."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "prisma/schema.prisma",
+            "content": "Define the models and run `npx prisma migrate dev --name init`.",
+            "codeSnippet": "model User {\n  id        String    @id @default(cuid())\n  name      String?\n  email     String?   @unique\n  image     String?\n  posts     Post[]\n  comments  Comment[]\n}\n\nmodel Post {\n  id        String    @id @default(cuid())\n  slug      String    @unique\n  title     String\n  content   String\n  published Boolean   @default(false)\n  createdAt DateTime  @default(now())\n  author    User      @relation(fields: [authorId], references: [id])\n  authorId  String\n  comments  Comment[]\n}\n\nmodel Comment {\n  id        String   @id @default(cuid())\n  text      String\n  createdAt DateTime @default(now())\n  post      Post     @relation(fields: [postId], references: [id])\n  postId    String\n  user      User     @relation(fields: [userId], references: [id])\n  userId    String\n}",
+            "codeLanguage": "prisma",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "Schema Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Why is the `slug` field marked as `@unique`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To make it the primary key",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To ensure no two posts have the same URL‑friendly identifier",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Because Prisma requires all text fields to be unique",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To enable auto‑increment",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The slug is used in the URL (`/posts/my-post`). Uniqueness prevents routing conflicts.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_7",
+            "type": "text",
+            "title": "Step 3: Configure NextAuth 🛡️",
+            "content": "# Authentication Setup\n\nWe'll use the GitHub provider as in Chapter 7.\n\n1. Create `lib/auth.js` with `authOptions`.\n2. Add `pages/api/auth/[...nextauth].js` (App Router uses `app/api/auth/[...nextauth]/route.js`).\n3. Set environment variables in `.env.local`.\n\nWe'll need NextAuth to attach the Prisma adapter later, but initially, JWT sessions are enough."
+        },
+        {
+            "id": "s_l1_8",
+            "type": "code",
+            "title": "NextAuth API Route (app/api/auth/[...nextauth]/route.js)",
+            "content": "App Router version using the route handler.",
+            "codeSnippet": "// app/api/auth/[...nextauth]/route.js\nimport NextAuth from 'next-auth';\nimport GitHubProvider from 'next-auth/providers/github';\n\nexport const authOptions = {\n  providers: [\n    GitHubProvider({\n      clientId: process.env.GITHUB_ID,\n      clientSecret: process.env.GITHUB_SECRET,\n    }),\n  ],\n  secret: process.env.NEXTAUTH_SECRET,\n};\n\nconst handler = NextAuth(authOptions);\nexport { handler as GET, handler as POST };",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_9",
+            "type": "quiz",
+            "title": "App Router Auth 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "In the App Router, how do you export the NextAuth handler?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "As a default export",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Export named GET and POST functions pointing to the same handler",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Using `export default handler`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "There's no support for NextAuth in App Router",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "App Router API routes use the `route.js` file with exported functions for each HTTP method.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_10",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "For local development, generate the `NEXTAUTH_SECRET` with `openssl rand -base64 32`. Store it in `.env.local`. Never commit secret keys."
+        }
+    ]
+}

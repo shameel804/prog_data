@@ -1,0 +1,117 @@
+{
+    "id": "l6",
+    "chapterId": "ch_4",
+    "title": "Connecting Frontend to API",
+    "description": "Fetch data from your own API routes using client‑side code, SWR, and HTML forms.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Full‑Stack",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "The Full‑Stack Loop 🔄",
+            "content": "# From Page to API and Back\n\nNow that you have API routes, how do you use them in your UI?\n\n* **Client‑side**: `fetch('/api/hello')` from a component (useEffect, SWR, or event handler).\n* **Server‑side**: Inside `getStaticProps` or `getServerSideProps`, you can call the same API route using an absolute URL or by directly importing the logic.\n* **Forms**: Submit HTML forms to an API route using the `action` attribute.\n\nLet's see examples for each."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Client‑Side Fetch with useEffect (pages/contact.js)",
+            "content": "Submit feedback to our `/api/feedback` endpoint and show result.",
+            "codeSnippet": "// pages/contact.js\nimport { useState } from 'react';\n\nexport default function Contact() {\n  const [message, setMessage] = useState('');\n  const [status, setStatus] = useState('');\n\n  const submit = async () => {\n    const res = await fetch('/api/feedback', {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify({ message })\n    });\n    if (res.ok) setStatus('Sent!');\n  };\n\n  return (\n    <div>\n      <textarea onChange={e => setMessage(e.target.value)} />\n      <button onClick={submit}>Submit</button>\n      <p>{status}</p>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "API Fetch 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "When calling an API route from the browser, what base URL should you use?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "`https://api.nextjs.com`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "`http://localhost:3000` (absolute)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Relative path like `/api/hello`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "`/pages/api/hello`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "On the client, you can use relative paths because the API is served from the same origin.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Using SWR with API Routes 💧",
+            "content": "# Declarative Data Fetching\n\nSWR works perfectly with your own API endpoints.\n\n```jsx\nimport useSWR from 'swr';\n\nconst fetcher = url => fetch(url).then(r => r.json());\n\nexport default function Posts() {\n  const { data, error } = useSWR('/api/posts', fetcher);\n  // ...\n}\n```\n\n* Cached, auto‑revalidating.\n* No useEffect required.\n* Extremely clean and scalable."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "code",
+            "title": "SWR Example (pages/dashboard.js)",
+            "content": "Display a list of posts fetched from an API route.",
+            "codeSnippet": "// pages/dashboard.js\nimport useSWR from 'swr';\n\nconst fetcher = (...args) => fetch(...args).then(res => res.json());\n\nexport default function Dashboard() {\n  const { data: posts, error } = useSWR('/api/posts', fetcher);\n\n  if (error) return <div>Error loading</div>;\n  if (!posts) return <div>Loading...</div>;\n  return (\n    <ul>\n      {posts.map(post => <li key={post.id}>{post.title}</li>)}\n    </ul>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_6",
+            "type": "quiz",
+            "title": "SWR Use 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "multiple_choice",
+                "question": "What is the benefit of using SWR over a manual `useEffect` + `fetch` for an API route?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's required by Next.js",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It automatically caches, revalidates, and manages loading/error states",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It only works with server‑side rendering",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It makes the code synchronous",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "SWR handles caching, background revalidation, and state management out of the box, reducing boilerplate.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "If you're fetching the same data in `getStaticProps` and on the client, you can share the fetcher function. But remember: API routes called from `getStaticProps` need an absolute URL (like `http://localhost:3000/api/posts`) because the code runs on the server. Or better, directly import the data logic."
+        }
+    ]
+}

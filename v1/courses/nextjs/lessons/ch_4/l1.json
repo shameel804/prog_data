@@ -1,0 +1,111 @@
+{
+    "id": "l1",
+    "chapterId": "ch_4",
+    "title": "Dynamic Routes Basics",
+    "description": "Create pages that adapt to any parameter like /posts/123 using [id].js and the useRouter hook.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Routing",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "When Static Isn't Enough 🔀",
+            "content": "# The Problem\n\nYou have a blog with hundreds of posts. Creating a separate file for each is impossible.\n\n**Solution: Dynamic Routes.**\n\nA single file can handle an infinite number of paths using **bracket notation**:\n\n* `pages/posts/[id].js` → matches `/posts/1`, `/posts/hello-world`, etc.\n\nNext.js extracts the dynamic part and passes it to your component."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "code",
+            "title": "First Dynamic Page (pages/posts/[id].js)",
+            "content": "Any file with `[param]` in its name becomes a dynamic route. Use the router to read the value.",
+            "codeSnippet": "// pages/posts/[id].js\nimport { useRouter } from 'next/router';\n\nexport default function Post() {\n  const router = useRouter();\n  const { id } = router.query;\n  return <h1>Post: {id}</h1>;\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Dynamic Match 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Which file would you create to handle the route `/product/xyz`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "pages/product/[slug].js",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "pages/product/xyz.js",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "pages/product.js",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "pages/[product].js",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The bracket syntax creates a dynamic segment. `[slug].js` will match any value like `xyz`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "Reading the Parameter 📖",
+            "content": "# Access via `router.query`\n\n```jsx\nimport { useRouter } from 'next/router';\n\nconst router = useRouter();\nconst { id } = router.query;\n```\n\n* `router.query` is an object containing all dynamic segments.\n* During pre‑rendering, `router.query` is empty; use `getStaticProps` or `getServerSideProps` to access params on the server.\n* For client‑side navigation, it's available immediately after mount."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "Pre‑rendered Dynamic Page (pages/posts/[id].js)",
+            "content": "Combine dynamic routes with data fetching. `getStaticProps` receives `params`.",
+            "codeSnippet": "// pages/posts/[id].js\nexport default function Post({ post }) {\n  return <article><h1>{post.title}</h1><p>{post.body}</p></article>;\n}\n\nexport async function getStaticProps({ params }) {\n  const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${params.id}`);\n  const post = await res.json();\n  return { props: { post } };\n}\n\nexport async function getStaticPaths() {\n  // define which ids to pre‑render\n  return { paths: [{ params: { id: '1' } }, { params: { id: '2' } }], fallback: false };\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "Params vs Query 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "In `pages/posts/[id].js`, where do you find the `id` value during server‑side rendering (in `getStaticProps`)?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "`router.query.id`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "`context.params.id`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "`req.params.id`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "`window.location`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Data fetching functions like `getStaticProps` receive `params` directly from the context, not the client‑side router.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

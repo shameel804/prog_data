@@ -1,0 +1,123 @@
+{
+    "id": "l6",
+    "chapterId": "ch_7",
+    "title": "Advanced Server Actions",
+    "description": "Revalidate cached data, handle errors gracefully, and optimistically update the UI.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "Server Actions",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Revalidating the Cache 🔄",
+            "content": "# Keeping Pages Fresh\n\nAfter a mutation (create, update, delete), you want the UI to reflect the change.\n\nServer Actions can call `revalidatePath()` or `revalidateTag()` to purge the cache and refetch data.\n\n```js\nimport { revalidatePath } from 'next/cache';\n\nexport async function addPost(formData) {\n  await db.post.create(...);\n  revalidatePath('/posts');\n}\n```\n\nNow the `/posts` page will show the new post immediately."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Revalidation Example (app/actions.js)",
+            "content": "After creating a product, revalidate the product list.",
+            "codeSnippet": "// app/actions.js\n'use server';\nimport { revalidatePath } from 'next/cache';\n\nexport async function createProduct(formData) {\n  const name = formData.get('name');\n  // db.product.create({ name });\n  revalidatePath('/products');\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "Revalidation 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What does `revalidatePath('/blog')` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Deletes the blog page",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Purges the cache for the /blog route, causing it to regenerate on the next request",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Redirects the user to /blog",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Adds a new blog post",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`revalidatePath` marks the route for regeneration. The next visitor gets the fresh data.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Error Handling & useFormState 🧨",
+            "content": "# Showing Validation Errors\n\nIn Client Components, use `useFormState` hook with your Server Action to capture return values (errors, success messages).\n\n```jsx\nconst [state, formAction] = useFormState(createPost, null);\n\nreturn (\n  <form action={formAction}>\n    <input name=\"title\" />\n    <p>{state?.error}</p>\n  </form>\n);\n```\n\nThe action returns an object like `{ error: 'Title required' }` which appears in `state`."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "code",
+            "title": "useFormState Example (components/NewPost.js)",
+            "content": "Combines server action, validation, and UI feedback.",
+            "codeSnippet": "// components/NewPost.js\n'use client';\nimport { useFormState } from 'react-dom';\nimport { createPost } from '@/app/actions';\n\nexport default function NewPost() {\n  const [state, formAction] = useFormState(createPost, null);\n\n  return (\n    <form action={formAction}>\n      <input name=\"title\" required />\n      {state?.error && <p className=\"error\">{state.error}</p>}\n      <button type=\"submit\">Create Post</button>\n    </form>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_6",
+            "type": "quiz",
+            "title": "useFormState 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "multiple_choice",
+                "question": "Which hook allows a client component to receive the return value of a Server Action?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "`useEffect`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "`useServerAction`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "`useFormState`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "`useReducer`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`useFormState` from `react-dom` pairs with a Server Action and provides the action's return value as state.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_7",
+            "type": "text",
+            "title": "Optimistic Updates ⚡",
+            "content": "# Instant UI Feedback\n\nWith `useOptimistic`, you can update the UI immediately while the Server Action runs in the background.\n\n```jsx\nconst [optimisticMessages, addOptimisticMessage] = useOptimistic(\n  messages,\n  (state, newMessage) => [...state, newMessage]\n);\n```\n\nThis makes your app feel instantaneous. If the server action fails, the UI rolls back automatically."
+        },
+        {
+            "id": "s_l6_8",
+            "type": "tip",
+            "title": "Best Practice ✨",
+            "content": "Combine `useFormState` for error handling, `useOptimistic` for snappy UI, and `revalidatePath` for cache refresh. This trio gives you a robust and delightful form experience."
+        }
+    ]
+}

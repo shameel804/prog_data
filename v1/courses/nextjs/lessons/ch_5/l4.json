@@ -1,0 +1,123 @@
+{
+    "id": "l4",
+    "chapterId": "ch_5",
+    "title": "Next.js Image Component",
+    "description": "Optimise images automatically – lazy loading, responsive sizes, and modern formats.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Assets & Performance",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The `<img>` Tag is Slow 🐢",
+            "content": "# Image Problems\n\n* Huge file sizes slow down your page.\n* No built‑in lazy loading (before loading=\"lazy\").\n* Layout shift – image loads late and pushes content down.\n* Not optimised for different screen sizes.\n\nNext.js provides a **`next/image`** component that solves all this automatically.\n\n```jsx\nimport Image from 'next/image';\n\n<Image src=\"/profile.jpg\" width={200} height={200} alt=\"User\" />\n```"
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Using next/image (pages/index.js)",
+            "content": "Always provide `width`, `height`, and `alt`. The image will be lazy‑loaded and responsive by default.",
+            "codeSnippet": "// pages/index.js\nimport Image from 'next/image';\n\nexport default function Home() {\n  return (\n    <div>\n      <Image\n        src=\"/hero.jpg\"\n        alt=\"Hero Banner\"\n        width={1200}\n        height={600}\n        priority\n      />\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Image Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Why must you provide `width` and `height` to the Next.js Image component?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "For the browser to scale the image",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To prevent layout shift by reserving the space before the image loads",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To set the image resolution",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's optional; you don't need them",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Next.js uses the given dimensions to calculate the aspect ratio and allocate the correct space, eliminating Cumulative Layout Shift (CLS).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Priority & Loading 🚨",
+            "content": "# Above‑the‑Fold Images\n\nFor your main hero image, add the `priority` prop. It tells Next.js to preload the image and skip lazy loading.\n\n```jsx\n<Image src=\"/hero.jpg\" width={1200} height={600} priority />\n```\n\nWithout `priority`, all images lazy‑load by default. Use it only for the largest contentful paint (LCP) image.\n\n`loading=\"eager\"` is also available but `priority` also adds `fetchPriority=\"high\"`."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "External Images (next.config.js)",
+            "content": "To use images from a remote URL, you must whitelist the domain in `next.config.js`.",
+            "codeSnippet": "// next.config.js\nmodule.exports = {\n  images: {\n    domains: ['example.com', 'cdn.myapp.com'],\n  },\n};\n\n// Then in component\n<Image src=\"https://example.com/photo.png\" width={200} height={200} alt=\"External\" />",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "External Images 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What happens if you use `<Image src=\"https://unsplash.com/photo.jpg\">` without configuring the domain?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The image loads normally",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Next.js throws an error during development and the image won't be optimized",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The image is automatically resized",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The page won't load",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "For security and performance, Next.js requires you to explicitly allow external image sources in `next.config.js`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Responsive Sizes & fill 🔄",
+            "content": "# Flexible Images\n\nIf you don't know the dimensions (e.g., for a full‑width image), use the `fill` prop.\n\n```jsx\n<div style={{ position: 'relative', width: '100%', height: '400px' }}>\n  <Image src=\"/banner.jpg\" alt=\"\" fill className=\"object-cover\" />\n</div>\n```\n\n`fill` makes the image fill its parent container. You must set the parent to `position: relative`.\n\nFor responsive images with `srcset`, you can use `sizes` prop."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "tip",
+            "title": "Performance Gold 🏆",
+            "content": "Images are served in modern WebP format automatically when supported. They are also cached on Vercel's edge network. Always use `next/image` unless you really need a simple `<img>`."
+        }
+    ]
+}

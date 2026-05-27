@@ -1,0 +1,100 @@
+{
+    "id": "l6",
+    "chapterId": "ch_8",
+    "title": "Full‑Stack Blog: Complete CRUD",
+    "description": "Put everything together – a fully working blog admin with create, read, update, and delete.",
+    "xpReward": 40,
+    "estimatedMinutes": 15,
+    "section": "Capstone",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "The Big Picture 🖼️",
+            "content": "# Assembling All Pieces\n\nWe'll build a mini blog admin:\n\n* `/posts` – list all posts with edit/delete links.\n* `/posts/new` – form to create a post.\n* `/posts/[id]/edit` – form to edit a post.\n* Server Actions for create, update, delete.\n* Prisma for database.\n* Zod for validation.\n\nThis is a complete full‑stack feature in a single Next.js project."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Posts List Page (app/posts/page.js)",
+            "content": "Server Component fetching all posts, showing links.",
+            "codeSnippet": "// app/posts/page.js\nimport Link from 'next/link';\nimport { prisma } from '@/lib/prisma';\n\nexport default async function PostsPage() {\n  const posts = await prisma.post.findMany({ orderBy: { createdAt: 'desc' } });\n  return (\n    <div>\n      <h1>Posts</h1>\n      <Link href=\"/posts/new\">New Post</Link>\n      <ul>\n        {posts.map(post => (\n          <li key={post.id}>\n            <h2>{post.title}</h2>\n            <p>{post.content.slice(0, 100)}...</p>\n            <Link href={`/posts/${post.id}/edit`}>Edit</Link>\n            <DeleteButton postId={post.id} />\n          </li>\n        ))}\n      </ul>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Delete Button Client Component (components/DeleteButton.js)",
+            "content": "Uses the delete action with confirmation.",
+            "codeSnippet": "// components/DeleteButton.js\n'use client';\nimport { deletePost } from '@/app/actions';\n\nexport default function DeleteButton({ postId }) {\n  return (\n    <button onClick={() => {\n      if (confirm('Delete this post?')) deletePost(postId);\n    }}>\n      Delete\n    </button>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_4",
+            "type": "code",
+            "title": "New Post Page (app/posts/new/page.js)",
+            "content": "Simply renders the form component.",
+            "codeSnippet": "// app/posts/new/page.js\nimport NewPostForm from '@/components/NewPostForm';\n\nexport default function NewPostPage() {\n  return (\n    <div>\n      <h1>New Post</h1>\n      <NewPostForm />\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_5",
+            "type": "code",
+            "title": "Edit Post Page (app/posts/[id]/edit/page.js)",
+            "content": "Fetch post and pass to edit form.",
+            "codeSnippet": "// app/posts/[id]/edit/page.js\nimport { prisma } from '@/lib/prisma';\nimport EditPostForm from '@/components/EditPostForm';\nimport { notFound } from 'next/navigation';\n\nexport default async function EditPostPage({ params }) {\n  const post = await prisma.post.findUnique({ where: { id: Number(params.id) } });\n  if (!post) notFound();\n\n  return (\n    <div>\n      <h1>Edit Post</h1>\n      <EditPostForm post={post} />\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_6",
+            "type": "quiz",
+            "title": "CRUD Flow 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "After creating a post via Server Action, what updates the list page?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A manual browser refresh",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "`revalidatePath('/posts')` inside the action",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The page automatically polls for changes",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A WebSocket connection",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Calling `revalidatePath` purges the cache for that route, so when the client navigates or re‑renders, it gets fresh data.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_7",
+            "type": "text",
+            "title": "The Complete Architecture 🏗️",
+            "content": "# What We Built\n\n- **Database**: SQLite via Prisma, fully typed.\n- **Backend Logic**: Server Actions (create, update, delete).\n- **Validation**: Zod with field‑level errors.\n- **UI**: Server Components for data, Client Components for forms.\n- **Caching**: `revalidatePath` for fresh data.\n\nThis is the modern Next.js full‑stack paradigm – no REST API required for mutations, just Server Actions."
+        },
+        {
+            "id": "s_l6_8",
+            "type": "tip",
+            "title": "Next Steps 🚀",
+            "content": "You can extend this pattern with user authentication (Chapter 7), file uploads, rich text editors, or switch to PostgreSQL for production. The same principles apply."
+        }
+    ]
+}

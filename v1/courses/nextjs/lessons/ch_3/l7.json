@@ -1,0 +1,64 @@
+{
+    "id": "l7",
+    "chapterId": "ch_3",
+    "title": "Choosing the Right Strategy",
+    "description": "A decision matrix to pick the perfect data fetching method for every scenario.",
+    "xpReward": 20,
+    "estimatedMinutes": 6,
+    "section": "Best Practices",
+    "slides": [
+        {
+            "id": "s_l7_1",
+            "type": "text",
+            "title": "The Decision Tree 🌳",
+            "content": "# How to Choose?\n\n1. **Does the page need to display data that is the same for every user?**\n   - Yes, and rarely changes → **SSG**\n   - Yes, but changes sometimes → **ISR (SSG + revalidate)**\n2. **Does the page need data that is user‑specific or changes on every request?**\n   - Yes → **SSR (getServerSideProps)**\n3. **Is the data not needed for initial render or SEO?**\n   - Yes → **Client‑side fetching** (useEffect, SWR)\n4. **Combination?** → Pre‑render the shell with SSG, fill in dynamic parts client‑side."
+        },
+        {
+            "id": "s_l7_2",
+            "type": "quiz",
+            "title": "Strategy Match 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_1",
+                "type": "multiple_choice",
+                "question": "A product page that needs to show real‑time inventory for a logged‑in user. Which approach?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "SSG + client‑side fetch for inventory",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Pure SSG",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only SSR",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "ISR with revalidate 1 second",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Pre‑render the static product info with SSG, then fetch the inventory on the client to show real‑time user‑specific data.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l7_3",
+            "type": "text",
+            "title": "Summary Table 📊",
+            "content": "# Data Fetching Methods at a Glance\n\n| Method | When It Runs | Freshness | SEO | Use Case |\n|--------|--------------|-----------|-----|----------|\n| `getStaticProps` | Build time | Stale until rebuild | ✅ | Blog, docs |\n| `getServerSideProps` | Every request | Always fresh | ✅ | Dashboard, user data |\n| ISR (`revalidate`) | Background on request | Stale up to X sec | ✅ | Product listings |\n| Client‑side (`useEffect`) | Browser | Depends on fetch | ❌ | User interactions |\n| SWR / React Query | Browser | Cached + fresh | ❌ | Dynamic components |"
+        },
+        {
+            "id": "s_l7_4",
+            "type": "tip",
+            "title": "Golden Rule ✨",
+            "content": "If you can pre‑render a page, **do it**. Use `getStaticProps` or `getStaticProps` + `revalidate`. Fall back to `getServerSideProps` only when necessary. Then supplement with client‑side fetching for truly dynamic bits. This gives the best performance, SEO, and cost balance."
+        }
+    ]
+}

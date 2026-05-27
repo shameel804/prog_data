@@ -1,0 +1,120 @@
+{
+    "id": "l2",
+    "chapterId": "ch_6",
+    "title": "Per-Page Layouts & Nested Layouts",
+    "description": "Assign different layouts to different pages and nest them for complex UIs.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Layouts",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "One Layout Doesn't Fit All 🎭",
+            "content": "# Different Pages, Different Needs\n\nThe dashboard might need a sidebar; the marketing page might need a hero banner.\n\nA single layout in `_app.js` is too rigid.\n\n**Solution: Per‑Page Layouts.**\n\nYou can define a `getLayout` function on each page, and `_app.js` uses it to wrap that page.\n\nThis keeps the layout logic close to the page and allows unlimited customization."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "The getLayout Pattern (pages/_app.js)",
+            "content": "Check if the page has a getLayout method; if so, use it. Otherwise, fall back to a default layout or just the page.",
+            "codeSnippet": "// pages/_app.js\nimport DefaultLayout from '../components/DefaultLayout';\n\nexport default function MyApp({ Component, pageProps }) {\n  const getLayout = Component.getLayout || ((page) => page);\n\n  return getLayout(<Component {...pageProps} />);\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "getLayout 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the benefit of defining a `getLayout` function on a page?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It replaces `_app.js` completely",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It allows each page to specify its own layout component without changing `_app.js`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It forces all pages to use the same layout",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It only works with the App Router",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The getLayout pattern decouples layout logic from the App component, giving each page full control over its surrounding UI.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Page with a Custom Layout (pages/dashboard.js)",
+            "content": "Export a `getLayout` function along with the component.",
+            "codeSnippet": "// pages/dashboard.js\nimport DashboardLayout from '../components/DashboardLayout';\n\nexport default function Dashboard({ stats }) {\n  return <div>Welcome, your stats: {stats}</div>;\n}\n\nDashboard.getLayout = function getLayout(page) {\n  return <DashboardLayout>{page}</DashboardLayout>;\n};",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Nested Layouts – The App Router Way 📁",
+            "content": "# In the App Router (next/app)\n\nNext.js 13+ introduced the `app` directory with a more powerful layout system:\n\n* `layout.js` files automatically wrap child routes.\n* You can nest layouts infinitely.\n* Layouts preserve state across navigations.\n\n```\napp/\n  layout.js          // Root layout (required)\n  dashboard/\n    layout.js        // Dashboard-specific layout\n    page.js\n```\n\nThis approach is now recommended for new projects, but the Pages Router `getLayout` still works great for existing codebases."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "code",
+            "title": "App Router Example (app/layout.js)",
+            "content": "A root layout with a global nav and a `{children}` slot for page content.",
+            "codeSnippet": "// app/layout.js\nexport default function RootLayout({ children }) {\n  return (\n    <html lang=\"en\">\n      <body>\n        <nav>Global Nav</nav>\n        {children}\n      </body>\n    </html>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "Layout Choices 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "In the App Router, what is the primary advantage of nested layouts?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They reduce the number of files",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Child layouts preserve their state when navigating between sibling routes",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They automatically style pages",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They eliminate the need for JavaScript",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "In the App Router, layouts are persistent. Navigating from `/dashboard/settings` to `/dashboard/analytics` keeps the dashboard layout mounted, preserving state like scroll position or form inputs.",
+                "xpReward": 10
+            }
+        }
+    ]
+}
