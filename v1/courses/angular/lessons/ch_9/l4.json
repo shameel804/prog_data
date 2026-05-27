@@ -1,0 +1,113 @@
+{
+    "id": "l4",
+    "chapterId": "ch_9",
+    "title": "Standalone Components & The Future 🚀",
+    "description": "Discover how standalone components, directives, and pipes eliminate the need for NgModules.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Modern Angular",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Angular 14+ Revolution 🚀",
+            "content": "# Standalone Components\n\nIntroduced in Angular 14, **standalone components** are components, directives, or pipes that are *not* declared in any NgModule.\n\nThey manage their own dependencies via `standalone: true` and the `imports` array inside the component decorator.\n\nThis simplifies Angular architecture – no more module files just to declare components. It’s the future of Angular development."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Creating a Standalone Component",
+            "content": "Set `standalone: true` and import needed modules directly in the component:",
+            "codeSnippet": "import { Component } from '@angular/core';\nimport { CommonModule } from '@angular/common';\nimport { FormsModule } from '@angular/forms';\n\n@Component({\n  selector: 'app-standalone-hello',\n  templateUrl: './hello.component.html',\n  standalone: true,\n  imports: [CommonModule, FormsModule]\n})\nexport class HelloComponent {\n  name = 'Angular';\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Standalone Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What must you set to make a component standalone?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "`module: false`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "`standalone: true`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "`ngModule: null`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "`independent: true`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `standalone: true` property marks the component as standalone.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Bootstrapping without AppModule 🥾",
+            "content": "You can now bootstrap an Angular app without any NgModule! Use `bootstrapApplication()` in `main.ts`:\n\n```typescript\nimport { bootstrapApplication } from '@angular/platform-browser';\nimport { AppComponent } from './app/app.component';\n\nbootstrapApplication(AppComponent);\n```\n\n`AppComponent` can be standalone, and you import providers (like `provideRouter`) directly in the bootstrap call."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Standalone Component with Routes",
+            "content": "A standalone component can configure its own routes:",
+            "codeSnippet": "import { Routes } from '@angular/router';\n\nexport const routes: Routes = [\n  {\n    path: 'products',\n    loadComponent: () => import('./products/product-list.component').then(m => m.ProductListComponent)\n  }\n];\n\n// main.ts\nbootstrapApplication(AppComponent, {\n  providers: [provideRouter(routes)]\n});",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Mixing with NgModules 🔄",
+            "content": "Angular allows seamless interoperability:\n* You can import an NgModule into a standalone component’s `imports`.\n* You can import a standalone component into an NgModule’s `imports` array.\n\nThis means you can gradually migrate an existing module‑based app to standalone without a big bang rewrite."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Start New Projects with Standalone\n\nAngular CLI now generates components with `standalone: true` by default (since v17+). Embrace it for simpler, flatter project structures."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "quiz",
+            "title": "Standalone Future 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "Standalone components cannot be used together with NgModules.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "They can be freely mixed; standalone components can import modules and vice versa.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

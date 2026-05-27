@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_5",
+    "title": "Basic Routing Setup",
+    "description": "Create a simple app with Home, About, and Contact pages using routing.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Convert a single‑page app into a multi‑view app using Angular Router.\n\n**Requirements:**\n1. Generate three components: `HomeComponent`, `AboutComponent`, `ContactComponent`.\n2. Define routes for `home`, `about`, and `contact` paths.\n3. Set up `RouterModule.forRoot()` in `AppModule`.\n4. Add a navigation bar with `routerLink` to switch pages.\n5. Use `<router-outlet>` to display the active component.\n6. Add `routerLinkActive=\"active\"` to highlight the current link.\n7. Add a redirect from the empty path `''` to `/home`.\n8. Add a wildcard route that displays a `NotFoundComponent` (generate it) for any unknown path.",
+    "hints": [
+        "Remember to import `RouterModule` from `@angular/router`.",
+        "The `pathMatch: 'full'` is important for the empty path redirect.",
+        "The wildcard route should be the last in the array."
+    ],
+    "expectedOutput": "Navigating to `/home`, `/about`, `/contact` shows respective components. Visiting `/unknown` shows NotFoundComponent. Navigation bar highlights active link.",
+    "solutionCode": "// app.module.ts\nimport { NgModule } from '@angular/core';\nimport { BrowserModule } from '@angular/platform-browser';\nimport { RouterModule, Routes } from '@angular/router';\nimport { AppComponent } from './app.component';\nimport { HomeComponent } from './home/home.component';\nimport { AboutComponent } from './about/about.component';\nimport { ContactComponent } from './contact/contact.component';\nimport { NotFoundComponent } from './not-found/not-found.component';\n\nconst routes: Routes = [\n  { path: 'home', component: HomeComponent },\n  { path: 'about', component: AboutComponent },\n  { path: 'contact', component: ContactComponent },\n  { path: '', redirectTo: '/home', pathMatch: 'full' },\n  { path: '**', component: NotFoundComponent }\n];\n\n@NgModule({\n  declarations: [AppComponent, HomeComponent, AboutComponent, ContactComponent, NotFoundComponent],\n  imports: [BrowserModule, RouterModule.forRoot(routes)],\n  bootstrap: [AppComponent]\n})\nexport class AppModule {}\n\n// app.component.html\n<nav>\n  <a routerLink=\"/home\" routerLinkActive=\"active\" [routerLinkActiveOptions]=\"{ exact: true }\">Home</a>\n  <a routerLink=\"/about\" routerLinkActive=\"active\">About</a>\n  <a routerLink=\"/contact\" routerLinkActive=\"active\">Contact</a>\n</nav>\n<router-outlet></router-outlet>"
+}

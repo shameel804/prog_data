@@ -1,0 +1,120 @@
+{
+    "id": "l1",
+    "chapterId": "ch_9",
+    "title": "The Role of NgModule 🏛️",
+    "description": "Learn what NgModule does, its five configuration arrays, and how the app bootstraps.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Modules",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Why Modules? 🗂️",
+            "content": "# NgModule: Angular’s Organizer\n\nAn **NgModule** is a class decorated with `@NgModule` that tells Angular how to compile and run the code it contains. It groups related components, directives, pipes, and services.\n\n* It’s not a file‑folder module (like JavaScript modules) – it’s an Angular‑specific compilation context.\n* Every Angular app has at least one NgModule: the **root module** (`AppModule`).\n* Modules help you: organise your app into blocks of functionality, control visibility, and configure providers."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Module Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What is the minimum number of NgModules required in an Angular application?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Zero (standalone components)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "One",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Two",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Three",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "With standalone components, you can have zero NgModules. But traditionally, one root module is the minimum.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "The Five Configuration Arrays ⚙️",
+            "content": "## The Anatomy of @NgModule\n\n```typescript\n@NgModule({\n  declarations: [AppComponent, MyDirective, MyPipe],\n  imports:      [BrowserModule, FormsModule],\n  providers:    [LoggerService],\n  exports:      [MyDirective, MyPipe],\n  bootstrap:    [AppComponent]\n})\n```\n* **declarations** – Components, directives, pipes *belonging* to this module.\n* **imports** – Other modules whose exported declarations are needed here.\n* **providers** – Services provided at the module’s injector level.\n* **exports** – Subset of declarations that should be available to other modules.\n* **bootstrap** – Only in the root module; the root component that starts the app."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "quiz",
+            "title": "Arrays Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "In which NgModule array would you add a component to make it visible to other modules?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "declarations",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "imports",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "exports",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "providers",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "You must declare it in `declarations` AND export it in `exports` for other modules to use it.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "AppModule (Root Module) Example",
+            "content": "The root module boots the app:",
+            "codeSnippet": "import { NgModule } from '@angular/core';\nimport { BrowserModule } from '@angular/platform-browser';\nimport { AppComponent } from './app.component';\n\n@NgModule({\n  declarations: [AppComponent],\n  imports: [BrowserModule],\n  providers: [],\n  bootstrap: [AppComponent]\n})\nexport class AppModule {}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_6",
+            "type": "text",
+            "title": "How Angular Compiles Modules 🛠️",
+            "content": "When the Angular compiler processes a module, it:\n1. Looks at the `declarations` and creates a component factory for each component.\n2. Checks `imports` to find the directives and pipes used in templates.\n3. Registers `providers` in the module’s injector.\n4. For the root module, renders the bootstrap component into the `index.html`.\n\nEach component must be declared in exactly one module."
+        },
+        {
+            "id": "s_l1_7",
+            "type": "warning",
+            "title": "Double Declaration Error ⚠️",
+            "content": "If you declare the same component in two modules, Angular will throw an error. A component can only belong to one NgModule."
+        },
+        {
+            "id": "s_l1_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Think of Modules as Compilation Units\n\nThey don’t affect runtime performance directly (except via lazy loading). Their main job is to tell the compiler what templates can use."
+        }
+    ]
+}

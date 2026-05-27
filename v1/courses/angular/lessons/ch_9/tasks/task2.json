@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_9",
+    "title": "Build SharedModule & CoreModule",
+    "description": "Extract common directives/pipes into SharedModule and global services into CoreModule.",
+    "estimatedMinutes": 18,
+    "problemStatement": "Refactor the app to use Shared and Core modules.\n\n**Given:** A `HighlightDirective` and `TruncatePipe` are used in multiple feature modules. Also, `AuthService` and `LoggerService` are provided in root but should be in CoreModule.\n\n**Requirements:**\n1. Create `SharedModule`:\n   - Declare and export `HighlightDirective` and `TruncatePipe`.\n   - Import and re‑export `CommonModule` and `FormsModule`.\n2. Create `CoreModule`:\n   - Provide `AuthService` and `LoggerService` (remove `providedIn: 'root'` from them).\n   - Add a constructor guard to prevent multiple imports.\n   - Import `CoreModule` **only** in `AppModule`.\n3. Remove the duplicate imports of `CommonModule`, `FormsModule`, `HighlightDirective`, `TruncatePipe` from feature modules. Just import `SharedModule` instead.\n4. Verify that services are still singletons.",
+    "hints": [
+        "Remove `providedIn: 'root'` from services if they are provided in CoreModule.",
+        "The constructor guard: `constructor(@Optional() @SkipSelf() parentModule: CoreModule) { if (parentModule) throw ... }`",
+        "Use `ng generate module shared` and `ng generate module core`."
+    ],
+    "expectedOutput": "Modules are cleaner, services are singletons, and no duplicate imports.",
+    "solutionCode": "// shared.module.ts\n@NgModule({\n  declarations: [HighlightDirective, TruncatePipe],\n  imports: [CommonModule, FormsModule],\n  exports: [CommonModule, FormsModule, HighlightDirective, TruncatePipe]\n})\nexport class SharedModule {}\n\n// core.module.ts\n@NgModule({\n  imports: [SharedModule],  // optional, if core components use shared\n  exports: [],\n  providers: [AuthService, LoggerService]\n})\nexport class CoreModule {\n  constructor(@Optional() @SkipSelf() parentModule: CoreModule) {\n    if (parentModule) {\n      throw new Error('CoreModule is already loaded.');\n    }\n  }\n}\n\n// app.module.ts\n@NgModule({\n  imports: [\n    BrowserModule,\n    CoreModule,\n    // feature modules that import SharedModule\n  ],\n  ...\n})\nexport class AppModule {}"
+}

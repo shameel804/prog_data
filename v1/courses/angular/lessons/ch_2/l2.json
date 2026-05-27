@@ -1,0 +1,98 @@
+{
+    "id": "l2",
+    "chapterId": "ch_2",
+    "title": "Template Syntax & Interpolation 📝",
+    "description": "Display dynamic data using double curly braces and understand template expressions.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Templates",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Template – Where Data Meets HTML 🤝",
+            "content": "# Angular Templates\n\nAn Angular template is HTML with superpowers. It can:\n\n* Show component properties dynamically.\n* Bind to element properties (e.g., image `src`).\n* Listen to user events (clicks, inputs).\n* Render lists and conditionally show/hide elements.\n\nUnder the hood, Angular compiles templates into JavaScript that manipulates the DOM efficiently."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Interpolation: {{ expression }}",
+            "content": "Interpolation pulls a value from the component into the view. Just wrap a component property in double curly braces.",
+            "codeSnippet": "@Component({\n  selector: 'app-greeting',\n  template: '<h1>Welcome, {{ userName }}!</h1>'\n})\nexport class GreetingComponent {\n  userName = 'Alex';\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Interpolation is Not Just Properties 🔢",
+            "content": "You can put any valid TypeScript expression inside `{{ }}`:\n\n* Arithmetic: `{{ 2 + 2 }}` → 4\n* Method calls: `{{ getName() }}` (though better avoid due to performance)\n* Ternary operators: `{{ isLoggedIn ? 'Welcome back' : 'Please sign in' }}`\n* Property access: `{{ user.name }}\n\n⚠️ **Important**: The expression must not have side effects (no assignments, no `new`). It must be **idempotent** – running it multiple times produces the same result."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Interpolation Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "fill_blank",
+                "question": "To display a component property `count`, you write {{ _____ }}.",
+                "options": [
+                    "count",
+                    "{{ count }}",
+                    "this.count",
+                    "expression"
+                ],
+                "correctAnswer": "count",
+                "explanation": "You simply put the property name inside the double curly braces.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_5",
+            "type": "warning",
+            "title": "Avoid These in Interpolation ⚠️",
+            "content": "## Forbidden Expressions\n\n```html\n<!-- ❌ Assignment -->\n{{ a = b + 1 }}\n\n<!-- ❌ Increment / Decrement -->\n{{ counter++ }}\n\n<!-- ❌ Creating objects -->\n{{ new Date() }}\n```\n\nThese can cause unpredictable behavior or `ExpressionChangedAfterItHasBeenCheckedError`.\n\nStick to simple reads and simple expressions."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "code",
+            "title": "Displaying Complex Data",
+            "content": "Interpolation works with objects and arrays too:",
+            "codeSnippet": "// Component class\nuser = { name: 'Alex', age: 30 };\nhobbies = ['reading', 'coding'];\n\n// Template\n<p>{{ user.name }} is {{ user.age }} years old.</p>\n<p>Hobbies: {{ hobbies[0] }} and {{ hobbies[1] }}</p>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "Expression Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "true_false",
+                "question": "You can safely write `{{ count = count + 1 }}` in an Angular template.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Assignments are side‑effects and are forbidden in interpolation expressions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use a Getter for Read‑Only Computed Values\n\nInstead of calling a method in interpolation (which runs on every change detection), use a TypeScript getter:\n\n```typescript\nget fullName(): string {\n  return `${this.firstName} ${this.lastName}`;\n}\n```\n\nThen `{{ fullName }}` will be just as efficient as a simple property."
+        }
+    ]
+}

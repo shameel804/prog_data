@@ -1,0 +1,107 @@
+{
+    "id": "l3",
+    "chapterId": "ch_10",
+    "title": "Building a Simple Reactive Store 🏗️",
+    "description": "Create a service that encapsulates state with a BehaviorSubject and exposes actions.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Architecture",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The Store Pattern – Step by Step 📝",
+            "content": "# A Service as a Store\n\nWe'll build a reactive store without any external library. The pattern:\n\n1. Define a **state interface** (typed).\n2. Create a private **BehaviorSubject** with initial state.\n3. Expose a public **Observable** (`state$`).\n4. Provide **action methods** that update the state immutably and call `next()`.\n\nComponents inject the store, subscribe to `state$`, and call action methods."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Complete CartStore Example",
+            "content": "A shopping cart store holding a list of items:",
+            "codeSnippet": "interface CartState {\n  items: string[];\n}\n\n@Injectable({ providedIn: 'root' })\nexport class CartStore {\n  private state = new BehaviorSubject<CartState>({ items: [] });\n  state$ = this.state.asObservable();\n\n  addItem(item: string) {\n    const current = this.state.value.items;\n    this.state.next({ items: [...current, item] });\n  }\n\n  removeItem(item: string) {\n    const current = this.state.value.items;\n    this.state.next({ items: current.filter(i => i !== item) });\n  }\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Store Setup 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of the `state$` Observable in a store service?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To allow components to modify the state directly.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To expose state changes reactively to components that subscribe.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To replace HTTP calls.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To serve as a template variable.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`state$` is an Observable stream of state that components can subscribe to using `async` pipe.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Component Usage",
+            "content": "Inject the store and use the `async` pipe to display state:",
+            "codeSnippet": "@Component({\n  selector: 'app-cart',\n  template: `\n    <ul>\n      <li *ngFor=\"let item of store.state$ | async as state\">\n        {{ item }}\n      </li>\n    </ul>\n  `\n})\nexport class CartComponent {\n  constructor(public store: CartStore) {}\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Selectors – Extracting a Slice of State 🔍",
+            "content": "You don’t always need the whole state. You can expose **derived observables** (selectors) from the store:\n\n```typescript\nitemsCount$ = this.state$.pipe(\n  map(state => state.items.length),\n  distinctUntilChanged()\n);\n```\n\nThis way a badge component can subscribe only to the count, not the whole cart."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `distinctUntilChanged()` on Selectors\n\nThis prevents unnecessary re‑renders when the selected slice hasn’t actually changed (even if another part of the state did)."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "quiz",
+            "title": "Selectors 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "true_false",
+                "question": "A selector is a derived Observable that exposes only part of the state.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Selectors map the state stream to a specific slice, improving performance.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

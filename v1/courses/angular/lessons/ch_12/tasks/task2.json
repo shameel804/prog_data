@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_12",
+    "title": "Optimize a List with trackBy",
+    "description": "Add trackBy to a large list and observe performance improvement.",
+    "estimatedMinutes": 12,
+    "problemStatement": "Given a component that renders a large list of items (500+), implement `trackBy` to improve re‑render performance.\n\n**Requirements:**\n1. Create a component with an array of objects (e.g., `{ id: number, text: string }`).\n2. Render them with `*ngFor`.\n3. Add a button that re‑creates the entire array with new objects (simulating fresh data from API).\n4. Without `trackBy`, observe that all DOM elements are re‑created (you can check by adding a timestamp to each item).\n5. Add a `trackBy` function that returns `item.id`.\n6. Verify that items that didn't change keep their DOM state (timestamps remain the same).",
+    "hints": [
+        "Implement `trackById(index: number, item: any): number { return item.id; }`.",
+        "Use `(click)=\"refresh()\"` that does `this.items = this.items.map(i => ({...i, timestamp: Date.now()}))` but keep same ids.",
+        "Observe that without trackBy, timestamps all update; with trackBy, they stay the same for unchanged ids."
+    ],
+    "expectedOutput": "With trackBy, only the updated items' timestamps change; other DOM elements are reused.",
+    "solutionCode": "// component.ts\nexport class ListComponent {\n  items = Array.from({ length: 500 }, (_, i) => ({ id: i, text: `Item ${i}`, timestamp: Date.now() }));\n\n  trackById(index: number, item: any): number { return item.id; }\n\n  refresh() {\n    // Simulate new data with some items changed\n    this.items = this.items.map(item =>\n      item.id % 50 === 0\n        ? { ...item, text: `Updated ${item.id}`, timestamp: Date.now() }\n        : item\n    );\n  }\n}\n\n// template.html\n<button (click)=\"refresh()\">Refresh</button>\n<ul>\n  <li *ngFor=\"let item of items; trackBy: trackById\">\n    {{ item.text }} - {{ item.timestamp | date:'mediumTime' }}\n  </li>\n</ul>"
+}

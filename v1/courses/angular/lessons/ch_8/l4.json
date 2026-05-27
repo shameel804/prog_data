@@ -1,0 +1,107 @@
+{
+    "id": "l4",
+    "chapterId": "ch_8",
+    "title": "Error Handling & Retry Strategies 🛡️",
+    "description": "Catch HTTP errors gracefully and implement retry logic with RxJS operators.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "RxJS",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "When Things Go Wrong 💥",
+            "content": "# HTTP Errors Are Inevitable\n\nServers go down, networks fail, authentication expires. Angular’s `HttpClient` wraps errors in an `HttpErrorResponse` object.\n\nYou **must** handle errors – otherwise the Observable chain breaks and your component freezes.\n\nRxJS provides `catchError` to gracefully handle errors and return a fallback Observable or throw a user‑friendly error."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "catchError Operator",
+            "content": "Use inside `pipe()` to intercept errors:",
+            "codeSnippet": "import { catchError } from 'rxjs/operators';\nimport { throwError } from 'rxjs';\n\ngetUsers(): Observable<User[]> {\n  return this.http.get<User[]>('/api/users').pipe(\n    catchError(error => {\n      console.error('Error fetching users:', error);\n      return throwError(() => new Error('Something went wrong'));\n    })\n  );\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Error Handling Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which RxJS operator is used to catch and handle errors in an Observable stream?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "map",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "retry",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "catchError",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "switchMap",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`catchError` intercepts errors and allows you to return a new Observable or rethrow.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Returning a Fallback Value",
+            "content": "Instead of rethrowing, you can return a safe default:",
+            "codeSnippet": "getUsers(): Observable<User[]> {\n  return this.http.get<User[]>('/api/users').pipe(\n    catchError(() => of([]))  // return empty array on error\n  );\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Retry Strategies ♻️",
+            "content": "Transient network glitches can be solved by automatically retrying the request. RxJS provides:\n\n* `retry(count)` – retry N times on error.\n* `retryWhen(notifier)` – more sophisticated conditional retry.\n\n```typescript\nthis.http.get('/api/data').pipe(\n  retry(3)  // retry up to 3 times before failing\n);\n```\nBe careful: retrying POST requests can cause duplicate writes unless the operation is idempotent."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "warning",
+            "title": "Retry with Delay ⚠️",
+            "content": "Retrying instantly can hammer the server. Use `retryWhen` with a delay:\n\n```typescript\nimport { retryWhen, delay, take } from 'rxjs/operators';\n\nthis.http.get('/api/data').pipe(\n  retryWhen(errors => errors.pipe(\n    delay(1000),\n    take(3)\n  ))\n);\n```\nThis waits 1 second between retries, up to 3 attempts."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "Retry Logic 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "It's safe to retry a POST request with `retry(2)` because POST is idempotent.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "POST is not idempotent; retrying can create duplicate resources. Only retry safe methods like GET.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

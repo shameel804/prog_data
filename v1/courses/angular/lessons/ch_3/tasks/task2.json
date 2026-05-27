@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_3",
+    "title": "Product List with TrackBy",
+    "description": "Render a list of products with index, even/odd row styling, and performance‑optimised trackBy.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Build a product list component that displays an array of products efficiently.\n\n**Requirements:**\n1. Define a `Product` interface (or class) with `id`, `name`, and `price`.\n2. In the component, create an array of at least 5 products.\n3. Use `*ngFor` to render the list in a `<ul>`.\n4. Show the product index (1‑based) and name.\n5. Apply a light gray background to even rows using `[style.background]` and the `even` local variable.\n6. Implement a `trackBy` function that returns `product.id`.\n7. Add a button “Shuffle” that replaces the array with a new one (same items but different order) to verify trackBy is working (no DOM flicker).",
+    "hints": [
+        "Interface: `export interface Product { id: number; name: string; price: number; }`",
+        "trackBy method signature: `trackById(index: number, product: Product): number { return product.id; }`",
+        "Use `*ngFor=\"let product of products; let i = index; let isEven = even; trackBy: trackById\"`"
+    ],
+    "expectedOutput": "Products displayed with alternating row colors. Clicking Shuffle reorders items quickly (Angular reuses DOM elements).",
+    "solutionCode": "// product.interface.ts\nexport interface Product {\n  id: number;\n  name: string;\n  price: number;\n}\n\n// product-list.component.ts\nimport { Component } from '@angular/core';\nimport { Product } from './product.interface';\n\n@Component({\n  selector: 'app-product-list',\n  templateUrl: './product-list.component.html'\n})\nexport class ProductListComponent {\n  products: Product[] = [\n    { id: 1, name: 'Laptop', price: 999 },\n    { id: 2, name: 'Mouse', price: 29 },\n    { id: 3, name: 'Keyboard', price: 79 },\n    { id: 4, name: 'Monitor', price: 299 },\n    { id: 5, name: 'Webcam', price: 49 }\n  ];\n\n  trackById(index: number, product: Product): number {\n    return product.id;\n  }\n\n  shuffle() {\n    // Create a new array with the same items in random order\n    this.products = [...this.products].sort(() => Math.random() - 0.5);\n  }\n}\n\n// product-list.component.html\n<button (click)=\"shuffle()\">Shuffle</button>\n<ul>\n  <li *ngFor=\"let product of products; let i = index; let isEven = even; trackBy: trackById\"\n      [style.background]=\"isEven ? '#f0f0f0' : 'white'\">\n    {{ i + 1 }}. {{ product.name }} - ${{ product.price }}\n  </li>\n</ul>"
+}

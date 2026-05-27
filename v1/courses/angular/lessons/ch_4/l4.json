@@ -1,0 +1,123 @@
+{
+    "id": "l4",
+    "chapterId": "ch_4",
+    "title": "Hierarchical Dependency Injection 🏛️",
+    "description": "Understand the injector tree, component‑level providers, and how to scope service instances.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Dependency Injection",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Injector Tree 🌳",
+            "content": "# Hierarchical Injectors\n\nAngular doesn’t have just one injector – it has a tree of injectors, mirroring the component tree.\n\n* **Root injector** – provides services with `providedIn: 'root'` and those listed in `AppModule` providers.\n* **Component‑level injectors** – created for every component that has a `providers` array in its `@Component` decorator.\n* A component’s injector can resolve dependencies from its own providers, or fallback upward to parent injectors.\n\nThis allows **scoping** a service instance to a component and its children."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Component‑Level Providers",
+            "content": "Provide a fresh instance of a service just for a component (and its descendants) by adding `providers` in `@Component`.",
+            "codeSnippet": "@Component({\n  selector: 'app-special',\n  templateUrl: './special.component.html',\n  providers: [LoggerService]  // overrides root provider for this component subtree\n})\nexport class SpecialComponent {\n  constructor(private logger: LoggerService) {\n    // This gets a NEW instance, not the root singleton\n  }\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Injector Scope 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Where can you provide a service so that only a specific component and its children get a dedicated instance?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "In the `providedIn` of @Injectable",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "In the `providers` array of @Component",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "In `AppModule` providers",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "In the service's constructor",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Adding `providers: [MyService]` in a component’s decorator creates a new instance for that component’s injector.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "How Angular Resolves Dependencies 🔍",
+            "content": "When a component requests a service, Angular:\n\n1. Looks in the **current component’s** injector.\n2. If not found, goes up to the **parent component’s** injector.\n3. Continues upward until it reaches the **root injector**.\n4. If still not found, throws an error (unless the dependency is marked `@Optional()`).\n\nThis allows you to override a service for a particular branch of the component tree."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Using Different Implementations",
+            "content": "You can provide an abstract class at root, then override with a concrete implementation at component level.",
+            "codeSnippet": "// Abstract service\n@Injectable()\nabstract class Logger {\n  abstract log(msg: string): void;\n}\n\n// Console logger (root)\n@Injectable({ providedIn: 'root' })\nclass ConsoleLogger extends Logger {\n  log(msg: string) { console.log(msg); }\n}\n\n// In a component, provide a different logger\n@Component({\n  providers: [{ provide: Logger, useClass: ConsoleLogger }]  // or another class\n})\nclass SomeComponent {\n  constructor(private logger: Logger) {}\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Other Provider Tokens 💰",
+            "content": "You’re not limited to class‑based providers. Angular supports:\n\n* **useClass** – provide a class.\n* **useValue** – provide a static value (e.g., config object).\n* **useFactory** – provide a value created by a function.\n* **useExisting** – alias an existing token.\n\nAll can be scoped using the component’s providers array."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "Provider Types 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Which provider syntax would you use to supply a constant configuration object?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "useClass",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "useValue",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "useFactory",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "useExisting",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`useValue` directly provides a static value, perfect for configuration constants.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use Component Providers Sparingly\n\nOverusing component‑level providers can lead to multiple service instances and confusion. Stick to `providedIn: 'root'` for most cases. Use component providers only when you intentionally need a separate instance or wish to override a dependency for a specific subtree."
+        }
+    ]
+}

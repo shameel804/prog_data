@@ -1,0 +1,113 @@
+{
+    "id": "l1",
+    "chapterId": "ch_12",
+    "title": "Change Detection & OnPush Strategy ⚡",
+    "description": "Learn how Angular detects changes and how to dramatically improve performance with OnPush.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Performance",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "How Angular Knows When to Update the UI 🔍",
+            "content": "# Change Detection: The Engine Behind the View\n\nAngular's change detection automatically keeps the model and the view in sync. By default, any event (click, HTTP response, timer) triggers a **full check** of all components from root to leaf.\n\n* Angular maintains a tree of **change detectors**, one per component.\n* Each detector compares the current state with the previous state and updates the DOM if necessary.\n* This is fast for small apps, but can become a bottleneck in large applications."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Change Detection Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "true_false",
+                "question": "By default, Angular's change detection runs only when you manually call detectChanges().",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Change detection runs automatically in response to any asynchronous event (zone.js patches these).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "The Default Strategy (CheckAlways) 🔁",
+            "content": "When any event occurs, Angular walks the entire component tree from top to bottom and checks every component’s bindings. This is called **CheckAlways**.\n\nEven if a component’s inputs haven’t changed, its bindings are still re‑evaluated. For components deep in the tree, this wasted work adds up.\n\nAngular provides an alternative: the **OnPush** strategy, which skips checks unless specific conditions are met."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "code",
+            "title": "Enabling OnPush",
+            "content": "Set the change detection strategy in the component decorator:",
+            "codeSnippet": "import { ChangeDetectionStrategy, Component } from '@angular/core';\n\n@Component({\n  selector: 'app-todo',\n  templateUrl: './todo.component.html',\n  changeDetection: ChangeDetectionStrategy.OnPush\n})\nexport class TodoComponent {\n  @Input() items: string[] = [];\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_5",
+            "type": "quiz",
+            "title": "OnPush Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "With OnPush, when does Angular check a component?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Every time any event occurs.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Only when an @Input reference changes, an event inside the component occurs, or an async pipe emits.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Never – the component becomes static.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only when the component is first created.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "OnPush marks the component for check only when an input changes (by reference), an event originates from the component, or an Observable pipe emits.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_6",
+            "type": "text",
+            "title": "Immutability & OnPush Go Hand in Hand 🤝",
+            "content": "With OnPush, Angular checks @Input only if its **reference changes**. If you mutate an object or array (e.g., `this.items.push(newItem)`), the reference stays the same – no update.\n\n**Always provide a new reference**:\n```typescript\nthis.items = [...this.items, newItem];\n```\n\nThis pairs perfectly with the store pattern from Chapter 10."
+        },
+        {
+            "id": "s_l1_7",
+            "type": "code",
+            "title": "Manually Triggering Change Detection",
+            "content": "In rare cases (e.g., after a third‑party library updates), inject `ChangeDetectorRef` and call `markForCheck()` or `detectChanges()`.",
+            "codeSnippet": "constructor(private cdr: ChangeDetectorRef) {}\n\nupdateFromExternal() {\n  this.data = externalLib.getData();\n  this.cdr.markForCheck(); // marks path for check\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use OnPush Everywhere\n\nFor new components, make OnPush the default. It's a safe performance boost if you follow immutability. In the rare case you need CheckAlways, you can fall back."
+        }
+    ]
+}

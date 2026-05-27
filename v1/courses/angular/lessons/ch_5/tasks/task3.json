@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_5",
+    "title": "Lazy Load a Feature Module",
+    "description": "Extract the admin section into a separate module and lazy‑load it.",
+    "estimatedMinutes": 20,
+    "problemStatement": "Optimise the app by lazy loading an AdminModule.\n\n**Requirements:**\n1. Generate a module `AdminModule` with its own routing module.\n2. Create two components inside: `AdminDashboardComponent` and `AdminUsersComponent`.\n3. Set up child routes: `/admin` shows dashboard, `/admin/users` shows users.\n4. In `AdminModule`, import `RouterModule.forChild()` with these routes.\n5. In `AppModule`, replace any existing admin routes with a lazy‑loaded route:\n   ```typescript\n   { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) }\n   ```\n6. Remove `AdminModule` from `AppModule` imports (it must not be eagerly imported).\n7. Test that navigating to `/admin` loads the module on demand (watch network tab).\n8. Add a preloading strategy `PreloadAllModules` to `forRoot()` to preload the module after the app starts.",
+    "hints": [
+        "Use `ng generate module admin --route admin --module app.module` to automatically set up lazy loading (optional, but manual is fine).",
+        "The `AdminModule` should have its own `<router-outlet>` in its root component.",
+        "Don’t forget to export `RouterModule` from the admin routing module."
+    ],
+    "expectedOutput": "Initially the admin chunk is not loaded. Navigating to `/admin` fetches the chunk. After preloading is added, the chunk loads automatically after the app starts, making navigation instant.",
+    "solutionCode": "// admin.module.ts\nimport { NgModule } from '@angular/core';\nimport { CommonModule } from '@angular/common';\nimport { RouterModule, Routes } from '@angular/router';\nimport { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';\nimport { AdminUsersComponent } from './admin-users/admin-users.component';\nimport { AdminComponent } from './admin.component';\n\nconst routes: Routes = [\n  { path: '', component: AdminComponent, children: [\n    { path: '', component: AdminDashboardComponent },\n    { path: 'users', component: AdminUsersComponent }\n  ]}\n];\n\n@NgModule({\n  declarations: [AdminComponent, AdminDashboardComponent, AdminUsersComponent],\n  imports: [CommonModule, RouterModule.forChild(routes)]\n})\nexport class AdminModule {}\n\n// admin.component.html\n<h2>Admin Panel</h2>\n<nav>\n  <a routerLink=\"\">Dashboard</a>\n  <a routerLink=\"users\">Users</a>\n</nav>\n<router-outlet></router-outlet>\n\n// app-routing.module.ts (or inside AppModule imports)\nRouterModule.forRoot([\n  { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) },\n  ...\n], { preloadingStrategy: PreloadAllModules })"
+}

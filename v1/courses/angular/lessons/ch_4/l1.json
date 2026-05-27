@@ -1,0 +1,79 @@
+{
+    "id": "l1",
+    "chapterId": "ch_4",
+    "title": "Why Services? 🤔",
+    "description": "Discover the role of services in Angular and how they help you write cleaner, reusable code.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Services",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The Problem with Duplicate Logic 🔁",
+            "content": "# When Components Do Too Much\n\nImagine you have three components that need to fetch user data from a server. Without services, you’d copy the same HTTP logic three times.\n\n* That’s a maintenance nightmare – change one place, forget the others.\n* Testing becomes harder; you can’t easily mock the data fetching.\n* Components become bloated, mixing UI logic with business logic.\n\n**Services** solve this by extracting reusable logic into a single, injectable class."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "What Is a Service? 💡",
+            "content": "## A class with a focused purpose.\n\nIn Angular, a service is just a TypeScript class decorated with `@Injectable()`.\n\n* It can hold data (state) that multiple components share.\n* It can contain methods that perform operations (e.g., logging, data fetching, calculations).\n* Services are typically **singletons** – one instance shared across the whole app (unless scoped otherwise).\n\nThink of services as the **worker bees** 🐝 that do the heavy lifting behind the scenes."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Service Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Why are services useful in Angular?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They make components display nicer HTML.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They allow sharing logic and data across multiple components.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They replace the need for templates.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They are used only for HTTP requests.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Services promote reusability and separation of concerns by holding shared logic.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "The Single‑Responsibility Principle 🧹",
+            "content": "Each component should focus on the view and user interactions. Everything else belongs in services.\n\n* **Component**: Handles the template, binds data, listens to events.\n* **Service**: Fetches data, validates forms, manages authentication state, logs errors.\n\nThis separation makes your code:\n* **Easier to test** – you can mock services.\n* **Easier to refactor** – change a service without touching components.\n* **Reusable** – use the same service in many places."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "Analogy: Restaurant 🍽️",
+            "content": "Component = Waiter (takes orders, serves food).\nService = Kitchen (prepares the food).\n\nIf the waiter also cooked, it would be chaos. The waiter simply asks the kitchen for what it needs.",
+            "codeSnippet": "// Bad: component doing everything\n@Component({...})\nclass OrderComponent {\n  orders = [];\n  addOrder(item) {\n    // HTTP call here – messy!\n    this.http.post('/api/orders', item).subscribe(...);\n  }\n}\n\n// Good: delegate to a service\nconstructor(private orderService: OrderService) {}\n\naddOrder(item) {\n  this.orderService.placeOrder(item);\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## If you have logic that doesn’t directly belong to a component, put it in a service.\n\nEven a simple utility like a date formatter can be a service – it keeps components pure and testable."
+        }
+    ]
+}

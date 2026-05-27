@@ -1,0 +1,16 @@
+{
+    "id": "task3",
+    "chapterId": "ch_10",
+    "title": "Auth Store with Optimistic Login",
+    "description": "Build an authentication store and implement optimistic UI updates.",
+    "estimatedMinutes": 20,
+    "problemStatement": "Create an `AuthStore` that holds the current user state (logged in or not, user info).\n\n**Requirements:**\n1. Define state: `{ user: User | null, loading: boolean }`.\n2. `AuthStore`:\n   - `login(username, password)`: Immediately set loading to true and optimistically set user (with temporary data). Then simulate an HTTP call (use `of(true).pipe(delay(1000))`). On success, update user with real data. On failure, roll back to logged out.\n   - `logout()`: clear user.\n   - `user$` and `isLoggedIn$` selectors.\n3. `LoginComponent`: form that calls `store.login()`. Show loading spinner while loading.\n4. `NavbarComponent`: shows “Welcome, {name}” or “Login” link based on `isLoggedIn$`.\n5. Implement proper rollback if login fails.",
+    "hints": [
+        "Use a simple `BehaviorSubject` for state: `{ user: null, loading: false }`.",
+        "Optimistic: before HTTP, set `{ user: { name: username }, loading: true }`.",
+        "In subscription, on error: set state back to `{ user: null, loading: false }`.",
+        "Simulate error with `throwError` for testing."
+    ],
+    "expectedOutput": "Logging in shows spinner and immediately updates navbar. On failure, user is logged out and error shown.",
+    "solutionCode": "// auth.store.ts\ninterface AuthState { user: { name: string } | null; loading: boolean; }\n\n@Injectable({ providedIn: 'root' })\nexport class AuthStore {\n  private state = new BehaviorSubject<AuthState>({ user: null, loading: false });\n  user$ = this.state.pipe(map(s => s.user), distinctUntilChanged());\n  isLoggedIn$ = this.user$.pipe(map(user => !!user));\n  loading$ = this.state.pipe(map(s => s.loading));\n\n  login(username: string, password: string) {\n    // Optimistic update\n    this.state.next({ user: { name: username }, loading: true });\n\n    of(true).pipe(delay(1000)).subscribe({\n      next: () => {\n        // Success – update with real data (simulated)\n        this.state.next({ user: { name: username }, loading: false });\n      },\n      error: () => {\n        // Failure – rollback\n        this.state.next({ user: null, loading: false });\n      }\n    });\n  }\n\n  logout() {\n    this.state.next({ user: null, loading: false });\n  }\n}"
+}

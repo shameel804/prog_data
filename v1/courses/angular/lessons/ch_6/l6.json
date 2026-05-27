@@ -1,0 +1,107 @@
+{
+    "id": "l6",
+    "chapterId": "ch_6",
+    "title": "Dynamic Forms & FormArray 🧩",
+    "description": "Build forms that grow and shrink with FormArray.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "When Forms Need to Be Dynamic 🌊",
+            "content": "# FormArray\n\nImagine a form where users can add multiple phone numbers or addresses. You can’t know the number of fields ahead of time.\n\n`FormArray` is a collection of `AbstractControl` instances (FormControl, FormGroup, or another FormArray). You can push, remove, or insert controls programmatically.\n\nIt’s defined using `FormBuilder`:\n```typescript\nphones: this.fb.array([])\n```"
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Creating a FormArray",
+            "content": "Start with an empty array and add controls:",
+            "codeSnippet": "// In component\nprofileForm = this.fb.group({\n  name: [''],\n  phones: this.fb.array([])\n});\n\nget phones(): FormArray {\n  return this.profileForm.get('phones') as FormArray;\n}\n\naddPhone() {\n  this.phones.push(this.fb.control(''));\n}\n\nremovePhone(index: number) {\n  this.phones.removeAt(index);\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "FormArray Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Which method adds a new control at the end of a FormArray?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "add()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "push()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "insert()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "append()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`push(control)` adds a control to the end of the FormArray.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "code",
+            "title": "Template for FormArray",
+            "content": "Use `formArrayName` and `*ngFor` to render controls:",
+            "codeSnippet": "<div formArrayName=\"phones\">\n  <div *ngFor=\"let phone of phones.controls; let i = index\" [formGroupName]=\"i\">\n    <input formControlName=\"number\" placeholder=\"Phone number\">\n    <button (click)=\"removePhone(i)\">Remove</button>\n  </div>\n</div>\n<button (click)=\"addPhone()\">Add Phone</button>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_5",
+            "type": "text",
+            "title": "Complex FormArray – Group of Fields",
+            "content": "You can push entire FormGroups into a FormArray. For example, an address with street, city, zip:\n\n```typescript\naddAddress() {\n  this.addresses.push(this.fb.group({\n    street: [''],\n    city: [''],\n    zip: ['']\n  }));\n}\n```\n\nThen use `[formGroupName]=\"i\"` on each iteration."
+        },
+        {
+            "id": "s_l6_6",
+            "type": "quiz",
+            "title": "Dynamic Forms 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "true_false",
+                "question": "FormArray can only hold FormControl instances.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "It can hold any AbstractControl, including FormGroup and even nested FormArrays.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Track the Index for Clean Removal\n\nWhen removing items from a FormArray, always use the index and ensure your template’s `let i = index` matches the array order. If you use `splice`, the formArray must be manipulated similarly."
+        }
+    ]
+}

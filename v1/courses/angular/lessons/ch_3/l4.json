@@ -1,0 +1,107 @@
+{
+    "id": "l4",
+    "chapterId": "ch_3",
+    "title": "Switch Cases & Template Helpers 🔀",
+    "description": "Use *ngSwitch, ng-template, and ng-container for cleaner conditional views.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Structural Directives",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "When If/Else Gets Messy 🤯",
+            "content": "# *ngSwitch\n\nSometimes you have multiple conditions, and nesting `*ngIf`/`else` becomes hard to read. Angular provides `*ngSwitch` – like a JavaScript `switch` statement in the template.\n\nThree parts:\n* `[ngSwitch]` – an attribute binding on a container element, evaluating the expression.\n* `*ngSwitchCase` – a structural directive that displays the element when the value matches.\n* `*ngSwitchDefault` – displayed when no case matches."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Switch Example: Tab Navigation",
+            "content": "Switch content based on a tab variable:",
+            "codeSnippet": "// Component\ncurrentTab = 'info'; // 'info', 'settings', 'help'\n\n// Template\n<div [ngSwitch]=\"currentTab\">\n  <div *ngSwitchCase=\"'info'\">Information tab content</div>\n  <div *ngSwitchCase=\"'settings'\">Settings tab content</div>\n  <div *ngSwitchCase=\"'help'\">Help tab content</div>\n  <div *ngSwitchDefault>Select a tab</div>\n</div>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "ngSwitch Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which directive marks the container element for a switch block?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "*ngSwitch",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "[ngSwitch]",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "ng-switch",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "*ngSwitchCase",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`[ngSwitch]` is an attribute binding that sets the switch expression on the container.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "ng-template: The Hidden Blueprint 🕶️",
+            "content": "`<ng-template>` is a fundamental Angular element. It’s never rendered directly; instead, it’s a template that can be stamped into the DOM by structural directives.\n\n* `*ngIf`, `*ngFor`, `*ngSwitchCase` all use `<ng-template>` under the hood.\n* You can reference it with a template reference variable (`#myTemplate`).\n* Use it with `ngTemplateOutlet` to dynamically render a template.\n\nThink of it as a reusable piece of view that you can define once and use multiple times."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "ngTemplateOutlet – Render a Template",
+            "content": "Define a template and render it with context:",
+            "codeSnippet": "<ng-template #greeting let-name=\"name\">\n  Hello, {{ name }}!\n</ng-template>\n\n<ng-container *ngTemplateOutlet=\"greeting; context: { name: 'Alex' }\"></ng-container>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use ng-container to Avoid Extra Wrappers\n\n`<ng-container>` is a grouping element that doesn’t appear in the DOM. Combine it with `*ngIf`, `*ngFor`, or `ngTemplateOutlet` to apply directives without an extra `<div>`.\n\n```html\n<ng-container *ngIf=\"user\">\n  <h2>{{ user.name }}</h2>\n  <p>{{ user.email }}</p>\n</ng-container>\n```\nThe h2 and p are rendered without a wrapper div."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "Template Helpers 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "An `<ng-template>` element is always visible in the final DOM.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "It’s only used as a blueprint; it’s not rendered unless explicitly stamped by a directive.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,246 @@
+{
+    "id": "quiz_ch_10",
+    "chapterId": "ch_10",
+    "title": "Chapter 10 Quiz",
+    "description": "Test your knowledge of state management with RxJS, Subjects, reactive stores, and immutability.",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the primary advantage of using a BehaviorSubject for state management?",
+            "options": [
+                "It completes immediately.",
+                "It stores the latest value and emits it to new subscribers.",
+                "It can emit an infinite stream of random numbers.",
+                "It doesn't require unsubscribing."
+            ],
+            "correctAnswer": 1,
+            "explanation": "BehaviorSubject holds a current value and sends it to any new subscriber, making it ideal for state."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "You should expose a Subject directly from a service so components can call `.next()` on it.",
+            "correctAnswer": false,
+            "explanation": "Expose only the `.asObservable()` to prevent outside code from bypassing your state logic."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "Which RxJS class requires an initial value and always has a current value?",
+            "options": [
+                "Subject",
+                "ReplaySubject",
+                "BehaviorSubject",
+                "AsyncSubject"
+            ],
+            "correctAnswer": 2,
+            "explanation": "BehaviorSubject must be initialized with a value, and it stores the latest value."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "What is the purpose of the `asObservable()` method on a Subject?",
+            "options": [
+                "To convert the Subject into an array.",
+                "To create a new Subject.",
+                "To return a read‑only Observable, hiding the Subject's `next`/`error`/`complete`.",
+                "To subscribe to the Subject automatically."
+            ],
+            "correctAnswer": 2,
+            "explanation": "It casts the Subject to an Observable, preventing external code from calling `next()`."
+        },
+        {
+            "id": "q5",
+            "type": "fill_blank",
+            "question": "A store service should provide a public ______ that components can subscribe to.",
+            "options": [
+                "Subject",
+                "Observable",
+                "method",
+                "array"
+            ],
+            "correctAnswer": "Observable",
+            "explanation": "The public property is typically an Observable (e.g., `state$`)."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "What is a selector in the context of a reactive store?",
+            "options": [
+                "A CSS selector for the store component.",
+                "A derived Observable that exposes a specific slice of the state.",
+                "A method that deletes state.",
+                "A Subject that listens to HTTP requests."
+            ],
+            "correctAnswer": 1,
+            "explanation": "Selectors use `map()` to project a subset of the state, often with `distinctUntilChanged()`."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "Why is immutability important when updating state in a BehaviorSubject?",
+            "options": [
+                "Because JavaScript doesn't allow object mutation.",
+                "To ensure the reference changes, triggering change detection and subscribers.",
+                "It's required by the Angular compiler.",
+                "It improves the speed of `console.log`."
+            ],
+            "correctAnswer": 1,
+            "explanation": "If you mutate the existing object, the reference stays the same, and Angular may not detect the change."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "Which code snippet correctly updates an array immutably?",
+            "options": [
+                "state.items.push(newItem); state.next(state);",
+                "this.state.next({ items: [...state.items, newItem] });",
+                "state.items = [...state.items, newItem];",
+                "this.state.next(state.items.push(newItem));"
+            ],
+            "correctAnswer": 1,
+            "explanation": "You must create a new array (spread) and pass a new object to `next()`."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "What does `distinctUntilChanged()` do when used on an observable?",
+            "options": [
+                "It delays each emission by one second.",
+                "It prevents duplicate consecutive values from being emitted.",
+                "It changes the type of the value.",
+                "It merges with another observable."
+            ],
+            "correctAnswer": 1,
+            "explanation": "`distinctUntilChanged()` suppresses emissions that are equal to the previous emission."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "What is an optimistic update?",
+            "options": [
+                "An update that only happens when the user is happy.",
+                "Immediately updating the UI before the server confirms the change, with rollback on error.",
+                "An update that never fails.",
+                "A slow, pessimistic approach to UI changes."
+            ],
+            "correctAnswer": 1,
+            "explanation": "Optimistic updates improve perceived performance by assuming success, rolling back if needed."
+        },
+        {
+            "id": "q11",
+            "type": "true_false",
+            "question": "You should never roll back an optimistic update because users might notice.",
+            "correctAnswer": false,
+            "explanation": "You must roll back and inform the user if the server operation fails."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "Which operator would you use to map state to a specific property?",
+            "options": [
+                "filter",
+                "map",
+                "reduce",
+                "scan"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`map()` transforms each emitted value, perfect for deriving a slice of state."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "What is a key benefit of using a store service pattern (BehaviorSubject + actions) over raw mutable services?",
+            "options": [
+                "It eliminates the need for components.",
+                "It provides a single source of truth and predictable state changes.",
+                "It makes the code twice as long.",
+                "It removes the need for TypeScript."
+            ],
+            "correctAnswer": 1,
+            "explanation": "The store pattern centralizes state and ensures changes happen through well‑defined actions."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "If you want to replay the last 5 state transitions to new subscribers, which Subject would you use?",
+            "options": [
+                "Subject",
+                "BehaviorSubject",
+                "ReplaySubject(5)",
+                "AsyncSubject"
+            ],
+            "correctAnswer": 2,
+            "explanation": "`ReplaySubject` with buffer size replays the specified number of past values."
+        },
+        {
+            "id": "q15",
+            "type": "true_false",
+            "question": "A plain Subject will emit the current value to a new subscriber immediately upon subscription.",
+            "correctAnswer": false,
+            "explanation": "Only BehaviorSubject and ReplaySubject emit past values. Plain Subject only emits future values."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "How do you handle an error during an optimistic delete?",
+            "options": [
+                "Ignore it and hope the user doesn't notice.",
+                "Roll back the local state to the previous value and show an error message.",
+                "Retry the delete infinitely.",
+                "Reload the page."
+            ],
+            "correctAnswer": 1,
+            "explanation": "Restore the original state and communicate the failure to the user."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "What is the best way to consume a store's Observable in the template?",
+            "options": [
+                "By manually subscribing in the constructor.",
+                "By using the `async` pipe.",
+                "By calling `.getValue()` in the template.",
+                "By using `*ngFor` without any subscription."
+            ],
+            "correctAnswer": 1,
+            "explanation": "The `async` pipe subscribes and unsubscribes automatically, preventing memory leaks."
+        },
+        {
+            "id": "q18",
+            "type": "fill_blank",
+            "question": "To prevent a selector from emitting when the selected slice hasn't changed, add ________ operator.",
+            "options": [
+                "distinctUntilChanged",
+                "debounceTime",
+                "filter",
+                "skip"
+            ],
+            "correctAnswer": "distinctUntilChanged",
+            "explanation": "It suppresses identical consecutive values, improving performance."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "Why should actions (like `addItem`) be methods on the store service, not performed directly by components?",
+            "options": [
+                "Because components cannot call methods.",
+                "To ensure all state changes go through the service, maintaining a single source of truth.",
+                "To make the component heavier.",
+                "Because RxJS doesn't allow external mutations."
+            ],
+            "correctAnswer": 1,
+            "explanation": "Centralizing mutations in service methods ensures consistency and predictable updates."
+        },
+        {
+            "id": "q20",
+            "type": "true_false",
+            "question": "You must manually unsubscribe from an `async` pipe when the component is destroyed.",
+            "correctAnswer": false,
+            "explanation": "The `async` pipe automatically handles subscription and unsubscription."
+        }
+    ]
+}

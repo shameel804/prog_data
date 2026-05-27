@@ -1,0 +1,107 @@
+{
+    "id": "l2",
+    "chapterId": "ch_9",
+    "title": "Feature Modules & Organising Your App 📦",
+    "description": "Create feature modules to encapsulate functionality, manage routing, and use forRoot/forChild.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Architecture",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Beyond the Root Module 🌳",
+            "content": "# Feature Modules\n\nAs your app grows, `AppModule` becomes a huge file. **Feature modules** group related code into cohesive blocks (e.g., `UserModule`, `ProductModule`, `AdminModule`).\n\n* They are ordinary NgModules imported by the root module or lazy‑loaded.\n* They help with **separation of concerns** and enable team scalability.\n* Each feature module can have its own routing, services, and components."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Creating a Feature Module",
+            "content": "Generate with CLI: `ng generate module user`.\n\nThen add components and services manually or with the CLI:",
+            "codeSnippet": "// user.module.ts\n@NgModule({\n  declarations: [\n    UserListComponent,\n    UserDetailComponent\n  ],\n  imports: [\n    CommonModule,\n    RouterModule.forChild([\n      { path: '', component: UserListComponent },\n      { path: ':id', component: UserDetailComponent }\n    ])\n  ],\n  providers: [UserService]\n})\nexport class UserModule {}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Feature Modules 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "How do you add routes to a feature module?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Use RouterModule.forRoot() in the feature module.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Use RouterModule.forChild() and import it.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Define routes in AppModule and import them.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Feature modules cannot have routes.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Feature modules use `RouterModule.forChild(routes)` to avoid re‑initializing the router.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Encapsulation with Imports & Exports 🔐",
+            "content": "To keep a feature module self‑contained, import only what it needs (`CommonModule`, `FormsModule`, etc.) and export the components that should be used elsewhere.\n\n* A component declared inside a feature module is **private** by default.\n* To make it usable in `AppModule`, the feature module must export it.\n* Only exported declarations are available to modules that import this module."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Exporting a Component",
+            "content": "If `UserAvatarComponent` is needed outside UserModule:",
+            "codeSnippet": "@NgModule({\n  declarations: [UserListComponent, UserDetailComponent, UserAvatarComponent],\n  exports: [UserAvatarComponent]   // now public\n})\nexport class UserModule {}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "forRoot() / forChild() Pattern 🔁",
+            "content": "Some modules (like `RouterModule`) offer `forRoot()` and `forChild()` static methods.\n\n* `forRoot()` – configures the service and returns the module with providers. Call **once** in `AppModule`.\n* `forChild()` – returns the module without re‑providing services. Use in feature/lazy‑loaded modules.\n\nYou can implement this pattern yourself for modules that provide services. It ensures the service is a singleton even if the module is imported multiple times."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "forRoot/forChild 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "true_false",
+                "question": "If you call RouterModule.forRoot() in a lazy‑loaded module, the router service will be re‑initialized and break the app.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`forRoot()` must be called only once in the root module. Lazy modules use `forChild()`.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

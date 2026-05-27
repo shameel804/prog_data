@@ -1,0 +1,113 @@
+{
+    "id": "l4",
+    "chapterId": "ch_11",
+    "title": "Integration Tests & Advanced Scenarios 🚀",
+    "description": "Test async operations, mock HttpClient, handle routing, and test reactive forms.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Testing Async Code ⏳",
+            "content": "# Handling Observables and Promises\n\nMany Angular components rely on async data (HTTP calls, timers). Jasmine provides several ways to test async code:\n\n- **`done` callback** – call `done()` when the async operation finishes.\n- **`async`/`await`** – use `await` to wait for promises.\n- **`fakeAsync` and `tick`** – Angular’s helpers to simulate the passage of time without real waiting.\n\nFor Observables, subscribe and verify inside the subscription, or use Angular’s `firstValueFrom`."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "fakeAsync Example",
+            "content": "Test a component that uses `setTimeout`:",
+            "codeSnippet": "import { fakeAsync, tick } from '@angular/core/testing';\n\nit('should update after 1 second', fakeAsync(() => {\n  component.delayedUpdate();\n  tick(1000); // simulates 1 second\n  expect(component.message).toBe('Updated');\n}));",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Async Testing 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does `tick(1000)` do inside a `fakeAsync` test?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It actually waits 1 second.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It advances the virtual clock by 1000 milliseconds.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It cancels all pending timers.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It triggers an HTTP request.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`tick` simulates the passage of time, allowing `setTimeout`/`setInterval` callbacks to execute synchronously.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Mocking HttpClient with HttpTestingController 🎛️",
+            "content": "To test services that use `HttpClient` without real network calls, Angular provides `HttpClientTestingModule` and `HttpTestingController`.\n\n- Import `HttpClientTestingModule` in the test module.\n- Inject `HttpTestingController` to intercept HTTP requests.\n- After making a request, call `httpMock.expectOne(url).flush(mockData)` to return a mock response.\n- Finally, call `httpMock.verify()` to ensure no outstanding requests."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Testing a Service with HttpTestingController",
+            "content": "Test `getUsers` method:",
+            "codeSnippet": "import { TestBed } from '@angular/core/testing';\nimport { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';\n\ndescribe('UserService', () => {\n  let service: UserService;\n  let httpMock: HttpTestingController;\n\n  beforeEach(() => {\n    TestBed.configureTestingModule({\n      imports: [HttpClientTestingModule],\n      providers: [UserService]\n    });\n    service = TestBed.inject(UserService);\n    httpMock = TestBed.inject(HttpTestingController);\n  });\n\n  afterEach(() => { httpMock.verify(); });\n\n  it('should fetch users', () => {\n    const mockUsers = [{ id: 1, name: 'Test' }];\n    service.getUsers().subscribe(users => {\n      expect(users.length).toBe(1);\n      expect(users[0].name).toBe('Test');\n    });\n    const req = httpMock.expectOne('/api/users');\n    expect(req.request.method).toBe('GET');\n    req.flush(mockUsers);\n  });\n});",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Testing Routing 🧭",
+            "content": "To test navigation, import `RouterTestingModule` or use `provideRouter` with dummy routes. Then inject `Router` and `Location`:\n\n```typescript\nTestBed.configureTestingModule({\n  imports: [RouterTestingModule.withRoutes([...])]\n});\nrouter = TestBed.inject(Router);\nlocation = TestBed.inject(Location);\n\nrouter.navigate(['/test']).then(() => {\n  expect(location.path()).toBe('/test');\n});\n```\n\nThis lets you verify that navigation works correctly without actually loading route components (unless you want to)."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `fixture.whenStable()` for Async UI\n\nAfter triggering an async action (like clicking a button that calls a service), call `await fixture.whenStable()` to wait for all pending promises/observables to settle before assertions."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "quiz",
+            "title": "Integration Testing 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "`HttpClientTestingModule` allows you to simulate HTTP responses without making real network calls.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It provides `HttpTestingController` to intercept requests and return mock data.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

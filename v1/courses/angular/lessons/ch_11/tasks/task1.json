@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_11",
+    "title": "Unit Test a Pipe",
+    "description": "Write Jasmine tests for the custom truncate pipe from Chapter 7.",
+    "estimatedMinutes": 12,
+    "problemStatement": "The `TruncatePipe` from Chapter 7 transforms a string: if longer than `maxLength`, it truncates and adds '...'; otherwise returns the string unchanged. Write a test file that verifies its behaviour.\n\n**Requirements:**\n1. Import the pipe and instantiate it (no TestBed).\n2. Test three cases:\n   - String shorter than maxLength (return unchanged).\n   - String longer than maxLength (truncated + '...').\n   - Null/undefined input returns empty string.\n3. Test with custom maxLength parameter.\n4. Verify that the pipe name is 'truncate' (optional, but good practice).",
+    "hints": [
+        "No need for Angular testing utilities; just `new TruncatePipe()`.",
+        "Call `pipe.transform(value, maxLength)`.",
+        "Use `expect(...).toBe(...)`."
+    ],
+    "expectedOutput": "All tests pass.",
+    "solutionCode": "import { TruncatePipe } from './truncate.pipe';\n\ndescribe('TruncatePipe', () => {\n  const pipe = new TruncatePipe();\n\n  it('should return the same string if length <= maxLength', () => {\n    expect(pipe.transform('Hello', 10)).toBe('Hello');\n    expect(pipe.transform('Hello', 5)).toBe('Hello');\n  });\n\n  it('should truncate and append \"...\" if string is longer', () => {\n    expect(pipe.transform('Hello World', 5)).toBe('Hello...');\n    expect(pipe.transform('abcdef', 3)).toBe('abc...');\n  });\n\n  it('should return empty string for null/undefined', () => {\n    expect(pipe.transform(null)).toBe('');\n    expect(pipe.transform(undefined)).toBe('');\n  });\n\n  it('should use default maxLength of 20 if not provided', () => {\n    const longStr = 'a'.repeat(25);\n    expect(pipe.transform(longStr)).toBe('a'.repeat(20) + '...');\n  });\n});"
+}

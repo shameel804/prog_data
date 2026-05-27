@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_6",
+    "title": "Dynamic Phone Numbers with FormArray",
+    "description": "Build a form where users can add/remove multiple phone numbers.",
+    "estimatedMinutes": 20,
+    "problemStatement": "Create a reactive form with a `name` field and a dynamic list of phone numbers.\n\n**Requirements:**\n1. Use `FormBuilder` to create a form with `name` (required) and a `phoneNumbers` FormArray.\n2. Each phone number should be its own FormGroup containing `type` (select: Home/Work/Mobile) and `number` (required, pattern for digits only).\n3. Provide \"Add Phone\" button that pushes a new phone FormGroup.\n4. Provide \"Remove\" button on each row to remove that phone.\n5. Display the form’s value as JSON below the form for debugging.\n6. On submit, log the value.",
+    "hints": [
+        "FormArray of FormGroups: `phoneNumbers: this.fb.array([])`.",
+        "To add: `this.phoneNumbers.push(this.fb.group({ type: ['Home'], number: ['', [Validators.required, Validators.pattern('^[0-9]+$')]] }))`.",
+        "In template: `formArrayName=\"phoneNumbers\"` and `[formGroupName]=\"i\"`."
+    ],
+    "expectedOutput": "Rows added dynamically, validation per phone, removal works, JSON preview updates live.",
+    "solutionCode": "// phone-form.component.ts\n@Component({...})\nexport class PhoneFormComponent {\n  form = this.fb.group({\n    name: ['', Validators.required],\n    phoneNumbers: this.fb.array([])\n  });\n\n  get phoneNumbers(): FormArray {\n    return this.form.get('phoneNumbers') as FormArray;\n  }\n\n  constructor(private fb: FormBuilder) {}\n\n  addPhone() {\n    this.phoneNumbers.push(this.fb.group({\n      type: ['Home'],\n      number: ['', [Validators.required, Validators.pattern(/^\\d+$/)]]\n    }));\n  }\n\n  removePhone(index: number) {\n    this.phoneNumbers.removeAt(index);\n  }\n\n  onSubmit() {\n    console.log(this.form.value);\n  }\n}\n\n// phone-form.component.html\n<form [formGroup]=\"form\" (ngSubmit)=\"onSubmit()\">\n  <input formControlName=\"name\" placeholder=\"Your name\">\n\n  <div formArrayName=\"phoneNumbers\">\n    <div *ngFor=\"let phone of phoneNumbers.controls; let i = index\" [formGroupName]=\"i\">\n      <select formControlName=\"type\">\n        <option>Home</option>\n        <option>Work</option>\n        <option>Mobile</option>\n      </select>\n      <input formControlName=\"number\" placeholder=\"Number\">\n      <button type=\"button\" (click)=\"removePhone(i)\">Remove</button>\n      <div *ngIf=\"phone.get('number')?.invalid && phone.get('number')?.touched\">\n        Valid digits required.\n      </div>\n    </div>\n  </div>\n\n  <button type=\"button\" (click)=\"addPhone()\">Add Phone</button>\n  <button type=\"submit\" [disabled]=\"!form.valid\">Submit</button>\n</form>\n\n<pre>{{ form.value | json }}</pre>"
+}

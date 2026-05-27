@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_8",
+    "title": "Fetch and Display Users",
+    "description": "Use HttpClient to fetch and display a list of users.",
+    "estimatedMinutes": 12,
+    "problemStatement": "Create a service that fetches users from `https://jsonplaceholder.typicode.com/users` and display them in a component using the async pipe.\n\n**Requirements:**\n1. Import `HttpClientModule` in `AppModule`.\n2. Generate a service `UserService`.\n3. Add a method `getUsers()` that returns `Observable<User[]>` (define User interface).\n4. Inject the service into `UserListComponent` and assign the result to `users$`.\n5. In the template, use `*ngFor` with `users$ | async` to list user names and emails.\n6. Show a loading message while data is being fetched (use `*ngIf=\"users$ | async as users; else loading\"`).",
+    "hints": [
+        "User interface: `{ id: number, name: string, email: string }`.",
+        "Use `<ng-template #loading>Loading...</ng-template>`.",
+        "The async pipe manages subscription."
+    ],
+    "expectedOutput": "A list of users with names and emails, a loading message initially.",
+    "solutionCode": "// user.model.ts\nexport interface User {\n  id: number;\n  name: string;\n  email: string;\n}\n\n// user.service.ts\nimport { Injectable } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { Observable } from 'rxjs';\nimport { User } from './user.model';\n\n@Injectable({ providedIn: 'root' })\nexport class UserService {\n  constructor(private http: HttpClient) {}\n  getUsers(): Observable<User[]> {\n    return this.http.get<User[]>('https://jsonplaceholder.typicode.com/users');\n  }\n}\n\n// user-list.component.ts\n@Component({...})\nexport class UserListComponent {\n  users$ = this.userService.getUsers();\n  constructor(private userService: UserService) {}\n}\n\n// user-list.component.html\n<div *ngIf=\"users$ | async as users; else loading\">\n  <ul>\n    <li *ngFor=\"let user of users\">{{ user.name }} ({{ user.email }})</li>\n  </ul>\n</div>\n<ng-template #loading>Loading users...</ng-template>"
+}

@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_4",
+    "title": "Shared State with a Service",
+    "description": "Create a counter service to share state between two sibling components.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Build a simple counter that two components can both read and increment.\n\n**Requirements:**\n1. Generate a service `CounterService` with `providedIn: 'root'`.\n2. The service should have a private `count` property (initial 0) and methods:\n   - `increment()` (increase by 1)\n   - `decrement()` (decrease by 1)\n   - `getCount()` (return current count)\n3. Generate two components: `CounterDisplay` and `CounterControls`.\n4. `CounterDisplay` should inject the service and display `{{ counterService.getCount() }}`.\n5. `CounterControls` should have two buttons: \"+\" calls `increment()`, \"-\" calls `decrement()`.\n6. Place both components in `AppComponent` template. Verify that clicking buttons in `CounterControls` updates the display in `CounterDisplay`.",
+    "hints": [
+        "No `@Output` needed – the service acts as the shared state.",
+        "Since `getCount()` returns a primitive, the display won't auto‑update unless Angular's change detection runs. For this task, the button clicks will trigger change detection and the display will update. (Later you'd use an Observable for truly reactive updates.)",
+        "The service is a singleton, so both components share the same `count`."
+    ],
+    "expectedOutput": "The number updates live when you click + or -.",
+    "solutionCode": "// counter.service.ts\nimport { Injectable } from '@angular/core';\n\n@Injectable({ providedIn: 'root' })\nexport class CounterService {\n  private count = 0;\n\n  increment() { this.count++; }\n  decrement() { this.count--; }\n  getCount() { return this.count; }\n}\n\n// counter-display.component.ts\nimport { Component } from '@angular/core';\nimport { CounterService } from '../counter.service';\n\n@Component({\n  selector: 'app-counter-display',\n  template: `<h2>Count: {{ counterService.getCount() }}</h2>`\n})\nexport class CounterDisplayComponent {\n  constructor(public counterService: CounterService) {}\n}\n\n// counter-controls.component.ts\nimport { Component } from '@angular/core';\nimport { CounterService } from '../counter.service';\n\n@Component({\n  selector: 'app-counter-controls',\n  template: `\n    <button (click)=\"counterService.increment()\">+</button>\n    <button (click)=\"counterService.decrement()\">-</button>\n  `\n})\nexport class CounterControlsComponent {\n  constructor(public counterService: CounterService) {}\n}\n\n// app.component.html\n<app-counter-controls></app-counter-controls>\n<app-counter-display></app-counter-display>"
+}

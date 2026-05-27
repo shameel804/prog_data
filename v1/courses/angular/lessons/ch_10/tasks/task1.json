@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_10",
+    "title": "Simple Counter Store",
+    "description": "Create a counter service that uses BehaviorSubject and let two components interact with it.",
+    "estimatedMinutes": 12,
+    "problemStatement": "Build a `CounterStore` service that holds a number state. Provide actions `increment()`, `decrement()`, and `reset()`. Create two components: `CounterDisplay` (shows the count) and `CounterControls` (buttons).\n\n**Requirements:**\n1. `CounterStore` with private `BehaviorSubject<number>` initialized to 0.\n2. Public `count$` observable.\n3. `increment()`, `decrement()`, `reset()` methods.\n4. `CounterDisplay` subscribes via `async` pipe.\n5. `CounterControls` calls store actions.\n6. Both components share the same counter (singleton store).",
+    "hints": [
+        "Increment: `this.countSubject.next(this.countSubject.value + 1)`.",
+        "Use `public` constructor parameter for store in components to use in template.",
+        "No `@Input`/`@Output` needed."
+    ],
+    "expectedOutput": "Buttons in CounterControls update the number in CounterDisplay reactively.",
+    "solutionCode": "// counter.store.ts\nimport { Injectable } from '@angular/core';\nimport { BehaviorSubject } from 'rxjs';\n\n@Injectable({ providedIn: 'root' })\nexport class CounterStore {\n  private countSubject = new BehaviorSubject<number>(0);\n  count$ = this.countSubject.asObservable();\n\n  increment() { this.countSubject.next(this.countSubject.value + 1); }\n  decrement() { this.countSubject.next(this.countSubject.value - 1); }\n  reset() { this.countSubject.next(0); }\n}\n\n// counter-display.component.ts\n@Component({\n  selector: 'app-counter-display',\n  template: `<h1>Count: {{ store.count$ | async }}</h1>`\n})\nexport class CounterDisplayComponent {\n  constructor(public store: CounterStore) {}\n}\n\n// counter-controls.component.ts\n@Component({\n  selector: 'app-counter-controls',\n  template: `\n    <button (click)=\"store.increment()\">+</button>\n    <button (click)=\"store.decrement()\">-</button>\n    <button (click)=\"store.reset()\">Reset</button>\n  `\n})\nexport class CounterControlsComponent {\n  constructor(public store: CounterStore) {}\n}"
+}

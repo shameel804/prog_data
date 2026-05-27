@@ -1,0 +1,123 @@
+{
+    "id": "l5",
+    "chapterId": "ch_6",
+    "title": "Reactive Form Validation & Custom Validators 🔍",
+    "description": "Apply built‑in validators and write custom synchronous and asynchronous validators.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Reactive",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Built‑In Validators 📋",
+            "content": "# Angular's `Validators` class\n\nImport `Validators` from `@angular/forms` for a set of pre‑built validator functions:\n\n* `Validators.required`\n* `Validators.minLength(n)`, `Validators.maxLength(n)`\n* `Validators.pattern(regex)`\n* `Validators.email`\n* `Validators.min(n)`, `Validators.max(n)`\n\nAttach them to a control in the `FormBuilder` array: `email: ['', [Validators.required, Validators.email]]`"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Adding Validators",
+            "content": "Create a form with validation:",
+            "codeSnippet": "this.form = this.fb.group({\n  username: ['', [Validators.required, Validators.minLength(3)]],\n  email: ['', [Validators.required, Validators.email]],\n  password: ['', [Validators.required, Validators.pattern(/^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$/)]]\n});",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Built‑In Validators 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which validator ensures the control contains a properly formatted email?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Validators.email",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Validators.pattern(/@/)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Validators.required",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Validators.minLength",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`Validators.email` performs a basic email format check.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Custom Synchronous Validators ✍️",
+            "content": "A validator is a function that returns `null` if valid, or an error object if invalid.\n\n```typescript\nforbiddenNameValidator(nameRe: RegExp): ValidatorFn {\n  return (control: AbstractControl): {[key: string]: any} | null => {\n    const forbidden = nameRe.test(control.value);\n    return forbidden ? { forbiddenName: { value: control.value } } : null;\n  };\n}\n```\n\nThen add it: `username: ['', [Validators.required, this.forbiddenNameValidator(/admin/)]]`"
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Displaying Custom Errors",
+            "content": "In the template, check for your custom error key:",
+            "codeSnippet": "<div *ngIf=\"form.get('username').errors?.forbiddenName\">\n  This username is not allowed.\n</div>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Async Validators 🌐",
+            "content": "For server‑side checks (e.g., unique email), use async validators that return a `Promise` or `Observable`.\n\n```typescript\nemailAvailableValidator(http: HttpClient): AsyncValidatorFn {\n  return (control: AbstractControl) => {\n    return this.http.get(`/api/check-email?email=${control.value}`).pipe(\n      map((res: any) => (res.available ? null : { emailTaken: true })),\n      catchError(() => of(null))\n    );\n  };\n}\n```\nAttach as third argument in the array: `email: ['', [Validators.required], [this.emailAvailableValidator]]`"
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Custom Validators 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What should a synchronous validator return if the control is valid?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "true",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "null",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "false",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "undefined",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Return `null` for valid, or an error object for invalid.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_8",
+            "type": "warning",
+            "title": "Async Validator Performance ⚠️",
+            "content": "Async validators are called on every keystroke unless you throttle the requests. Use `updateOn: 'blur'` or `debounceTime` in your observable to avoid hammering the server."
+        }
+    ]
+}

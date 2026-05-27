@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_9",
+    "title": "Convert to Standalone Component",
+    "description": "Refactor AppComponent to standalone and bootstrap the app without AppModule.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Modernise the app by removing `AppModule` entirely. Use standalone `AppComponent` and `bootstrapApplication`.\n\n**Requirements:**\n1. Make `AppComponent` standalone (`standalone: true`). Import `CommonModule` and `RouterModule` in its `imports` array (as needed).\n2. Define the app routes in a separate variable and provide them via `provideRouter()`.\n3. In `main.ts`, replace `platformBrowserDynamic().bootstrapModule(AppModule)` with `bootstrapApplication(AppComponent, { providers: [provideRouter(routes)] })`.\n4. Delete `app.module.ts` and verify the app still runs.\n5. Ensure any other component used by AppComponent is either standalone or imported via an NgModule (e.g., `SharedModule`).",
+    "hints": [
+        "Use `import { provideRouter } from '@angular/router'`.",
+        "AppComponent's template must include `<router-outlet>`.",
+        "If you have `SharedModule`, import it in AppComponent's `imports`."
+    ],
+    "expectedOutput": "App runs without AppModule, bootstrapped via `bootstrapApplication`.",
+    "solutionCode": "// main.ts\nimport { bootstrapApplication } from '@angular/platform-browser';\nimport { provideRouter } from '@angular/router';\nimport { AppComponent } from './app/app.component';\nimport { routes } from './app/app.routes';\n\nbootstrapApplication(AppComponent, {\n  providers: [provideRouter(routes)]\n}).catch(err => console.error(err));\n\n// app.component.ts\n@Component({\n  selector: 'app-root',\n  standalone: true,\n  imports: [CommonModule, RouterModule, SharedModule],\n  template: `\n    <nav>\n      <a routerLink=\"/home\">Home</a>\n      <a routerLink=\"/about\">About</a>\n    </nav>\n    <router-outlet></router-outlet>\n  `\n})\nexport class AppComponent {}\n\n// app.routes.ts\nexport const routes: Routes = [\n  { path: 'home', component: HomeComponent },\n  { path: 'about', component: AboutComponent },\n  { path: '', redirectTo: '/home', pathMatch: 'full' }\n];"
+}

@@ -1,0 +1,111 @@
+{
+    "id": "l2",
+    "chapterId": "ch_8",
+    "title": "Setting Up HttpClient & First GET Request 🌐",
+    "description": "Import HttpClientModule, inject HttpClient, and fetch data from a remote server.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "HTTP",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "HttpClient – Angular's HTTP Weapon ⚔️",
+            "content": "# Built on Observables\n\n`HttpClient` is an injectable service that performs HTTP requests. Every method returns an `Observable` of the response.\n\n* Available in `@angular/common/http`.\n* Must import `HttpClientModule` in your AppModule (or standalone component).\n* Supports GET, POST, PUT, DELETE, PATCH, JSONP.\n* Interceptors can be chained for authentication, logging, etc."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Setup: Import HttpClientModule",
+            "content": "First, add `HttpClientModule` to your module imports:",
+            "codeSnippet": "import { HttpClientModule } from '@angular/common/http';\n\n@NgModule({\n  imports: [\n    BrowserModule,\n    HttpClientModule  // ✅\n  ],\n  ...\n})\nexport class AppModule {}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Setup Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which module must be imported to use HttpClient?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "HttpModule",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "HttpClientModule",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "HttpClient",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "RxJS Module",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`HttpClientModule` provides the HttpClient service and supporting infrastructure.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Injecting HttpClient and Making a GET Request",
+            "content": "Inject `HttpClient` in a component or service:",
+            "codeSnippet": "import { HttpClient } from '@angular/common/http';\nimport { Observable } from 'rxjs';\n\n@Injectable({ providedIn: 'root' })\nexport class UserService {\n  constructor(private http: HttpClient) {}\n\n  getUsers(): Observable<any> {\n    return this.http.get('https://jsonplaceholder.typicode.com/users');\n  }\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Generic Type for Strong Typing 💪",
+            "content": "Always specify the expected response type using generics:\n\n```typescript\ninterface User { id: number; name: string; email: string; }\n\ngetUsers(): Observable<User[]> {\n  return this.http.get<User[]>('/api/users');\n}\n```\n\nNow you get autocompletion and type safety when you subscribe."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "code",
+            "title": "Subscribing in the Component",
+            "content": "You can subscribe directly, or better, use the async pipe:",
+            "codeSnippet": "// Component\nusers$ = this.userService.getUsers();\n\n// Template\n<ul>\n  <li *ngFor=\"let user of users$ | async\">{{ user.name }}</li>\n</ul>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "GET Request 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "fill_blank",
+                "question": "The `HttpClient.get()` method returns an ______.",
+                "options": [
+                    "Observable",
+                    "Promise",
+                    "Array",
+                    "void"
+                ],
+                "correctAnswer": "Observable",
+                "explanation": "All HttpClient methods return an Observable that you must subscribe to.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use a Service to Centralize HTTP Logic\n\nNever call `HttpClient` directly from a component. Create a service that returns typed Observables. Components just subscribe or use the `async` pipe."
+        }
+    ]
+}

@@ -1,0 +1,107 @@
+{
+    "id": "l3",
+    "chapterId": "ch_9",
+    "title": "Shared & Core Modules 🤝",
+    "description": "Prevent duplication with SharedModule and keep singleton services safe in CoreModule.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Best Practices",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The Problem of Repetition 🔁",
+            "content": "# Why Shared and Core Modules?\n\nIn a multi‑module app, you’ll often import the same stuff everywhere (e.g., `CommonModule`, `FormsModule`, custom components).\n\nThis leads to:\n* Duplicated imports.\n* Accidental re‑providing of services, creating multiple instances.\n\nAngular style guide recommends two special modules:\n* **SharedModule** – re‑exports commonly used directives, pipes, and components.\n* **CoreModule** – holds singleton services and app‑wide components (like header/footer)."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "SharedModule Example",
+            "content": "Import once, use everywhere:",
+            "codeSnippet": "import { NgModule } from '@angular/core';\nimport { CommonModule } from '@angular/common';\nimport { FormsModule } from '@angular/forms';\nimport { HighlightDirective } from './highlight.directive';\nimport { TruncatePipe } from './truncate.pipe';\n\n@NgModule({\n  declarations: [HighlightDirective, TruncatePipe],\n  imports: [CommonModule, FormsModule],\n  exports: [\n    CommonModule,\n    FormsModule,\n    HighlightDirective,\n    TruncatePipe\n  ]\n})\nexport class SharedModule {}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Shared Module 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the primary purpose of a SharedModule?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To provide singleton services.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To re‑export commonly used components, directives, and pipes.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To lazy‑load features.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To bootstrap the application.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "SharedModule collects and re‑exports frequently used items so other modules only import it.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "CoreModule – Protect Your Singletons 💍",
+            "content": "Services provided in `AppModule` are singletons. But if you accidentally provide a service in a feature module, a new instance is created for that module’s injector.\n\n**CoreModule** solves this:\n* Provide all app‑wide services in `CoreModule`.\n* Import `CoreModule` **only** in `AppModule`.\n* Add a constructor guard to prevent accidental import elsewhere.\n\n```typescript\nconstructor(@Optional() @SkipSelf() parentModule: CoreModule) {\n  if (parentModule) {\n    throw new Error('CoreModule is already loaded. Import it only in AppModule!');\n  }\n}\n```"
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "CoreModule Example",
+            "content": "Collect global services and single‑use components:",
+            "codeSnippet": "@NgModule({\n  declarations: [HeaderComponent, FooterComponent],\n  imports: [CommonModule, RouterModule],\n  exports: [HeaderComponent, FooterComponent],\n  providers: [\n    LoggerService,\n    AuthService,\n    UserService\n  ]\n})\nexport class CoreModule {\n  constructor(@Optional() @SkipSelf() parentModule: CoreModule) {\n    if (parentModule) {\n      throw new Error('CoreModule is already loaded.');\n    }\n  }\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "warning",
+            "title": "Don't Import Shared Module into Core Module ⚠️",
+            "content": "If `CoreModule` imports `SharedModule`, then every feature module that imports `SharedModule` will indirectly get the services from `CoreModule`? No – services are not imported via modules. But it’s cleaner to keep CoreModule focused on singleton providers and app‑wide components, not shared widgets."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "quiz",
+            "title": "Core Module 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "true_false",
+                "question": "A service provided in CoreModule will be a singleton if CoreModule is imported only in AppModule.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Yes, the root module injector creates one instance that is shared app‑wide.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

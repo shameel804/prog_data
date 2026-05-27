@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_3",
+    "title": "Build a Custom Directive",
+    "description": "Create an attribute directive that changes text color on double‑click.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Create a custom directive named `appRainbow` that, when applied to any element, changes its text color to a random color each time the element is double‑clicked.\n\n**Requirements:**\n1. Generate a directive using `ng generate directive rainbow`.\n2. The selector should be `[appRainbow]`.\n3. Use `@HostListener` to listen to the `dblclick` event.\n4. In the handler, generate a random hex color (e.g., `#` followed by 6 random hex digits).\n5. Set the host element’s text color using `ElementRef` or `@HostBinding` (preferred).\n6. Use the directive in `AppComponent` on a paragraph.\n7. Ensure the directive is declared in `AppModule`.",
+    "hints": [
+        "To generate random hex: `'#' + Math.floor(Math.random()*16777215).toString(16)`",
+        "With `@HostBinding`: `@HostBinding('style.color') color: string;` then set `this.color = newColor`.",
+        "The CLI automatically adds the directive to the module’s declarations."
+    ],
+    "expectedOutput": "Double‑clicking the paragraph changes its text color to a random color each time.",
+    "solutionCode": "// rainbow.directive.ts\nimport { Directive, HostBinding, HostListener } from '@angular/core';\n\n@Directive({\n  selector: '[appRainbow]'\n})\nexport class RainbowDirective {\n  @HostBinding('style.color') color: string = 'black';\n\n  @HostListener('dblclick') onDoubleClick() {\n    this.color = '#' + Math.floor(Math.random() * 16777215).toString(16);\n  }\n}\n\n// app.component.html\n<p appRainbow>Double-click me to change my color!</p>"
+}

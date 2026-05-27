@@ -1,0 +1,16 @@
+{
+    "id": "task3",
+    "chapterId": "ch_8",
+    "title": "CRUD Service with Error Handling",
+    "description": "Build a PostService with full CRUD, error handling, and a reactive component.",
+    "estimatedMinutes": 18,
+    "problemStatement": "Create a service to manage blog posts (using JSONPlaceholder as mock API). Implement full CRUD and display posts in a component with optimistic UI updates.\n\n**Requirements:**\n1. `PostService` with methods:\n   - `getPosts(): Observable<Post[]>`\n   - `createPost(post: Partial<Post>): Observable<Post>`\n   - `updatePost(id: number, changes: Partial<Post>): Observable<Post>`\n   - `deletePost(id: number): Observable<void>`\n2. Handle errors in each method with `catchError`, re‑throwing a user‑friendly error message.\n3. In `PostListComponent`, inject `PostService`, load posts on init.\n4. Display posts with a delete button. On delete, remove the post from the local array optimistically (without re‑fetching all).\n5. Provide an \"Add Post\" form that calls `createPost` and pushes the new post to the array.\n6. Show an error message if any operation fails.",
+    "hints": [
+        "Post interface: `{ id: number, title: string, body: string }`.",
+        "Error handling: use `catchError(error => throwError(() => 'Failed to load posts'))`.",
+        "For optimistic delete: `this.posts = this.posts.filter(p => p.id !== id)` after calling service.",
+        "Use `take(1)` if subscribing manually to avoid leaks."
+    ],
+    "expectedOutput": "Posts list with delete and add functionality; errors shown if server fails.",
+    "solutionCode": "// post.service.ts\n@Injectable({ providedIn: 'root' })\nexport class PostService {\n  constructor(private http: HttpClient) {}\n\n  getPosts(): Observable<Post[]> {\n    return this.http.get<Post[]>('https://jsonplaceholder.typicode.com/posts').pipe(\n      catchError(err => throwError(() => 'Error fetching posts'))\n    );\n  }\n\n  createPost(post: Partial<Post>): Observable<Post> {\n    return this.http.post<Post>('https://jsonplaceholder.typicode.com/posts', post).pipe(\n      catchError(err => throwError(() => 'Error creating post'))\n    );\n  }\n\n  deletePost(id: number): Observable<void> {\n    return this.http.delete<void>(`https://jsonplaceholder.typicode.com/posts/${id}`).pipe(\n      catchError(err => throwError(() => 'Error deleting post'))\n    );\n  }\n}\n\n// post-list.component.ts\nexport class PostListComponent implements OnInit {\n  posts: Post[] = [];\n  errorMessage = '';\n\n  constructor(private postService: PostService) {}\n\n  ngOnInit() {\n    this.postService.getPosts().subscribe({\n      next: posts => this.posts = posts,\n      error: err => this.errorMessage = err\n    });\n  }\n\n  addPost(title: string, body: string) {\n    this.postService.createPost({ title, body }).subscribe({\n      next: newPost => this.posts.unshift(newPost),\n      error: err => this.errorMessage = err\n    });\n  }\n\n  deletePost(id: number) {\n    this.posts = this.posts.filter(p => p.id !== id);\n    this.postService.deletePost(id).subscribe({\n      error: err => {\n        this.errorMessage = err;\n        // rollback could be added\n      }\n    });\n  }\n}"
+}

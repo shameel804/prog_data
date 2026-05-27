@@ -1,0 +1,122 @@
+{
+    "id": "l3",
+    "chapterId": "ch_4",
+    "title": "Injecting Services into Components 💉",
+    "description": "Use constructor injection to bring a service to life and share data between components.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Dependency Injection",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Dependency Injection (DI) – The Magic 🪄",
+            "content": "# How Angular Gives Your Component What It Needs\n\nAngular’s DI system automatically creates and delivers service instances to components that ask for them.\n\n1. You declare a dependency in the component’s constructor.\n2. Angular looks at the parameter type, finds the matching provider, creates the service (if not already created), and passes it in.\n3. You don’t need to `new` anything – Angular handles the entire lifecycle.\n\nThis decouples your component from the service implementation."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Injecting a Service",
+            "content": "Example: Using the LoggerService we built earlier.",
+            "codeSnippet": "import { Component } from '@angular/core';\nimport { LoggerService } from './logger.service';\n\n@Component({\n  selector: 'app-root',\n  templateUrl: './app.component.html'\n})\nexport class AppComponent {\n  constructor(private logger: LoggerService) {\n    this.logger.log('AppComponent initialized!');\n  }\n\n  doSomething() {\n    this.logger.log('User clicked the button');\n  }\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "The Constructor Parameter Shorthand 🧼",
+            "content": "Using the `private` (or `public`) keyword in the constructor parameter automatically creates and assigns a class property.\n\n```typescript\nconstructor(private myService: MyService) {}\n```\n\nThis is equivalent to:\n```typescript\nprivate myService: MyService;\nconstructor(myService: MyService) {\n  this.myService = myService;\n}\n```\n\nNow you can use `this.myService` anywhere in the class."
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "DI Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "How do you tell Angular that a component needs a service?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "List it in the component's `providers` array.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Declare it as a property with `@Service`.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Add it as a constructor parameter with a type.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Call `inject(Service)` inside the component.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Angular uses the constructor parameter type to know what to inject.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Sharing Data Between Components via a Service",
+            "content": "Since a service is a singleton, two components can use it to share state.\n\nStep 1: Create a service with a shared property.",
+            "codeSnippet": "@Injectable({ providedIn: 'root' })\nexport class DataService {\n  private message = 'Hello';\n\n  setMessage(msg: string) { this.message = msg; }\n  getMessage() { return this.message; }\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "code",
+            "title": "Step 2: Inject in Two Components",
+            "content": "Component A sets the message, Component B reads it.",
+            "codeSnippet": "// ComponentA\nconstructor(private dataService: DataService) {}\nupdateMessage() {\n  this.dataService.setMessage('New value from A');\n}\n\n// ComponentB\nconstructor(private dataService: DataService) {}\nget message() {\n  return this.dataService.getMessage();\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "The Service Is the Same Instance 🔄",
+            "content": "When ComponentA calls `setMessage`, ComponentB will see the change because they share the exact same instance of `DataService`.\n\nThis is a simple yet powerful pattern for cross‑component communication – no need for `@Input`/`@Output` chains when the components are not directly parent‑child."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "quiz",
+            "title": "Sharing Data 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "true_false",
+                "question": "Two components that inject the same service (providedIn: 'root') get different instances of that service.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "With `providedIn: 'root'`, the service is a singleton – one instance shared across the app.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_9",
+            "type": "warning",
+            "title": "Avoid Overusing Services for All State ⚠️",
+            "content": "While services are great for shared state, don’t turn them into a giant global variable bag. For complex state, consider state management libraries (NgRx, Akita) or simple RxJS stores (Chapter 10)."
+        }
+    ]
+}

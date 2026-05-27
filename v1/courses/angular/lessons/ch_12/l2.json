@@ -1,0 +1,113 @@
+{
+    "id": "l2",
+    "chapterId": "ch_12",
+    "title": "Optimizing Templates & Lists 🎯",
+    "description": "Use trackBy, pure pipes, and avoid expensive expressions in templates.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Performance",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Templates Are Not Free 🏋️",
+            "content": "# Keep Templates Lean\n\nEvery expression in a template (`{{ }}`, `[property]`, `*ngFor`) is re‑evaluated during change detection. Complex logic or method calls inside templates can become a performance sink.\n\nKey strategies:\n1. Use **pure pipes** for data transformations.\n2. Always use **trackBy** with `*ngFor`.\n3. Cache computed values in the component class instead of calling methods in templates."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "trackBy – The Must‑Have for Lists",
+            "content": "When iterating over lists with `*ngFor`, Angular tracks items by identity. If the array is replaced, it destroys and recreates all DOM nodes. `trackBy` tells Angular how to identify items uniquely, enabling DOM reuse.",
+            "codeSnippet": "// Component\nitems = [{ id: 1, name: 'Item 1' }, ...];\ntrackById(index, item) { return item.id; }\n\n// Template\n<li *ngFor=\"let item of items; trackBy: trackById\">{{ item.name }}</li>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "trackBy 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the main benefit of using trackBy with *ngFor?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It styles list items automatically.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It allows Angular to identify items that haven't changed, avoiding unnecessary DOM operations.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It speeds up HTTP requests.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It enables two‑way binding.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "trackBy helps Angular reuse DOM elements for unchanged items, dramatically improving list re‑render performance.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Avoid Method Calls in Templates 🚫",
+            "content": "A method called from the template (e.g., `{{ getFullName() }}`) runs every time change detection runs, even if the result hasn’t changed.\n\n**Instead**:\n* Use a **pure pipe** if you need to transform data.\n* Use a **getter** for simple computed properties (they’re still called every check, but often lighter).\n* Pre‑calculate the value in the component and expose it as a property.\n\n```html\n<!-- ❌ Slow -->\n{{ calculateTotal() }}\n\n<!-- ✅ Fast -->\n{{ total | currency }}\n```"
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Pure Pipes Are Cached",
+            "content": "A pure pipe’s `transform` method is called only when the input value changes (reference change). This makes them efficient for displaying formatted data.",
+            "codeSnippet": "// A pure date‑formatting pipe won't re‑compute unless the date object changes.\n{{ birthday | date:'fullDate' }}",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "warning",
+            "title": "Impure Pipes Can Be Expensive ⚠️",
+            "content": "Impure pipes run on every change detection cycle. Avoid using them for large data sets. If you must filter a list, consider doing it in the component and caching the result."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "Template Optimization 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "true_false",
+                "question": "Calling a component method from the template is a recommended best practice for computed values.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Method calls re‑evaluate on every change detection cycle. Use pipes, getters, or pre‑computed properties.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Lazy Load Images with `loading='lazy'`\n\nNot strictly Angular, but adding `loading='lazy'` to `<img>` elements improves perceived performance drastically."
+        }
+    ]
+}

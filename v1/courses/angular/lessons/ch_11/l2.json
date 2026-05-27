@@ -1,0 +1,107 @@
+{
+    "id": "l2",
+    "chapterId": "ch_11",
+    "title": "Unit Testing Components & Services 🧩",
+    "description": "Test components with TestBed, mock dependencies, and verify service logic in isolation.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Testing",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Testing Components with TestBed 🏗️",
+            "content": "# TestBed: Angular's Test Environment\n\n`TestBed` creates a module specifically for testing. It lets you configure a testing module with the component, its dependencies, and any providers you want to mock.\n\n```typescript\nTestBed.configureTestingModule({\n  declarations: [MyComponent],\n  providers: [MyService]\n}).compileComponents();\n```\n\nAfter configuration, you can create the component fixture: `TestBed.createComponent(MyComponent)`."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Testing a Simple Component",
+            "content": "A component that displays a title:",
+            "codeSnippet": "// app-title.component.ts\n@Component({ template: '<h1>{{ title }}</h1>' })\nclass AppTitleComponent { title = 'Hello'; }\n\n// app-title.component.spec.ts\ndescribe('AppTitleComponent', () => {\n  let fixture: ComponentFixture<AppTitleComponent>;\n  beforeEach(() => {\n    TestBed.configureTestingModule({ declarations: [AppTitleComponent] });\n    fixture = TestBed.createComponent(AppTitleComponent);\n  });\n  it('should display title', () => {\n    fixture.detectChanges();\n    const h1 = fixture.nativeElement.querySelector('h1');\n    expect(h1.textContent).toContain('Hello');\n  });\n});",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "TestBed Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of `TestBed.configureTestingModule()`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To start the Karma runner.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To set up a testing module with the necessary declarations and providers.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To compile the entire application.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To deploy the app to production.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "TestBed creates a dynamic test module to configure the test environment.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Mocking Dependencies 🤡",
+            "content": "Components often depend on services. Instead of using the real service (which might make HTTP calls), provide a **mock**.\n\n```typescript\nconst mockService = jasmine.createSpyObj('MyService', ['getData']);\nmockService.getData.and.returnValue(of('mock data'));\n\nTestBed.configureTestingModule({\n  providers: [{ provide: MyService, useValue: mockService }]\n});\n```\n\nNow the component gets a fake service, and you control its return values."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Testing a Service in Isolation",
+            "content": "Services are just classes – test them without Angular's DI:",
+            "codeSnippet": "describe('CalculatorService', () => {\n  let service: CalculatorService;\n  beforeEach(() => { service = new CalculatorService(); });\n\n  it('should add two numbers', () => {\n    expect(service.add(2, 3)).toBe(5);\n  });\n\n  it('should subtract two numbers', () => {\n    expect(service.subtract(5, 2)).toBe(3);\n  });\n});",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `jasmine.createSpyObj` for quick mocks\n\n`const spyObj = jasmine.createSpyObj('Name', ['method1', 'method2']);` creates a mock with controllable methods. Great for dependencies."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "Mocking 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "true_false",
+                "question": "You should always use the real HttpClient in unit tests to catch real server errors.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Unit tests should be fast and isolated. Mock HttpClient to avoid real network calls.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

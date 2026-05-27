@@ -1,0 +1,88 @@
+{
+    "id": "l2",
+    "chapterId": "ch_6",
+    "title": "Template‑Driven Forms Basics 🏗️",
+    "description": "Create forms using ngModel, ngForm, and two‑way binding.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Template‑Driven",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Building Blocks 🧱",
+            "content": "# `ngForm` and `ngModel`\n\nTemplate‑driven forms rely on two main directives:\n* **`ngForm`** – automatically applied to every `<form>` element; creates a top‑level `FormGroup` implicitly.\n* **`ngModel`** – used with `[(ngModel)]` for two‑way data binding, plus it registers the control with the parent `ngForm`.\n\nYou just need to import `FormsModule` and start writing HTML."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "A Simple Login Form",
+            "content": "Two inputs bound to component properties:",
+            "codeSnippet": "// app.module.ts\nimport { FormsModule } from '@angular/forms';\n@NgModule({\n  imports: [..., FormsModule]\n})\n\n// login.component.ts\nexport class LoginComponent {\n  username = '';\n  password = '';\n\n  onSubmit(form: any) {\n    console.log(form.value);\n  }\n}\n\n// login.component.html\n<form #loginForm=\"ngForm\" (ngSubmit)=\"onSubmit(loginForm)\">\n  <input name=\"username\" [(ngModel)]=\"username\" required>\n  <input name=\"password\" type=\"password\" [(ngModel)]=\"password\" required>\n  <button type=\"submit\">Login</button>\n</form>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Template Form Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which directive creates the form’s FormGroup implicitly?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "ngModel",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "ngForm",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "formGroup",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "ngSubmit",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`ngForm` is automatically attached to `<form>` elements and creates the root FormGroup.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "The `name` Attribute is Crucial 🏷️",
+            "content": "In template‑driven forms, every control must have a `name` attribute. It acts as the key in the form’s value object.\n\nWithout `name`, Angular cannot register the control and you’ll get a runtime error.\n\n```html\n<input [(ngModel)]=\"email\" name=\"email\">  <!-- ✅ -->\n<input [(ngModel)]=\"email\">              <!-- ❌ No name! -->\n```"
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Accessing Form State",
+            "content": "You can get the form’s values, validity, and other properties through the template reference `#loginForm=\"ngForm\"`.",
+            "codeSnippet": "<p>Form valid: {{ loginForm.valid }}</p>\n<p>Form value: {{ loginForm.value | json }}</p>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use the `json` pipe for debugging\n\n`{{ form.value | json }}` instantly shows the whole form model. Great during development."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "warning",
+            "title": "Forget `name`? ⚠️",
+            "content": "If you omit `name`, Angular will not throw an error in the console immediately, but the form will not include that control. Always add `name` to inputs with `ngModel`."
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_11",
+    "title": "Component Test with Mocked Service",
+    "description": "Test a component that depends on a user service, mocking the service.",
+    "estimatedMinutes": 18,
+    "problemStatement": "Given a `UserProfileComponent` that injects `UserService` and displays the user's name, write a test that verifies the name is rendered correctly, using a mock service.\n\n**Component:**\n```typescript\n@Component({\n  template: '<h2>{{ user?.name }}</h2>'\n})\nexport class UserProfileComponent implements OnInit {\n  user: User | null = null;\n  constructor(private userService: UserService) {}\n  ngOnInit() { this.userService.getCurrentUser().subscribe(u => this.user = u); }\n}\n```\n**Requirements:**\n1. Configure TestBed with the component and a mock `UserService`.\n2. The mock should return an Observable of a dummy user (`{ name: 'Test User' }`).\n3. Trigger `ngOnInit` and change detection.\n4. Assert that the h2 contains 'Test User'.\n5. Also test that if the service returns `null`, nothing is rendered (h2 empty or no error).",
+    "hints": [
+        "Create mock with `jasmine.createSpyObj('UserService', ['getCurrentUser'])`.",
+        "Set return value: `mockService.getCurrentUser.and.returnValue(of({ name: 'Test User' }))`.",
+        "Don't forget to import/declare component."
+    ],
+    "expectedOutput": "Test passes, confirming component displays data from service.",
+    "solutionCode": "describe('UserProfileComponent', () => {\n  let component: UserProfileComponent;\n  let fixture: ComponentFixture<UserProfileComponent>;\n  let mockUserService: jasmine.SpyObj<UserService>;\n\n  beforeEach(async () => {\n    mockUserService = jasmine.createSpyObj('UserService', ['getCurrentUser']);\n    await TestBed.configureTestingModule({\n      declarations: [UserProfileComponent],\n      providers: [{ provide: UserService, useValue: mockUserService }]\n    }).compileComponents();\n\n    fixture = TestBed.createComponent(UserProfileComponent);\n    component = fixture.componentInstance;\n  });\n\n  it('should display user name', () => {\n    mockUserService.getCurrentUser.and.returnValue(of({ name: 'Test User' }));\n    fixture.detectChanges(); // triggers ngOnInit\n    const h2 = fixture.nativeElement.querySelector('h2');\n    expect(h2.textContent).toContain('Test User');\n  });\n\n  it('should show nothing if user is null', () => {\n    mockUserService.getCurrentUser.and.returnValue(of(null));\n    fixture.detectChanges();\n    const h2 = fixture.nativeElement.querySelector('h2');\n    expect(h2.textContent).toBe('');\n  });\n});"
+}

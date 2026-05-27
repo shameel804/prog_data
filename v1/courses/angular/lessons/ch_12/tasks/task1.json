@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_12",
+    "title": "Convert to OnPush with Immutability",
+    "description": "Refactor a component to use OnPush change detection and immutable data updates.",
+    "estimatedMinutes": 15,
+    "problemStatement": "You have a `TaskListComponent` that receives an array of tasks as `@Input` and displays them. It currently uses the default change detection strategy.\n\n**Requirements:**\n1. Change the component's change detection to `OnPush`.\n2. In the parent component, update the tasks immutably (use spread or slice) when adding a new task.\n3. Verify that the list updates correctly.\n4. Additionally, add a button inside `TaskListComponent` that toggles a task's completed state. Update the task immutably within the component and ensure the view updates (OnPush detects local events).\n5. Use `ChangeDetectorRef.markForCheck()` if needed in any async scenario.",
+    "hints": [
+        "Set `changeDetection: ChangeDetectionStrategy.OnPush` in @Component.",
+        "For the toggle, create a new array: `this.tasks = this.tasks.map(task => task.id === id ? { ...task, done: !task.done } : task)`.",
+        "Because the button click originates from the component, OnPush will check the component automatically."
+    ],
+    "expectedOutput": "The list updates only when reference changes; performance is improved.",
+    "solutionCode": "// task-list.component.ts\nimport { ChangeDetectionStrategy, Component, Input } from '@angular/core';\n\n@Component({\n  selector: 'app-task-list',\n  template: `\n    <ul>\n      <li *ngFor=\"let task of tasks\">\n        {{ task.title }}\n        <button (click)=\"toggle(task.id)\">Toggle</button>\n      </li>\n    </ul>\n  `,\n  changeDetection: ChangeDetectionStrategy.OnPush\n})\nexport class TaskListComponent {\n  @Input() tasks: { id: number; title: string; done: boolean }[] = [];\n\n  toggle(id: number) {\n    this.tasks = this.tasks.map(task =>\n      task.id === id ? { ...task, done: !task.done } : task\n    );\n  }\n}\n\n// parent.component.ts\naddTask() {\n  this.allTasks = [...this.allTasks, { id: Date.now(), title: 'New Task', done: false }];\n}"
+}

@@ -1,0 +1,107 @@
+{
+    "id": "l1",
+    "chapterId": "ch_8",
+    "title": "Introduction to Observables & RxJS 🔄",
+    "description": "Learn the core reactive concepts that power Angular's HTTP and event systems.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Fundamentals",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Why Reactive? 🤔",
+            "content": "# From Callbacks to Streams\n\nAsynchronous code is everywhere: user clicks, HTTP responses, timers.\nTraditional approaches (callbacks, Promises) handle **one** value and stop.\n\n**Observables** handle **multiple values over time** – they are lazy push‑based collections.\n\n* Think of an Observable as a stream of data that you can transform, filter, and combine.\n* RxJS (Reactive Extensions for JavaScript) provides the Observable type and hundreds of operators.\n* Angular uses Observables extensively: `HttpClient`, router events, reactive forms, `EventEmitter`."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "code",
+            "title": "Your First Observable",
+            "content": "Create and subscribe to an Observable manually:",
+            "codeSnippet": "import { Observable } from 'rxjs';\n\nconst myObservable = new Observable(subscriber => {\n  subscriber.next('Hello');\n  subscriber.next('World');\n  subscriber.complete();\n});\n\nmyObservable.subscribe({\n  next: value => console.log(value),\n  complete: () => console.log('Done!')\n});\n// Output: Hello, World, Done!",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Observable Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What is a key difference between a Promise and an Observable?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Promises are lazy, Observables are eager.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Observables can emit multiple values over time, Promises resolve once.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Observables cannot be cancelled, Promises can.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "There is no difference.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Observables are streams that can emit many values; Promises handle a single future value.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "The Four Pillars of an Observable 🏛️",
+            "content": "1. **Creating** – `new Observable()` or creation operators (`of`, `from`, `interval`).\n2. **Subscribing** – the Observable does nothing until you call `.subscribe()`.\n3. **Executing** – the subscriber function runs, emitting `next()`, `error()`, or `complete()`.\n4. **Disposing** – calling `.unsubscribe()` tears down resources.\n\n```typescript\nconst subscription = interval(1000).subscribe(console.log);\nsetTimeout(() => subscription.unsubscribe(), 5000); // stops after 5 seconds\n```"
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "Unsubscribing Prevents Memory Leaks",
+            "content": "Always unsubscribe when the component is destroyed unless using the `async` pipe.",
+            "codeSnippet": "export class MyComponent implements OnInit, OnDestroy {\n  private subscription!: Subscription;\n  ngOnInit() {\n    this.subscription = someObservable$.subscribe(...);\n  }\n  ngOnDestroy() {\n    this.subscription.unsubscribe();\n  }\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use the `async` Pipe Whenever Possible\n\nThe `async` pipe subscribes and unsubscribes automatically. It's the safest and cleanest way to bind observables to your template."
+        },
+        {
+            "id": "s_l1_7",
+            "type": "quiz",
+            "title": "Subscription Lifecycle 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "true_false",
+                "question": "If you don't call `unsubscribe()` on a long‑lived Observable, it can cause a memory leak.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Active subscriptions hold references, preventing garbage collection.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

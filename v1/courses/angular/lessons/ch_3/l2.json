@@ -1,0 +1,108 @@
+{
+    "id": "l2",
+    "chapterId": "ch_3",
+    "title": "Conditional Rendering with *ngIf ✅",
+    "description": "Show or hide elements dynamically using Angular’s structural if directive.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Structural Directives",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Most Common Structural Directive 💡",
+            "content": "# *ngIf\n\n`*ngIf` is the go‑to directive for conditionally including an element in the DOM.\n\nSyntax: `*ngIf=\"expression\"`\n\n* If the expression is **truthy**, the element is added to the DOM.\n* If it’s **falsy**, the element is completely removed (not just hidden).\n\nThis is different from `[hidden]` – `hidden` keeps the element in the DOM but hides it visually."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Basic *ngIf Example",
+            "content": "Toggle a welcome message based on login status:",
+            "codeSnippet": "// Component\nisLoggedIn = false;\n\n// Template\n<button (click)=\"isLoggedIn = !isLoggedIn\">Toggle Login</button>\n<div *ngIf=\"isLoggedIn\">\n  <h2>Welcome back, user!</h2>\n  <p>You have new notifications.</p>\n</div>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "ngIf Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What happens to an element with `*ngIf=\"false\"`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It is hidden but still in the DOM.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It is completely removed from the DOM.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It throws an error.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It becomes invisible but still takes up space.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`*ngIf` removes the element and its subtree from the DOM when false.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "ngIf with Else Block 🔀",
+            "content": "Often you want to show alternative content when the condition is false. Use `else` with a template reference.\n\n## The `else` Syntax\n```html\n<div *ngIf=\"isLoggedIn; else loggedOut\">\n  Welcome back!\n</div>\n<ng-template #loggedOut>\n  <div>Please log in.</div>\n</ng-template>\n```\n\n* `#loggedOut` is a template reference variable pointing to the `<ng-template>`.\n* `<ng-template>` is not rendered by itself – it’s a blueprint used by Angular."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Then and Else Together",
+            "content": "You can also use `then` and `else` to keep the template clean:",
+            "codeSnippet": "<ng-container *ngIf=\"isLoggedIn; then loggedInTpl else loggedOutTpl\"></ng-container>\n\n<ng-template #loggedInTpl>\n  Welcome back!\n</ng-template>\n\n<ng-template #loggedOutTpl>\n  Please log in.\n</ng-template>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `<ng-container>` for Grouping Without Extra Divs\n\n`<ng-container>` is a logical container that doesn’t add an extra DOM element. Perfect when you need to apply `*ngIf` to multiple elements without a wrapper div."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "warning",
+            "title": "ngIf vs hidden ⚠️",
+            "content": "Use `*ngIf` when the element is expensive to create (e.g., large component subtree) and you want to completely remove it.\n\nUse `[hidden]` when the element is already in the DOM and toggling visibility is frequent – it’s faster because no DOM manipulation occurs."
+        },
+        {
+            "id": "s_l2_8",
+            "type": "quiz",
+            "title": "Else Block Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "fill_blank",
+                "question": "To show an alternative template when *ngIf is false, use the `else` keyword followed by a template ______ variable.",
+                "options": [
+                    "reference",
+                    "id",
+                    "class",
+                    "name"
+                ],
+                "correctAnswer": "reference",
+                "explanation": "You use a template reference variable like `#myTemplate`.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

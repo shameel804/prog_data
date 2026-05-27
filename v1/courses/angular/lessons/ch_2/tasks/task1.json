@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_2",
+    "title": "Parent‑Child Messenger",
+    "description": "Pass a message down to a child and receive a response back.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Create a simple messaging system between two components.\n\n**Requirements:**\n1. Generate a new component `ChildMessage` using the CLI.\n2. In the child, create an `@Input()` property `incomingMessage` (type string).\n3. In the child template, display `{{ incomingMessage }}` and add a button “Reply”.\n4. Use `@Output()` and `EventEmitter` to emit a string `replyMessage = 'Hello back from child!'` when the button is clicked.\n5. In `AppComponent` (the parent), add a property `parentMessage = 'Hello from parent'`.\n6. Use the child’s selector in the parent template, bind the input, and listen to the reply event. Store the reply in a new property `reply` and display it.\n7. Verify that the reply appears when the button is clicked.",
+    "hints": [
+        "The child output event should be named `replyEvent` (or any name). In parent: `(replyEvent)=\"receiveReply($event)\"`.",
+        "Don’t forget to import `FormsModule` only if using ngModel (not needed here).",
+        "Child button: `<button (click)=\"reply()\">Reply</button>`"
+    ],
+    "expectedOutput": "The screen shows 'Hello from parent', and after clicking 'Reply', it shows 'Hello back from child!' under the parent.",
+    "solutionCode": "// ChildMessage component (child.component.ts)\nimport { Component, Input, Output, EventEmitter } from '@angular/core';\n\n@Component({\n  selector: 'app-child-message',\n  template: `\n    <div>\n      <h3>Child says:</h3>\n      <p>{{ incomingMessage }}</p>\n      <button (click)=\"reply()\">Reply</button>\n    </div>\n  `\n})\nexport class ChildMessageComponent {\n  @Input() incomingMessage: string = '';\n  @Output() replyEvent = new EventEmitter<string>();\n\n  reply() {\n    this.replyEvent.emit('Hello back from child!');\n  }\n}\n\n// AppComponent (parent)\nexport class AppComponent {\n  parentMessage = 'Hello from parent';\n  reply = '';\n\n  receiveReply(msg: string) {\n    this.reply = msg;\n  }\n}\n\n// app.component.html\n<app-child-message\n  [incomingMessage]=\"parentMessage\"\n  (replyEvent)=\"receiveReply($event)\">\n</app-child-message>\n<p *ngIf=\"reply\">Parent received: {{ reply }}</p>"
+}

@@ -1,0 +1,102 @@
+{
+    "id": "l2",
+    "chapterId": "ch_10",
+    "title": "Subjects & BehaviorSubject Deep Dive 🧬",
+    "description": "Understand the different types of Subjects and when to use each for state.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "RxJS",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "What Is a Subject? 🔄",
+            "content": "# Subject = Observable + Observer\n\nA **Subject** is a special type of Observable that allows values to be multicasted to many Observers. It’s both an Observable (you can subscribe) and an Observer (you can call `next()`, `error()`, `complete()`).\n\n* **Plain Subject**: emits new values to subscribers from the moment they subscribe (they don’t receive past values).\n* **BehaviorSubject**: requires an initial value and stores the latest value; new subscribers immediately receive the current value.\n* **ReplaySubject**: replays a specified number of past values to new subscribers.\n* **AsyncSubject**: emits the last value only when the sequence completes."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "BehaviorSubject – Perfect for State",
+            "content": "It holds the current state and gives it immediately to any new component:",
+            "codeSnippet": "import { BehaviorSubject } from 'rxjs';\n\n// Initial state: logged out\nprivate authSubject = new BehaviorSubject<boolean>(false);\nauth$ = this.authSubject.asObservable();\n\nlogin() {\n  this.authSubject.next(true);\n}\nlogout() {\n  this.authSubject.next(false);\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Subject Types 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which Subject stores the current value and emits it immediately to new subscribers?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Subject",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "BehaviorSubject",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "ReplaySubject",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "AsyncSubject",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "BehaviorSubject requires an initial value and replays the latest value to new subscribers.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Why Not Plain Subject?",
+            "content": "With a plain Subject, a component that subscribes late might miss the current state. For example, if the user already logged in before the header component is created, the header won't know.\n\nBehaviorSubject solves this by always having a current value. It’s the go‑to choice for state services."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "ReplaySubject for History",
+            "content": "If you need to replay a sequence of recent actions (e.g., last 5 notifications):",
+            "codeSnippet": "private notifSubject = new ReplaySubject<string>(5);\nnotifications$ = this.notifSubject.asObservable();\n\naddNotification(msg: string) {\n  this.notifSubject.next(msg);\n}\n// New subscribers get the last 5 messages",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "warning",
+            "title": "Avoid Subject When Async Pipe is Better ⚠️",
+            "content": "Don't use Subject to mimic HTTP calls. For data fetching, `HttpClient` returns an Observable that completes after one emission. Subjects are for multi‑cast state that changes over time."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "ReplaySubject Use 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "fill_blank",
+                "question": "A Subject that replays the last N emissions to new subscribers is called ________.",
+                "options": [
+                    "ReplaySubject",
+                    "BehaviorSubject",
+                    "AsyncSubject",
+                    "BufferSubject"
+                ],
+                "correctAnswer": "ReplaySubject",
+                "explanation": "ReplaySubject takes a buffer size and replays that many previous values.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

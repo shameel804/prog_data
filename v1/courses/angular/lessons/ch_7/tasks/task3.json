@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_7",
+    "title": "Filter List with Impure Pipe",
+    "description": "Create an impure filter pipe for a list, with a search input.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Build a searchable list using an impure custom pipe.\n\n**Requirements:**\n1. Create a pipe `filter` that takes an array of objects and a search string, returning items where the `name` property contains the search string (case‑insensitive).\n2. The pipe must be impure (`pure: false`) because the array reference doesn't change when you type.\n3. In the component, define an array of items (e.g., ['Apple', 'Banana', 'Cherry', ...]) or objects `{ name: 'Apple' }`.\n4. Add an input field bound with `[(ngModel)]` to `searchTerm`.\n5. Use `*ngFor` with the pipe to display filtered items.\n6. Display a message if no items match.",
+    "hints": [
+        "Use `items.filter(i => i.name.toLowerCase().includes(term.toLowerCase()))`.",
+        "Make sure to check for null/empty searchTerm.",
+        "Because the pipe is impure, it will re‑filter on every keystroke automatically."
+    ],
+    "expectedOutput": "Typing in the input filters the list instantly.",
+    "solutionCode": "// filter.pipe.ts\nimport { Pipe, PipeTransform } from '@angular/core';\n\n@Pipe({ name: 'filter', pure: false })\nexport class FilterPipe implements PipeTransform {\n  transform(items: any[], searchText: string): any[] {\n    if (!items) return [];\n    if (!searchText) return items;\n    searchText = searchText.toLowerCase();\n    return items.filter(item => item.name.toLowerCase().includes(searchText));\n  }\n}\n\n// component.ts\nexport class AppComponent {\n  searchTerm = '';\n  items = [{ name: 'Apple' }, { name: 'Banana' }, { name: 'Cherry' }, { name: 'Date' }];\n}\n\n// component.html\n<input [(ngModel)]=\"searchTerm\" placeholder=\"Search...\">\n<ul>\n  <li *ngFor=\"let item of items | filter: searchTerm\">{{ item.name }}</li>\n</ul>\n<div *ngIf=\"(items | filter: searchTerm).length === 0\">No items found.</div>"
+}

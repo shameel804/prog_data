@@ -1,0 +1,122 @@
+{
+    "id": "l3",
+    "chapterId": "ch_3",
+    "title": "Lists & Loops with *ngFor 🔁",
+    "description": "Render arrays, access index, trackBy, and handle nested loops.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Structural Directives",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Iterating Over Collections 🗂️",
+            "content": "# *ngFor\n\n`*ngFor` is a structural directive that repeats a template for each item in an iterable (array, Set, Map).\n\nSyntax: `*ngFor=\"let item of items\"`\n\n* `let item` creates a template input variable that holds the current item.\n* `items` is the iterable from the component.\n\nIt’s like a `for…of` loop embedded in your HTML."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Simple To‑Do List",
+            "content": "Display a list of tasks:",
+            "codeSnippet": "// Component\ntasks = ['Learn Angular', 'Build an app', 'Deploy to production'];\n\n// Template\n<ul>\n  <li *ngFor=\"let task of tasks\">{{ task }}</li>\n</ul>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "ngFor Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which syntax correctly iterates over an array `items`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "*ngFor=\"let item in items\"",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "*ngFor=\"const item of items\"",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "*ngFor=\"let item of items\"",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "*ngFor=\"item from items\"",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The correct syntax is `let item of items`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Local Variables Inside *ngFor 📊",
+            "content": "`*ngFor` provides several handy local variables:\n\n| Variable | Description |\n|----------|-------------|\n| `index` | number – the index of the current item (0‑based) |\n| `first` | boolean – true if this is the first item |\n| `last` | boolean – true if this is the last item |\n| `even` | boolean – true if index is even |\n| `odd` | boolean – true if index is odd |\n\nThese are exported by the directive; you assign them to a local variable: `let i = index`."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Using Index and Even/Odd",
+            "content": "Numbered list with alternating row styles:",
+            "codeSnippet": "<ul>\n  <li *ngFor=\"let task of tasks; let i = index; let isEven = even\"\n      [style.background]=\"isEven ? '#f0f0f0' : 'white'\">\n    {{ i + 1 }}. {{ task }}\n  </li>\n</ul>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "trackBy: Performance Booster ⚡",
+            "content": "By default, `*ngFor` tracks items by object identity. When the array is replaced (e.g., from an API), Angular destroys and recreates all DOM elements – expensive!\n\nUse `trackBy` to tell Angular how to identify items uniquely:\n\n1. Define a method in the component that returns a unique identifier.\n2. Add `trackBy: myTrackFn` to the `*ngFor`.\n\nNow Angular only re‑renders items that actually changed."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "code",
+            "title": "trackBy Example",
+            "content": "Track tasks by a unique id:",
+            "codeSnippet": "// Component\ntasks = [\n  { id: 1, name: 'Learn Angular' },\n  { id: 2, name: 'Build app' }\n];\ntrackById(index: number, item: any) {\n  return item.id;\n}\n\n// Template\n<li *ngFor=\"let task of tasks; trackBy: trackById\">\n  {{ task.name }}\n</li>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_8",
+            "type": "quiz",
+            "title": "trackBy Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "true_false",
+                "question": "Using trackBy can improve performance when the iterable is replaced with a new array.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "trackBy helps Angular identify which items have changed, added, or removed, avoiding unnecessary DOM recreation.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_9",
+            "type": "text",
+            "title": "Nested *ngFor Loops 🪆",
+            "content": "You can nest `*ngFor` to render multi‑dimensional data:\n\n```html\n<div *ngFor=\"let category of categories\">\n  <h3>{{ category.name }}</h3>\n  <ul>\n    <li *ngFor=\"let product of category.products\">\n      {{ product.name }}\n    </li>\n  </ul>\n</div>\n```\nBe careful with performance on large data sets – try to flatten data if possible."
+        }
+    ]
+}

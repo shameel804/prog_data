@@ -1,0 +1,107 @@
+{
+    "id": "l4",
+    "chapterId": "ch_10",
+    "title": "Immutable State & Optimistic Updates ⚡",
+    "description": "Master immutability, handle async operations in stores, and implement optimistic UI.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Immutability – Never Mutate State Directly 🚫",
+            "content": "# Why Immutable?\n\nWhen you call `stateSubject.next(newValue)`, Angular checks if the reference changed. If you mutate the existing object (e.g., `state.items.push(newItem)`), the reference is the same, and change detection may not fire.\n\n**Always create a new object/array** when updating state:\n\n```typescript\n// ❌ Bad (mutation)\nthis.state.value.items.push(item);\nthis.state.next(this.state.value);\n\n// ✅ Good (immutable)\nconst newItems = [...this.state.value.items, item];\nthis.state.next({ items: newItems });\n```"
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Updating Nested Objects Immutably",
+            "content": "Use the spread operator for objects too:",
+            "codeSnippet": "// Update a nested property\ninterface User { name: string; profile: { email: string } }\n\nupdateEmail(newEmail: string) {\n  const current = this.state.value.user;\n  const updatedUser = {\n    ...current,\n    profile: { ...current.profile, email: newEmail }\n  };\n  this.state.next({ user: updatedUser });\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Immutability 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is the correct way to add an item to an array in a state update?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "state.items.push(item);",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "this.state.next({ items: [...state.items, item] });",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "this.state.value.items = [...state.items, item];",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "this.state.items.add(item);",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "You must create a new array and pass it to `next()`. Option 2 does that.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Optimistic Updates 🌈",
+            "content": "For a better user experience, update the UI **immediately** (optimistically) before the server confirms the change. If the request fails, roll back.\n\nExample: deleting an item.\n1. Immediately remove it from local state.\n2. Send DELETE request to server.\n3. If error, re‑add the item and show error message."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Optimistic Delete Example",
+            "content": "Service method with rollback:",
+            "codeSnippet": "deleteItem(id: number) {\n  const currentItems = this.state.value.items;\n  // Optimistically remove\n  this.state.next({ items: currentItems.filter(i => i.id !== id) });\n\n  this.http.delete(`/api/items/${id}`).subscribe({\n    error: () => {\n      // Rollback\n      this.state.next({ items: currentItems });\n      console.error('Delete failed, rolled back');\n    }\n  });\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "warning",
+            "title": "Optimistic Updates Caution ⚠️",
+            "content": "Don't use optimistic updates for critical operations (like payments) unless you have a strong error recovery mechanism. For deletes, toggles, or simple updates, it's usually safe and feels instant."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "Optimistic Updates 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "If an optimistic update fails on the server, you should discard the user's change without any rollback.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "You must roll back the local state to the previous state and inform the user.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

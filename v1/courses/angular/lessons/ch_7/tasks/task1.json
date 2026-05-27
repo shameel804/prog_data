@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_7",
+    "title": "Custom Truncate Pipe",
+    "description": "Build a pipe that truncates a string and adds '...' after a specified length.",
+    "estimatedMinutes": 12,
+    "problemStatement": "Create a custom pipe named `truncate` that accepts a string and a maximum length. If the string length exceeds the max, truncate it and append '...'.\n\n**Requirements:**\n1. Generate the pipe using CLI: `ng g p truncate`.\n2. The pipe should take one optional parameter: `maxLength` (default 20).\n3. If the string is shorter than maxLength, return it unchanged.\n4. Use the pipe in a component with both a short string and a long string.\n5. Test with different maxLength values.",
+    "hints": [
+        "Pipe transform signature: `transform(value: string, maxLength: number = 20): string`.",
+        "Remember to add `TruncatePipe` to the module's declarations.",
+        "Usage: `{{ longText | truncate:10 }}`"
+    ],
+    "expectedOutput": "Short string unchanged; long string truncated with '...'.",
+    "solutionCode": "// truncate.pipe.ts\nimport { Pipe, PipeTransform } from '@angular/core';\n\n@Pipe({ name: 'truncate' })\nexport class TruncatePipe implements PipeTransform {\n  transform(value: string, maxLength: number = 20): string {\n    if (!value) return '';\n    if (value.length <= maxLength) return value;\n    return value.substring(0, maxLength) + '...';\n  }\n}\n\n// component.ts\nexport class AppComponent {\n  shortText = 'Hello';\n  longText = 'This is a very long string that needs truncation.';\n}\n\n// component.html\n<p>{{ shortText | truncate:20 }}</p>    <!-- Hello -->\n<p>{{ longText | truncate:20 }}</p>      <!-- This is a very long ... -->\n<p>{{ longText | truncate:30 }}</p>      <!-- This is a very long string t... -->"
+}

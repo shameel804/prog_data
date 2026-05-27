@@ -1,0 +1,108 @@
+{
+    "id": "l2",
+    "chapterId": "ch_4",
+    "title": "Creating Your First Service 🛠️",
+    "description": "Generate a service with the CLI, understand @Injectable, and provide it globally.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Services",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Generating a Service with Angular CLI 🏗️",
+            "content": "# Command Line Magic\n\nAngular CLI can scaffold a service in seconds:\n\n```bash\nng generate service my-service\n# shorthand: ng g s my-service\n```\n\nThis creates two files:\n* `my-service.service.ts` – the service class.\n* `my-service.service.spec.ts` – the test file.\n\nThe service is decorated with `@Injectable()` and registered as a provider in the root injector (by default)."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "The Generated Service",
+            "content": "Look at the generated code:",
+            "codeSnippet": "import { Injectable } from '@angular/core';\n\n@Injectable({\n  providedIn: 'root'\n})\nexport class MyService {\n  constructor() { }\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "CLI Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "fill_blank",
+                "question": "The shorthand command to generate a service is `ng g s ______`.",
+                "options": [
+                    "service-name",
+                    "my-service",
+                    "service",
+                    "s"
+                ],
+                "correctAnswer": "service-name",
+                "explanation": "You provide the service name after `ng g s`. E.g., `ng g s user` creates `UserService`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "The @Injectable() Decorator 🏷️",
+            "content": "`@Injectable()` tells Angular that this class can be injected with dependencies itself (i.e., it can be a dependency).\n\n* If your service has no dependencies, you can technically omit it. But it’s a best practice to always include it.\n* The `providedIn: 'root'` option tells Angular to register the service with the root injector, making it available throughout the app as a singleton.\n\nOther possible values for `providedIn`:\n* `'root'` – app‑wide singleton.\n* `'platform'` – shared across multiple Angular apps on the same page.\n* `'any'` – creates a new instance for each lazy‑loaded module."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Adding Logic to the Service",
+            "content": "Let’s add a method that logs messages:",
+            "codeSnippet": "import { Injectable } from '@angular/core';\n\n@Injectable({\n  providedIn: 'root'\n})\nexport class LoggerService {\n  log(message: string) {\n    console.log(`[LOG]: ${message}`);\n  }\n\n  error(message: string) {\n    console.error(`[ERROR]: ${message}`);\n  }\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Providing Services in NgModule vs `providedIn`",
+            "content": "Before Angular 6, services were registered in the `providers` array of an `NgModule`:\n\n```typescript\n@NgModule({\n  providers: [LoggerService]\n})\n```\n\nNow, the recommended way is to use `providedIn` inside `@Injectable()`. This enables **tree‑shaking** – if no one injects the service, it’s removed from the final bundle automatically."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "@Injectable Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What does `providedIn: 'root'` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Makes the service available only in the root component.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Registers the service with the root injector, making it a singleton for the whole app.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It prevents the service from being injected anywhere.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It automatically creates an instance for every component.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`providedIn: 'root'` provides the service at the application root level, so one instance is shared app‑wide.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Always Use `providedIn: 'root'` Unless You Need a Scoped Service\n\nIt keeps configuration minimal and allows tree‑shaking. Only override in specific cases like component‑scoped providers (next lesson)."
+        }
+    ]
+}

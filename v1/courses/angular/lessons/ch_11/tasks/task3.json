@@ -1,0 +1,16 @@
+{
+    "id": "task3",
+    "chapterId": "ch_11",
+    "title": "Test HTTP Service with HttpTestingController",
+    "description": "Write unit tests for a service that fetches data via HttpClient.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Write a test for `PostService.getPosts()` that fetches posts from `/api/posts`. Use `HttpClientTestingModule` and `HttpTestingController` to mock the HTTP call.\n\n**Requirements:**\n1. Set up the test module with `HttpClientTestingModule`.\n2. Inject `PostService` and `HttpTestingController`.\n3. Call `getPosts()` and subscribe to the result.\n4. Expect one request to `/api/posts` with method GET.\n5. Respond with mock data `[{ id:1, title:'Test' }]`.\n6. Assert the received data matches.\n7. Call `httpMock.verify()` in `afterEach`.",
+    "hints": [
+        "Import `HttpClientTestingModule` and `HttpTestingController` from `@angular/common/http/testing`.",
+        "Use `TestBed.inject(HttpTestingController)`.",
+        "`const req = httpMock.expectOne('/api/posts');`",
+        "`req.flush(mockData);`"
+    ],
+    "expectedOutput": "Test verifies the service correctly fetches and processes the response.",
+    "solutionCode": "import { TestBed } from '@angular/core/testing';\nimport { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';\nimport { PostService } from './post.service';\n\ndescribe('PostService', () => {\n  let service: PostService;\n  let httpMock: HttpTestingController;\n\n  beforeEach(() => {\n    TestBed.configureTestingModule({\n      imports: [HttpClientTestingModule],\n      providers: [PostService]\n    });\n    service = TestBed.inject(PostService);\n    httpMock = TestBed.inject(HttpTestingController);\n  });\n\n  afterEach(() => { httpMock.verify(); });\n\n  it('should fetch posts via GET', () => {\n    const mockPosts = [{ id: 1, title: 'Test Post' }];\n\n    service.getPosts().subscribe(posts => {\n      expect(posts.length).toBe(1);\n      expect(posts[0].title).toBe('Test Post');\n    });\n\n    const req = httpMock.expectOne('/api/posts');\n    expect(req.request.method).toBe('GET');\n    req.flush(mockPosts);\n  });\n});"
+}

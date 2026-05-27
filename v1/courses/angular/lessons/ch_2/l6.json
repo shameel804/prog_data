@@ -1,0 +1,119 @@
+{
+    "id": "l6",
+    "chapterId": "ch_2",
+    "title": "Component Communication 📡",
+    "description": "Pass data into child components with @Input() and emit events upward with @Output().",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Components",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Parent‑Child Component Communication 👨‍👧",
+            "content": "# Sharing Data Between Components\n\nAngular apps are a tree of components. To build something useful, they need to talk to each other.\n\n* **Parent → Child**: Pass data using `@Input()`.\n* **Child → Parent**: Emit events using `@Output()` (EventEmitter).\n\nThis one‑way data flow makes your app predictable and easier to debug."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "@Input() – Receiving Data from Parent",
+            "content": "In the child component, decorate a property with `@Input()` to turn it into a bindable input.",
+            "codeSnippet": "// child.component.ts\nimport { Component, Input } from '@angular/core';\n\n@Component({...})\nexport class ChildComponent {\n  @Input() name: string = '';\n  @Input() age: number = 0;\n}\n\n// parent.component.html\n<app-child [name]=\"parentName\" [age]=\"parentAge\"></app-child>",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "@Input Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Which decorator allows a child component to receive data from a parent?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "@Output",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "@ViewChild",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "@Input",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "@HostListener",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`@Input()` marks a property as a data‑binding target for parent components.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "@Output() – Emitting Events Upward 📤",
+            "content": "When the child needs to tell the parent something happened (e.g., a button click), it uses `@Output()` and an `EventEmitter`.\n\n* Decorate an `EventEmitter` instance with `@Output()`.\n* Call `.emit(value)` to send data to the parent.\n* In the parent template, use event binding: `(customEvent)=\"handleEvent($event)\"`."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "code",
+            "title": "Child Emitting an Event",
+            "content": "Child component with a button that notifies parent:",
+            "codeSnippet": "// child.component.ts\nimport { Component, Output, EventEmitter } from '@angular/core';\n\n@Component({\n  selector: 'app-child',\n  template: `<button (click)=\"sendMessage()\">Send</button>`\n})\nexport class ChildComponent {\n  @Output() messageEvent = new EventEmitter<string>();\n\n  sendMessage() {\n    this.messageEvent.emit('Hello from child!');\n  }\n}\n\n// parent.component.html\n<app-child (messageEvent)=\"parentMethod($event)\"></app-child>\n\n// parent.component.ts\nparentMethod(msg: string) {\n  console.log(msg); // 'Hello from child!'\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_6",
+            "type": "tip",
+            "title": "Naming Convention for Outputs 🏷️",
+            "content": "Name the output property after the event, e.g., `(itemSelected)`, `(formSubmitted)`. Avoid prefixing with `on` – the binding already looks event‑ish."
+        },
+        {
+            "id": "s_l6_7",
+            "type": "text",
+            "title": "Template Reference Variables 📍",
+            "content": "Sometimes you need to access a child component’s method or property directly from the parent template (without using @Output). You can use a **template reference variable** with `#child`.\n\n```html\n<app-child #childRef></app-child>\n<button (click)=\"childRef.someMethod()\">Call Child</button>\n```\n\nUse with caution – it couples the parent to the child’s public API. `@Input`/`@Output` is usually cleaner."
+        },
+        {
+            "id": "s_l6_8",
+            "type": "quiz",
+            "title": "Communication Round‑up 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "true_false",
+                "question": "An @Output() property must be of type EventEmitter.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Angular uses EventEmitter (which extends RxJS Subject) to emit custom events. It’s the standard type for outputs.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_9",
+            "type": "text",
+            "title": "Recap: The Component Data Flow 🌊",
+            "content": "## Summary of Bindings\n\n| Direction | Syntax |\n|-----------|--------|\n| Component → Template (one‑way) | `{{ expression }}` or `[property]=\"value\"` |\n| Template → Component (one‑way) | `(event)=\"handler()\"` |\n| Two‑way (both) | `[(ngModel)]=\"property\"` |\n| Parent → Child | `[inputProp]=\"data\"` with `@Input()` |\n| Child → Parent | `(outputProp)=\"handler($event)\"` with `@Output()` |\n\nNow you’re equipped to build dynamic, interactive Angular interfaces!"
+        }
+    ]
+}

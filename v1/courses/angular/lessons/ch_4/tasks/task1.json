@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_4",
+    "title": "Logger Service & Injector",
+    "description": "Create and inject a simple logging service into multiple components.",
+    "estimatedMinutes": 12,
+    "problemStatement": "Create a `LoggerService` that logs messages to the console. Then inject it into `AppComponent` and a new `HeaderComponent`.\n\n**Requirements:**\n1. Generate a service named `logger` (`ng g s logger`).\n2. Add methods `log(message: string)` and `warn(message: string)`. Each should prefix the message with `[LOG]` or `[WARN]` respectively.\n3. Inject `LoggerService` into `AppComponent`. In `ngOnInit`, log \"AppComponent initialized\".\n4. Generate a new component `HeaderComponent` and inject the same `LoggerService`.\n5. In `HeaderComponent`, add a button that when clicked calls `this.logger.warn('Button clicked in Header')`.\n6. Verify that both components use the same service instance and logs appear in the console.",
+    "hints": [
+        "The service should have `providedIn: 'root'`.",
+        "For `ngOnInit`, your component must implement `OnInit` and import it.",
+        "`HeaderComponent` must be declared in a module (or standalone) and added to the template."
+    ],
+    "expectedOutput": "Console shows '[LOG] AppComponent initialized' on load, and '[WARN] Button clicked in Header' when the button is clicked.",
+    "solutionCode": "// logger.service.ts\nimport { Injectable } from '@angular/core';\n\n@Injectable({ providedIn: 'root' })\nexport class LoggerService {\n  log(message: string) {\n    console.log(`[LOG] ${message}`);\n  }\n  warn(message: string) {\n    console.warn(`[WARN] ${message}`);\n  }\n}\n\n// app.component.ts\nimport { Component, OnInit } from '@angular/core';\nimport { LoggerService } from './logger.service';\n\n@Component({\n  selector: 'app-root',\n  template: `<app-header></app-header>`\n})\nexport class AppComponent implements OnInit {\n  constructor(private logger: LoggerService) {}\n  ngOnInit() {\n    this.logger.log('AppComponent initialized');\n  }\n}\n\n// header.component.ts\nimport { Component } from '@angular/core';\nimport { LoggerService } from '../logger.service';\n\n@Component({\n  selector: 'app-header',\n  template: `<button (click)=\"onClick()\">Header Button</button>`\n})\nexport class HeaderComponent {\n  constructor(private logger: LoggerService) {}\n  onClick() {\n    this.logger.warn('Button clicked in Header');\n  }\n}"
+}

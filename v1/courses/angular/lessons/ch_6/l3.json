@@ -1,0 +1,107 @@
+{
+    "id": "l3",
+    "chapterId": "ch_6",
+    "title": "Template‑Driven Validation & Error Messages ❌",
+    "description": "Show validation feedback using control state and template references.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Template‑Driven",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Built‑In HTML5 Validators ➕",
+            "content": "# Angular respects native validation attributes\n\nAdd `required`, `minlength`, `maxlength`, `pattern`, etc., directly to your inputs. Angular will hook into them.\n\n```html\n<input name=\"username\" [(ngModel)]=\"username\" required minlength=\"3\" maxlength=\"20\">\n```\n\nAngular tracks the control’s validity in `control.valid`, `control.invalid`, and the specific errors object."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Accessing a Control's State",
+            "content": "Use a template reference on the ngModel directive: `#usernameRef=\"ngModel\"`",
+            "codeSnippet": "<input name=\"username\" [(ngModel)]=\"username\" required minlength=\"3\" #usernameRef=\"ngModel\">\n<div *ngIf=\"usernameRef.invalid && usernameRef.touched\">\n  <small *ngIf=\"usernameRef.errors?.required\">Username is required.</small>\n  <small *ngIf=\"usernameRef.errors?.minlength\">Must be at least 3 characters.</small>\n</div>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Validation State 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which property on a control reference tells if the user has interacted with the field and then left it?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "dirty",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "touched",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "pristine",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "untouched",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`touched` becomes `true` when the field loses focus after being visited. `dirty` means the value was changed.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Important Control States 📊",
+            "content": "Every `ngModel` control tracks:\n\n* `valid` / `invalid` – overall validity.\n* `pristine` / `dirty` – has the user modified the value?\n* `touched` / `untouched` – has the field been focused?\n* `errors` – an object with validation error names (e.g., `{ required: true }`).\n\nUse these to show/hide error messages at the right time – usually after the field is `touched` and `invalid`."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Disabling Submit Button",
+            "content": "Bind the button’s `disabled` property to the form’s validity:",
+            "codeSnippet": "<form #loginForm=\"ngForm\">\n  ...\n  <button type=\"submit\" [disabled]=\"!loginForm.valid\">Submit</button>\n</form>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Show Errors Only After Interaction\n\nIt’s a better UX to show errors after the field loses focus (touched) rather than on page load. Use `*ngIf=\"control.invalid && control.touched\"`."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "quiz",
+            "title": "Error Display 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "true_false",
+                "question": "You should always show validation errors as soon as the page loads.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "It’s best to delay error display until the user has interacted with the field (touched or dirty).",
+                "xpReward": 10
+            }
+        }
+    ]
+}

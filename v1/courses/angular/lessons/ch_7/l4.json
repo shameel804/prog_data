@@ -1,0 +1,98 @@
+{
+    "id": "l4",
+    "chapterId": "ch_7",
+    "title": "The Async Pipe & Advanced Patterns ⚡",
+    "description": "Use the async pipe to subscribe to Observables and Promises directly in the template.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Magic of Async Pipe 🪄",
+            "content": "# Handle Asynchronous Data the Angular Way\n\nThe `async` pipe subscribes to an `Observable` or `Promise` and returns the latest value. It also automatically unsubscribes when the component is destroyed.\n\n```html\n{{ myObservable$ | async }}\n```\n\n* No manual subscription management.\n* No risk of memory leaks.\n* Works with `ngIf`, `ngFor`, and any expression."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Async Pipe with Observable",
+            "content": "Component exposes an Observable, and the template subscribes via async:",
+            "codeSnippet": "// Component\ntime$ = interval(1000).pipe(\n  map(() => new Date().toLocaleTimeString())\n);\n\n// Template\n<p>Current time: {{ time$ | async }}</p>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Async Pipe Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "true_false",
+                "question": "You must manually unsubscribe when using async pipe in the template.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "The async pipe automatically handles subscription and unsubscription.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Async with *ngIf – Storing Values",
+            "content": "Use `*ngIf` to assign the async value to a local variable and avoid multiple subscriptions:",
+            "codeSnippet": "<div *ngIf=\"user$ | async as user; else loading\">\n  <h1>Welcome, {{ user.name }}</h1>\n</div>\n<ng-template #loading>Loading...</ng-template>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Async Pipe with HttpClient",
+            "content": "When you call `http.get()` you get an Observable. Use async pipe directly instead of subscribing in the component:\n\n```typescript\n// Component\nusers$ = this.http.get<User[]>('/api/users');\n```\n```html\n<ul>\n  <li *ngFor=\"let user of users$ | async\">{{ user.name }}</li>\n</ul>\n```\n\nThis is a common pattern to keep components clean."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "warning",
+            "title": "Async Pipe and Change Detection ⚠️",
+            "content": "The async pipe marks the component for check when a new value arrives. It works seamlessly with `OnPush` change detection strategy – making your app much faster."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `async` pipe with `OnPush` for Max Performance\n\nSet `changeDetection: ChangeDetectionStrategy.OnPush` on your component. The async pipe will trigger change detection only when new data arrives, drastically reducing checks."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "quiz",
+            "title": "Async Pipe Patterns 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "fill_blank",
+                "question": "The `async` pipe can subscribe to both Observables and ________.",
+                "options": [
+                    "Promises",
+                    "Arrays",
+                    "Strings",
+                    "Objects"
+                ],
+                "correctAnswer": "Promises",
+                "explanation": "Async pipe works with both Observables and Promises.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,116 @@
+{
+    "id": "l3",
+    "chapterId": "ch_7",
+    "title": "Custom Pipes – Your Own Transformers 🛠️",
+    "description": "Create reusable custom pipes, understand pure/impure, and integrate them into your app.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "When Built‑In Isn't Enough 🎨",
+            "content": "# Custom Pipes\n\nIf you find yourself writing a transformation method in a component and calling it in the template, that's a perfect candidate for a custom pipe.\n\n* Reusable across the app.\n* Cleaner templates.\n* Testable in isolation.\n\nCreate with CLI:\n```bash\nng generate pipe my-custom-pipe\n```"
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Anatomy of a Custom Pipe",
+            "content": "A pipe is a class with `@Pipe` decorator and a `transform` method:",
+            "codeSnippet": "import { Pipe, PipeTransform } from '@angular/core';\n\n@Pipe({\n  name: 'myPipe',\n  pure: true  // default\n})\nexport class MyPipe implements PipeTransform {\n  transform(value: any, ...args: any[]): any {\n    // transform logic\n    return modifiedValue;\n  }\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Custom Pipe Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which interface must a custom pipe implement?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Pipe",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "PipeTransform",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Transform",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "PipeDecorator",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Custom pipes must implement `PipeTransform` and its `transform()` method.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Example: Reverse Pipe",
+            "content": "A pipe that reverses a string:",
+            "codeSnippet": "@Pipe({ name: 'reverse' })\nexport class ReversePipe implements PipeTransform {\n  transform(value: string): string {\n    return value.split('').reverse().join('');\n  }\n}\n\n// Usage in template\n{{ 'Angular' | reverse }}  // 'ralugnA'",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Pure vs Impure Pipes 🔬",
+            "content": "* **Pure pipes** (default) – Angular executes the pipe only when it detects a *pure change* to the input value (primitive value change or object reference change). This saves performance.\n* **Impure pipes** (`pure: false`) – runs on every change detection cycle, even if the input didn’t change. Necessary when the pipe’s output depends on something outside the input (e.g., filter on an array that gets new items).\n\nBe careful: impure pipes can be expensive."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "warning",
+            "title": "Impure Pipe Performance ⚠️",
+            "content": "An impure pipe that filters an array will create a new array every change detection cycle. For large lists, this can cause lag. Consider doing filtering in the component or using memoization."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "code",
+            "title": "Filter Pipe (Impure)",
+            "content": "A pipe that filters items by a search term – must be impure because the array reference doesn’t change when items are pushed.",
+            "codeSnippet": "@Pipe({ name: 'filter', pure: false })\nexport class FilterPipe implements PipeTransform {\n  transform(items: any[], searchText: string): any[] {\n    if (!items || !searchText) return items;\n    return items.filter(item => item.name.toLowerCase().includes(searchText.toLowerCase()));\n  }\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_8",
+            "type": "quiz",
+            "title": "Pure/Impure 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "true_false",
+                "question": "A pure pipe will re‑execute every time any event occurs in the component.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Pure pipes only re‑run when their input value changes (reference change). Impure pipes run on every change detection.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

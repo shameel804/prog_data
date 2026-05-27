@@ -1,0 +1,104 @@
+{
+    "id": "l1",
+    "chapterId": "ch_10",
+    "title": "Why State Management Matters 🧠",
+    "description": "Learn what state is and why managing it with plain services often leads to bugs.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "State Management",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "What Is State? 🗂️",
+            "content": "# State = Data that changes over time\n\nEvery interactive application has **state**:\n* The current user (logged in or not).\n* Items in a shopping cart.\n* An array of search results.\n* UI flags (sidebar open/closed, loading spinner visible).\n\nWhen state changes, the UI must update. In Angular, we often keep state in services and use Observables to broadcast changes."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "The Problem with Mutable Shared State 🐛",
+            "content": "When multiple components directly mutate a plain object stored in a service, tracking **who changed what and when** becomes impossible.\n\n* Bugs arise: one component overwrites another’s data.\n* Change detection may not run (if object reference doesn’t change).\n* It’s hard to debug or replay state transitions.\n\nWe need a **single source of truth** that components can **observe** but not directly mutate."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "State Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What is a major risk of letting any component directly mutate a shared object in a service?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The service becomes too fast.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It’s impossible to track who changed the data, leading to unpredictable UI.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The template can no longer display the data.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Angular will refuse to compile.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Without controlled mutations, state becomes unpredictable and debugging is a nightmare.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "The RxJS Solution: Observables as State 📡",
+            "content": "Instead of exposing raw data, expose an **Observable stream** of state updates. Components subscribe and react automatically.\n\n* Use a **Subject** (like BehaviorSubject) to hold the current state and emit new values.\n* The service is the **single source of truth**: only the service can change the state.\n* Components dispatch **actions** (method calls) to the service, which updates the state and notifies subscribers.\n\nThis is the **store pattern** – you don’t need a library like NgRx to do it."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "Simple Store Concept",
+            "content": "A minimal reactive store in a service:",
+            "codeSnippet": "@Injectable({ providedIn: 'root' })\nexport class CounterStore {\n  private countSubject = new BehaviorSubject<number>(0);\n  count$ = this.countSubject.asObservable();\n\n  increment() {\n    this.countSubject.next(this.countSubject.value + 1);\n  }\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Keep the Subject Private\n\nNever expose the Subject directly. Only expose the Observable (`asObservable()`). This prevents external code from calling `.next()` and bypassing your business logic."
+        },
+        {
+            "id": "s_l1_7",
+            "type": "quiz",
+            "title": "Store Pattern 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "true_false",
+                "question": "It's safe to expose a Subject directly from a service so components can emit new values.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Exposing the Subject lets anyone call .next(), undermining control over state changes.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

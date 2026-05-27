@@ -1,0 +1,110 @@
+{
+    "id": "l5",
+    "chapterId": "ch_4",
+    "title": "Advanced Service Patterns 🧪",
+    "description": "Learn how to use services for state management, observables, and scalable architecture.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Patterns",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Services as State Holders 🗄️",
+            "content": "# Beyond Simple Data Sharing\n\nA service can act as a centralized store for application state. Instead of passing data through inputs and outputs, components can inject a service and read/modify the state directly.\n\nFor reactive apps, combine services with **RxJS Observables** so components can subscribe to state changes. This decouples components and makes the app more predictable."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Service with BehaviorSubject",
+            "content": "A simple reactive store using RxJS BehaviorSubject:",
+            "codeSnippet": "import { Injectable } from '@angular/core';\nimport { BehaviorSubject } from 'rxjs';\n\n@Injectable({ providedIn: 'root' })\nexport class CartService {\n  private itemsSubject = new BehaviorSubject<string[]>([]);\n  items$ = this.itemsSubject.asObservable();\n\n  addItem(item: string) {\n    const current = this.itemsSubject.value;\n    this.itemsSubject.next([...current, item]);\n  }\n\n  removeItem(item: string) {\n    const current = this.itemsSubject.value;\n    this.itemsSubject.next(current.filter(i => i !== item));\n  }\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Why Observables? 👁️",
+            "content": "* **Push‑based**: components get updated automatically when data changes.\n* **Composable**: you can pipe, filter, map data before it reaches components.\n* **Efficient**: Angular’s `async` pipe can subscribe in the template, handling subscription and change detection automatically.\n\nComponents simply inject the service and bind to the observable with `async` pipe:\n```html\n<div *ngFor=\"let item of cartService.items$ | async\">{{ item }}</div>\n```"
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Reactive State 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which RxJS class is most suitable for holding a changing value that new subscribers should immediately receive?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Subject",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "BehaviorSubject",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Observable",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "ReplaySubject",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`BehaviorSubject` stores the current value and emits it to new subscribers, perfect for state services.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Service Best Practices 📚",
+            "content": "## Keep It Clean\n\n1. **Single Responsibility** – one service, one purpose.\n2. **Avoid Side Effects in getters** – prefer methods for mutations.\n3. **Expose Observables, Not Subjects** – use `.asObservable()` to prevent components from calling `.next()`.\n4. **Use the `async` pipe** in templates to automatically manage subscriptions.\n5. **Test services independently** – they are easy to unit test without the DOM."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "warning",
+            "title": "Memory Leak Warning ⚠️",
+            "content": "If you manually subscribe to an observable in a component, always **unsubscribe** in `ngOnDestroy`. Otherwise, the subscription lives on and causes memory leaks.\n\nBetter approach: use the `async` pipe in the template, which handles subscription/unsubscription automatically."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Best Practices Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "true_false",
+                "question": "It’s safe to expose a `Subject` directly from a service so components can emit new values.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Exposing a Subject allows external code to call `.next()` directly, breaking encapsulation. Always expose the Observable (`asObservable()`).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Services Are the Foundation of Scalable Angular Apps\n\nMastering services and DI will make you an Angular pro. They enable clean architecture patterns like the **Facade pattern** over NgRx, or simple reactive stores as shown here. Practice building services for every piece of logic that isn’t pure UI."
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_10",
+    "title": "To‑Do Store with Selectors",
+    "description": "Build a to‑do store with add/remove/toggle and derived selectors.",
+    "estimatedMinutes": 18,
+    "problemStatement": "Create a `TodoStore` that manages a list of tasks. Each task has an `id`, `title`, and `completed` flag.\n\n**Requirements:**\n1. Interface `Todo { id: number, title: string, completed: boolean }`.\n2. `TodoStore`:\n   - Private BehaviorSubject of `Todo[]` (initial empty).\n   - Public `todos$` observable.\n   - `addTodo(title: string)`: generate unique id, push immutably.\n   - `removeTodo(id: number)`: filter out.\n   - `toggleTodo(id: number)`: map to toggle completed.\n   - Selector `completedCount$` that emits the number of completed todos (use `map` + `distinctUntilChanged`).\n3. `TodoListComponent` displays todos with checkboxes and delete buttons; uses store actions.\n4. `TodoSummaryComponent` only displays the completed count using `completedCount$` selector.\n5. All components use `async` pipe.",
+    "hints": [
+        "For unique id, use `Date.now()` or a counter variable in the store.",
+        "Toggle: `todos.map(t => t.id === id ? { ...t, completed: !t.completed } : t)`.",
+        "Selector: `this.todos$.pipe(map(todos => todos.filter(t => t.completed).length), distinctUntilChanged())`."
+    ],
+    "expectedOutput": "Adding, removing, toggling updates list and summary count instantly.",
+    "solutionCode": "// todo.store.ts\nexport interface Todo { id: number; title: string; completed: boolean; }\n\n@Injectable({ providedIn: 'root' })\nexport class TodoStore {\n  private todosSubject = new BehaviorSubject<Todo[]>([]);\n  todos$ = this.todosSubject.asObservable();\n\n  completedCount$ = this.todos$.pipe(\n    map(todos => todos.filter(t => t.completed).length),\n    distinctUntilChanged()\n  );\n\n  addTodo(title: string) {\n    const newTodo: Todo = { id: Date.now(), title, completed: false };\n    this.todosSubject.next([...this.todosSubject.value, newTodo]);\n  }\n\n  removeTodo(id: number) {\n    const todos = this.todosSubject.value.filter(t => t.id !== id);\n    this.todosSubject.next(todos);\n  }\n\n  toggleTodo(id: number) {\n    const todos = this.todosSubject.value.map(t =>\n      t.id === id ? { ...t, completed: !t.completed } : t\n    );\n    this.todosSubject.next(todos);\n  }\n}\n\n// todo-summary.component.ts\n@Component({...})\nexport class TodoSummaryComponent {\n  constructor(public store: TodoStore) {}\n}\n// template: <p>Completed: {{ store.completedCount$ | async }}</p>"
+}

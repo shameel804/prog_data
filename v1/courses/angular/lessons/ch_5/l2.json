@@ -1,0 +1,114 @@
+{
+    "id": "l2",
+    "chapterId": "ch_5",
+    "title": "Defining Routes & RouterModule 🗺️",
+    "description": "Create your first route configuration and import the RouterModule correctly.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Setup",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Routes Array 📋",
+            "content": "# Setting Up Routes\n\nRoutes are defined as an array of objects, each with a `path` and a `component`.\n\n```typescript\nconst routes: Routes = [\n  { path: 'home', component: HomeComponent },\n  { path: 'about', component: AboutComponent },\n  { path: '', redirectTo: '/home', pathMatch: 'full' },\n  { path: '**', component: NotFoundComponent }\n];\n```\n\n* `path` – the URL segment (no leading slash).\n* `component` – the component to display.\n* `redirectTo` – redirect from one path to another.\n* `**` – a wildcard for unmatched routes (404 page)."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Routes Array Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What does `path: '**'` match?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The root path only.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Any URL that doesn’t match any other route.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "All paths starting with '**' literally.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It is not a valid path.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The double asterisk is a wildcard that catches all unmatched routes – perfect for a 404 page.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "RouterModule.forRoot() 🏗️",
+            "content": "To activate the routes, you must import `RouterModule` and call `forRoot()` (or `forChild()` for feature modules).\n\n```typescript\n@NgModule({\n  imports: [\n    BrowserModule,\n    RouterModule.forRoot(routes)\n  ],\n  ...\n})\nexport class AppModule {}\n```\n\n* `forRoot()` registers the router service and sets up the root routing configuration.\n* Only call `forRoot()` once, in the root module.\n* Feature modules use `forChild()` to add extra routes without re‑initializing the router."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Full Setup Example",
+            "content": "A minimal app with two pages:",
+            "codeSnippet": "// app.module.ts\nimport { NgModule } from '@angular/core';\nimport { BrowserModule } from '@angular/platform-browser';\nimport { RouterModule, Routes } from '@angular/router';\nimport { AppComponent } from './app.component';\nimport { HomeComponent } from './home/home.component';\nimport { AboutComponent } from './about/about.component';\n\nconst routes: Routes = [\n  { path: 'home', component: HomeComponent },\n  { path: 'about', component: AboutComponent },\n  { path: '', redirectTo: '/home', pathMatch: 'full' },\n];\n\n@NgModule({\n  declarations: [AppComponent, HomeComponent, AboutComponent],\n  imports: [BrowserModule, RouterModule.forRoot(routes)],\n  bootstrap: [AppComponent]\n})\nexport class AppModule {}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "pathMatch: 'full' vs 'prefix' 🔍",
+            "content": "The `pathMatch` property tells Angular how to match the URL:\n\n* `'full'` – the remaining URL must be exactly the path (no extra segments).\n* `'prefix'` – matches if the URL starts with the path (default for redirects if not specified, but safer to use 'full' for empty paths).\n\nExample: `{ path: '', redirectTo: '/home', pathMatch: 'full' }` redirects only when the URL is exactly `/`."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "RouterModule Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Which method should be used to import the RouterModule in a lazy‑loaded feature module?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "RouterModule.forRoot()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "RouterModule.forChild()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "RouterModule.forLazy()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Just import RouterModule without a method.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Feature modules use `forChild()` to append routes without re‑initializing the router service.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "warning",
+            "title": "Common Pitfall ⚠️",
+            "content": "## Order Matters!\n\nRoutes are evaluated in order. Put more specific routes before wildcards. If you put `{ path: '**', component: NotFoundComponent }` first, it will match every URL and no other page will load."
+        }
+    ]
+}

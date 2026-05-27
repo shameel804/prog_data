@@ -1,0 +1,113 @@
+{
+    "id": "l5",
+    "chapterId": "ch_5",
+    "title": "Child Routes & Lazy Loading 🧩",
+    "description": "Create nested views with child routes and optimise performance with lazy loading.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Child Routes: Nested Views 🪆",
+            "content": "# Hierarchical Routing\n\nOften a component has its own sub‑pages. For example, a `DashboardComponent` might have sections like `stats` and `settings`.\n\nDefine a `children` array in the route:\n```typescript\n{\n  path: 'dashboard',\n  component: DashboardComponent,\n  children: [\n    { path: 'stats', component: StatsComponent },\n    { path: 'settings', component: SettingsComponent }\n  ]\n}\n```\n\nThe child components will be rendered into a `<router-outlet>` inside the parent’s template."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Child Route Example",
+            "content": "Parent template must contain its own `<router-outlet>`:",
+            "codeSnippet": "<!-- dashboard.component.html -->\n<h2>Dashboard</h2>\n<nav>\n  <a routerLink=\"stats\">Stats</a>\n  <a routerLink=\"settings\">Settings</a>\n</nav>\n<router-outlet></router-outlet>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Child Routes Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "true_false",
+                "question": "Child routes are rendered into the same `<router-outlet>` as the parent.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "The parent component must have its own `<router-outlet>` to display child components.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Lazy Loading: Load on Demand ⚡",
+            "content": "By default, all components are bundled at startup. For large apps, this slows initial load.\n\n**Lazy loading** defers the loading of a feature module until the user navigates to it.\n\nInstead of pointing to a component, the route points to a module using `loadChildren`:\n```typescript\n{\n  path: 'admin',\n  loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)\n}\n```\n\nAngular generates a separate JS chunk for this module, loaded only when needed."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Setting Up a Lazy‑Loaded Module",
+            "content": "Step 1: Create a feature module with its own routing.\nStep 2: In the root routes, use `loadChildren`.",
+            "codeSnippet": "// admin-routing.module.ts\nconst routes: Routes = [\n  { path: '', component: AdminComponent },\n  { path: 'users', component: ManageUsersComponent }\n];\n\n@NgModule({\n  imports: [RouterModule.forChild(routes)],\n  exports: [RouterModule]\n})\nexport class AdminRoutingModule {}\n\n// app-routing.module.ts\nconst routes: Routes = [\n  {\n    path: 'admin',\n    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)\n  }\n];",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Preloading Strategies 🏎️",
+            "content": "Lazy loading improves initial load, but causes a small delay when navigating to a new module for the first time.\n\nAngular offers **preloading strategies** to load lazy modules in the background after the app starts.\n\n* `PreloadAllModules` – preloads every lazy module.\n* Custom strategy – selectively preload high‑priority modules.\n\nSet in `forRoot()`:\n```typescript\nRouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })\n```\n\nThis combines fast startup with instant navigation."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Lazy Loading Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What is the main benefit of lazy loading a module?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It makes the app run faster after every click.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It reduces the initial bundle size by loading code only when needed.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It makes the router work offline.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It automatically compresses images.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Lazy loading splits code into chunks, decreasing the initial download size.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Organise by Feature\n\nCreate feature modules for each major section (e.g., AdminModule, ShopModule) and lazy‑load them. It makes the codebase maintainable and speeds up development builds."
+        }
+    ]
+}

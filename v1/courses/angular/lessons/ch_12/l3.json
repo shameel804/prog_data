@@ -1,0 +1,104 @@
+{
+    "id": "l3",
+    "chapterId": "ch_12",
+    "title": "Bundle Size & Build Optimizations 📦",
+    "description": "Reduce initial load time with production builds, tree‑shaking, lazy loading, and budgets.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Performance",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Why Bundle Size Matters ⏱️",
+            "content": "# First Impressions Count\n\nUsers expect apps to load in under 2 seconds. Every kilobyte of JavaScript adds download, parse, and execution time.\n\nAngular provides several built‑in mechanisms to keep your app lean:\n* **Production mode** – disables assertions and debug tools.\n* **Tree‑shaking** – removes unused code.\n* **Lazy loading** – loads modules only when needed.\n* **AOT compilation** – pre‑compiles templates ahead of time.\n* **Budget thresholds** – warn or error if bundles exceed a limit."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Production Build with AOT",
+            "content": "Always use the production configuration for deployment:",
+            "codeSnippet": "ng build --configuration production",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "AOT Compilation & Ivy 🌿",
+            "content": "Angular's **Ivy** renderer (default since v9) compiles templates during the build process (Ahead‑Of‑Time) rather than in the browser.\n\nBenefits:\n* Faster rendering (no runtime compiler).\n* Smaller bundle size (the compiler is not shipped).\n* Better template error detection at build time.\n\nIn production mode, AOT is enabled by default."
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "AOT & Production 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "true_false",
+                "question": "Angular's production build uses AOT compilation by default, which reduces bundle size and improves runtime performance.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "AOT compiles templates during the build, removing the need for the Angular compiler in the browser bundle.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Lazy Loading & Preloading (Review) 🔄",
+            "content": "As seen in Chapter 5, lazy loading splits the app into chunks. Use it for all feature modules.\n\nPreloading strategies (`PreloadAllModules` or custom) load lazy chunks in the background after the initial app is ready, giving instant navigation.\n\n```typescript\nRouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })\n```"
+        },
+        {
+            "id": "s_l3_6",
+            "type": "code",
+            "title": "Configuring Budgets",
+            "content": "Set size budgets in `angular.json` to catch bloat early:",
+            "codeSnippet": "\"budgets\": [\n  {\n    \"type\": \"initial\",\n    \"maximumWarning\": \"500kb\",\n    \"maximumError\": \"1mb\"\n  },\n  {\n    \"type\": \"anyComponentStyle\",\n    \"maximumWarning\": \"2kb\",\n    \"maximumError\": \"4kb\"\n  }\n]",
+            "codeLanguage": "json",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Differential Loading 🚛",
+            "content": "Angular automatically generates separate bundles for modern browsers (ES2015+) and legacy browsers (ES5). Modern browsers get smaller, faster code.\n\nThis is called **differential loading** and is enabled by default for production builds."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "quiz",
+            "title": "Budgets 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "fill_blank",
+                "question": "To set a maximum warning size for the initial bundle, you configure ________ in angular.json.",
+                "options": [
+                    "budgets",
+                    "limits",
+                    "sizeChecks",
+                    "maxSize"
+                ],
+                "correctAnswer": "budgets",
+                "explanation": "Budgets in angular.json define size thresholds that warn or error during build.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Analyze Your Bundle\n\nRun `ng build --stats-json` and then use tools like `webpack‑bundle‑analyzer` or `source‑map‑explorer` to see exactly what's making your bundle large."
+        }
+    ]
+}

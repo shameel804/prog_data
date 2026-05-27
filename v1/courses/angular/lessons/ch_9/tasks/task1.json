@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_9",
+    "title": "Create a Feature Module",
+    "description": "Move user‑related components into a UserModule with routing.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Organise the following components into a dedicated UserModule.\n\n**Given:** `UserListComponent`, `UserDetailComponent`, and a `UserService` (provided in root).\n\n**Requirements:**\n1. Generate a module named `UserModule`.\n2. Move both components into the `declarations` of `UserModule`.\n3. Set up child routes: `/users` shows `UserListComponent`, `/users/:id` shows `UserDetailComponent`.\n4. Use `RouterModule.forChild()` to define routes.\n5. Import `CommonModule` (needed for `*ngFor`, etc.).\n6. In `AppModule`, import `UserModule` and add a lazy‑loaded route for `users` (optional: you can just import eagerly for this task).\n7. Ensure the user components are not declared in `AppModule` anymore.",
+    "hints": [
+        "CLI: `ng g m user` creates the module; then move the component files into the user folder.",
+        "Don't forget to export the components if they are used elsewhere (not needed here).",
+        "If lazy loading, use `loadChildren` in AppModule routes."
+    ],
+    "expectedOutput": "Navigating to `/users` displays the list; clicking a user navigates to `/users/1` showing details.",
+    "solutionCode": "// user.module.ts\nimport { NgModule } from '@angular/core';\nimport { CommonModule } from '@angular/common';\nimport { RouterModule, Routes } from '@angular/router';\nimport { UserListComponent } from './user-list/user-list.component';\nimport { UserDetailComponent } from './user-detail/user-detail.component';\n\nconst routes: Routes = [\n  { path: '', component: UserListComponent },\n  { path: ':id', component: UserDetailComponent }\n];\n\n@NgModule({\n  declarations: [UserListComponent, UserDetailComponent],\n  imports: [CommonModule, RouterModule.forChild(routes)],\n  exports: [RouterModule]\n})\nexport class UserModule {}\n\n// app.module.ts routes\nconst routes: Routes = [\n  { path: 'users', loadChildren: () => import('./user/user.module').then(m => m.UserModule) },\n  ...\n];"
+}

@@ -1,0 +1,86 @@
+{
+    "id": "l3",
+    "chapterId": "ch_11",
+    "title": "Testing Directives & Pipes 🔍",
+    "description": "Create isolated tests for custom directives and pipes, and verify template interactions.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Testing",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Testing Pipes – Easy Peasy ✅",
+            "content": "# Pipes Are Pure Functions\n\nA custom pipe is just a class with a `transform` method. Testing it is as simple as:\n1. Create an instance.\n2. Call `transform` with test inputs.\n3. Assert the output.\n\nNo TestBed needed! Just instantiate the pipe class directly."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Testing a Custom Pipe",
+            "content": "The `truncate` pipe from Chapter 7:",
+            "codeSnippet": "import { TruncatePipe } from './truncate.pipe';\n\ndescribe('TruncatePipe', () => {\n  const pipe = new TruncatePipe();\n\n  it('should not truncate short strings', () => {\n    expect(pipe.transform('Hello', 10)).toBe('Hello');\n  });\n\n  it('should truncate long strings and append \"...\"', () => {\n    expect(pipe.transform('This is a long string', 10)).toBe('This is a ...');\n  });\n\n  it('should return empty string for null value', () => {\n    expect(pipe.transform(null)).toBe('');\n  });\n});",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Pipe Testing 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "true_false",
+                "question": "To test a custom pipe, you must use TestBed and compile a template.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Pipes can be tested by directly instantiating the class and calling `transform`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Testing Attribute Directives 🎯",
+            "content": "To test an attribute directive, you need to attach it to an element. Use a **host component** – a simple test component that uses the directive.\n\nThen use `TestBed` to create the host component and verify the directive’s effect on the DOM.\n\nFor the `HighlightDirective` (Chapter 3), you’d create a host component with `<p appHighlight>Hover me</p>` and trigger mouse events."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Testing a Directive with Host Component",
+            "content": "Test the highlight directive:",
+            "codeSnippet": "// Create a test host component\n@Component({\n  template: '<p appHighlight>Test</p>'\n})\nclass TestHostComponent {}\n\ndescribe('HighlightDirective', () => {\n  let fixture: ComponentFixture<TestHostComponent>;\n  beforeEach(() => {\n    TestBed.configureTestingModule({\n      declarations: [TestHostComponent, HighlightDirective]\n    });\n    fixture = TestBed.createComponent(TestHostComponent);\n    fixture.detectChanges();\n  });\n\n  it('should apply yellow background on mouseenter', () => {\n    const el = fixture.nativeElement.querySelector('p');\n    el.dispatchEvent(new MouseEvent('mouseenter'));\n    fixture.detectChanges();\n    expect(el.style.backgroundColor).toBe('yellow');\n  });\n});",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Directive Testing 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "fill_blank",
+                "question": "To test an attribute directive, you often create a ______ component that uses it.",
+                "options": [
+                    "host",
+                    "dummy",
+                    "mock",
+                    "stub"
+                ],
+                "correctAnswer": "host",
+                "explanation": "A host component provides an element for the directive to attach to in the test.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

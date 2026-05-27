@@ -1,0 +1,113 @@
+{
+    "id": "l4",
+    "chapterId": "ch_2",
+    "title": "Event Binding 🎤",
+    "description": "Listen to clicks, key presses, and more – and respond with component methods.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Bindings",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Reacting to User Actions 👆",
+            "content": "# Event Binding\n\nEvent binding lets the template listen for user events (clicks, key presses, mouse moves) and call a method in the component.\n\nSyntax: `(eventName)=\"handler($event)\"`\n\n* The parentheses indicate event binding.\n* `eventName` is a standard DOM event (click, input, keyup, etc.).\n* The expression calls a component method, optionally passing the `$event` object."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Click Me Example",
+            "content": "A button that increments a counter when clicked:",
+            "codeSnippet": "// Component\ncounter = 0;\nincrement() {\n  this.counter++;\n}\n\n// Template\n<button (click)=\"increment()\">Click me!</button>\n<p>Count: {{ counter }}</p>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Event Syntax Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which syntax binds a click event to a method `handleClick()`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "[click]=\"handleClick()\"",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "(click)=\"handleClick()\"",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "on-click=\"handleClick()\"",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "click=\"handleClick()\"",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Event binding uses parentheses around the event name.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "The $event Object 📦",
+            "content": "Sometimes you need information about the event itself. Angular provides the `$event` variable.\n\n* For mouse events, `$event` is a MouseEvent (with clientX, clientY).\n* For keyboard events, it’s a KeyboardEvent (key, keyCode).\n* For input events on a text field, you often want `$event.target.value`.\n\nBut **avoid passing the raw DOM event** if possible – it couples your component to the browser. Instead, pass the relevant value."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Input Event with $event",
+            "content": "Capture what the user types:",
+            "codeSnippet": "// Component\ninputValue = '';\nonInput(event: any) {\n  this.inputValue = event.target.value;\n}\n\n// Template\n<input (input)=\"onInput($event)\" [value]=\"inputValue\">\n<p>You typed: {{ inputValue }}</p>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Better: Template Reference Variables 🚀",
+            "content": "Instead of `$event.target.value`, use a template reference variable (next lesson!). It’s cleaner and more Angular‑like:\n\n```html\n<input #myInput (input)=\"onInput(myInput.value)\">\n```"
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Common Event Bindings 🎯",
+            "content": "* `(click)` – user clicks element.\n* `(dblclick)` – double click.\n* `(submit)` – form submission (use `(ngSubmit)` for Angular forms).\n* `(keydown)` / `(keyup)` – keyboard events.\n* `(mouseenter)` / `(mouseleave)` – hover effects.\n* `(input)` – fires on every keystroke in a text field.\n* `(change)` – fires when value changes and focus leaves (for select, checkbox)."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "quiz",
+            "title": "Event Handling Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "The expression `(click)=\"counter++\"` is valid and will increment a property named `counter`.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It's allowed, though calling a method is usually cleaner. Simple statements like `counter++` work.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

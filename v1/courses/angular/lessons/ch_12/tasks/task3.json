@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_12",
+    "title": "Configure Production Build & Budgets",
+    "description": "Set up production configuration, budgets, and analyze the bundle.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Optimize the app for production and configure budget warnings.\n\n**Requirements:**\n1. Run `ng build --configuration production` and note the bundle sizes.\n2. In `angular.json`, under `configurations.production`, add a budget that warns if the initial bundle exceeds 500KB.\n3. Re‑build and observe if the budget warning appears (if your app is small, lower the threshold to test the warning).\n4. Enable lazy loading for at least one feature module (e.g., admin) to split the bundle.\n5. Run `ng build --stats-json` and generate a bundle analysis using a tool (if available), or just describe how you'd do it.\n6. Verify that lazy‑loaded chunks are separate files in the `dist` folder.",
+    "hints": [
+        "Budget: add `\"budgets\": [{ \"type\": \"initial\", \"maximumWarning\": \"500kb\" }]` in angular.json.",
+        "For lazy loading, use `loadChildren: () => import(...)` in routes.",
+        "Stats: `ng build --stats-json` creates `dist/stats.json`."
+    ],
+    "expectedOutput": "Production build is small, budget warns if exceeded, and lazy chunks are present.",
+    "solutionCode": "// angular.json (relevant snippet)\n\"configurations\": {\n  \"production\": {\n    \"budgets\": [\n      { \"type\": \"initial\", \"maximumWarning\": \"500kb\", \"maximumError\": \"1mb\" },\n      { \"type\": \"anyComponentStyle\", \"maximumWarning\": \"2kb\", \"maximumError\": \"4kb\" }\n    ],\n    ...\n  }\n}\n\n// app-routing.module.ts\nconst routes: Routes = [\n  { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) }\n];\n\n// terminal commands:\nng build --configuration production --stats-json\n// then use webpack-bundle-analyzer or source-map-explorer to analyze stats.json"
+}

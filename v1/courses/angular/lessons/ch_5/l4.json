@@ -1,0 +1,113 @@
+{
+    "id": "l4",
+    "chapterId": "ch_5",
+    "title": "Route Parameters & ActivatedRoute 📍",
+    "description": "Create dynamic routes and read parameters using the ActivatedRoute service.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Dynamic Routes",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Dynamic Routes: URLs That Change 📊",
+            "content": "# Route Parameters\n\nStatic paths like `/products` are fine, but what about `/products/42`? We need dynamic segments.\n\nDefine a parameter with a colon:\n```typescript\n{ path: 'products/:id', component: ProductDetailComponent }\n```\n\nNow any value after `products/` is captured as a parameter named `id`.\n\nYou can have multiple parameters: `products/:category/:id`."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Reading Parameters with ActivatedRoute",
+            "content": "Inject `ActivatedRoute` and read the paramMap:",
+            "codeSnippet": "import { ActivatedRoute } from '@angular/router';\n\nconstructor(private route: ActivatedRoute) {\n  this.route.paramMap.subscribe(params => {\n    const id = params.get('id');\n    console.log('Product ID:', id);\n  });\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Param Syntax 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "How do you define a route with a dynamic parameter?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "path: 'products/id'",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "path: 'products/:id'",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "path: 'products/{id}'",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "path: 'products/*id'",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A colon followed by the parameter name makes it dynamic.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "paramMap: Observable vs Snapshot 🔁",
+            "content": "`ActivatedRoute` provides two ways to read parameters:\n\n* **paramMap (Observable)** – subscribe to it to react to changes. Use when the component might be reused with different parameters (e.g., navigating from product/1 to product/2 without destroying the component).\n* **snapshot.paramMap** – one‑time read at component creation. Use if the component is always destroyed and recreated when the route changes.\n\nPrefer the observable approach for robust components."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Snapshot Example",
+            "content": "Read the id once during initialization:",
+            "codeSnippet": "ngOnInit() {\n  const id = this.route.snapshot.paramMap.get('id');\n  this.loadProduct(id);\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "warning",
+            "title": "Component Reuse Pitfall ⚠️",
+            "content": "If you navigate from `/products/1` to `/products/2` and the component is not destroyed, `ngOnInit` won’t run again. The snapshot will still have the old value. Always use the paramMap observable if the same component is reused for different parameter values."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Query Parameters & Fragments 🧩",
+            "content": "Routes can also capture query strings (`?sort=asc`) and fragments (`#section`):\n\n* Query parameters: access via `route.queryParamMap`.\n* Fragments: access via `route.fragment`.\n\nExample: `/products?sort=price#top`"
+        },
+        {
+            "id": "s_l4_8",
+            "type": "quiz",
+            "title": "ActivatedRoute Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "It’s safe to always use snapshot.paramMap, even when the component can be reused for different parameter values.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Snapshot only reads once. Use the observable to stay updated on changes.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_6",
+    "title": "Template‑Driven Login Form",
+    "description": "Build a login form with validation and error messages.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Create a login form using the template‑driven approach.\n\n**Requirements:**\n1. Import `FormsModule`.\n2. Create an input for `username` and `password` (type password).\n3. Both fields are required; `username` must be at least 4 characters.\n4. Use template reference variables to capture the form (`#loginForm=\"ngForm\"`) and the controls (`#usernameRef=\"ngModel\"`).\n5. Display validation errors only after the field is touched and invalid.\n6. Disable the submit button while the form is invalid.\n7. On submit (ngSubmit), log the form value to the console and clear the form.",
+    "hints": [
+        "Use `required` and `minlength=\"4\"` attributes.",
+        "Error condition: `*ngIf=\"usernameRef.invalid && usernameRef.touched\"`.",
+        "Reset form: `loginForm.reset()`."
+    ],
+    "expectedOutput": "Errors shown on blur if fields invalid. Submit button disabled until form valid. After submit, console shows value and form clears.",
+    "solutionCode": "// login.component.ts\nexport class LoginComponent {\n  username = '';\n  password = '';\n\n  onSubmit(form: any) {\n    console.log('Submitted:', form.value);\n    form.reset();\n  }\n}\n\n// login.component.html\n<form #loginForm=\"ngForm\" (ngSubmit)=\"onSubmit(loginForm)\">\n  <div>\n    <label>Username</label>\n    <input name=\"username\" [(ngModel)]=\"username\" required minlength=\"4\" #usernameRef=\"ngModel\">\n    <div *ngIf=\"usernameRef.invalid && usernameRef.touched\">\n      <small *ngIf=\"usernameRef.errors?.required\">Username is required.</small>\n      <small *ngIf=\"usernameRef.errors?.minlength\">Minimum 4 characters.</small>\n    </div>\n  </div>\n  <div>\n    <label>Password</label>\n    <input name=\"password\" type=\"password\" [(ngModel)]=\"password\" required #passwordRef=\"ngModel\">\n    <div *ngIf=\"passwordRef.invalid && passwordRef.touched\">\n      <small>Password is required.</small>\n    </div>\n  </div>\n  <button type=\"submit\" [disabled]=\"!loginForm.valid\">Login</button>\n</form>"
+}

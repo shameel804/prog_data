@@ -1,0 +1,132 @@
+{
+    "id": "l5",
+    "chapterId": "ch_3",
+    "title": "Attribute Directives & Custom Creations 🎨",
+    "description": "Master ngClass, ngStyle, and build your own custom attribute directive from scratch.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Attribute Directives",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Modifying Existing Elements 🖌️",
+            "content": "# Attribute Directives\n\nAttribute directives don’t change the DOM structure; they change the **look and feel** of an element.\n\n* `ngClass` – dynamically add/remove CSS classes.\n* `ngStyle` – dynamically set inline styles.\n* You can build your own by creating a class with `@Directive`."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "ngClass: Dynamic CSS Classes",
+            "content": "Apply classes based on component state using a string, array, or object.",
+            "codeSnippet": "// String\n<div [ngClass]=\"'active'\">String</div>\n\n// Array\n<div [ngClass]=\"['active', 'highlight']\">Array</div>\n\n// Object (most powerful)\n<div [ngClass]=\"{ active: isActive, highlight: isHighlighted }\">Object</div>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "ngClass Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which syntax applies the class 'error' only if `hasError` is true?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "[ngClass]=\"hasError ? 'error' : ''\"",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "[ngClass]=\"{ error: hasError }\"",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "class=\"hasError ? 'error' : ''\"",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "[class.error]=\"hasError\"",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`[ngClass]=\"{ error: hasError }\"` is the clean, Angular‑way to conditionally apply a class. Option 4 also works but uses a different binding.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "ngStyle: Dynamic Inline Styles",
+            "content": "Set styles with an object whose keys are CSS properties (camelCase or kebab‑case in quotes).",
+            "codeSnippet": "<div [ngStyle]=\"{ 'font-size': '20px', color: 'blue' }\">Styled text</div>\n\n// Or based on component data:\n<div [ngStyle]=\"{ backgroundColor: bgColor, fontWeight: isBold ? 'bold' : 'normal' }\">Dynamic</div>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Creating a Custom Attribute Directive 🛠️",
+            "content": "Let’s build a directive that highlights an element on hover.\n\n1. Generate with CLI: `ng generate directive highlight`.\n2. It creates a class decorated with `@Directive`.\n3. The `selector` is usually in camelCase (e.g., `[appHighlight]`).\n4. Inject `ElementRef` to access the host DOM element.\n5. Use `@HostListener` to listen to events on the host."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "code",
+            "title": "Custom Highlight Directive",
+            "content": "Directive that changes background color on mouse enter/leave:",
+            "codeSnippet": "import { Directive, ElementRef, HostListener } from '@angular/core';\n\n@Directive({\n  selector: '[appHighlight]'\n})\nexport class HighlightDirective {\n  constructor(private el: ElementRef) {}\n\n  @HostListener('mouseenter') onMouseEnter() {\n    this.el.nativeElement.style.backgroundColor = 'yellow';\n  }\n\n  @HostListener('mouseleave') onMouseLeave() {\n    this.el.nativeElement.style.backgroundColor = '';\n  }\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Using the Custom Directive",
+            "content": "After declaring the directive in your module’s `declarations` array, use it in any template:\n\n```html\n<p appHighlight>Hover over me!</p>\n```\n\nThat’s it! The directive adds the hover behaviour without touching the component."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "quiz",
+            "title": "Custom Directive Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "Which decorator is used to listen to events on the host element in a directive?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "@Input",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "@Output",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "@HostListener",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "@HostBinding",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`@HostListener` lets you bind to events on the element that hosts the directive.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use @HostBinding for Cleaner Code\n\nInstead of manually setting `element.style.xxx`, you can bind directly to host properties:\n\n```typescript\n@HostBinding('style.backgroundColor') backgroundColor: string;\n\n@HostListener('mouseenter') onMouseEnter() {\n  this.backgroundColor = 'yellow';\n}\n```\n\nThis keeps your code testable and reduces direct DOM manipulation."
+        }
+    ]
+}

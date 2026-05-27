@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_8",
+    "title": "Search with Debounce & SwitchMap",
+    "description": "Build a search component that queries a server as the user types.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Create an input field that searches posts from JSONPlaceholder using the `?q=` query parameter.\n\n**Requirements:**\n1. Create a `PostService` with a method `searchPosts(term: string): Observable<any[]>` that hits `https://jsonplaceholder.typicode.com/posts?q={term}`.\n2. In `SearchComponent`, use a `Subject<string>` for the search terms.\n3. From that subject, pipe: `debounceTime(300)`, `distinctUntilChanged()`, `switchMap(term => this.postService.searchPosts(term))`.\n4. Subscribe and assign results to a local array (or use async pipe).\n5. Bind the input event to call `this.searchTerms.next(value)`.\n6. Display the results (title and body) in a list.",
+    "hints": [
+        "Use `import { Subject } from 'rxjs'`.",
+        "`distinctUntilChanged` avoids requests for same term.",
+        "Don't forget `HttpClientModule`."
+    ],
+    "expectedOutput": "Typing in the input shows relevant posts after a 300ms pause; no duplicate requests.",
+    "solutionCode": "// post.service.ts\n@Injectable({ providedIn: 'root' })\nexport class PostService {\n  constructor(private http: HttpClient) {}\n  searchPosts(term: string): Observable<any[]> {\n    return this.http.get<any[]>(`https://jsonplaceholder.typicode.com/posts?q=${term}`);\n  }\n}\n\n// search.component.ts\nimport { Subject } from 'rxjs';\nimport { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';\n\n@Component({...})\nexport class SearchComponent implements OnInit {\n  searchTerms = new Subject<string>();\n  results: any[] = [];\n\n  constructor(private postService: PostService) {}\n\n  ngOnInit() {\n    this.searchTerms.pipe(\n      debounceTime(300),\n      distinctUntilChanged(),\n      switchMap(term => this.postService.searchPosts(term))\n    ).subscribe(posts => this.results = posts);\n  }\n\n  onSearch(term: string) {\n    this.searchTerms.next(term);\n  }\n}\n\n// search.component.html\n<input (input)=\"onSearch($event.target.value)\" placeholder=\"Search posts...\">\n<ul>\n  <li *ngFor=\"let post of results\">{{ post.title }}</li>\n</ul>"
+}

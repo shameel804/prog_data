@@ -1,0 +1,102 @@
+{
+    "id": "l4",
+    "chapterId": "ch_6",
+    "title": "Reactive Forms Setup 🧪",
+    "description": "Build forms programmatically using FormGroup, FormControl, and FormBuilder.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Reactive",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Reactive Way 🎛️",
+            "content": "# Form Model in the Class\n\nWith reactive forms, you define the structure and validation of the form in the component class using `FormControl`, `FormGroup`, and `FormArray`.\n\nThe template merely binds to the model using directives like `formGroup`, `formControlName`, and `formArrayName`.\n\nBenefits:\n* Immutable state – you can observe value changes as streams.\n* Easier unit testing.\n* Scalable for complex scenarios."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Creating a Form Group",
+            "content": "Import `ReactiveFormsModule` and build your form:",
+            "codeSnippet": "import { Component } from '@angular/core';\nimport { FormGroup, FormControl } from '@angular/forms';\n\n@Component({...})\nexport class SignupComponent {\n  signupForm = new FormGroup({\n    email: new FormControl(''),\n    password: new FormControl('')\n  });\n\n  onSubmit() {\n    console.log(this.signupForm.value);\n  }\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Reactive Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which module must be imported for reactive forms?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "FormsModule",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "ReactiveFormsModule",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "HttpClientModule",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "RouterModule",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Reactive forms need `ReactiveFormsModule`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Binding in the Template",
+            "content": "Use `[formGroup]` and `formControlName` to link the template to the class model:",
+            "codeSnippet": "<form [formGroup]=\"signupForm\" (ngSubmit)=\"onSubmit()\">\n  <input formControlName=\"email\" placeholder=\"Email\">\n  <input formControlName=\"password\" type=\"password\" placeholder=\"Password\">\n  <button type=\"submit\">Sign Up</button>\n</form>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "FormBuilder – A Shorter Syntax 🛠️",
+            "content": "Angular provides `FormBuilder` to reduce boilerplate:\n\n```typescript\nimport { FormBuilder } from '@angular/forms';\n\nconstructor(private fb: FormBuilder) {}\n\nthis.signupForm = this.fb.group({\n  email: [''],\n  password: ['']\n});\n```\n\n* The array syntax is `[initialValue, validators, asyncValidators]`.\n* Much cleaner for large forms."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "FormBuilder Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "fill_blank",
+                "question": "The service that simplifies reactive form creation is called ________.",
+                "options": [
+                    "FormBuilder",
+                    "FormService",
+                    "FormFactory",
+                    "FormHelper"
+                ],
+                "correctAnswer": "FormBuilder",
+                "explanation": "Inject `FormBuilder` and use `fb.group()` for cleaner form creation.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Value Changes & Status Changes 📡",
+            "content": "You can subscribe to the form’s `valueChanges` or `statusChanges` observables to react to user input:\n\n```typescript\nthis.signupForm.valueChanges.subscribe(val => console.log(val));\n```\n\nThis is extremely powerful for real‑time validation, auto‑save, or dependent fields."
+        }
+    ]
+}

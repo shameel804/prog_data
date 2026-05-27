@@ -1,0 +1,116 @@
+{
+    "id": "l3",
+    "chapterId": "ch_8",
+    "title": "CRUD Operations with HttpClient ✍️",
+    "description": "Learn POST, PUT, DELETE, headers, query params, and typed responses.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "HTTP",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Beyond GET – Full CRUD 🛢️",
+            "content": "# Sending Data to the Server\n\n`HttpClient` provides methods for all REST verbs:\n\n* `post(url, body, options?)`\n* `put(url, body, options?)`\n* `patch(url, body, options?)`\n* `delete(url, options?)`\n\nThe second argument is the request body (for POST/PUT/PATCH), and the optional third (or second for DELETE) is an options object containing `headers`, `params`, etc."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "POST Request Example",
+            "content": "Create a new user:",
+            "codeSnippet": "createUser(user: User): Observable<User> {\n  return this.http.post<User>('/api/users', user);\n}\n\n// Usage\nthis.userService.createUser({ name: 'Alice' }).subscribe(\n  newUser => console.log('Created:', newUser)\n);",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Adding HTTP Headers",
+            "content": "Pass an `HttpHeaders` object in the options:",
+            "codeSnippet": "import { HttpHeaders } from '@angular/common/http';\n\nconst headers = new HttpHeaders({\n  'Content-Type': 'application/json',\n  'Authorization': 'Bearer my-token'\n});\n\nthis.http.post('/api/data', body, { headers });",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Query Parameters with HttpParams 🔍",
+            "content": "For GET requests, use `HttpParams` to build query strings immutably:\n\n```typescript\nlet params = new HttpParams().set('page', '1').set('limit', '10');\n// params = params.append('sort', 'asc');\n\nthis.http.get('/api/users', { params });\n```\n\nThe resulting URL: `/api/users?page=1&limit=10`. The `fromObject` shortcut also exists: `HttpParams({ fromObject: { page: 1, limit: 10 } })`."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "quiz",
+            "title": "CRUD Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which HttpClient method is used to update an entire resource?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "post()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "put()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "patch()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "delete()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`put()` replaces the entire resource; `patch()` does a partial update.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_6",
+            "type": "code",
+            "title": "DELETE and Response Types",
+            "content": "Specify what you expect back using `observe` and `responseType`:",
+            "codeSnippet": "// Expect the full HttpResponse object\nthis.http.delete('/api/users/1', { observe: 'response' }).subscribe(\n  response => console.log(response.status)\n);\n\n// Expect plain text instead of JSON\nthis.http.get('/api/text', { responseType: 'text' });",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use a Consistent API Service\n\nCreate a base service that holds common headers and base URL. Extend it for each resource to avoid repetition."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "quiz",
+            "title": "Headers & Params 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "true_false",
+                "question": "HttpParams is mutable – you can change a param directly after creation.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "HttpParams is immutable. `set()` returns a new instance; you must reassign it.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

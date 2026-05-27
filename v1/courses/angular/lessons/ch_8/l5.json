@@ -1,0 +1,116 @@
+{
+    "id": "l5",
+    "chapterId": "ch_8",
+    "title": "Advanced RxJS Operators for HTTP 🚀",
+    "description": "Use switchMap, mergeMap, forkJoin, and debounceTime for common real‑world patterns.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "RxJS",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Beyond Simple GET 🔗",
+            "content": "# Chaining HTTP Requests\n\nOften one request depends on another. You can chain them using **higher‑order mapping operators**:\n\n* `switchMap` – cancel previous inner observable when new outer emission arrives. Perfect for search.\n* `mergeMap` – run all inner observables concurrently. Good for multiple independent requests.\n* `concatMap` – run inner observables in order, one after another.\n* `exhaustMap` – ignore new outer emissions while inner is active (e.g., login)."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "switchMap for Type‑Ahead Search 🔍",
+            "content": "Cancel previous search request when the user types a new term:",
+            "codeSnippet": "import { fromEvent } from 'rxjs';\nimport { debounceTime, switchMap } from 'rxjs/operators';\n\nsearchInput$ = fromEvent(this.input.nativeElement, 'input').pipe(\n  debounceTime(300),\n  map((event: any) => event.target.value),\n  switchMap(term => this.http.get(`/api/search?q=${term}`))\n);",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "SwitchMap Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which operator cancels a previous inner observable when a new outer value arrives?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "mergeMap",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "switchMap",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "concatMap",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "exhaustMap",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`switchMap` unsubscribes from the previous inner observable and switches to the new one.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "forkJoin – Parallel Requests",
+            "content": "When you need to wait for multiple independent HTTP calls to complete:",
+            "codeSnippet": "import { forkJoin } from 'rxjs';\n\nconst users$ = this.http.get('/api/users');\nconst posts$ = this.http.get('/api/posts');\n\nforkJoin([users$, posts$]).subscribe(([users, posts]) => {\n  console.log('Both loaded:', users, posts);\n});",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "debounceTime & distinctUntilChanged ⏲️",
+            "content": "When building a search input, use `debounceTime` to wait until the user stops typing, and `distinctUntilChanged` to avoid duplicate requests.\n\n```typescript\nthis.searchTerms.pipe(\n  debounceTime(300),\n  distinctUntilChanged(),\n  switchMap(term => this.searchService.search(term))\n);\n```\nThis drastically reduces server load."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "code",
+            "title": "mergeMap for Concurrent Requests",
+            "content": "If you want to fire many independent requests and handle results as they arrive:",
+            "codeSnippet": "// Fetch details for a list of user IDs\nfrom([1, 2, 3]).pipe(\n  mergeMap(id => this.http.get(`/api/users/${id}`))\n).subscribe(user => console.log(user));",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Choose the Right Map Operator\n\n* Search? `switchMap`.\n* Multiple independent fetches? `mergeMap`.\n* Order matters? `concatMap`.\n* Prevent double submit? `exhaustMap`."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "quiz",
+            "title": "Operators Summary 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "true_false",
+                "question": "`forkJoin` will emit only after all input Observables have completed.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`forkJoin` waits for all observables to complete, then emits the last values as an array.",
+                "xpReward": 10
+            }
+        }
+    ]
+}
