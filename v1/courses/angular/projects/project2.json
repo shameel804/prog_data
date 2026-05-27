@@ -1,0 +1,32 @@
+{
+    "id": "project2",
+    "title": "Weather Dashboard ☀️",
+    "description": "Fetch real‑time weather data using a public API and display it with dynamic formatting and lazy‑loaded settings.",
+    "difficulty": "Intermediate",
+    "estimatedHours": "3-5",
+    "problemStatement": "## Build a real‑time weather dashboard\n\nThis project combines HttpClient, reactive forms, routing, pipes, and lazy loading. You will fetch weather data from the OpenWeatherMap API (free tier) and present it in an attractive dashboard.\n\n**Features:**\n1. **Search city** – reactive form with input, validation, and a submit button.\n2. **Current weather** – displays temperature, humidity, wind speed, and description for the searched city.\n3. **Forecast** – shows a 5‑day forecast in a list (use the free 5‑day forecast API).\n4. **Settings page (lazy‑loaded)** – allows the user to switch between Celsius/Fahrenheit and select a theme color.\n5. **Dashboard page** – shows the last searched city’s weather (stored in a `WeatherService`).\n\nUse `HttpClient` to communicate with the API. Implement error handling with `catchError` and display user‑friendly messages. Use async pipe to subscribe to the weather observables in the template. Apply pipes for date and temperature formatting.",
+    "requirements": [
+        "Sign up at OpenWeatherMap and obtain a free API key.",
+        "Create a `WeatherService` with methods: `getCurrentWeather(city)`, `getForecast(city)`.",
+        "Define TypeScript interfaces for the API responses (at least `WeatherData` and `ForecastItem`).",
+        "Build a reactive search form with a city input (required, min 2 chars) and a search button.",
+        "When the form is submitted, call the service and use `switchMap` to fetch both current weather and forecast (using `forkJoin` if appropriate).",
+        "Display the current weather using a component with `[ngClass]` to apply different backgrounds based on temperature range (e.g., cold, warm, hot).",
+        "Use the `date` pipe to format timestamps and the `number` pipe to round temperature values.",
+        "Implement a lazy‑loaded `SettingsModule` with its own routing (`/settings`). Inside, use a reactive form to select unit (metric/imperial) and store the preference in a shared `SettingsService`.",
+        "In the weather display, read the unit preference from the service and convert temperatures accordingly.",
+        "Use `catchError` to handle API failures and show a message \"Could not load weather data\".",
+        "Add a loading spinner using `*ngIf` with the async pipe’s `loading` state (or use a behavior subject).",
+        "Apply the theme color from settings to the header bar using `[style.backgroundColor]`.",
+        "Include at least one custom pipe (e.g., `temperature` pipe that appends °C or °F based on a parameter)."
+    ],
+    "hints": [
+        "Store the API key in an environment file (`environment.ts`).",
+        "For the search form, create a `BehaviorSubject` for the loading state.",
+        "Use `provideHttpClient()` in a standalone bootstrap or `HttpClientModule` in AppModule.",
+        "Lazy loading: `ng generate module settings --route settings --module app.module` (or configure manually).",
+        "To share settings, use a service with `BehaviorSubject` for the unit.",
+        "The custom temperature pipe can accept a boolean parameter indicating whether to use imperial."
+    ],
+    "expectedOutput": "A functional weather dashboard that fetches live data, displays it gracefully, handles errors, and remembers user preferences across sessions (in‑memory)."
+}

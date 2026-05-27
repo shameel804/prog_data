@@ -1,0 +1,111 @@
+{
+    "id": "l5",
+    "chapterId": "ch_2",
+    "title": "Programmatic Navigation with useRouter",
+    "description": "Navigate imperatively using the useRouter hook – perfect for form submits, timeouts, and user interactions.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Navigation",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Beyond Link: The Router Object 🧭",
+            "content": "# `useRouter` Hook\n\n`useRouter` gives you access to the router object, which contains:\n\n* `push(url)` – Navigate to a new page, adding a history entry.\n* `replace(url)` – Navigate but replace the current history entry.\n* `back()` – Go back one step in history.\n* `pathname`, `query`, `asPath` – Information about the current route.\n\nImport from `next/router`."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Using push() on Button Click (pages/contact.js)",
+            "content": "Navigate after form submission or any user action.",
+            "codeSnippet": "// pages/contact.js\nimport { useRouter } from 'next/router';\n\nexport default function Contact() {\n  const router = useRouter();\n\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    // ... send form data\n    router.push('/thank-you');\n  };\n\n  return (\n    <form onSubmit={handleSubmit}>\n      <button type=\"submit\">Send</button>\n    </form>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Push vs Replace 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the difference between `router.push` and `router.replace`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "`push` works only with external URLs",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "`replace` adds a new history entry, `push` doesn't",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "`push` adds a new history entry, `replace` overwrites the current one",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "There is no difference",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`push` lets the user go back to the previous page. `replace` eliminates the current page from history, useful after login to prevent going back to the login page.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Go Back Button (pages/404.js example)",
+            "content": "`router.back()` acts like the browser's back button.",
+            "codeSnippet": "// pages/404.js\nimport { useRouter } from 'next/router';\n\nexport default function Custom404() {\n  const router = useRouter();\n  return (\n    <div>\n      <h1>Page Not Found</h1>\n      <button onClick={() => router.back()}>Go Back</button>\n    </div>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Router Hook 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "Where can you use the `useRouter` hook?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Only in page components",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "In any React component inside the Next.js app",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only in `_app.js`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only on the server",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`useRouter` is a React hook and can be used in any component, as long as it's inside the Next.js application context.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "warning",
+            "title": "Don't Overuse Programmatic Navigation ⚠️",
+            "content": "Prefer declarative `<Link>` components when possible. Use `useRouter` only for side‑effect navigation like after submitting a form, or when you need conditional logic that can't be expressed with a link."
+        }
+    ]
+}

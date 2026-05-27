@@ -1,0 +1,36 @@
+{
+    "id": "project3",
+    "title": "E‑Commerce Store 🛒",
+    "description": "A complete online store with product catalog, cart, checkout, authentication, and performance optimizations.",
+    "difficulty": "Advanced",
+    "estimatedHours": "5-8",
+    "problemStatement": "## Build a full‑featured e‑commerce web app\n\nThis is the capstone project that integrates everything you’ve learned. You will build an online store with multiple feature modules, complex state management, route guards, lazy loading, reactive forms, and performance best practices.\n\n**Features:**\n1. **Product Listing** – Display products fetched from a mock API (JSONPlaceholder or a local JSON file). Implement filtering and search.\n2. **Product Detail** – Show product details with a \"Add to Cart\" button.\n3. **Shopping Cart** – Reactive cart state managed with a store service (BehaviorSubject), with optimistic updates.\n4. **Checkout** – A multi‑step reactive form (shipping, payment) with custom validators.\n5. **Authentication** – Fake login/logout (can be simulated) with route guards protecting the cart and checkout pages.\n6. **Admin Module (lazy‑loaded)** – Manage products (list, edit, delete) using an admin panel.\n7. **Shared Module** – Common components, directives, and pipes.\n8. **Core Module** – Singleton services (auth, product, cart).\n9. **Performance** – Use OnPush change detection, trackBy on lists, lazy loading for admin, and production build with budgets.\n\nUse Angular best practices throughout.",
+    "requirements": [
+        "Project structure: `core/`, `shared/`, `feature modules` (products, cart, checkout, auth, admin).",
+        "**CoreModule**: Provide `AuthService`, `ProductService`, `CartStore` as singleton services (use `providedIn: 'root'` or CoreModule providers).",
+        "**SharedModule**: Re‑export `CommonModule`, `FormsModule`, a `HighlightDirective`, and a `PricePipe`.",
+        "**ProductService**: Fetch products from `https://jsonplaceholder.typicode.com/posts` (map to product-like objects) or a local JSON array; implement `getProducts()`, `getProduct(id)`.",
+        "**CartStore**: Use a BehaviorSubject holding `CartState { items: CartItem[], total: number }`. Expose `state$`, selectors (`itemCount$`, `total$`), and actions: `addToCart`, `removeFromCart`, `updateQuantity`, `clearCart`.",
+        "**Product List**: Display products in a grid. Use `*ngFor` with `trackBy`. Add a search input with `debounceTime` and `switchMap` to filter products (can be client‑side).",
+        "**Product Detail**: Route with parameter `/products/:id`. Show details and an \"Add to Cart\" button.",
+        "**Cart Page**: Show items with quantity selectors, total price, and \"Proceed to Checkout\" button. Protect this route with an auth guard.",
+        "**AuthGuard**: A simple service that checks if user is logged in (inject `AuthService`). Redirect to login if not.",
+        "**Checkout**: Multi‑step reactive form using `FormBuilder`. Steps: shipping address, payment info. Use custom validators (e.g., credit card pattern). On submit, simulate order placement and clear cart.",
+        "**Login/Logout**: A simple form (template‑driven or reactive) that sets a user object in `AuthService`. Display user name in the header.",
+        "**Admin Module**: Lazy‑loaded at `/admin`. Implements a simple product management (list, delete, edit). Use reactive forms for editing.",
+        "**Performance**: Apply `ChangeDetectionStrategy.OnPush` on list and cart components. Ensure immutability in cart operations.",
+        "**Error Handling**: Use `catchError` on HTTP calls; show error toasts or messages.",
+        "**Build**: Run `ng build --configuration production` and ensure budgets are met (set a budget of 1.5MB initial)."
+    ],
+    "hints": [
+        "Start by generating the core, shared, and feature modules.",
+        "For the cart store, you can reuse patterns from Chapter 10.",
+        "The auth guard should check `authService.isLoggedIn()` and navigate to `/login` if false.",
+        "For the multi‑step form, you can use a single reactive form and show/hide sections with `*ngIf`.",
+        "Use the `async` pipe in templates to subscribe to store observables.",
+        "Add `trackBy` to all `*ngFor` loops that iterate over product lists.",
+        "For the search input, create a `Subject` and apply `debounceTime(300)`, `distinctUntilChanged()`, `switchMap`.",
+        "Consider using `@HostListener` for a custom directive like `[appHighlight]` on product cards."
+    ],
+    "expectedOutput": "A fully functional e‑commerce SPA with lazy loading, authentication, reactive cart, form validation, and performance optimizations, built following the Angular style guide."
+}

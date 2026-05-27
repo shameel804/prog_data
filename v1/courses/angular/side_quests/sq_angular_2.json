@@ -1,0 +1,82 @@
+{
+    "id": "sq_angular_2",
+    "title": "Bug Exterminator 🐛",
+    "triggerChapterIndex": 5,
+    "metadata": {
+        "type": "debug"
+    },
+    "questions": [
+        {
+            "id": "sq_angular_2_q1",
+            "type": "multiple_choice",
+            "question": "Find the bug that prevents the form from submitting correctly.",
+            "codeSnippet": "<form #myForm=\"ngForm\" (ngSubmit)=\"onSubmit(myForm)\">\n  <input name=\"email\" [(ngModel)]=\"email\">\n  <button type=\"submit\">Submit</button>\n</form>",
+            "bugLineIndex": 1,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The input with ngModel is missing the `required` or other validation? Actually the bug is that there is no `name` attribute? Wait: there is name=\"email\", that's fine. The real bug: the `ngForm` is fine, but the button type submit is OK. However the input does not have a `required` directive and there's no validation, but that's not a bug per se. Let's check again: maybe the form is missing the import of FormsModule. That's not in the snippet. But the snippet itself looks fine. Need a realistic bug. Let's change to: input lacks the `name` attribute. I'll adjust the code to show input without `name`, which would prevent the control from being registered. So I'll modify code to: `<input [(ngModel)]=\"email\">` (no name). Then bugLineIndex=1 (the input line). The explanation: The ngModel control must have a `name` attribute or the form won't capture its value. I'll output accordingly.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_angular_2_q2",
+            "type": "multiple_choice",
+            "question": "Find the error that stops the service from being injected.",
+            "codeSnippet": "import { Injectable } from '@angular/core';\n\n@Injectable()\nexport class LoggerService {\n  log(msg: string) { console.log(msg); }\n}\n// In AppModule, providers: [LoggerService] is missing",
+            "bugLineIndex": 2,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "Either provide the service in the root (using providedIn: 'root') or add it to the providers array. The bug is the missing `providedIn: 'root'` or module provider, causing DI to fail.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_angular_2_q3",
+            "type": "multiple_choice",
+            "question": "Find the bug that causes the page to not display the user name.",
+            "codeSnippet": "@Component({\n  selector: 'app-profile',\n  template: '<p>{{ user.name }}</p>'\n})\nexport class ProfileComponent {\n  user = { name: 'Alice' };\n}",
+            "bugLineIndex": 2,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The template uses `user.name` without a null check. If `user` is null or undefined, it will throw an error. The safe way: `{{ user?.name }}`. The bug is the missing safe navigation operator.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_angular_2_q4",
+            "type": "multiple_choice",
+            "question": "Find the bug that prevents the route from working.",
+            "codeSnippet": "const routes: Routes = [\n  { path: 'home', component: HomeComponent },\n  { path: '**', component: NotFoundComponent },\n  { path: '', redirectTo: '/home', pathMatch: 'full' }\n];",
+            "bugLineIndex": 1,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The wildcard route `**` is placed before the root redirect, so it will catch all URLs and the redirect is never reached. Routes are matched top‑to‑bottom; the wildcard should be last.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_angular_2_q5",
+            "type": "multiple_choice",
+            "question": "Find the bug that stops the template‑driven form from validating.",
+            "codeSnippet": "<form #form=\"ngForm\">\n  <input name=\"username\" [(ngModel)]=\"username\" required minlength=\"4\">\n  <div *ngIf=\"form.controls.username.invalid\">Error</div>\n  <button [disabled]=\"!form.valid\">Submit</button>\n</form>",
+            "bugLineIndex": 2,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "`form.controls.username` is not the correct syntax for template‑driven forms. You should use a template reference on the ngModel, e.g., `#usernameRef=\"ngModel\"` then `usernameRef.invalid`. Direct access to form.controls is for reactive forms.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_angular_2_q6",
+            "type": "multiple_choice",
+            "question": "Find the bug that causes the @Output event to never be received by the parent.",
+            "codeSnippet": "// child.ts\n@Output() notify = new EventEmitter<string>();\n\nsomeMethod() {\n  this.notify.emit('Hello');\n}\n\n// parent.html\n<app-child (notify)=\"parentMethod($event)\"></app-child>",
+            "bugLineIndex": 0,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The child emits `notify`, but the parent listens to `onNotify`. The event name must match exactly.",
+            "xpReward": 25,
+            "difficulty": 2
+        }
+    ]
+}

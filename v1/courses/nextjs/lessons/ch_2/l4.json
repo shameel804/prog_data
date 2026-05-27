@@ -1,0 +1,117 @@
+{
+    "id": "l4",
+    "chapterId": "ch_2",
+    "title": "Mastering the Link Component",
+    "description": "Go beyond basic linking: prefetching, scroll restoration, and passing refs to child components.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Navigation",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Link Component – Quick Recap 🔗",
+            "content": "# Declarative Navigation\n\n```jsx\nimport Link from 'next/link';\n\n<Link href=\"/about\">About</Link>\n```\n\n* Renders an `<a>` tag under the hood.\n* Client‑side transition – no full page reload.\n* **Prefetches** the linked page when it appears in the viewport (production only)."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Basic Link Usage (pages/index.js)",
+            "content": "Wrap any text or component to make it a navigational link.",
+            "codeSnippet": "// pages/index.js\nimport Link from 'next/link';\n\nexport default function Home() {\n  return (\n    <ul>\n      <li><Link href=\"/blog\">Blog</Link></li>\n      <li><Link href=\"/about\">About</Link></li>\n    </ul>\n  );\n}",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Prefetching 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "When does Next.js Link prefetch a page?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Always on page load",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "When the link is clicked",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "When the link enters the viewport (in production)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only on mobile devices",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "In production, Link prefetches the page as soon as the link appears in the viewport, making transitions nearly instant. You can disable this with `prefetch={false}`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Advanced Props 🛠️",
+            "content": "# Beyond href\n\n* **`replace`** – replaces the current history entry instead of pushing a new one.\n* **`scroll={false}`** – prevents scrolling to the top after navigation.\n* **`prefetch={false}`** – disables automatic prefetching.\n* **`passHref`** – forces the `href` to be passed to a child component (needed when wrapping custom components).\n* **`legacyBehavior`** – for older Next.js patterns where you needed an `<a>` child."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Link with Custom Component (passHref)",
+            "content": "If you wrap a custom component, you must forward the href.",
+            "codeSnippet": "// components/ButtonLink.js\nimport Link from 'next/link';\n\nconst ButtonLink = React.forwardRef(({ onClick, href }, ref) => {\n  return (\n    <a href={href} onClick={onClick} ref={ref} className=\"btn\">\n      Click me\n    </a>\n  );\n});\n\n// Usage\n<Link href=\"/about\" passHref>\n  <ButtonLink />\n</Link>",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Scroll Control 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Which prop prevents the page from scrolling to the top after navigating?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "replace",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "scroll={false}",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "prefetch={false}",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "shallow",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`scroll={false}` keeps the current scroll position. The default is `scroll={true}` which scrolls to top.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "tip",
+            "title": "External Links?",
+            "content": "For external URLs, use a regular `<a>` tag or the Link component with `target=\"_blank\"`. Don't use Link for external unless you set `passHref` and handle it manually; a plain `<a>` is simpler."
+        }
+    ]
+}
