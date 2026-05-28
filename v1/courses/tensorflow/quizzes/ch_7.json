@@ -1,0 +1,246 @@
+{
+    "id": "quiz_ch_7",
+    "chapterId": "ch_7",
+    "title": "Chapter 7 Quiz",
+    "description": "Test your knowledge of Transfer Learning, pre‑trained models, feature extraction, and fine‑tuning!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is transfer learning?",
+            "options": [
+                "Training a model from scratch on a large dataset",
+                "Using a pre‑trained model as a starting point for a different task",
+                "Copying weights from one model to an identical architecture",
+                "Converting a model to TensorFlow Lite"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Transfer learning leverages knowledge from a pre‑trained model to solve a new, often related, problem."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "ImageNet‑pre‑trained models can only be used for classifying the same 1000 ImageNet classes.",
+            "correctAnswer": false,
+            "explanation": "By removing the top classification layer, we can repurpose the convolutional base for any visual task."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "Which argument loads a pre‑trained model without its final classification layers?",
+            "options": [
+                "include_top=False",
+                "weights='imagenet'",
+                "pooling=None",
+                "input_shape=(224,224,3)"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`include_top=False` removes the fully connected classifier layers, leaving the convolutional base."
+        },
+        {
+            "id": "q4",
+            "type": "fill_blank",
+            "question": "To load a pre‑trained VGG16 model, you import it from `tf.keras._____`.",
+            "options": [
+                "layers",
+                "applications",
+                "models",
+                "datasets"
+            ],
+            "correctAnswer": "applications",
+            "explanation": "Pre‑trained models reside in `tf.keras.applications`."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "Which of these is NOT a pre‑trained model available in tf.keras.applications?",
+            "options": [
+                "EfficientNet",
+                "InceptionV3",
+                "AlexNet",
+                "MobileNetV2"
+            ],
+            "correctAnswer": 2,
+            "explanation": "AlexNet is not included; the others are available."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "What is feature extraction in transfer learning?",
+            "options": [
+                "Training the entire base model with a low learning rate",
+                "Freezing the base and training only a new classifier on top",
+                "Removing all convolutional layers",
+                "Using the base model's output as input to another base model"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Feature extraction means the base model acts as a fixed feature extractor; only the new layers are trained."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "How do you freeze all layers of a base model?",
+            "options": [
+                "base_model.trainable = False",
+                "for layer in base_model.layers: layer.freeze()",
+                "base_model.compile(loss=None)",
+                "base_model.set_weights(frozen=True)"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Setting `trainable = False` on the model (or iterating layers) stops their weights from being updated."
+        },
+        {
+            "id": "q8",
+            "type": "true_false",
+            "question": "Fine‑tuning trains the entire pre‑trained base model from scratch.",
+            "correctAnswer": false,
+            "explanation": "Fine‑tuning updates some (often top) layers of the base model with a very low learning rate, not from scratch."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "What is a typical learning rate for fine‑tuning?",
+            "options": [
+                "0.01",
+                "0.001 (same as initial training)",
+                "0.00001 (1e-5)",
+                "1.0"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Fine‑tuning uses a learning rate 10‑100× smaller than the initial head training to avoid catastrophic forgetting."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "Which layer is often added after a convolutional base for classification?",
+            "options": [
+                "Conv2D",
+                "GlobalAveragePooling2D",
+                "MaxPooling2D",
+                "Flatten only (without Dense)"
+            ],
+            "correctAnswer": 1,
+            "explanation": "GlobalAveragePooling2D reduces each feature map to a single value, then a Dense layer is added."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "Why might you choose MobileNetV2 over VGG16 for transfer learning on a mobile device?",
+            "options": [
+                "Higher accuracy",
+                "Smaller model size and faster inference",
+                "More layers",
+                "Easier to train"
+            ],
+            "correctAnswer": 1,
+            "explanation": "MobileNetV2 is designed to be lightweight and efficient for mobile and embedded applications."
+        },
+        {
+            "id": "q12",
+            "type": "true_false",
+            "question": "When using a pre‑trained model, you must use the exact same input size it was trained on.",
+            "correctAnswer": true,
+            "explanation": "The model's weights expect a specific spatial size (e.g., 224×224). While some layers adapt, it's best to match the original size."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "What does `preprocess_input` do for VGG16?",
+            "options": [
+                "Scales pixels to [0,1]",
+                "Subtracts the mean RGB values of ImageNet",
+                "Normalizes to mean 0, std 1",
+                "Applies data augmentation"
+            ],
+            "correctAnswer": 1,
+            "explanation": "VGG16's `preprocess_input` subtracts specific channel‑wise means."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "During feature extraction, the base model is run with training=False. Why?",
+            "options": [
+                "To speed up computation",
+                "To ensure BatchNormalization layers use moving statistics, not batch stats",
+                "To save memory",
+                "To disable dropout"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`training=False` ensures that layers like BatchNorm behave in inference mode, using their learned moving means and variances."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "If your new dataset has 3 classes, how many units should the final Dense layer have?",
+            "options": [
+                "1000",
+                "1",
+                "3",
+                "5"
+            ],
+            "correctAnswer": 2,
+            "explanation": "The output layer must match the number of classes in the new task."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "Which of the following is a good practice when fine‑tuning?",
+            "options": [
+                "Unfreeze all layers at once with a high learning rate",
+                "First train the new head, then unfreeze some base layers with a low learning rate",
+                "Never unfreeze any base layer",
+                "Replace all convolutional layers with new ones"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Gradually unfreezing top layers after head training is the standard recipe."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "What is the purpose of `GlobalAveragePooling2D` in a transfer learning model?",
+            "options": [
+                "To increase the number of parameters",
+                "To convert the 3D feature maps into a 1D vector without adding weights",
+                "To double the spatial size",
+                "To apply dropout"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It averages each feature map to a single number, producing a compact vector for the classifier."
+        },
+        {
+            "id": "q18",
+            "type": "true_false",
+            "question": "Transfer learning is only useful for image tasks.",
+            "correctAnswer": false,
+            "explanation": "While common in images, transfer learning applies to text (e.g., BERT), audio, and other domains where pre‑trained models exist."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "What is the risk of fine‑tuning with a high learning rate?",
+            "options": [
+                "The model learns too slowly",
+                "The pre‑trained weights may be overwritten with noise",
+                "The model runs out of memory",
+                "It causes underfitting"
+            ],
+            "correctAnswer": 1,
+            "explanation": "A high learning rate can destroy the carefully learned features, leading to poor performance."
+        },
+        {
+            "id": "q20",
+            "type": "fill_blank",
+            "question": "To adapt a pre‑trained model to a new task, we often add a new classifier head and use `model._____()` with a low learning rate.",
+            "options": [
+                "compile",
+                "fit",
+                "evaluate",
+                "predict"
+            ],
+            "correctAnswer": "compile",
+            "explanation": "We compile the model with an optimizer and loss before training (`fit`)."
+        }
+    ]
+}

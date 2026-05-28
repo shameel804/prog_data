@@ -1,0 +1,305 @@
+{
+    "id": "quiz_ch_9",
+    "chapterId": "ch_9",
+    "title": "Chapter 9 Quiz",
+    "description": "Test your knowledge of custom training loops, GradientTape, custom layers, and custom models!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "Why would you write a custom training loop instead of using model.fit()?",
+            "options": [
+                "model.fit() doesn't support batching",
+                "To implement non‑standard training schemes like GANs or gradient penalties",
+                "Custom loops are faster by default",
+                "model.fit() cannot use optimizers"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Custom loops are needed when the built‑in fit() doesn't cover complex training logic."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "GradientTape by default records operations on all tensors.",
+            "correctAnswer": false,
+            "explanation": "It only watches trainable `tf.Variable` objects by default. Use `tape.watch()` for other tensors."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "What does `tape.gradient(loss, var)` return?",
+            "options": [
+                "The updated value of var",
+                "The gradient of loss with respect to var",
+                "The loss value",
+                "The optimizer step"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It computes d(loss)/d(var)."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "How do you compute multiple gradients from a single forward pass?",
+            "options": [
+                "Use multiple GradientTape context managers",
+                "Set persistent=True in GradientTape",
+                "Call tape.gradient() multiple times with the same tape",
+                "Both B and C"
+            ],
+            "correctAnswer": 1,
+            "explanation": "A persistent tape allows multiple gradient calls without being consumed."
+        },
+        {
+            "id": "q5",
+            "type": "fill_blank",
+            "question": "To include a tensor that is not a Variable in gradient computation, use `tape._____(tensor)`.",
+            "options": [
+                "watch",
+                "add",
+                "include",
+                "record"
+            ],
+            "correctAnswer": "watch",
+            "explanation": "`tape.watch(tensor)` marks a non‑variable tensor to be watched."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "In a custom training loop, which method applies the computed gradients?",
+            "options": [
+                "optimizer.minimize(loss, var_list)",
+                "optimizer.apply_gradients(zip(grads, vars))",
+                "model.train_on_batch(x, y)",
+                "tape.apply_gradients()"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`apply_gradients` updates variables using the given gradients."
+        },
+        {
+            "id": "q7",
+            "type": "true_false",
+            "question": "Using `@tf.function` on a train step can speed up execution by compiling a graph.",
+            "correctAnswer": true,
+            "explanation": "`@tf.function` traces the Python function and creates a static graph, often improving performance."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "When building a custom layer, which method defines the forward computation?",
+            "options": [
+                "__init__",
+                "build",
+                "call",
+                "compute_output_shape"
+            ],
+            "correctAnswer": 2,
+            "explanation": "`call()` implements the layer's logic."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "What is the purpose of `build(input_shape)` in a custom layer?",
+            "options": [
+                "To compile the layer",
+                "To create the layer's weights based on the input shape",
+                "To define the layer's activation",
+                "To set the layer name"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`build` is called lazily on first call and creates weights using the concrete input shape."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "How do you add a trainable weight in a custom layer?",
+            "options": [
+                "self.w = tf.Variable(...)",
+                "self.add_weight(name=..., shape=..., trainable=True)",
+                "self.build_weight(...)",
+                "tf.keras.layers.Dense(...)"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`add_weight` is the Keras‑integrated way to create layer variables."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "In `call(self, inputs, training=None)`, when is `training` `True`?",
+            "options": [
+                "Always",
+                "When the layer is called inside a training loop with `training=True`",
+                "Only in custom training loops",
+                "Only during inference"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The `training` argument is passed by the parent model during fit/predict/evaluate; you can control it."
+        },
+        {
+            "id": "q12",
+            "type": "true_false",
+            "question": "Model subclassing allows you to override `train_step` and still use callbacks and `model.fit()`.",
+            "correctAnswer": true,
+            "explanation": "You can customise the inner training logic while keeping the high‑level API conveniences."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "What is the main disadvantage of model subclassing compared to the Functional API?",
+            "options": [
+                "It's slower",
+                "It doesn't support complex topologies",
+                "The model's graph is not static, making saving/loading and introspection harder",
+                "It can't use custom layers"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Subclassed models rely on Python code; the topology is not stored as a static graph, which complicates serialisation."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "Which of these is NOT a typical use of advanced GradientTape?",
+            "options": [
+                "Computing a Hessian matrix",
+                "Calculating gradients of a loss with respect to input images (adversarial examples)",
+                "Training a standard classifier with model.fit",
+                "Per‑layer gradient clipping"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Standard training with fit() doesn't require manual GradientTape; it's used inside the built‑in loop."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "What does `tf.clip_by_global_norm(gradients, max_norm)` do?",
+            "options": [
+                "Clips each gradient individually to max_norm",
+                "Scales the whole gradient vector if its global L2 norm exceeds max_norm",
+                "Adds noise to gradients",
+                "Removes gradients smaller than max_norm"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It rescales the gradients vector so that its L2 norm equals max_norm if it exceeded it."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "How can you check for NaN gradients?",
+            "options": [
+                "Use tf.debugging.check_numerics",
+                "Print the gradients",
+                "All of the above",
+                "NaN gradients are impossible"
+            ],
+            "correctAnswer": 2,
+            "explanation": "You can use `check_numerics` or manually inspect; both are valid."
+        },
+        {
+            "id": "q17",
+            "type": "fill_blank",
+            "question": "To compute the Jacobian of y with respect to x, use `tape._____(y, x)`.",
+            "options": [
+                "jacobian",
+                "gradient",
+                "hessian",
+                "batch_jacobian"
+            ],
+            "correctAnswer": "jacobian",
+            "explanation": "`tape.jacobian(y, x)` returns the Jacobian matrix."
+        },
+        {
+            "id": "q18",
+            "type": "true_false",
+            "question": "`optimizer.minimize(loss, var_list)` internally uses a GradientTape and apply_gradients, providing a one‑line shortcut.",
+            "correctAnswer": true,
+            "explanation": "`minimize` is a convenience method that computes gradients and applies them."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "In a custom layer, how do you ensure that a weight is not trainable (e.g., a running mean)?",
+            "options": [
+                "Use a constant tensor",
+                "Pass `trainable=False` to `add_weight`",
+                "Set `layer.trainable = False`",
+                "Don't add the weight"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`add_weight(..., trainable=False)` creates a non‑trainable variable that can still be updated manually."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "What does `model.compile()` do in a subclassed model?",
+            "options": [
+                "It does nothing, as the model is already compiled",
+                "It configures the optimizer, loss, and metrics, preparing for fit()",
+                "It builds the layers",
+                "It runs a training step"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`compile()` sets up the training configuration, same as for other model types."
+        },
+        {
+            "id": "q21",
+            "type": "mcq",
+            "question": "If you need to compute both the gradient and the value of the loss, which is efficient?",
+            "options": [
+                "Run the forward pass once, then call tape.gradient()",
+                "Call the forward pass twice",
+                "Use a persistent tape",
+                "Both A and C are correct"
+            ],
+            "correctAnswer": 3,
+            "explanation": "A non‑persistent tape is fine for one gradient call; persistent is needed only for multiple. You can compute loss once and retrieve value after tape context."
+        },
+        {
+            "id": "q22",
+            "type": "true_false",
+            "question": "Custom layers can only be used inside subclassed models.",
+            "correctAnswer": false,
+            "explanation": "Custom layers can be used anywhere: Sequential, Functional, or subclassed models."
+        },
+        {
+            "id": "q23",
+            "type": "mcq",
+            "question": "Which method is called to update metrics in a custom `train_step`?",
+            "options": [
+                "self.compiled_metrics.update_state(y_true, y_pred)",
+                "metrics = self.metrics; metrics[0].update_state(...)",
+                "tf.keras.metrics.Mean.reset_states()",
+                "self.losses.append(...)"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`self.compiled_metrics` is a container that holds the metrics passed in `compile`; you call `update_state` on it."
+        },
+        {
+            "id": "q24",
+            "type": "mcq",
+            "question": "In a custom training loop, why set `training=True` during the forward pass?",
+            "options": [
+                "To enable dropout and batch norm training behaviour",
+                "To make the model run faster",
+                "It's optional, doesn't matter",
+                "To use gradient tape"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Layers like Dropout and BatchNormalization behave differently during training vs inference; the flag ensures correct behavior."
+        },
+        {
+            "id": "q25",
+            "type": "fill_blank",
+            "question": "To implement a custom training step in a Keras model, override the `_____` method.",
+            "options": [
+                "train_step",
+                "fit",
+                "call",
+                "compile"
+            ],
+            "correctAnswer": "train_step",
+            "explanation": "Subclass `tf.keras.Model` and override `train_step` to customise the training loop while keeping `fit()`."
+        }
+    ]
+}

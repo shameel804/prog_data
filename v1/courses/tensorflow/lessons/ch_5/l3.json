@@ -1,0 +1,82 @@
+{
+    "id": "l3",
+    "chapterId": "ch_5",
+    "title": "Pooling Layers: Downsampling 🏊",
+    "description": "Max pooling, average pooling, and why we shrink feature maps.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Why Downsample? 📉",
+            "content": "# Pooling Reduces Spatial Size\n\n- Decreases computational load for deeper layers.\n- Provides slight translation invariance (small shifts don't change output).\n- Enlarges the receptive field of subsequent layers.\n\nMost common: **Max Pooling** (take the maximum value in a window)."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Max Pooling in Keras",
+            "content": "Typically 2×2 window, stride 2 – halves the size.",
+            "codeSnippet": "from tensorflow.keras.layers import MaxPooling2D\n\npool = MaxPooling2D(pool_size=(2,2), strides=2)\n# Input shape (batch, 28,28,32) → output (batch, 14,14,32)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Pooling Impact 🌊",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "After a MaxPooling2D(2,2) layer, the feature map size will:",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Double",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Stay the same",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Halve (if stride=2)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Become 1×1",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A 2×2 pooling with stride 2 reduces each spatial dimension by a factor of 2.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Max Pooling vs Average Pooling 🆚",
+            "content": "# Max Pooling\nTakes the maximum value in each window. Retains strong activations, adds non‑linearity.\n\n# Average Pooling\nTakes the mean. Smoother, but less common in modern CNNs.\n\n# Global Pooling\n`GlobalAveragePooling2D` reduces each feature map to a single number – often used before the final classifier."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Global Pooling Example",
+            "content": "Often replaces a Flatten layer, reducing parameters.",
+            "codeSnippet": "from tensorflow.keras.layers import GlobalAveragePooling2D\n\ngap = GlobalAveragePooling2D()\n# Input (batch, 7,7,64) → output (batch, 64)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "tip",
+            "title": "When to Use Pooling 🕹️",
+            "content": "Stack pattern: Conv2D → ReLU → Pool2D. Repeat several times, then Flatten/GlobalPool → Dense → output. Pooling is optional; some architectures use stride=2 convolutions instead."
+        }
+    ]
+}

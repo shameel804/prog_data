@@ -1,0 +1,305 @@
+{
+    "id": "quiz_ch_8",
+    "chapterId": "ch_8",
+    "title": "Chapter 8 Quiz",
+    "description": "Test your knowledge of tf.data pipelines, transformations, augmentation, and performance optimization!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the primary purpose of the tf.data API?",
+            "options": [
+                "Build neural network layers",
+                "Create efficient input pipelines",
+                "Save and load models",
+                "Visualise training metrics"
+            ],
+            "correctAnswer": 1,
+            "explanation": "tf.data is designed for building fast, reusable data pipelines."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "`tf.data.Dataset.from_tensor_slices` can accept a tuple of (features, labels) and returns a dataset of paired elements.",
+            "correctAnswer": true,
+            "explanation": "Yes, it slices the first dimension of each input, pairing them element‑wise."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "Which transformation applies a function to each element of a dataset?",
+            "options": [
+                "batch",
+                "shuffle",
+                "map",
+                "prefetch"
+            ],
+            "correctAnswer": 2,
+            "explanation": "`.map(fn)` applies the given function to every element."
+        },
+        {
+            "id": "q4",
+            "type": "fill_blank",
+            "question": "To execute a map function in parallel, set `num_parallel_calls=tf.data._____`.",
+            "options": [
+                "AUTOTUNE",
+                "INFINITY",
+                "MAX",
+                "PARALLEL"
+            ],
+            "correctAnswer": "AUTOTUNE",
+            "explanation": "`tf.data.AUTOTUNE` lets TensorFlow dynamically choose the level of parallelism."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "What does `dataset.shuffle(buffer_size)` do?",
+            "options": [
+                "Sorts the dataset",
+                "Randomly samples elements with replacement",
+                "Randomly shuffles elements using a buffer of given size",
+                "Reverses the dataset"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Shuffle fills a buffer and randomly picks the next element from it."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "Why should `batch` usually be placed before `prefetch`?",
+            "options": [
+                "It doesn't matter",
+                "Prefetch works on batches, so batching first creates the elements to prefetch",
+                "Batch needs to be after prefetch for correct ordering",
+                "Batch is not used with prefetch"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`prefetch` prepares batches in the background; it expects batched elements."
+        },
+        {
+            "id": "q7",
+            "type": "true_false",
+            "question": "Datasets are evaluated eagerly as soon as they are created.",
+            "correctAnswer": false,
+            "explanation": "Datasets are lazy; computation only happens when elements are consumed (e.g., during iteration or `fit`)."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "What is the advantage of `interleave` over `flat_map` when reading many files?",
+            "options": [
+                "Interleave can read from multiple files in parallel, interleaving records",
+                "Interleave is faster for a single file",
+                "Interleave does not require memory",
+                "Interleave sorts the data"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`interleave` can process `cycle_length` files concurrently, mixing their outputs, which improves throughput."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "Which method would you use to combine two datasets into one dataset of pairs?",
+            "options": [
+                "concatenate",
+                "zip",
+                "interleave",
+                "batch"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`zip` pairs elements from two datasets element‑wise."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "What does `dataset.window(size, shift)` create?",
+            "options": [
+                "A single window of data",
+                "A dataset of datasets, each representing a window",
+                "A random subset",
+                "A batched dataset"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Each window is a nested Dataset; you typically `flat_map` with `batch` to get fixed‑size tensors."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "Where is data augmentation typically NOT applied?",
+            "options": [
+                "Training dataset",
+                "Validation dataset",
+                "Inside a map function",
+                "Using Keras preprocessing layers"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Validation data should represent real, unaugmented data to correctly evaluate model performance."
+        },
+        {
+            "id": "q12",
+            "type": "true_false",
+            "question": "Augmentation inside a tf.data pipeline can run on CPU in parallel with GPU training.",
+            "correctAnswer": true,
+            "explanation": "Because `map` can use `num_parallel_calls`, it uses CPU cores while the GPU trains."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "Which Keras utility creates a tf.data.Dataset from a directory of images?",
+            "options": [
+                "image_dataset_from_directory",
+                "TextLineDataset",
+                "TFRecordDataset",
+                "from_tensor_slices"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`image_dataset_from_directory` loads images from folder structures, with labels inferred from subdirectory names."
+        },
+        {
+            "id": "q14",
+            "type": "fill_blank",
+            "question": "To decode a JPEG image from bytes, use `tf.image._____`.",
+            "options": [
+                "decode_jpeg",
+                "encode_jpeg",
+                "read_file",
+                "resize"
+            ],
+            "correctAnswer": "decode_jpeg",
+            "explanation": "`tf.image.decode_jpeg` (or `decode_image`) converts compressed bytes to a tensor."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "What is a TFRecord?",
+            "options": [
+                "A text file of records",
+                "A binary file format for storing serialised tf.train.Example protos",
+                "A dataset class for images",
+                "A way to log training metrics"
+            ],
+            "correctAnswer": 1,
+            "explanation": "TFRecord is TensorFlow's standard binary format for large datasets."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "Which transformation prepares the next batch while the current batch is being processed?",
+            "options": [
+                "shuffle",
+                "cache",
+                "prefetch",
+                "batch"
+            ],
+            "correctAnswer": 2,
+            "explanation": "`prefetch` overlaps data preprocessing and model execution."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "What does `cache()` do?",
+            "options": [
+                "Deletes the dataset",
+                "Stores the dataset in memory or disk after the first epoch",
+                "Shuffles the dataset",
+                "Repeats the dataset"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Cache saves the transformed dataset to avoid re‑computation or re‑reading in subsequent epochs."
+        },
+        {
+            "id": "q18",
+            "type": "true_false",
+            "question": "Using `tf.data.AUTOTUNE` for `num_parallel_calls` will automatically determine the optimal level of parallelism.",
+            "correctAnswer": true,
+            "explanation": "AUTOTUNE dynamically adjusts parallelism to maximise throughput."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "Why might you place `cache()` after `batch()` and `map()`?",
+            "options": [
+                "To cache the raw data",
+                "To cache the processed, batched data, skipping heavy transformations on later epochs",
+                "Cache must always be last",
+                "Because it's required by shuffle"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Caching after heavy preprocessing stores the ready‑to‑feed batches, saving time."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "Which of the following improves I/O when reading many small files?",
+            "options": [
+                "Shuffle",
+                "Prefetch",
+                "Interleave with parallel calls",
+                "Batch"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Interleave can read from multiple files in parallel, speeding up I/O for fragmented data."
+        },
+        {
+            "id": "q21",
+            "type": "mcq",
+            "question": "What is the default behaviour of `tf.data.Dataset.shuffle` regarding epoch boundaries?",
+            "options": [
+                "It reshuffles after each epoch if used with `.repeat()` before shuffle",
+                "It never reshuffles",
+                "It requires a seed",
+                "It shuffles only once"
+            ],
+            "correctAnswer": 0,
+            "explanation": "If you place `.repeat()` before `.shuffle`, the shuffle buffer spans epoch boundaries, yielding seamless randomization. Otherwise, it shuffles each epoch independently if repeat is after shuffle."
+        },
+        {
+            "id": "q22",
+            "type": "mcq",
+            "question": "Which statement about `tf.data.Dataset.from_generator` is TRUE?",
+            "options": [
+                "It's the most performant way to create a dataset",
+                "It wraps a Python generator, which can be a performance bottleneck due to GIL",
+                "It only works with images",
+                "It automatically shards data"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Generators run in Python and are slower; prefer TensorFlow native operations when possible."
+        },
+        {
+            "id": "q23",
+            "type": "true_false",
+            "question": "You can use `tf.data.experimental.AUTOTUNE` for the `buffer_size` of `shuffle`.",
+            "correctAnswer": false,
+            "explanation": "Shuffle's buffer_size requires an explicit integer because it determines randomness and memory usage."
+        },
+        {
+            "id": "q24",
+            "type": "mcq",
+            "question": "If your GPU utilisation is low during training, what's a likely cause?",
+            "options": [
+                "The model is too small",
+                "The input pipeline is too slow (GPU starved)",
+                "The learning rate is too high",
+                "Batch size is too large"
+            ],
+            "correctAnswer": 1,
+            "explanation": "A slow data pipeline can't feed the GPU fast enough, causing idle cycles."
+        },
+        {
+            "id": "q25",
+            "type": "fill_blank",
+            "question": "To save a processed dataset for faster subsequent epochs, use `._____()`.",
+            "options": [
+                "cache",
+                "save",
+                "tensorboard",
+                "checkpoint"
+            ],
+            "correctAnswer": "cache",
+            "explanation": "`.cache()` stores the dataset in memory or on disk."
+        }
+    ]
+}

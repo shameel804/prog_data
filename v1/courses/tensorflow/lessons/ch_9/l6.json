@@ -1,0 +1,88 @@
+{
+    "id": "l6",
+    "chapterId": "ch_9",
+    "title": "Advanced GradientTape & Debugging 🧪",
+    "description": "Jacobians, Hessians, gradient clipping, and monitoring gradients like a pro.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Jacobian and Hessian Matrices 🧮",
+            "content": "# Beyond Scalar Gradients\n\n- **Jacobian**: matrix of partial derivatives of a vector‑valued function. Use `tape.jacobian(y, x)`.\n- **Hessian**: matrix of second derivatives of a scalar function. Use `tape.gradient` twice or `tape.hessian`.\n\nBoth are heavy for large dimensions; use `tf.GradientTape` with `persistent=True`.\n\n```python\nwith tf.GradientTape() as t2:\n    with tf.GradientTape() as t1:\n        y = x**3\n    dy_dx = t1.gradient(y, x)\nd2y_dx2 = t2.gradient(dy_dx, x)\n```"
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Compute Jacobian Example",
+            "content": "",
+            "codeSnippet": "x = tf.constant([[1.0, 2.0], [3.0, 4.0]])\nwith tf.GradientTape(persistent=True) as tape:\n    tape.watch(x)\n    y = x ** 2  # element‑wise, output shape matches x\njacobian = tape.jacobian(y, x)\nprint(jacobian.shape)  # (2,2,2,2) – y[i,j] wrt x[k,l]",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "Hessian Hunt 🧪",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What is the Hessian of a function?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The first derivative",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The matrix of second‑order partial derivatives",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The transpose of the Jacobian",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The determinant of the Jacobian",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The Hessian is the square matrix of second derivatives of a scalar‑valued function.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Gradient Clipping and Noise ✂️",
+            "content": "# Practical Uses of Gradient Manipulation\n\n- **Clipping by global norm**: `tf.clip_by_global_norm(grads, max_norm)` prevents exploding gradients.\n- **Clipping by value**: `tf.clip_by_value(grad, -1, 1)`.\n- **Adding noise**: e.g., for differential privacy, add Gaussian noise to gradients.\n\nApply these after tape.gradient() and before optimizer.apply_gradients()."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "code",
+            "title": "Gradient Clipping in a Loop",
+            "content": "",
+            "codeSnippet": "grads = tape.gradient(loss, model.trainable_variables)\ngrads, global_norm = tf.clip_by_global_norm(grads, 5.0)\noptimizer.apply_gradients(zip(grads, model.trainable_variables))",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_6",
+            "type": "text",
+            "title": "Debugging Gradients 🔍",
+            "content": "# Check for NaNs and monitor norms\n\n- `tf.debugging.check_numerics(tensor, message)` – throws error on NaN/Inf.\n- Compute gradient norm: `tf.linalg.global_norm(grads)`.\n- Print or log gradient histogram using TensorBoard summary.\n\nHealthy training: gradient norms should be non‑zero and not exploding."
+        },
+        {
+            "id": "s_l6_7",
+            "type": "exercise",
+            "title": "Experiment 🛠️",
+            "content": "Write a custom training loop that computes gradient norm per layer and prints it each step. Observe how norms behave."
+        }
+    ]
+}

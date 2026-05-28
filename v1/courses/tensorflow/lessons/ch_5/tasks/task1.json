@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_5",
+    "title": "Build a CNN for MNIST",
+    "description": "Construct and train a CNN on MNIST digits.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Create a convolutional neural network to classify handwritten digits (MNIST).\n\n**Steps:**\n1. Load MNIST dataset and preprocess: normalise pixel values to [0,1], add channel dimension.\n2. Build a Sequential model with:\n   - Conv2D(32, (3,3), activation='relu', input_shape=(28,28,1))\n   - MaxPooling2D((2,2))\n   - Conv2D(64, (3,3), activation='relu')\n   - MaxPooling2D((2,2))\n   - Flatten()\n   - Dense(64, activation='relu')\n   - Dense(10, activation='softmax')\n3. Compile with Adam, sparse categorical crossentropy, and accuracy.\n4. Train for 5 epochs with validation_split=0.1.\n5. Evaluate on test set and print test accuracy.\n\n**Expected Output:** Test accuracy > 98% after 5 epochs.",
+    "hints": [
+        "Use `x_train[..., tf.newaxis]` to add channel dim.",
+        "Normalise by dividing by 255.0.",
+        "Use `model.evaluate(x_test, y_test, verbose=0)` to get final accuracy."
+    ],
+    "expectedOutput": "Test accuracy: 0.99xx",
+    "solutionCode": "import tensorflow as tf\nfrom tensorflow.keras import layers, models\n\n# Load data\n(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()\nx_train = x_train[..., tf.newaxis] / 255.0\nx_test = x_test[..., tf.newaxis] / 255.0\n\nmodel = models.Sequential([\n    layers.Conv2D(32, (3,3), activation='relu', input_shape=(28,28,1)),\n    layers.MaxPooling2D((2,2)),\n    layers.Conv2D(64, (3,3), activation='relu'),\n    layers.MaxPooling2D((2,2)),\n    layers.Flatten(),\n    layers.Dense(64, activation='relu'),\n    layers.Dense(10, activation='softmax')\n])\n\nmodel.compile(optimizer='adam',\n              loss='sparse_categorical_crossentropy',\n              metrics=['accuracy'])\n\nmodel.fit(x_train, y_train, epochs=5, batch_size=64, validation_split=0.1, verbose=0)\n\ntest_loss, test_acc = model.evaluate(x_test, y_test, verbose=0)\nprint(f\"Test accuracy: {test_acc:.4f}\")"
+}

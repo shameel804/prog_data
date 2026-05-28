@@ -1,0 +1,246 @@
+{
+    "id": "quiz_ch_10",
+    "chapterId": "ch_10",
+    "title": "Chapter 10 Quiz",
+    "description": "Test your knowledge of model saving, TensorFlow Serving, TFLite conversion, and mobile deployment!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "Which format is the standard for serving TensorFlow models in production?",
+            "options": [
+                "HDF5 (.h5)",
+                "SavedModel directory",
+                "Weights checkpoint",
+                "Pickle"
+            ],
+            "correctAnswer": 1,
+            "explanation": "SavedModel is the universal format for serving, exporting to TFLite, and TF.js."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "`model.save('my_model')` creates a single HDF5 file.",
+            "correctAnswer": false,
+            "explanation": "By default in TF2, `model.save()` creates a SavedModel directory, not an HDF5 file. To save as HDF5, use `model.save('model.h5')`."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "What does `model.save_weights('ckpt')` store?",
+            "options": [
+                "Model architecture and weights",
+                "Only the model weights",
+                "Training history",
+                "The optimizer state"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`save_weights` saves the weight values only, not the model structure."
+        },
+        {
+            "id": "q4",
+            "type": "fill_blank",
+            "question": "To load a Keras SavedModel, you use `tf.keras.models._____('path')`.",
+            "options": [
+                "load_model",
+                "load",
+                "from_saved_model",
+                "restore"
+            ],
+            "correctAnswer": "load_model",
+            "explanation": "The function is `tf.keras.models.load_model`."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "What is TensorFlow Serving?",
+            "options": [
+                "A Python library for training models",
+                "A high‑performance serving system for ML models",
+                "A mobile inference engine",
+                "A data preprocessing tool"
+            ],
+            "correctAnswer": 1,
+            "explanation": "TF Serving is a C++ server that serves models via gRPC/REST."
+        },
+        {
+            "id": "q6",
+            "type": "true_false",
+            "question": "TensorFlow Serving supports both gRPC and REST APIs.",
+            "correctAnswer": true,
+            "explanation": "It exposes both gRPC and HTTP REST endpoints for flexibility."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "What is a serving signature?",
+            "options": [
+                "The model's loss function",
+                "A definition of the input and output tensors for inference",
+                "A log of predictions",
+                "The optimizer configuration"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The signature tells the server what inputs to expect and outputs to return."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "How does TensorFlow Serving handle multiple model versions?",
+            "options": [
+                "It doesn't; only one version can be loaded",
+                "It automatically serves the highest version number unless specified",
+                "It picks a random version",
+                "It merges them"
+            ],
+            "correctAnswer": 1,
+            "explanation": "By default, the latest (highest) version is served; you can request a specific version in the URL."
+        },
+        {
+            "id": "q9",
+            "type": "fill_blank",
+            "question": "The tool to inspect a SavedModel from the command line is `_____`.",
+            "options": [
+                "saved_model_cli",
+                "tf_inspect",
+                "model_tool",
+                "tf_cli"
+            ],
+            "correctAnswer": "saved_model_cli",
+            "explanation": "`saved_model_cli show --dir ...` displays signatures and graph info."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "Why use TensorFlow Lite?",
+            "options": [
+                "To train models faster",
+                "To run models on mobile and embedded devices with low latency and small size",
+                "To serve models in a data center",
+                "To visualize model graphs"
+            ],
+            "correctAnswer": 1,
+            "explanation": "TFLite is optimized for on‑device inference with a lightweight interpreter."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "Which class is used to convert a SavedModel to TFLite?",
+            "options": [
+                "tf.lite.TFLiteConverter",
+                "tf.lite.Interpreter",
+                "tf.lite.Optimize",
+                "tf.lite.RepresentativeDataset"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`tf.lite.TFLiteConverter` handles conversion."
+        },
+        {
+            "id": "q12",
+            "type": "true_false",
+            "question": "Quantization from float32 to int8 always increases model accuracy.",
+            "correctAnswer": false,
+            "explanation": "Quantization reduces precision, which may cause a small accuracy drop, but the model becomes much smaller and faster."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "What is needed for full integer quantization (int8)?",
+            "options": [
+                "No special data",
+                "A representative dataset for calibration",
+                "GPU support",
+                "The original training script"
+            ],
+            "correctAnswer": 1,
+            "explanation": "A small set of representative samples is used to determine quantization ranges."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "Which TFLite optimization applies dynamic range quantization?",
+            "options": [
+                "tf.lite.Optimize.OPTIMIZE_FOR_SIZE",
+                "tf.lite.Optimize.DEFAULT",
+                "tf.lite.Optimize.OPTIMIZE_FOR_LATENCY",
+                "tf.lite.Optimize.EXPERIMENTAL_SPARSITY"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`tf.lite.Optimize.DEFAULT` enables dynamic range quantization (weights quantized to 8 bits)."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "How do you run inference with a TFLite model in Python?",
+            "options": [
+                "Use tf.keras.models.load_model",
+                "Use tf.lite.Interpreter",
+                "Use tf.saved_model.load",
+                "Directly call the .tflite file"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The `Interpreter` class loads a .tflite model and provides methods to set inputs and get outputs."
+        },
+        {
+            "id": "q16",
+            "type": "true_false",
+            "question": "TFLite models can run on a Raspberry Pi or a microcontroller.",
+            "correctAnswer": true,
+            "explanation": "TFLite supports even microcontrollers via TensorFlow Lite for Microcontrollers."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "Which delegate would you use to accelerate TFLite on Android GPU?",
+            "options": [
+                "Core ML delegate",
+                "GPU delegate",
+                "NNAPI delegate",
+                "XNNPACK delegate"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The GPU delegate offloads computation to the mobile GPU."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "What is the advantage of running a model on‑device instead of on a server?",
+            "options": [
+                "Easier to update the model",
+                "Lower latency and offline capability",
+                "Unlimited model size",
+                "No need to preprocess data"
+            ],
+            "correctAnswer": 1,
+            "explanation": "On‑device inference eliminates network latency and works without connectivity."
+        },
+        {
+            "id": "q19",
+            "type": "fill_blank",
+            "question": "In TFLite, to ensure inputs and outputs are uint8, set `converter.inference_input_type = tf._____`.",
+            "options": [
+                "uint8",
+                "int8",
+                "float32",
+                "float16"
+            ],
+            "correctAnswer": "uint8",
+            "explanation": "For full integer quantization, input/output type can be uint8 or int8."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "Which is NOT a step in deploying a TFLite model to an Android app?",
+            "options": [
+                "Copy .tflite file to assets folder",
+                "Write TensorFlow training code in Java",
+                "Use Interpreter to run inference",
+                "Handle input/output tensor conversion"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Training is done in Python; the Android app only runs inference, no training code."
+        }
+    ]
+}

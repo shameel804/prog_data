@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_12",
+    "title": "Sentiment Serving Capstone",
+    "description": "Train an LSTM sentiment model, export a SavedModel, and serve a prediction.",
+    "estimatedMinutes": 25,
+    "problemStatement": "Create a binary sentiment classifier using the IMDB dataset, export it as a SavedModel with a serving signature that accepts raw integer sequences, and then simulate a serving request.\n\n**Steps:**\n1. Load IMDB dataset, pad sequences to maxlen=200.\n2. Build an LSTM model: Embedding(10000,128), LSTM(64), Dense(1,sigmoid).\n3. Train for 2 epochs (to keep time short).\n4. Create a serving function `serve_fn(input_text)` that wraps the model.\n5. Save the model with `tf.saved_model.save` using the signature.\n6. Load the SavedModel and run inference on a test sample, printing the output.\n\n**Expected Output:** A prediction probability for the first test sample.",
+    "hints": [
+        "Use `tf.function(input_signature=[...])` to define the signature.",
+        "In the signature, specify `tf.TensorSpec(shape=[None, 200], dtype=tf.int32)`."
+    ],
+    "expectedOutput": "Prediction: 0.94 (or similar)",
+    "solutionCode": "import tensorflow as tf\n\n# Data\n(x_train, y_train), (x_test, y_test) = tf.keras.datasets.imdb.load_data(num_words=10000)\nmaxlen = 200\nx_train = tf.keras.preprocessing.sequence.pad_sequences(x_train, maxlen=maxlen)\nx_test = tf.keras.preprocessing.sequence.pad_sequences(x_test, maxlen=maxlen)\n\nmodel = tf.keras.Sequential([\n    tf.keras.layers.Embedding(10000, 128, input_length=maxlen),\n    tf.keras.layers.LSTM(64),\n    tf.keras.layers.Dense(1, activation='sigmoid')\n])\nmodel.compile('adam', 'binary_crossentropy', metrics=['accuracy'])\nmodel.fit(x_train, y_train, epochs=2, batch_size=64, verbose=0)\n\n# Serving signature\n@tf.function(input_signature=[tf.TensorSpec(shape=[None, maxlen], dtype=tf.int32, name='input_text')])\ndef serve_fn(input_text):\n    return {'output': model(input_text)}\n\nmodel.save = tf.saved_model.save(model, 'sentiment_model', signatures={'serving_default': serve_fn})\n\n# Load and test\nloaded = tf.saved_model.load('sentiment_model')\ninfer = loaded.signatures['serving_default']\nsample = x_test[:1]\nresult = infer(input_text=tf.constant(sample))\nprint(f\"Prediction: {result['output'].numpy()[0][0]:.4f}\")"
+}

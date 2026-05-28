@@ -1,0 +1,82 @@
+{
+    "id": "l4",
+    "chapterId": "ch_9",
+    "title": "Custom Layers – Build Your Own 🧱",
+    "description": "Subclass tf.keras.layers.Layer to create reusable components with custom logic.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Beyond Built‑in Layers 📦",
+            "content": "# Why Custom Layers?\n\nSometimes you need a computation that isn't covered by existing layers:\n- A new activation function.\n- A layer with trainable parameters that combines inputs in a special way.\n- A layer that applies a complex mathematical transformation.\n\nSubclass `tf.keras.layers.Layer` and implement:\n- `__init__` – define layer‑specific attributes.\n- `build(input_shape)` – create weights (called on first call).\n- `call(inputs, training=False)` – forward pass logic."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "A Simple Dense Layer (Custom)",
+            "content": "Create a Dense layer from scratch.",
+            "codeSnippet": "class MyDense(tf.keras.layers.Layer):\n    def __init__(self, units):\n        super().__init__()\n        self.units = units\n\n    def build(self, input_shape):\n        self.w = self.add_weight(shape=(input_shape[-1], self.units),\n                                 initializer='random_normal', trainable=True)\n        self.b = self.add_weight(shape=(self.units,),\n                                 initializer='zeros', trainable=True)\n\n    def call(self, inputs):\n        return tf.matmul(inputs, self.w) + self.b",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Custom Layer Lifecycle 🧬",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "When is the `build` method of a custom layer called?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "When the layer is instantiated",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The first time the layer is called with an input shape",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "During model compilation",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It must be called manually",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`build` is automatically invoked on the first call to `__call__`, which passes the input shape, allowing lazy weight creation.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Adding Trainable & Non‑trainable Weights 🏋️",
+            "content": "# `self.add_weight()`\n\n- Create weights: `kernel = self.add_weight(name='kernel', shape=..., initializer=...)`.\n- For non‑trainable weights (e.g., running mean in BatchNorm), set `trainable=False`.\n\nYou can also create standard variables with `tf.Variable`, but `add_weight` integrates with Keras saving/loading."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Layer with Multiple Inputs & Training Behaviour",
+            "content": "Example: custom layer that adds Gaussian noise during training.",
+            "codeSnippet": "class AddGaussianNoise(tf.keras.layers.Layer):\n    def __init__(self, stddev):\n        super().__init__()\n        self.stddev = stddev\n\n    def call(self, inputs, training=None):\n        if training:\n            noise = tf.random.normal(shape=tf.shape(inputs), stddev=self.stddev)\n            return inputs + noise\n        return inputs",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Test Your Layer 🧪",
+            "content": "Always test with a sample input and check `.trainable_variables`. Use `layer.build(input_shape)` manually if you want to inspect weights before first call."
+        }
+    ]
+}

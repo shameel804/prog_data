@@ -1,0 +1,79 @@
+{
+    "id": "l4",
+    "chapterId": "ch_4",
+    "title": "Backpropagation Explained 📚",
+    "description": "The chain rule, computational graphs, and how gradients flow backward.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Learning Engine ⚙️",
+            "content": "# Backpropagation = Backward Propagation of Errors\n\n1. **Forward pass**: compute predictions.\n2. **Loss**: measure error.\n3. **Backward pass**: compute gradients of loss w.r.t all weights using the **chain rule**.\n4. **Update**: optimiser uses gradients to adjust weights.\n\nTensorFlow automatically computes gradients via **automatic differentiation**."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Chain Rule Intuition 🔗",
+            "content": "# If loss depends on `z`, and `z` depends on `w`:\n`dL/dw = dL/dz * dz/dw`\n\nThis chains through many layers. Each layer’s gradient is multiplied by the gradient from the next layer.\n\n> Analogy: A chain of dominoes – the force (gradient) is passed backward from the last domino to the first."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Chain Check 🔗",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Backpropagation relies heavily on which mathematical rule?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Pythagorean theorem",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Chain rule",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Quadratic formula",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Bayes' theorem",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The chain rule is used to decompose gradients across composite functions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "GradientTape in Action",
+            "content": "TensorFlow records operations to compute gradients.",
+            "codeSnippet": "import tensorflow as tf\n\nx = tf.Variable(3.0)\nwith tf.GradientTape() as tape:\n    y = x**2 + 2*x + 1\ngrad = tape.gradient(y, x)\nprint(grad.numpy())  # 2*x + 2 = 8.0",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Vanishing / Exploding Gradients ⚠️",
+            "content": "# Deep Networks Can Suffer\n- **Vanishing gradients**: gradients become tiny, early layers stop learning.\n- **Exploding gradients**: gradients grow huge, weights update wildly.\n\nSolutions: proper initialisation, batch normalisation, gradient clipping."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Debugging Gradients 🔍",
+            "content": "Use `tf.debugging.check_numerics` to spot NaNs or infinities in gradients. Always plot gradient norms during training."
+        }
+    ]
+}

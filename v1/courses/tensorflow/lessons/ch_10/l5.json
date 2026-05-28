@@ -1,0 +1,88 @@
+{
+    "id": "l5",
+    "chapterId": "ch_10",
+    "title": "Deploying to Mobile & Edge 📱",
+    "description": "Integrate a TFLite model into an Android/iOS app and run inference on‑device.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Mobile",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "From .tflite to an App 📲",
+            "content": "# The Mobile Integration Path\n\n1. **Train** a TF model and export to SavedModel.\n2. **Convert** to .tflite with desired optimizations.\n3. **Add** the .tflite file to your mobile project (Android: `assets/`; iOS: bundle).\n4. **Use** the TFLite Interpreter API to run inference.\n\nTensorFlow provides native SDKs for Android (Java/Kotlin) and iOS (Swift/Objective‑C)."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Android (Kotlin) Inference Snippet",
+            "content": "Conceptual code of how you'd load and run a TFLite model.",
+            "codeSnippet": "// Android Kotlin\nval tflite = Interpreter(loadModelFile())\nval input = Array(1) { FloatArray(INPUT_SIZE) }\nval output = Array(1) { FloatArray(OUTPUT_SIZE) }\ntflite.run(input, output)",
+            "codeLanguage": "kotlin",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Mobile Deployment 🚀",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the role of the TFLite Interpreter on mobile?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To train the model on the device",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To execute the converted model and run inference",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To convert Python to Java",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To collect training data",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The Interpreter is a lightweight runtime that loads and executes .tflite models.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "On‑Device Benefits 🏠",
+            "content": "# Why Run Locally?\n- **Latency**: no network round‑trip; real‑time.\n- **Privacy**: data stays on device.\n- **Offline**: works without internet.\n- **Cost**: no server costs.\n\nIdeal for image classification, speech recognition, object detection in camera apps, etc."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "iOS (Swift) Snippet",
+            "content": "Similar concept using Swift.",
+            "codeSnippet": "// Swift (iOS)\nlet interpreter = try Interpreter(modelPath: modelPath)\ntry interpreter.allocateTensors()\ntry interpreter.copy(inputData, toInputAt: 0)\ntry interpreter.invoke()\nlet output = try interpreter.output(at: 0)",
+            "codeLanguage": "swift",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "Use GPU Delegates 🚄",
+            "content": "Both Android and iOS support GPU acceleration for TFLite. Add a GPU delegate to the interpreter to speed up compute‑intensive models significantly."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "exercise",
+            "title": "Try It 🛠️",
+            "content": "Convert a small MNIST model to TFLite, write a Python script that loads and runs it using the TFLite interpreter (`tf.lite.Interpreter`) to verify correctness. (No mobile device required)."
+        }
+    ]
+}

@@ -1,0 +1,187 @@
+{
+    "id": "quiz_ch_12",
+    "chapterId": "ch_12",
+    "title": "Chapter 12 Quiz",
+    "description": "Test your ability to integrate all TensorFlow skills in end‑to‑end projects!",
+    "passingScore": 70,
+    "xpReward": 75,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "Which data pipeline method creates a dataset from image subfolders with labels?",
+            "options": [
+                "tf.data.Dataset.from_tensor_slices",
+                "tf.keras.utils.image_dataset_from_directory",
+                "tf.data.TextLineDataset",
+                "tf.io.TFRecordDataset"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`image_dataset_from_directory` reads images from folders, inferring labels from subdirectory names."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "In the image classifier capstone, why did we use `preprocess_input`?",
+            "options": [
+                "To apply data augmentation",
+                "To scale pixel values to the range expected by the pre‑trained MobileNetV2",
+                "To convert RGB to grayscale",
+                "To resize images"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Each pre‑trained model expects a specific input normalization; `preprocess_input` ensures correct scaling."
+        },
+        {
+            "id": "q3",
+            "type": "true_false",
+            "question": "Quantization‑aware training (QAT) must be applied before fine‑tuning to get the best accuracy.",
+            "correctAnswer": false,
+            "explanation": "QAT is typically applied after a well‑trained float model and fine‑tuning; you can fine‑tune first, then apply QAT, or combine them in one step."
+        },
+        {
+            "id": "q4",
+            "type": "fill_blank",
+            "question": "To convert a QAT Keras model to TFLite, you use `tf.lite.TFLiteConverter.from_keras_model()` and set `converter.optimizations = [tf.lite.Optimize._____]`.",
+            "options": [
+                "DEFAULT",
+                "FULL_INT8",
+                "QAT",
+                "SPARSE"
+            ],
+            "correctAnswer": "DEFAULT",
+            "explanation": "`Optimize.DEFAULT` enables dynamic range quantization; for full integer quantization you would need additional settings."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "In the sentiment analysis serving project, why do we create a `@tf.function` signature?",
+            "options": [
+                "To speed up training",
+                "To define the exact input/output tensors for TensorFlow Serving",
+                "To apply dropout during inference",
+                "To compile the model"
+            ],
+            "correctAnswer": 1,
+            "explanation": "A concrete function with a signature tells the server the expected input shape and dtype."
+        },
+        {
+            "id": "q6",
+            "type": "true_false",
+            "question": "When deploying with TF Serving, you must use the HTTP REST API; gRPC is not supported.",
+            "correctAnswer": false,
+            "explanation": "TF Serving supports both REST and gRPC endpoints."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "What is the purpose of `model.save('my_model/1/')` before serving?",
+            "options": [
+                "To save the model weights only",
+                "To create a versioned SavedModel directory for TF Serving",
+                "To convert to TFLite",
+                "To export as HDF5"
+            ],
+            "correctAnswer": 1,
+            "explanation": "TF Serving expects a versioned SavedModel directory (e.g., `model/1/saved_model.pb`)."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "In the time series forecasting project, why do we use a `window()` dataset?",
+            "options": [
+                "To shuffle the data",
+                "To create sliding windows of consecutive points for supervised learning",
+                "To apply data augmentation",
+                "To reduce the dataset size"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`window()` groups time series points into input‑output pairs for regression."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "Which model architecture was used in the time series capstone?",
+            "options": [
+                "CNN only",
+                "LSTM only",
+                "CNN‑LSTM hybrid (Conv1D followed by LSTM)",
+                "Transformer"
+            ],
+            "correctAnswer": 2,
+            "explanation": "We used Conv1D layers for local feature extraction, then an LSTM for long‑term dependencies."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "What is the reparameterization trick used for in a VAE?",
+            "options": [
+                "To increase the model size",
+                "To allow backpropagation through a stochastic sampling step",
+                "To reduce the loss",
+                "To speed up training"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The trick separates the random noise from the parameters, so gradients can flow through the mean and log‑variance."
+        },
+        {
+            "id": "q11",
+            "type": "true_false",
+            "question": "A VAE's loss function consists only of the reconstruction loss (e.g., binary cross‑entropy).",
+            "correctAnswer": false,
+            "explanation": "It also includes a KL divergence term that regularises the latent space to a prior distribution."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "How do you generate new images from a trained VAE?",
+            "options": [
+                "Pass a random noise vector through the encoder",
+                "Pass a random latent vector through the decoder",
+                "Use the reconstruction loss",
+                "Feed an image to the encoder"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The decoder maps latent vectors to images. Sampling random latent vectors yields novel outputs."
+        },
+        {
+            "id": "q13",
+            "type": "fill_blank",
+            "question": "In the custom VAE training loop, the KL loss is computed as `-0.5 * sum(1 + logvar - sq(mean) - exp(logvar))`. This encourages the latent distribution to resemble a standard _____.",
+            "options": [
+                "Normal",
+                "Uniform",
+                "Laplace",
+                "Binomial"
+            ],
+            "correctAnswer": "Normal",
+            "explanation": "The KL divergence with a standard normal prior shapes the latent space."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "Why might you choose a 1D CNN layer before an LSTM in time series forecasting?",
+            "options": [
+                "To increase training time",
+                "To extract local patterns before the LSTM processes the sequence",
+                "Because LSTMs cannot handle raw inputs",
+                "To replace the LSTM entirely"
+            ],
+            "correctAnswer": 1,
+            "explanation": "CNNs can detect short‑term patterns (e.g., daily cycles), which the LSTM then uses to model longer dependencies."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "What is the final output format of the TFLite model in the image classifier capstone?",
+            "options": [
+                "A SavedModel directory",
+                "A .tflite file that can be used with the Task Library on Android",
+                "A .h5 Keras model",
+                "A Docker container"
+            ],
+            "correctAnswer": 1,
+            "explanation": "We converted to .tflite, which is the format for mobile and embedded devices."
+        }
+    ]
+}

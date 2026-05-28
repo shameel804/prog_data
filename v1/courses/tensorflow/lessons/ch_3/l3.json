@@ -1,0 +1,82 @@
+{
+    "id": "l3",
+    "chapterId": "ch_3",
+    "title": "Dense Layers – The Workhorse 🐴",
+    "description": "Deep dive into fully connected layers: weights, biases, and output computation.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Layers",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Dense = Fully Connected 🔗",
+            "content": "# Every Neuron Connects to Every Neuron in Previous Layer\n\nA **Dense layer** (also called Linear or Fully Connected) performs:\n```\noutput = activation(dot(input, weight) + bias)\n```\n- `weight`: matrix of shape `(input_dim, units)`\n- `bias`: vector of shape `(units,)`\n\n> Analogy: A round‑table discussion where every person shares their opinion with everyone at the next table."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Creating a Dense Layer",
+            "content": "The simplest building block:",
+            "codeSnippet": "from tensorflow.keras.layers import Dense\n\n# 32 neurons, ReLU activation\nlayer = Dense(32, activation='relu')",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Dense Dimensions 🧮",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "If input has 100 features and a Dense layer has 64 units, what is the shape of its weight matrix?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "(100, 64)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "(64, 100)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "(64,)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "(100,)",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Weights multiply `input (batch,100)` by `(100,64)` to get `(batch,64)`. So weight shape = (input_dim, units).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Weights & Biases Initialization 🎲",
+            "content": "# Starting Values Matter\n\nBy default, Keras uses:\n- **Weights**: Glorot uniform (also called Xavier).\n- **Biases**: zeros.\n\nYou can change it:\n```python\nDense(64, kernel_initializer='he_normal', bias_initializer='zeros')\n```\n\nProper initialisation helps training converge faster."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Inspecting Weights",
+            "content": "After building the model, you can see weight shapes:",
+            "codeSnippet": "model = Sequential([Dense(32, activation='relu', input_shape=(100,))])\nmodel.build((None, 100))  # explicit build\nweights, biases = model.layers[0].get_weights()\nprint('Weight shape:', weights.shape)  # (100, 32)\nprint('Bias shape:', biases.shape)     # (32,)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "tip",
+            "title": "Parameter Count 📊",
+            "content": "Number of parameters in a Dense layer = `input_dim * units + units` (weights + biases). For 100 inputs and 64 units: 100*64 + 64 = 6464."
+        }
+    ]
+}

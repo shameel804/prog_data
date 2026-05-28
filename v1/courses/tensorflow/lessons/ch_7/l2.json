@@ -1,0 +1,82 @@
+{
+    "id": "l2",
+    "chapterId": "ch_7",
+    "title": "Pre‑trained Models in Keras 📦",
+    "description": "Learn to access powerful models like VGG16, ResNet50, and MobileNet via tf.keras.applications.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "API",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Keras Applications – A Model Zoo 🦁",
+            "content": "# Ready‑to‑Use Giants\n\nTensorFlow provides many pre‑trained models under `tf.keras.applications`:\n- **VGG16 / VGG19** – classic, deep but heavy.\n- **ResNet50 / ResNet101** – residual connections, very deep.\n- **InceptionV3 / InceptionResNetV2** – efficient multi‑path.\n- **MobileNet / MobileNetV2** – lightweight for mobile.\n- **EfficientNet** – state‑of‑the‑art scaling.\n\nAll come with weights pre‑trained on ImageNet."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Loading a Pre‑trained Model",
+            "content": "One line of code, optionally without the top classifier.",
+            "codeSnippet": "from tensorflow.keras.applications import VGG16\n\n# With top (1000 classes) – for direct ImageNet classification\nmodel = VGG16(weights='imagenet')\n\n# Without top – for transfer learning\nbase_model = VGG16(weights='imagenet', include_top=False, input_shape=(224,224,3))\nbase_model.summary()",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Keras Apps 📱",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What does `include_top=False` do when loading a pre‑trained model?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Removes all convolutional layers",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Removes the final classification layers (usually Dense)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Loads only the first layer",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Uses average pooling instead of max pooling",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`include_top=False` discards the global pooling and 1000‑unit Dense layer, leaving the convolutional base for feature extraction.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Input Preprocessing 🧹",
+            "content": "# Each Model Expects Specific Preprocessing\n\n- VGG16: subtract mean RGB values `[103.939, 116.779, 123.68]` (or use `preprocess_input`).\n- ResNet, MobileNet: scale between -1 and 1.\n\nKeras provides `tf.keras.applications.vgg16.preprocess_input` (and similar) to handle this.\n\n```python\nfrom tensorflow.keras.applications.vgg16 import preprocess_input\nx_train_preprocessed = preprocess_input(x_train)\n```"
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Trying Different Architectures",
+            "content": "Swap VGG16 for ResNet50 easily:",
+            "codeSnippet": "from tensorflow.keras.applications import ResNet50\nfrom tensorflow.keras.applications.resnet50 import preprocess_input\n\nbase_model = ResNet50(weights='imagenet', include_top=False, input_shape=(224,224,3))\n# Use preprocess_input for ResNet style preprocessing",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "tip",
+            "title": "Choosing the Right Base Model 🧭",
+            "content": "- **Accuracy priority**: EfficientNet > ResNet > VGG.\n- **Speed/size**: MobileNet > EfficientNet (small variants) > VGG.\n- **If you have very little data**: start with a smaller model (MobileNet) to avoid overfitting."
+        }
+    ]
+}

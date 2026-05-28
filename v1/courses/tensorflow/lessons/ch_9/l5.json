@@ -1,0 +1,82 @@
+{
+    "id": "l5",
+    "chapterId": "ch_9",
+    "title": "Custom Models – Full Control 🧠",
+    "description": "Subclass tf.keras.Model to encapsulate architectures and define custom train_step.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Model Subclassing 🏗️",
+            "content": "# Beyond Sequential and Functional\n\nModel subclassing gives the ultimate flexibility:\n- Define layers in `__init__`.\n- Write the forward pass in `call()`.\n- Optionally override `train_step()` and `test_step()` to control training logic while still using `fit()`.\n\nThis is how researchers prototype complex ideas."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Custom Model Example",
+            "content": "A simple multi‑layer model with custom call.",
+            "codeSnippet": "class MyModel(tf.keras.Model):\n    def __init__(self):\n        super().__init__()\n        self.dense1 = tf.keras.layers.Dense(64, activation='relu')\n        self.dense2 = tf.keras.layers.Dense(10, activation='softmax')\n\n    def call(self, inputs, training=False):\n        x = self.dense1(inputs)\n        return self.dense2(x)\n\nmodel = MyModel()\nmodel.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])\n# Can still use model.fit()",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Model Subclass 🧪",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What advantage does overriding `train_step` in a custom model give?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "You can use the model for inference only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "You can customise the training logic while still using model.fit() and callbacks",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It automatically speeds up training",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It eliminates the need for an optimizer",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Custom `train_step` lets you inject logic (e.g., multiple losses, custom gradient ops) yet retain the convenience of `fit()` and callbacks.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Custom train_step Example",
+            "content": "Override to add gradient clipping and weight decay.",
+            "codeSnippet": "class RegularizedModel(tf.keras.Model):\n    def train_step(self, data):\n        x, y = data\n        with tf.GradientTape() as tape:\n            y_pred = self(x, training=True)\n            loss = self.compiled_loss(y, y_pred, regularization_losses=self.losses)\n        trainable_vars = self.trainable_variables\n        gradients = tape.gradient(loss, trainable_vars)\n        # Gradient clipping\n        gradients, _ = tf.clip_by_global_norm(gradients, 1.0)\n        self.optimizer.apply_gradients(zip(gradients, trainable_vars))\n        self.compiled_metrics.update_state(y, y_pred)\n        return {m.name: m.result() for m in self.metrics}",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "When to Subclass Model 📋",
+            "content": "# Use when:\n- Your architecture has dynamic branching based on input.\n- You need a custom `train_step` for research.\n- You want to share layers in complex ways.\n\nOtherwise, Sequential or Functional API are simpler and often sufficient."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "Serialization 🧩",
+            "content": "Subclassed models are harder to save/load (they rely on Python code). Use `save_weights` and `load_weights`, or export to SavedModel with `@tf.function` decorated methods."
+        }
+    ]
+}

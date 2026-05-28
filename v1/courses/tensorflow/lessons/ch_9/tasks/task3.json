@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_9",
+    "title": "Custom Model with GAN‑Style Training Step",
+    "description": "Create a model that overrides train_step to train a simple GAN discriminator.",
+    "estimatedMinutes": 20,
+    "problemStatement": "Build a custom Keras model that overrides `train_step` to implement a simple adversarial training setup. The model will receive both real and fake images and must learn to classify them.\n\n**Steps:**\n1. Create a `GANModel` subclassing `tf.keras.Model`.\n2. In `__init__`, create a discriminator (a small CNN or Dense net).\n3. Override `train_step(data)`: data is a tuple of (real_images, fake_images).\n   - Pass both real and fake images through discriminator.\n   - Compute binary crossentropy loss: real labeled as 1, fake as 0.\n   - Compute gradients and apply.\n   - Update metrics (accuracy).\n4. Compile the model with Adam and binary crossentropy, accuracy.\n5. Train on random Gaussian data (real) and uniform noise (fake) for a few batches.\n6. Print the final accuracy.\n\n**Expected Output:** Accuracy around 0.5 (initially random) should improve as discriminator learns; print final accuracy after 5 epochs.",
+    "hints": [
+        "Use `self.compiled_loss` and `self.compiled_metrics`.",
+        "Concatenate real and fake into a batch, labels 1 and 0 respectively.",
+        "Compute grads w.r.t `self.discriminator.trainable_variables`."
+    ],
+    "expectedOutput": "Final accuracy after training: 0.78",
+    "solutionCode": "import tensorflow as tf\nimport numpy as np\n\nclass GANModel(tf.keras.Model):\n    def __init__(self):\n        super().__init__()\n        self.discriminator = tf.keras.Sequential([\n            tf.keras.layers.Dense(32, activation='relu'),\n            tf.keras.layers.Dense(1, activation='sigmoid')\n        ])\n\n    def call(self, inputs, training=False):\n        return self.discriminator(inputs, training=training)\n\n    def train_step(self, data):\n        real, fake = data\n        batch_size = tf.shape(real)[0]\n        # Concatenate real and fake images\n        combined = tf.concat([real, fake], axis=0)\n        labels = tf.concat([tf.ones((batch_size, 1)), tf.zeros((batch_size, 1))], axis=0)\n\n        with tf.GradientTape() as tape:\n            pred = self.discriminator(combined, training=True)\n            loss = self.compiled_loss(labels, pred)\n        grads = tape.gradient(loss, self.discriminator.trainable_variables)\n        self.optimizer.apply_gradients(zip(grads, self.discriminator.trainable_variables))\n        self.compiled_metrics.update_state(labels, pred)\n        return {m.name: m.result() for m in self.metrics}\n\n# Generate synthetic data\nreal_data = tf.random.normal((1000, 10))\nfake_data = tf.random.uniform((1000, 10), minval=-2, maxval=2)\ndataset = tf.data.Dataset.from_tensor_slices((real_data, fake_data)).batch(32)\n\nmodel = GANModel()\nmodel.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])\nhistory = model.fit(dataset, epochs=5, verbose=0)\nprint(f\"Final accuracy after training: {history.history['accuracy'][-1]:.3f}\")"
+}

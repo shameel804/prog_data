@@ -1,0 +1,82 @@
+{
+    "id": "l4",
+    "chapterId": "ch_7",
+    "title": "Implementing Transfer Learning (Flowers Example) 🌼",
+    "description": "Full walkthrough: load images, apply a pre‑trained base, train a custom classifier, and evaluate.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Practice",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Classify Flower Species 🌸",
+            "content": "# The Task\n\nWe have a small dataset of flower images (daisy, dandelion, roses, sunflowers, tulips). Let's build a classifier using transfer learning.\n\nWe'll use **MobileNetV2** (fast, small) as our base.\n\nSteps:\n1. Load and preprocess images.\n2. Load pre‑trained base model.\n3. Add new classifier head.\n4. Train (feature extraction phase).\n5. Optionally fine‑tune."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Load Data with tf.data",
+            "content": "Assuming images are in folder 'flower_photos', we use `image_dataset_from_directory`.",
+            "codeSnippet": "import tensorflow as tf\n\nBATCH_SIZE = 32\nIMG_SIZE = (224, 224)\n\ntrain_ds = tf.keras.utils.image_dataset_from_directory(\n    'flower_photos',\n    validation_split=0.2,\n    subset='training',\n    seed=123,\n    image_size=IMG_SIZE,\n    batch_size=BATCH_SIZE\n)\nval_ds = tf.keras.utils.image_dataset_from_directory(\n    'flower_photos',\n    validation_split=0.2,\n    subset='validation',\n    seed=123,\n    image_size=IMG_SIZE,\n    batch_size=BATCH_SIZE\n)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Data Pipeline 🚰",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does `image_dataset_from_directory` automatically infer?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The image file format",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Labels from subdirectory names",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The image sizes",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The model architecture",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It creates labels from the folder structure, using each subdirectory as a class.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Build the Model",
+            "content": "Use MobileNetV2 base + GlobalAveragePooling + Dense.",
+            "codeSnippet": "from tensorflow.keras.applications import MobileNetV2\nfrom tensorflow.keras.applications.mobilenet_v2 import preprocess_input\nfrom tensorflow.keras import layers, models\n\nbase_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=(224,224,3))\nbase_model.trainable = False  # freeze\n\nmodel = models.Sequential([\n    layers.Input(shape=(224,224,3)),\n    layers.Rescaling(1./255.),  # quick rescale, but we'll use preprocess_input separately\n    base_model,\n    layers.GlobalAveragePooling2D(),\n    layers.Dropout(0.2),\n    layers.Dense(5, activation='softmax')\n])\n\n# Actually better to use base_model directly as a layer after preprocessing\n# Let's integrate preprocess_input as a Lambda for end‑to‑end\ninputs = tf.keras.Input(shape=(224,224,3))\nx = preprocess_input(inputs)\nx = base_model(x, training=False)\nx = layers.GlobalAveragePooling2D()(x)\nx = layers.Dropout(0.2)(x)\noutputs = layers.Dense(5, activation='softmax')(x)\nmodel = tf.keras.Model(inputs, outputs)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Train the Model 🏋️",
+            "content": "# Compile and Fit\n\n```python\nmodel.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])\nhistory = model.fit(train_ds, validation_data=val_ds, epochs=10)\n```\n\nAfter this, you can evaluate on test data. Usually feature extraction alone gives > 80% accuracy."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Using `preprocess_input` as a Lambda",
+            "content": "Wrapping the preprocessing function inside a `Lambda` layer makes the model self‑contained. Then you don't need to preprocess images manually before inference."
+        }
+    ]
+}

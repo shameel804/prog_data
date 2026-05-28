@@ -1,0 +1,82 @@
+{
+    "id": "l2",
+    "chapterId": "ch_6",
+    "title": "Recurrent Neural Networks Unrolled 🔄",
+    "description": "Visualise the RNN as a repeated cell across time steps; learn the internal equations.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Unrolling the Loop 🔁",
+            "content": "# An RNN is a Loop in Time\n\nInstead of a single cell with a feedback loop, we can **unroll** it into a chain of identical copies, one per time step.\n\nAt step `t`:\n- Input `x_t`\n- Hidden state `h_t = f( x_t * W_xh + h_{t-1} * W_hh + b_h )`\n- Output `y_t = g( h_t * W_hy + b_y )`\n\nThe same weights `W_xh, W_hh, W_hy` are shared across all time steps."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "SimpleRNN in Keras",
+            "content": "The `SimpleRNN` layer implements this basic recurrence.",
+            "codeSnippet": "from tensorflow.keras.layers import SimpleRNN\n\nrnn = SimpleRNN(64, activation='tanh', return_sequences=True, input_shape=(None, 10))\n# input_shape: (timesteps, features) – None means variable length",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Unrolled Brain 🧪",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "In an unrolled RNN, how many sets of weights are there?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "One set per time step",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "One set shared across all time steps",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Three sets (W_xh, W_hh, W_hy) but each step uses different copies",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "No weights",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The same weight matrices are used at every time step – that's weight sharing across time.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Return Sequences vs Return State 🎛️",
+            "content": "# Controlling the Output\n\n- `return_sequences=True`: return the full sequence of outputs (one per timestep) – needed for stacking RNNs or sequence‑to‑sequence.\n- `return_sequences=False` (default): only output of the last timestep – used when you want a single vector for classification.\n- `return_state=True`: also return the final hidden state (and cell state for LSTM)."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Example: SimpleRNN on a Sequence",
+            "content": "Generate a dummy sequence of 3 timesteps, 10 features, and pass through SimpleRNN.",
+            "codeSnippet": "import tensorflow as tf\nimport numpy as np\n\n# Batch of 2 sequences, length 3, 10 features each\nx = tf.random.normal((2, 3, 10))\nrnn = SimpleRNN(32, return_sequences=False)\noutput = rnn(x)\nprint(output.shape)  # (2, 32) – only last output",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_6",
+            "type": "tip",
+            "title": "Beware of Vanilla RNNs ⚠️",
+            "content": "`SimpleRNN` is rarely used in practice because it suffers from **vanishing gradients**. It's mainly for educational purposes. LSTM and GRU are the real workhorses."
+        }
+    ]
+}

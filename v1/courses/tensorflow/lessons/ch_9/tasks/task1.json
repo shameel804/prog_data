@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_9",
+    "title": "Custom Training Loop for Polynomial Regression",
+    "description": "Write a manual loop to fit a polynomial model, tracking loss and gradient norms.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Implement a custom training loop to fit a 3‑degree polynomial: y = 2*x^3 - 1.5*x^2 + 0.8*x + 0.1 using a neural network with one hidden layer.\n\n**Steps:**\n1. Generate 500 samples x in [-2,2] and compute y with some Gaussian noise.\n2. Build a Sequential model: Dense(8, relu) -> Dense(1).\n3. Use MSE loss and Adam optimizer.\n4. Write a training loop for 50 epochs, using batch size 32, tracking average loss per epoch.\n5. After each epoch, print epoch number, loss, and the global norm of gradients (computed manually using `tf.linalg.global_norm`).\n6. After training, print the weights of the last layer.\n\n**Expected Output:** Loss decreasing, gradient norm eventually shrinking, final weights approximating the polynomial mapping.",
+    "hints": [
+        "Use `tf.data.Dataset.from_tensor_slices` with batch.",
+        "Inside loop: compute grads, then `global_norm = tf.linalg.global_norm(grads)`.",
+        "Print grads norm."
+    ],
+    "expectedOutput": "Epoch 1: Loss: 2.34, Grad norm: 5.67\n...\nEpoch 50: Loss: 0.05, Grad norm: 0.12",
+    "solutionCode": "import tensorflow as tf\nimport numpy as np\n\n# Generate data\nnp.random.seed(0)\nx = np.random.uniform(-2, 2, 500).astype(np.float32)\ny = 2*x**3 - 1.5*x**2 + 0.8*x + 0.1 + np.random.normal(0, 0.2, 500).astype(np.float32)\ny = y.reshape(-1,1)\n\ndataset = tf.data.Dataset.from_tensor_slices((x.reshape(-1,1), y)).batch(32)\n\nmodel = tf.keras.Sequential([\n    tf.keras.layers.Dense(8, activation='relu'),\n    tf.keras.layers.Dense(1)\n])\nloss_fn = tf.keras.losses.MeanSquaredError()\noptimizer = tf.keras.optimizers.Adam(0.01)\n\nepochs = 50\nfor epoch in range(epochs):\n    epoch_loss = tf.keras.metrics.Mean()\n    for batch_x, batch_y in dataset:\n        with tf.GradientTape() as tape:\n            pred = model(batch_x, training=True)\n            loss = loss_fn(batch_y, pred)\n        grads = tape.gradient(loss, model.trainable_variables)\n        grad_norm = tf.linalg.global_norm(grads)\n        optimizer.apply_gradients(zip(grads, model.trainable_variables))\n        epoch_loss.update_state(loss)\n    print(f\"Epoch {epoch+1}: Loss: {epoch_loss.result():.4f}, Grad norm: {grad_norm:.4f}\")\n\nprint(\"Final layer weights:\", model.layers[1].get_weights()[0].flatten())"
+}

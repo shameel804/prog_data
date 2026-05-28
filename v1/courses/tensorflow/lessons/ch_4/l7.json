@@ -1,0 +1,88 @@
+{
+    "id": "l7",
+    "chapterId": "ch_4",
+    "title": "Callbacks: Early Stopping & Checkpoints 🚦",
+    "description": "Automate training with callbacks – stop early, save best model, adjust rates.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Automation",
+    "slides": [
+        {
+            "id": "s_l7_1",
+            "type": "text",
+            "title": "What are Callbacks? 📞",
+            "content": "# Functions Called at Training Milestones\n\nCallbacks let you hook into events like `on_epoch_end` to perform actions:\n- Save model checkpoints.\n- Stop training early.\n- Adjust learning rate.\n- Log to TensorBoard.\n\nPass a list to `model.fit(callbacks=[...])`."
+        },
+        {
+            "id": "s_l7_2",
+            "type": "code",
+            "title": "EarlyStopping – The Must‑Have 🛑",
+            "content": "Stop training when a monitored metric stops improving.",
+            "codeSnippet": "early_stop = tf.keras.callbacks.EarlyStopping(\n    monitor='val_loss',\n    patience=3,          # epochs to wait\n    restore_best_weights=True\n)\n\nmodel.fit(X, y, epochs=100, callbacks=[early_stop], validation_split=0.2)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_3",
+            "type": "quiz",
+            "title": "Early Stop IQ ⏹️",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_1",
+                "type": "multiple_choice",
+                "question": "What does `patience=5` in EarlyStopping mean?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Stop after 5 epochs total",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Wait 5 epochs of no improvement before stopping",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Stop if loss doesn't reach 0.5",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Start training after 5 epochs",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Patience is the number of epochs without improvement after which training will be stopped.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l7_4",
+            "type": "text",
+            "title": "ModelCheckpoint – Save the Best 💾",
+            "content": "# Preserve Your Best Model\n\n```python\ncheckpoint = tf.keras.callbacks.ModelCheckpoint(\n    'best_model.h5',\n    monitor='val_accuracy',\n    save_best_only=True,\n    mode='max'\n)\n```\n\nAfter training, load with `tf.keras.models.load_model('best_model.h5')`."
+        },
+        {
+            "id": "s_l7_5",
+            "type": "code",
+            "title": "Learning Rate Scheduler",
+            "content": "Reduce learning rate on plateau:",
+            "codeSnippet": "reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(\n    monitor='val_loss',\n    factor=0.2,\n    patience=2,\n    min_lr=0.0001\n)\n\nmodel.fit(..., callbacks=[reduce_lr])",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_6",
+            "type": "tip",
+            "title": "Combine Callbacks 🧰",
+            "content": "You can pass multiple callbacks: `callbacks=[early_stop, checkpoint, tensorboard]`. They work harmoniously."
+        },
+        {
+            "id": "s_l7_7",
+            "type": "exercise",
+            "title": "Try It 🛠️",
+            "content": "Train a small model and use EarlyStopping with `patience=2` and ModelCheckpoint to save the best weights. Observe how the training stops earlier than the `epochs` parameter."
+        }
+    ]
+}

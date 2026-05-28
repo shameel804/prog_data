@@ -1,0 +1,117 @@
+{
+    "id": "l4",
+    "chapterId": "ch_2",
+    "title": "Broadcasting Demystified 📡",
+    "description": "How tensors of different shapes work together in element‑wise ops.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Magic of Broadcasting ✨",
+            "content": "# When Shapes Don’t Match\n\nTensorFlow automatically **broadcasts** smaller tensors to match larger ones, following strict rules.\n\nExample:\n```python\na = tf.constant([[1],[2],[3]])  # (3,1)\nb = tf.constant([10,20])        # (2,)\n# a + b works! shape (3,2)\n```\n\n> Analogy: Stretching a rubber band to fit a larger frame."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Broadcasting Example 🎬",
+            "content": "See how it expands:",
+            "codeSnippet": "import tensorflow as tf\n\na = tf.constant([[1],[2],[3]])  # (3,1)\nb = tf.constant([10,20])        # (2,)\nresult = a + b\nprint(result.numpy())\n# [[11,21]\n#  [12,22]\n#  [13,23]]",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Broadcast Basics 📻",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is the shape of `a + b` if `a.shape = (5,)` and `b.shape = (1,)`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "(5,)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "(1,)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "(5,1)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Scalar-like (1,) broadcasts to match (5,) → result (5,).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Broadcasting Rules 📜",
+            "content": "# The Algorithm\nCompare shapes element‑wise from the **right**:\n1. If dimensions are equal, fine.\n2. If one is 1, it is stretched.\n3. If neither is equal nor 1, error.\n\n**Example:** `(3,4,2)` and `(4,1)` → align trailing:\n```\n(3,4,2)\n  (4,1)\n```\nPad shorter with ones on left: `(1,4,1)`. Now compare: 3 vs 1 → stretch 1 to 3, 4 vs 4 ok, 2 vs 1 → stretch 1 to 2. Result `(3,4,2)`."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Broadcast Battle ⚔️",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Will `(4,3)` and `(3,2)` broadcast together?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Yes, to (4,3,2)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Yes, to (4,3)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "No, shapes are incompatible",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Yes, to (4,2)",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Compare rightmost: 3 vs 2 (not equal, neither is 1) → error.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "code",
+            "title": "Fancy: Outer Product via Broadcasting",
+            "content": "Create a column vector and row vector, add them:",
+            "codeSnippet": "col = tf.constant([[1],[2],[3]])   # (3,1)\nrow = tf.constant([[4,5,6]])       # (1,3)\n# addition + broadcast -> (3,3)\nprint(col + row)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_7",
+            "type": "warning",
+            "title": "Broadcasting Pitfalls ⚠️",
+            "content": "## Unexpected Shapes\n\nWhen you accidentally introduce a dimension of size 1 via `expand_dims` or indexing, broadcasting may silently produce larger tensors. **Always check shapes** during debugging."
+        }
+    ]
+}

@@ -1,0 +1,114 @@
+{
+    "id": "l5",
+    "chapterId": "ch_2",
+    "title": "Data Types & Numerical Precision 🎯",
+    "description": "Float32, float16, mixed precision, and how to cast between types.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "TensorFlow Data Types 📋",
+            "content": "# Common dtypes\n- `tf.float32` (default float)\n- `tf.float16` (half precision, faster on GPUs)\n- `tf.int32`, `tf.int64`\n- `tf.bool`\n- `tf.string`\n\n> Analogy: Choosing the right measuring cup – ml vs. liters."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Checking & Setting dtypes",
+            "content": "",
+            "codeSnippet": "import tensorflow as tf\n\nf = tf.constant(3.14)\nprint(f.dtype)  # tf.float32\n\ni = tf.constant(42, dtype=tf.int64)\nprint(i.dtype)  # tf.int64\n\nb = tf.constant(True)  # tf.bool",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Default Type 🎚️",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the default integer dtype in TensorFlow?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "int32",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "int64",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "float32",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "int8",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "TensorFlow defaults to `int32` for integers and `float32` for floats.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Casting Between Types 🔀",
+            "content": "# `tf.cast(tensor, dtype)`\n\nConvert a tensor to a different data type.\n\n```python\na = tf.constant([1.7, 2.3])\nb = tf.cast(a, tf.int32)   # truncates: [1,2]\nc = tf.cast([0,1], tf.bool) # [False, True]\n```\n\n**Warning**: Casting float to int truncates, does not round."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Cast Conundrum 🤔",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "After `tf.cast([2.9], tf.int32)`, what is the result?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "[3]",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "[2]",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "[2.0]",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Casting to int truncates the decimal, not rounds.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Mixed Precision Training 🏎️",
+            "content": "# Faster Training with float16\n\nModern GPUs have special hardware for `float16`. Mixed precision keeps some computations in `float32` for stability, others in `float16` for speed.\n\n```python\nfrom tensorflow.keras.mixed_precision import set_global_policy\nset_global_policy('mixed_float16')\n```\n\nLayers automatically cast inputs to `float16`, outputs to `float32`."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "warning",
+            "title": "Precision Pitfalls ⚠️",
+            "content": "## Underflow & Overflow\n\n`float16` range is limited (~5.96e‑8 to 65504). Gradients can easily overflow or underflow. Use loss scaling in mixed precision."
+        }
+    ]
+}

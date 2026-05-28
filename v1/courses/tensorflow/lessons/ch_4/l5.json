@@ -1,0 +1,82 @@
+{
+    "id": "l5",
+    "chapterId": "ch_4",
+    "title": "Metrics & Monitoring Performance 📊",
+    "description": "Track accuracy, precision, recall, and custom metrics during training.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Monitoring",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Why Metrics? 📈",
+            "content": "# Loss ≠ Perceived Success\n\nLoss is for the optimiser. **Metrics** tell humans how well the model does on tasks.\n\nExamples:\n- **Accuracy**: fraction of correct predictions.\n- **Precision / Recall**: for imbalanced datasets.\n- **AUC**: area under ROC curve.\n\nYou can track multiple metrics at once."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Compiling with Metrics",
+            "content": "",
+            "codeSnippet": "model.compile(\n    optimizer='adam',\n    loss='binary_crossentropy',\n    metrics=['accuracy',\n             tf.keras.metrics.Precision(),\n             tf.keras.metrics.AUC()]\n)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Metrics Match 📊",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which metric would you use for a highly imbalanced classification problem?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Accuracy",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Precision and Recall",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "MSE",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Categorical cross‑entropy",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Accuracy can be misleading when classes are imbalanced; precision/recall give better insight.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Custom Metrics 🛠️",
+            "content": "# Subclass `tf.keras.metrics.Metric`\n\nYou can create your own metric by implementing `update_state` and `result`.\n\n```python\nclass MyThresholdAccuracy(tf.keras.metrics.Metric):\n    def __init__(self, threshold=0.5, **kwargs):\n        super().__init__(**kwargs)\n        self.threshold = threshold\n        self.correct = self.add_weight(name='correct', initializer='zeros')\n        self.total = self.add_weight(name='total', initializer='zeros')\n```"
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Reading the History",
+            "content": "`fit()` returns a History object with loss and metrics.",
+            "codeSnippet": "history = model.fit(X, y, epochs=5, validation_split=0.2)\nprint(history.history.keys())  # dict_keys(['loss', 'accuracy', 'val_loss', 'val_accuracy'])",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "TensorBoard Integration 📋",
+            "content": "Use `tf.keras.callbacks.TensorBoard(log_dir='./logs')` to visualise metrics in real time."
+        }
+    ]
+}

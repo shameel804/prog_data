@@ -1,0 +1,82 @@
+{
+    "id": "l3",
+    "chapterId": "ch_7",
+    "title": "Feature Extraction vs Fine‑Tuning 🔧",
+    "description": "Understand the two main transfer learning strategies and how to implement them.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Two Paths to Adapt a Pre‑trained Model 🛤️",
+            "content": "# 1. Feature Extraction\nFreeze the convolutional base, use its output as features for a new classifier. Only the new classifier is trained.\n\n# 2. Fine‑Tuning\nUnfreeze some top layers of the base model and train them together with the new classifier. This adapts the pre‑trained features to the new task.\n\n> Analogy: Feature extraction = using a pre‑built camera to take pictures and only changing how you interpret them. Fine‑tuning = also adjusting the camera's lens slightly for your specific scene."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Feature Extraction in Code",
+            "content": "Set `layer.trainable = False` for all layers in the base model.",
+            "codeSnippet": "base_model = VGG16(weights='imagenet', include_top=False)\nfor layer in base_model.layers:\n    layer.trainable = False\n\n# Now add new classifier head\nglobal_avg = GlobalAveragePooling2D()(base_model.output)\npredictions = Dense(5, activation='softmax')(global_avg)\nmodel = Model(inputs=base_model.input, outputs=predictions)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Freeze or Not? ❄️",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "In feature extraction, which layers are updated during training?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "All layers of the base model",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Only the newly added classifier layers",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "No layers are updated",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only the first convolutional layer",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The base model is frozen; gradients only flow through the new head, updating its weights.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Fine‑Tuning: Unfreeze and Retrain Selectively 🔓",
+            "content": "# Steps for Fine‑Tuning\n1. First, train the new classifier head with the base frozen (feature extraction).\n2. Then, unfreeze some top layers of the base model.\n3. Recompile with a very low learning rate (to avoid wrecking pre‑trained weights).\n4. Train end‑to‑end.\n\nThis allows the pre‑trained features to shift slightly to your domain."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Fine‑Tuning Example",
+            "content": "Unfreeze the last few layers of the base model.",
+            "codeSnippet": "# After initial training with head only\nbase_model.trainable = True\n\n# Freeze all layers except the last 5\nfor layer in base_model.layers[:-5]:\n    layer.trainable = False\n\nmodel.compile(optimizer=Adam(learning_rate=1e-5), loss='categorical_crossentropy', metrics=['accuracy'])\nmodel.fit(train_data, epochs=5)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "warning",
+            "title": "Don't Fine‑Tune Too Aggressively ⚠️",
+            "content": "If you unfreeze too many layers with a high learning rate, you may destroy the valuable pre‑trained features. Always use a learning rate 10‑100× smaller than the initial head training."
+        }
+    ]
+}

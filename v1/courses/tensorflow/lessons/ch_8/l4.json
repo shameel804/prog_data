@@ -1,0 +1,63 @@
+{
+    "id": "l4",
+    "chapterId": "ch_8",
+    "title": "Data Augmentation in the Pipeline 🎨",
+    "description": "Integrate Keras preprocessing layers and tf.image ops into your input pipeline.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Data Augmentation",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Augmentation Inside the Model or the Pipeline? 🎯",
+            "content": "# Two Integration Points\n\n1. **As part of the model**: use `tf.keras.layers` like `RandomFlip`, `RandomRotation` as the first layers of your network.\n2. **In the tf.data pipeline**: apply `tf.image` operations inside a `.map()` call.\n\nPros of pipeline augmentation:\n- Runs on CPU in parallel with GPU training.\n- No overhead during inference (not part of saved model).\n\nPros of model‑integrated:\n- Simpler, model‑self‑contained, can export with augmentation for deployment if needed."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Augmentation in tf.data using map",
+            "content": "Use `tf.image` functions inside a map.",
+            "codeSnippet": "def augment(image, label):\n    image = tf.image.random_flip_left_right(image)\n    image = tf.image.random_brightness(image, max_delta=0.1)\n    image = tf.image.random_contrast(image, lower=0.8, upper=1.2)\n    return image, label\n\ndataset = dataset.map(augment, num_parallel_calls=tf.data.AUTOTUNE)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Augmentation Awareness 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "true_false",
+                "question": "Augmentation inside the tf.data pipeline is applied only during training, not evaluation, if you prepare separate datasets.",
+                "options": [
+                    {
+                        "id": "t",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "f",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "You typically create a training dataset with augmentation and a validation dataset without.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Using Keras Preprocessing Layers in the Pipeline",
+            "content": "# For Consistency, You Can Map Layers\n\nYou can instantiate a layer and call it inside a map function:\n```python\nflip = tf.keras.layers.RandomFlip('horizontal')\nrotate = tf.keras.layers.RandomRotation(0.1)\n\ndef augment_keras(image, label):\n    image = flip(image, training=True)\n    image = rotate(image, training=True)\n    return image, label\n```\nThe `training=True` ensures randomness only during training."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "tip",
+            "title": "Consistency Matters ⚖️",
+            "content": "If you use augmentation in the pipeline, remember to **not** apply it to validation/test datasets. Build separate pipelines for training and evaluation."
+        }
+    ]
+}

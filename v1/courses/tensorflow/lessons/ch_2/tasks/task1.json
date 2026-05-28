@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_2",
+    "title": "Tensor Surgery",
+    "description": "Manipulate tensor shapes, indexing, and transposition.",
+    "estimatedMinutes": 10,
+    "problemStatement": "Let's practice advanced tensor manipulation.\n\n1. Create a 3D tensor of shape (3, 4, 2) with consecutive integers starting at 1. Use `tf.reshape` on a `tf.range`.\n2. Print its shape and total number of elements.\n3. Extract the second slice along axis 0 (index 1) and print it.\n4. Transpose the entire tensor from shape (3,4,2) to (2,4,3) using `tf.transpose` with `perm=[2,1,0]`. Print the new shape.\n5. Remove the last dimension (should be size 1) from a tensor of shape (5,1) using `tf.squeeze`, but first create a tensor of shape (5,1) with values 1..5.\n\n**Expected Output:** see below.",
+    "hints": [
+        "Use `tf.range(total)` and then `tf.reshape`.",
+        "`tensor[1]` gets the slice along axis 0.",
+        "For squeeze, axis doesn't need to be specified if size 1; or `tf.squeeze(t, axis=1)`."
+    ],
+    "expectedOutput": "Shape of t: (3, 4, 2)\nTotal elements: 24\nSecond slice:\n[[ 9 10]\n [11 12]\n [13 14]\n [15 16]]\nTransposed shape: (2, 4, 3)\nSqueezed tensor: [1 2 3 4 5]",
+    "solutionCode": "import tensorflow as tf\n\n# 1. Create 3D tensor (3,4,2) with 1..24\nt = tf.reshape(tf.range(1, 25), (3,4,2))\nprint(\"Shape of t:\", t.shape)\nprint(\"Total elements:\", tf.size(t).numpy())\n\n# 3. Second slice (index 1)\nsecond_slice = t[1]\nprint(\"Second slice:\")\nprint(second_slice.numpy())\n\n# 4. Transpose to (2,4,3)\nt_transposed = tf.transpose(t, perm=[2,1,0])\nprint(\"Transposed shape:\", t_transposed.shape)\n\n# 5. Squeeze a (5,1) tensor\nflat_tensor = tf.reshape(tf.range(1,6), (5,1))\nsqueezed = tf.squeeze(flat_tensor)\nprint(\"Squeezed tensor:\", squeezed.numpy())"
+}

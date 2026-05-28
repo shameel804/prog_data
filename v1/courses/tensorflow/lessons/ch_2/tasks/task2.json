@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_2",
+    "title": "Broadcasting Explorer",
+    "description": "Practice broadcasting rules with real operations.",
+    "estimatedMinutes": 12,
+    "problemStatement": "Solve the following broadcasting challenges:\n\n1. Create a column vector `a` of shape (4,1) with values 1,2,3,4.\n2. Create a row vector `b` of shape (1,3) with values 10,20,30.\n3. Add them and print the resulting shape and values.\n4. Create tensor `c` of shape (2,3) filled with 5.0, and tensor `d` of shape (3,) with values 1,2,3. Multiply `c * d` and print the result.\n5. Can you add tensors of shapes (5,4) and (4,)? If yes, do it with random tensors and print shape. If no, explain why.\n\n**Expected Output:** show shapes and results.",
+    "hints": [
+        "For step 1 use `tf.constant` with a 2D list.",
+        "Broadcasting aligns from right. (5,4) and (4,) -> (4,) stretches to (1,4) then broadcast to (5,4).",
+        "Use `tf.random.uniform` for random."
+    ],
+    "expectedOutput": "a shape: (4,1)\nb shape: (1,3)\na+b shape: (4,3)\na+b result:\n[[11. 21. 31.]\n [12. 22. 32.]\n [13. 23. 33.]\n [14. 24. 34.]]\nc*d result:\n[[ 5. 10. 15.]\n [ 5. 10. 15.]]\nAddition (5,4) + (4,) works, shape (5,4).",
+    "solutionCode": "import tensorflow as tf\n\n# 1 & 2\na = tf.constant([[1.],[2.],[3.],[4.]])  # (4,1)\nb = tf.constant([[10.,20.,30.]])        # (1,3)\nprint(\"a shape:\", a.shape)\nprint(\"b shape:\", b.shape)\n\n# 3\nsum_ab = a + b\nprint(\"a+b shape:\", sum_ab.shape)\nprint(\"a+b result:\")\nprint(sum_ab.numpy())\n\n# 4\nc = tf.fill((2,3), 5.0)   # or tf.constant(5.0, shape=(2,3))\nd = tf.constant([1.0,2.0,3.0])\nprod = c * d\nprint(\"c*d result:\")\nprint(prod.numpy())\n\n# 5\nx = tf.random.uniform((5,4))\ny = tf.random.uniform((4,))\nsum_xy = x + y\nprint(\"Addition (5,4) + (4,) works, shape\", sum_xy.shape)"
+}

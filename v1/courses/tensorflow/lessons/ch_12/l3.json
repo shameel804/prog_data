@@ -1,0 +1,56 @@
+{
+    "id": "l3",
+    "chapterId": "ch_12",
+    "title": "Capstone 3: Time Series Forecasting 📈",
+    "description": "Predict future temperature using a CNN‑LSTM model on real sensor data, then deploy on edge.",
+    "xpReward": 40,
+    "estimatedMinutes": 12,
+    "section": "Project",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Forecast the Future ☀️",
+            "content": "# Project Overview\n\nGiven hourly temperature readings from a weather station, predict the next 24 hours.\n\nWe'll use a **sliding window** approach:\n- Input: last 72 hours.\n- Output: next 24 hours.\n\nModel: 1D CNN for feature extraction, LSTM for sequence modeling, and Dense layers.\n\nFinal step: convert to TFLite and run on a Raspberry Pi."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Prepare Windowed Dataset",
+            "content": "Generate synthetic temperature data (sine wave + noise) and create windows.",
+            "codeSnippet": "import numpy as np\nimport tensorflow as tf\n\n# Synthetic data: 3 years of hourly temperature (sinusoidal)\nseries = np.sin(np.linspace(0, 20*np.pi, 3*365*24)) * 10 + 20\nseries = series.astype(np.float32)\n\n# Create windows\ndef windowed_dataset(series, input_width, label_width, shift):\n    ds = tf.data.Dataset.from_tensor_slices(series)\n    ds = ds.window(input_width + label_width, shift=shift, drop_remainder=True)\n    ds = ds.flat_map(lambda w: w.batch(input_width + label_width))\n    ds = ds.map(lambda w: (w[:input_width], w[input_width:]))\n    return ds\n\nINPUT_WIDTH = 72\nLABEL_WIDTH = 24\nSHIFT = 1\n\ntrain_ds = windowed_dataset(series, INPUT_WIDTH, LABEL_WIDTH, SHIFT).batch(32).prefetch(1)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Build CNN‑LSTM Model",
+            "content": "A hybrid model that captures local patterns with convolutions and long‑term dependencies with LSTM.",
+            "codeSnippet": "model = tf.keras.Sequential([\n    tf.keras.layers.Conv1D(32, kernel_size=5, activation='relu', input_shape=(INPUT_WIDTH, 1)),\n    tf.keras.layers.MaxPooling1D(2),\n    tf.keras.layers.Conv1D(64, kernel_size=5, activation='relu'),\n    tf.keras.layers.LSTM(64, return_sequences=False),\n    tf.keras.layers.Dense(32, activation='relu'),\n    tf.keras.layers.Dense(LABEL_WIDTH)\n])\nmodel.compile(optimizer='adam', loss='mse', metrics=['mae'])\n\n# Add a channel dimension to the input\ntrain_ds = train_ds.map(lambda x, y: (tf.expand_dims(x, -1), y))\nmodel.fit(train_ds, epochs=10)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Convert to TFLite for Raspberry Pi",
+            "content": "# Edge Deployment\n\n1. Convert the trained model to TFLite with dynamic range quantization.\n2. Copy the .tflite file to the Pi.\n3. Run inference with the TFLite Interpreter (C++ or Python).\n\nThis enables real‑time temperature forecasting without internet."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Conversion and Test",
+            "content": "",
+            "codeSnippet": "converter = tf.lite.TFLiteConverter.from_keras_model(model)\nconverter.optimizations = [tf.lite.Optimize.DEFAULT]\ntflite_model = converter.convert()\n\n# Save\nwith open('temp_forecast.tflite', 'wb') as f:\n    f.write(tflite_model)\n\n# Test with Interpreter\ninterpreter = tf.lite.Interpreter(model_content=tflite_model)\ninterpreter.allocate_tensors()\ninput_index = interpreter.get_input_details()[0]['index']\noutput_index = interpreter.get_output_details()[0]['index']\n\nsample_input = np.random.rand(1, INPUT_WIDTH, 1).astype(np.float32)\ninterpreter.set_tensor(input_index, sample_input)\ninterpreter.invoke()\nforecast = interpreter.get_tensor(output_index)\nprint(f\"Forecast shape: {forecast.shape}\")",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "tip",
+            "title": "Going Further 🚀",
+            "content": "Integrate a display (e.g., LED matrix) to show forecasts, or connect to a cloud dashboard via MQTT."
+        }
+    ]
+}

@@ -1,0 +1,79 @@
+{
+    "id": "l5",
+    "chapterId": "ch_6",
+    "title": "Gated Recurrent Units (GRU) & Variants 🚪",
+    "description": "Meet the GRU, a leaner alternative to LSTM, plus bidirectional and stacked RNNs.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Architectures",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "GRU: The Younger, Simpler Sibling 👶",
+            "content": "# Two Gates Instead of Three\n\nGRU (Gated Recurrent Unit) combines the forget and input gates into a single **update gate**. It also merges the cell state and hidden state.\n\nEquations (simplified):\n```\nz_t = σ(W_z · [h_{t-1}, x_t])          (update gate)\nr_t = σ(W_r · [h_{t-1}, x_t])          (reset gate)\nh̃_t = tanh(W · [r_t * h_{t-1}, x_t])\nh_t = (1 - z_t) * h_{t-1} + z_t * h̃_t  (new state)\n```\n\n> Analogy: LSTM is a Swiss army knife with many tools; GRU is a simpler pocket knife that does 90% of the job with less complexity."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "GRU in Keras",
+            "content": "Just replace LSTM with GRU.",
+            "codeSnippet": "from tensorflow.keras.layers import GRU\n\ngru = GRU(64, return_sequences=True, input_shape=(None, 10))",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "GRU vs LSTM 🆚",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What advantage does GRU have over LSTM?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "More gates",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Fewer parameters, often faster training",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Always better accuracy",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It has no vanishing gradient problem",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "GRU has fewer parameters because it has only two gates, making it computationally lighter while often matching LSTM performance.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Bidirectional RNNs ↔️",
+            "content": "# Looking Both Ways\n\nA bidirectional RNN runs two independent RNNs: one forward through time, one backward. Their outputs are concatenated at each step.\n\nThis gives the model full context around each time point. Essential for tasks like named entity recognition, question answering, and many NLP tasks.\n\n```python\nfrom tensorflow.keras.layers import Bidirectional, LSTM\nmodel.add(Bidirectional(LSTM(64, return_sequences=True)))\n```"
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Stacked RNNs 🏗️",
+            "content": "# Deep RNNs\n\nYou can stack multiple RNN layers. The first layer should have `return_sequences=True` to pass the full sequence to the next RNN.\n\n```python\nmodel.add(LSTM(64, return_sequences=True))\nmodel.add(LSTM(32, return_sequences=False))\n```\n\nDeeper RNNs can learn more abstract temporal features but require more data and computation."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "Choosing LSTM vs GRU 🧭",
+            "content": "Both work well. Start with LSTM if you have lots of data; try GRU if you want a smaller/faster model. Often GRU performs equally on smaller datasets."
+        }
+    ]
+}

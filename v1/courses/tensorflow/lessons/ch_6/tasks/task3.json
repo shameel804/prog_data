@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_6",
+    "title": "Text Generation with LSTM",
+    "description": "Generate Shakespeare‑like text character by character using an LSTM.",
+    "estimatedMinutes": 20,
+    "problemStatement": "Train a character‑level LSTM on a small text corpus (Shakespeare sonnet) and generate new text.\n\n**Steps:**\n1. Use the text: \"Shall I compare thee to a summer's day? Thou art more lovely and more temperate...\" (provide longer in code).\n2. Create mapping char → index and index → char.\n3. Create sequences of 40 characters, next character as target.\n4. Build model: `Embedding(vocab_size, 64, input_length=40)` → `LSTM(128)` → `Dense(vocab_size, softmax)`.\n5. Compile with sparse categorical crossentropy and Adam.\n6. Train for 20 epochs (verbose=0).\n7. Write a generation function: seed a starting string, predict next char, append, repeat 100 times.\n8. Print the generated text.\n\n**Expected Output:** Some semi‑coherent Shakespeare‑like text.",
+    "hints": [
+        "Use `tf.keras.utils.to_categorical` for labels? No, we use sparse so keep integer labels.",
+        "For generation, at each step, convert last 40 chars to indices, predict, sample from output distribution (or argmax), append.",
+        "Use `tf.random.categorical` for sampling."
+    ],
+    "expectedOutput": "Generated text: Shall I compare thee to a summer's day? Thou art more lovely and more temperate...",
+    "solutionCode": "import tensorflow as tf\nimport numpy as np\n\n# Sample Shakespeare text\nsonnet = (\"Shall I compare thee to a summer's day? \"\n          \"Thou art more lovely and more temperate. \"\n          \"Rough winds do shake the darling buds of May, \"\n          \"And summer's lease hath all too short a date. \")\n\nchars = sorted(list(set(sonnet)))\nchar_to_idx = {c: i for i, c in enumerate(chars)}\nidx_to_char = {i: c for i, c in enumerate(chars)}\nvocab_size = len(chars)\n\n# Create sequences\nseq_length = 40\nsequences = []\nnext_chars = []\nfor i in range(0, len(sonnet) - seq_length):\n    sequences.append([char_to_idx[c] for c in sonnet[i:i+seq_length]])\n    next_chars.append(char_to_idx[sonnet[i+seq_length]])\n\nX = np.array(sequences)\ny = np.array(next_chars)\n\nmodel = tf.keras.Sequential([\n    tf.keras.layers.Embedding(vocab_size, 64, input_length=seq_length),\n    tf.keras.layers.LSTM(128),\n    tf.keras.layers.Dense(vocab_size, activation='softmax')\n])\nmodel.compile(optimizer='adam', loss='sparse_categorical_crossentropy')\nmodel.fit(X, y, epochs=20, verbose=0)\n\ndef generate_text(seed, length=100):\n    generated = seed\n    for _ in range(length):\n        input_seq = np.array([[char_to_idx[c] for c in generated[-seq_length:]]])\n        pred = model.predict(input_seq, verbose=0)[0]\n        next_idx = tf.random.categorical(tf.math.log(pred.reshape(1,-1)), 1)[0,0].numpy()\n        generated += idx_to_char[next_idx]\n    return generated\n\nprint(\"Generated text:\", generate_text(\"Shall I compare thee to a summer's day?\"))"
+}

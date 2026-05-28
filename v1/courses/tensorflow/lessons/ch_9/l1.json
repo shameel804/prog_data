@@ -1,0 +1,73 @@
+{
+    "id": "l1",
+    "chapterId": "ch_9",
+    "title": "Why Custom Training Loops? 🧐",
+    "description": "Compare model.fit with manual loops, and learn when you need full control.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "model.fit() is Awesome, But... 🚀",
+            "content": "# The Built‑in Training Loop\n\n`model.fit()` handles:\n- Batching, shuffling\n- Forward pass\n- Loss computation\n- Backpropagation\n- Metric tracking\n- Callbacks\n\nIt's perfect for 90% of cases. But sometimes you need **more control**."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "When You Need Custom Loops 🛠️",
+            "content": "# Scenarios\n\n- **Multiple models interacting** (GANs: generator + discriminator).\n- **Non‑standard loss** with extra tensors or regularisation.\n- **Custom gradient manipulation** (gradient clipping, adding noise).\n- **Research**: trying new optimisation algorithms or training dynamics.\n- **Meta‑learning**: updating weights in inner/outer loops.\n\n> Analogy: `model.fit()` is driving an automatic car. Custom loops = manual transmission – more control, but you need to know what you're doing."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Why Custom? 🧐",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Which of the following is NOT a good reason to write a custom training loop?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Implementing a GAN with alternating updates",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Simple image classification with standard cross‑entropy",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Adding a gradient penalty to the loss",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Training a model with reinforcement learning",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "For a standard supervised task, `model.fit()` is sufficient and easier. Custom loops are for non‑standard requirements.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "code",
+            "title": "The Core Components of a Training Loop",
+            "content": "Any loop must do these five things:",
+            "codeSnippet": "# Pseudocode of a custom loop\nfor epoch in range(epochs):\n    for batch in dataset:\n        with tf.GradientTape() as tape:\n            predictions = model(batch_x, training=True)\n            loss = loss_fn(batch_y, predictions)\n        grads = tape.gradient(loss, model.trainable_variables)\n        optimizer.apply_gradients(zip(grads, model.trainable_variables))",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_5",
+            "type": "tip",
+            "title": "Still Use Keras Components 💡",
+            "content": "Custom loops don't mean ditching Keras! You still use `tf.keras.layers`, `tf.keras.optimizers`, `tf.keras.losses`, and `tf.keras.metrics`. Just the orchestration is manual."
+        }
+    ]
+}

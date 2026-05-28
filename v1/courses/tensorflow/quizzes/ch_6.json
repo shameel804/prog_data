@@ -1,0 +1,305 @@
+{
+    "id": "quiz_ch_6",
+    "chapterId": "ch_6",
+    "title": "Chapter 6 Quiz",
+    "description": "Test your knowledge of Recurrent Neural Networks, LSTMs, GRUs, BPTT, and sequence modeling!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the key feature of sequential data?",
+            "options": [
+                "Fixed size",
+                "Order matters",
+                "All values are the same",
+                "It's always numeric"
+            ],
+            "correctAnswer": 1,
+            "explanation": "In sequential data, the order of elements is crucial for meaning or patterns."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "A standard feed‑forward network can naturally handle variable‑length sequences without any modification.",
+            "correctAnswer": false,
+            "explanation": "Feed‑forward nets require fixed input size and have no memory across time steps."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "In an RNN, the hidden state is updated at each time step using:",
+            "options": [
+                "Only the current input",
+                "Only the previous hidden state",
+                "Both the current input and the previous hidden state",
+                "The entire sequence at once"
+            ],
+            "correctAnswer": 2,
+            "explanation": "An RNN combines the current input with the previous hidden state to produce a new hidden state."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "What does `return_sequences=True` do in a Keras RNN layer?",
+            "options": [
+                "Return only the last output",
+                "Return the full sequence of outputs",
+                "Return the final hidden state only",
+                "Return the learned weights"
+            ],
+            "correctAnswer": 1,
+            "explanation": "With `True`, the layer outputs a sequence (batch, timesteps, units); with `False`, only the last output (batch, units)."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "Why does weight sharing occur in RNNs?",
+            "options": [
+                "To increase model capacity",
+                "Because the same weight matrices are used at every time step",
+                "To allow different processing per time step",
+                "It's not true; RNNs don't share weights"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The same weights (W_xh, W_hh, etc.) are applied at each time step, reducing parameters and enabling generalisation across positions."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "What is BPTT?",
+            "options": [
+                "A type of optimizer",
+                "Backpropagation Through Time – gradient computation for RNNs",
+                "A layer normalisation technique",
+                "A method to initialise weights"
+            ],
+            "correctAnswer": 1,
+            "explanation": "BPTT unrolls the RNN and applies backpropagation across time steps."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "Vanishing gradients in RNNs are caused by:",
+            "options": [
+                "Large learning rates",
+                "Repeated multiplication of small weights along time",
+                "Using ReLU activation",
+                "Short sequences"
+            ],
+            "correctAnswer": 1,
+            "explanation": "If the recurrent weight matrix has eigenvalues < 1, gradients shrink exponentially with more time steps."
+        },
+        {
+            "id": "q8",
+            "type": "true_false",
+            "question": "Gradient clipping is used to solve vanishing gradients.",
+            "correctAnswer": false,
+            "explanation": "Gradient clipping addresses exploding gradients by capping gradient magnitude; vanishing gradients need architectures like LSTM/GRU."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "Which of the following is a component of an LSTM cell?",
+            "options": [
+                "Reset gate",
+                "Update gate",
+                "Forget gate",
+                "Input gate and forget gate"
+            ],
+            "correctAnswer": 3,
+            "explanation": "LSTM has forget, input, and output gates. Reset and update gates belong to GRU."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "What is the purpose of the cell state in LSTM?",
+            "options": [
+                "To store the output",
+                "To provide a highway for information to flow across time with minimal change",
+                "To replace the hidden state",
+                "To store the input sequence"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The cell state allows gradients and information to pass through many time steps unchanged, mitigating vanishing gradients."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "In LSTM, which gate controls what new information is added to the cell state?",
+            "options": [
+                "Forget gate",
+                "Input gate",
+                "Output gate",
+                "Update gate"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The input gate decides which values from the candidate cell state are added."
+        },
+        {
+            "id": "q12",
+            "type": "true_false",
+            "question": "GRU has more parameters than LSTM for the same number of units.",
+            "correctAnswer": false,
+            "explanation": "GRU has fewer parameters because it merges cell state and hidden state and uses only two gates."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "How does a Bidirectional RNN process data?",
+            "options": [
+                "It runs two separate RNNs: one forward, one backward, then concatenates outputs",
+                "It reverses the sequence",
+                "It uses a different activation",
+                "It processes data twice in the same direction"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Bidirectional RNNs capture context from both past and future by running a forward and a backward RNN."
+        },
+        {
+            "id": "q14",
+            "type": "fill_blank",
+            "question": "In Keras, to wrap a layer as bidirectional, you use `tf.keras.layers._____`.",
+            "options": [
+                "Bidirectional",
+                "BiRNN",
+                "TimeDistributed",
+                "Concatenate"
+            ],
+            "correctAnswer": "Bidirectional",
+            "explanation": "The correct wrapper is `Bidirectional`."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "Why do we use `pad_sequences` before training an RNN on text?",
+            "options": [
+                "To increase vocabulary",
+                "To make all sequences the same length for batch processing",
+                "To remove stop words",
+                "To shuffle the data"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Neural nets require uniform shape; padding ensures all sequences have the same length."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "What is the role of an Embedding layer in an RNN text model?",
+            "options": [
+                "It compresses text",
+                "It converts integer word indices into dense vector representations",
+                "It removes punctuation",
+                "It counts word frequency"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Embedding learns a dense vector for each word, capturing semantic relationships."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "In the IMDB sentiment model, why is the final Dense layer using `sigmoid` activation?",
+            "options": [
+                "For regression",
+                "For multi‑class classification",
+                "For binary classification (output probability)",
+                "To reduce overfitting"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Sigmoid squashes output between 0 and 1, perfect for binary sentiment prediction."
+        },
+        {
+            "id": "q18",
+            "type": "true_false",
+            "question": "Dropout can be applied to recurrent connections inside an LSTM using the `recurrent_dropout` argument.",
+            "correctAnswer": true,
+            "explanation": "Keras LSTM layer supports `dropout` (for inputs) and `recurrent_dropout` (for recurrent connections)."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "What is the main benefit of stacking RNN layers?",
+            "options": [
+                "Increased training speed",
+                "Ability to learn more abstract temporal features",
+                "Reduced memory usage",
+                "It automatically fixes overfitting"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Stacked RNNs create a hierarchy of temporal abstractions, similar to deep feed‑forward networks."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "When would you use `return_sequences=True` in the first LSTM of a stacked RNN?",
+            "options": [
+                "When you want a single output for classification",
+                "When you need the full sequence to feed the next RNN layer",
+                "When you want to use Bidirectional",
+                "Never"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The second RNN layer expects a sequence as input, so the first must output the full sequence."
+        },
+        {
+            "id": "q21",
+            "type": "mcq",
+            "question": "Which of these tasks is NOT typically solved with RNNs?",
+            "options": [
+                "Sentiment analysis",
+                "Machine translation",
+                "Image classification",
+                "Time series forecasting"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Image classification is usually handled by CNNs, not RNNs."
+        },
+        {
+            "id": "q22",
+            "type": "mcq",
+            "question": "What is the advantage of `GRU` over `LSTM`?",
+            "options": [
+                "GRU always gives better accuracy",
+                "GRU has fewer parameters and often trains faster",
+                "GRU has more gates for fine control",
+                "GRU doesn't need padding"
+            ],
+            "correctAnswer": 1,
+            "explanation": "GRU merges gates and states, reducing parameter count while often maintaining performance."
+        },
+        {
+            "id": "q23",
+            "type": "mcq",
+            "question": "If you need to predict the next word in a sentence, which output mode would you use?",
+            "options": [
+                "return_sequences=False",
+                "return_sequences=True",
+                "return_state=True",
+                "return_sequences=True with a Dense layer applied to each timestep"
+            ],
+            "correctAnswer": 3,
+            "explanation": "Next‑word prediction requires a probability distribution at each time step, so you need full sequence output and a time‑distributed Dense."
+        },
+        {
+            "id": "q24",
+            "type": "true_false",
+            "question": "BPTT is automatically handled by TensorFlow when you train an RNN with `model.fit()`.",
+            "correctAnswer": true,
+            "explanation": "TensorFlow's autodiff unrolls the RNN and computes gradients through time transparently."
+        },
+        {
+            "id": "q25",
+            "type": "fill_blank",
+            "question": "The LSTM cell state update equation involves element‑wise multiplication, often denoted by ____.",
+            "options": [
+                "dot",
+                "matmul",
+                "*",
+                "@"
+            ],
+            "correctAnswer": "*",
+            "explanation": "Element‑wise multiplication of gates and states uses `*` (or `tf.multiply`)."
+        }
+    ]
+}

@@ -1,0 +1,79 @@
+{
+    "id": "l3",
+    "chapterId": "ch_6",
+    "title": "Training RNNs: Backpropagation Through Time (BPTT) 📚",
+    "description": "Understand BPTT, gradient flow across time steps, and the issues that arise.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Gradients Through Time 🕰️",
+            "content": "# Backpropagation Through Time (BPTT)\n\nThe unrolled RNN is like a deep network with shared weights. To compute gradients:\n1. Unroll the RNN over all time steps.\n2. Apply standard backpropagation.\n3. Accumulate gradients from each time step for the shared weights.\n\nThis is computationally expensive for long sequences."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Vanishing & Exploding Gradients 🌊",
+            "content": "# The Problem of Deep Networks\n\nIn a very deep network (many time steps), gradients can:\n- **Vanish**: become extremely small → early time steps learn almost nothing.\n- **Explode**: become enormous → unstable updates, NaN losses.\n\nRNNs are especially prone because the same weights multiply over and over.\n\n> Analogy: A game of telephone – the message gets distorted (vanishes) or amplified uncontrollably the longer the chain."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Gradient Flow 🌊",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What causes vanishing gradients in RNNs?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Large learning rates",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Repeated multiplication of small weight matrices through many time steps",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Too many layers",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Using ReLU activation",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "If the recurrent weight matrix has eigenvalues < 1, gradients shrink exponentially with time.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Gradient Clipping 🚦",
+            "content": "A simple fix for exploding gradients: scale gradients if their norm exceeds a threshold.",
+            "codeSnippet": "optimizer = tf.keras.optimizers.Adam(learning_rate=0.001, clipnorm=1.0)\n# or clipvalue=0.5",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Truncated BPTT ✂️",
+            "content": "# A Practical Solution\n\nInstead of unrolling the full sequence (which might be thousands of steps), unroll only a fixed window (e.g., 100 steps). This speeds up training and limits gradient propagation length.\n\nKeras automatically handles backpropagation over the entire sequence, but you can set `unroll=True` to speed up for shorter sequences."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "warning",
+            "title": "Don't Panic! 🛡️",
+            "content": "In practice, using LSTM or GRU largely mitigates vanishing gradients. They have special gating mechanisms that allow gradients to flow unchanged across many time steps."
+        }
+    ]
+}

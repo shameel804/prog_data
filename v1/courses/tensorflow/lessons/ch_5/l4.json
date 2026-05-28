@@ -1,0 +1,82 @@
+{
+    "id": "l4",
+    "chapterId": "ch_5",
+    "title": "Building a CNN with Keras 🧱",
+    "description": "Stack Conv2D, MaxPooling2D, Flatten, and Dense layers for image classification.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Practice",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Classic CNN Recipe 📜",
+            "content": "# A Typical Architecture\n\n```\nInput → [Conv2D → ReLU → Pool2D] * N → Flatten → Dense → Output\n```\n\n- **N** = number of convolutional blocks (often 2‑4).\n- Filters increase with depth: 32 → 64 → 128.\n- Finally, a classifier head with Dense layers."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "MNIST CNN Example",
+            "content": "Build a CNN for digit recognition (28×28 grayscale).",
+            "codeSnippet": "from tensorflow.keras.models import Sequential\nfrom tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense\n\nmodel = Sequential([\n    Conv2D(32, (3,3), activation='relu', input_shape=(28,28,1)),\n    MaxPooling2D((2,2)),\n    Conv2D(64, (3,3), activation='relu'),\n    MaxPooling2D((2,2)),\n    Conv2D(64, (3,3), activation='relu'),\n    Flatten(),\n    Dense(64, activation='relu'),\n    Dense(10, activation='softmax')\n])\nmodel.summary()",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "CNN Structure 🧱",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of Flatten after convolutional layers?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Add more filters",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Convert 3D feature maps to 1D vector for Dense layers",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Increase spatial size",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Reduce overfitting",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Flatten reshapes the tensor from (batch, H, W, C) to (batch, H*W*C) so Dense layers can process it.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Choosing Hyperparameters 🔧",
+            "content": "# How to Decide Filter Counts & Sizes\n- **Filter size**: 3×3 is standard; sometimes 5×5 in first layer for larger images.\n- **Number of filters**: start with 32, double after each pooling.\n- **Pooling**: 2×2 with stride 2.\n- **Padding**: 'same' for initial layers to preserve size; 'valid' later to shrink.\n\nYou can also use `padding='same'` in Conv2D to keep the spatial size."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Training the CNN",
+            "content": "Load MNIST and train quickly:",
+            "codeSnippet": "import tensorflow as tf\n\n(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()\nx_train = x_train[..., tf.newaxis] / 255.0\nx_test = x_test[..., tf.newaxis] / 255.0\n\nmodel.compile(optimizer='adam',\n              loss='sparse_categorical_crossentropy',\n              metrics=['accuracy'])\n\nmodel.fit(x_train, y_train, epochs=5, batch_size=64, validation_split=0.1)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Debugging CNNs 🔍",
+            "content": "Print `.shape` after each layer using `model.summary()`. If dimensions don't match expected values, check your padding, stride, and pooling choices."
+        }
+    ]
+}

@@ -1,0 +1,88 @@
+{
+    "id": "l4",
+    "chapterId": "ch_11",
+    "title": "Building a Custom Inference App (Android) 📱",
+    "description": "Walk through the full Android app code to load a TFLite model, process input, run inference, and display results.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Development",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "From .tflite to Android APK 🤖",
+            "content": "# Step‑by‑Step\n\n1. Add TFLite dependency to `build.gradle`.\n2. Place the .tflite file in `app/src/main/assets/`.\n3. Create a helper class to load model and run inference.\n4. Preprocess camera/image input into the format the model expects.\n5. Postprocess output tensors into human‑readable results.\n\nWe'll build a simple digit recognizer using a MNIST CNN."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Dependencies (build.gradle)",
+            "content": "Add TensorFlow Lite and optionally support library.",
+            "codeSnippet": "dependencies {\n    implementation 'org.tensorflow:tensorflow-lite:2.14.0'\n    // For GPU delegate:\n    implementation 'org.tensorflow:tensorflow-lite-gpu:2.14.0'\n    // For support library (optional):\n    implementation 'org.tensorflow:tensorflow-lite-support:2.14.0'\n}",
+            "codeLanguage": "groovy",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Android Prep 📱",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Where should you place the .tflite file in an Android project?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "res/raw",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "assets/",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "java/",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "libs/",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The assets folder is the standard location for raw files that are bundled with the APK.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Load Model and Define Inference 🔍",
+            "content": "# Interpreter Setup (Kotlin)\n\n```kotlin\nprivate lateinit var interpreter: Interpreter\n\nprivate fun loadModelFile(): ByteBuffer {\n    val assetFileDescriptor = assets.openFd(\"mnist_model.tflite\")\n    val inputStream = FileInputStream(assetFileDescriptor.fileDescriptor)\n    val fileChannel = inputStream.channel\n    val startOffset = assetFileDescriptor.startOffset\n    val declaredLength = assetFileDescriptor.declaredLength\n    return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)\n}\n\ninterpreter = Interpreter(loadModelFile())\n```"
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Preprocessing and Running Inference",
+            "content": "Convert a Bitmap to float array and predict.",
+            "codeSnippet": "// Preprocess bitmap to 28x28 grayscale float array\nval bitmap = Bitmap.createScaledBitmap(inputBitmap, 28, 28, true)\nval input = Array(1) { Array(28) { FloatArray(28) } }\nfor (y in 0 until 28) {\n    for (x in 0 until 28) {\n        val pixel = bitmap.getPixel(x, y)\n        input[0][y][x] = (Color.red(pixel) / 255.0f)\n    }\n}\n\nval output = Array(1) { FloatArray(10) }\ninterpreter.run(input, output)\nval predictedDigit = output[0].indices.maxByOrNull { output[0][it] } ?: -1\nprintln(\"Predicted digit: $predictedDigit\")",
+            "codeLanguage": "kotlin",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Memory Mapping for Speed 💨",
+            "content": "Use `MappedByteBuffer` as shown above – it loads the model lazily and shares memory, reducing RAM usage."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "exercise",
+            "title": "Extend It 🛠️",
+            "content": "Try integrating the cameraX library to capture live frames, run inference on each frame, and overlay the result. This is the foundation of real‑time mobile ML!"
+        }
+    ]
+}

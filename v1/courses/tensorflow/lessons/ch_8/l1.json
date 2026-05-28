@@ -1,0 +1,79 @@
+{
+    "id": "l1",
+    "chapterId": "ch_8",
+    "title": "Why tf.data? High‑Performance Data Pipelines 🚀",
+    "description": "Learn the need for efficient data loading and the basics of the tf.data API.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The Data Bottleneck ⏳",
+            "content": "# Training Models is Fast, Feeding Them is Slow\n\n- Modern GPUs can process hundreds of images per second.\n- Loading data from disk, decoding, and augmenting on the CPU can't keep up.\n- An **idle GPU** is wasted time and money.\n\n> Analogy: A race car (GPU) waiting for a bicycle (data loading) to deliver fuel.\n\nSolution: **tf.data** – TensorFlow's high‑performance input pipeline library."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "What is tf.data? 📦",
+            "content": "# The tf.data API\n\n- Builds efficient, reusable input pipelines.\n- Handles ETL: **Extract** (read files), **Transform** (map, batch, shuffle), **Load** (feed to model).\n- Works seamlessly with Keras `model.fit()`, custom loops, and distributed training.\n- Pipelined execution: data preparation and model training run concurrently.\n\nCore abstraction: `tf.data.Dataset` – a sequence of elements."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "code",
+            "title": "Your First Dataset",
+            "content": "Create a dataset from a list or NumPy array.",
+            "codeSnippet": "import tensorflow as tf\n\n# From a list\ndataset = tf.data.Dataset.from_tensor_slices([1, 2, 3, 4, 5])\n\nfor element in dataset:\n    print(element.numpy())",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_4",
+            "type": "quiz",
+            "title": "Dataset Basics 🧪",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What does `tf.data.Dataset.from_tensor_slices` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Concatenates tensors into one",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Creates a dataset where each element is a slice along the first dimension",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Loads data from a TFRecord file",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Shuffles the tensor",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It slices the input along the first axis, creating one element per slice.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_5",
+            "type": "text",
+            "title": "Data Sources 🗂️",
+            "content": "# Creating Datasets From Various Sources\n\n- `from_tensor_slices((features, labels))` – for in‑memory data.\n- `from_generator(callable, output_types, ...)` – for custom Python generators (slower).\n- `list_files(pattern)` – for globbing file paths.\n- `TextLineDataset(filenames)` – reads lines from text files.\n- `TFRecordDataset(filenames)` – reads binary protocol buffers.\n\nWe'll explore these throughout the chapter."
+        },
+        {
+            "id": "s_l1_6",
+            "type": "tip",
+            "title": "Always Use tf.data 🧰",
+            "content": "Even for small datasets, using `tf.data` gives you reproducible shuffling, batching, and prefetching for free. It's a best practice."
+        }
+    ]
+}

@@ -1,0 +1,82 @@
+{
+    "id": "l2",
+    "chapterId": "ch_3",
+    "title": "The Keras Sequential API 🧱",
+    "description": "Learn to stack layers one after another using the Sequential model.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "API",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Two Ways to Build Models 🛠️",
+            "content": "# 1. Sequential API\nLayers are stacked in a straight line. Ideal for most simple networks.\n\n# 2. Functional API\nLayers can connect in complex graphs. More flexible, for multi‑input/output models.\n\nWe start with Sequential – it's like building a tower of blocks."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Creating a Sequential Model",
+            "content": "Three equivalent ways:",
+            "codeSnippet": "# Way 1: list in constructor\nmodel = Sequential([\n    Dense(32, activation='relu'),\n    Dense(10, activation='softmax')\n])\n\n# Way 2: add() method\nmodel = Sequential()\nmodel.add(Dense(32, activation='relu'))\nmodel.add(Dense(10, activation='softmax'))\n\n# Way 3: with input_shape in first layer\nmodel = Sequential()\nmodel.add(Dense(32, activation='relu', input_shape=(784,)))\nmodel.add(Dense(10, activation='softmax'))",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Sequential Check 🧱",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which statement about the Sequential API is TRUE?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Layers can have multiple inputs",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Each layer's output feeds into the next layer",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "You can only use one hidden layer",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It requires manual weight updates",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Sequential models are linear stacks, each layer connected to the next.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "The `input_shape` Argument 📥",
+            "content": "# Telling the Model What to Expect\n\nYou **must** specify the shape of the input data in the first layer (or via `model.build((batch, features))`).\n\n- For a 28×28 image flattened, `input_shape=(784,)`.\n- For a vector of 10 features, `input_shape=(10,)`.\n\n**The batch dimension is omitted** – it's automatically handled."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Checking Model Summary",
+            "content": "Use `model.summary()` to see the layer structure.",
+            "codeSnippet": "from tensorflow.keras.models import Sequential\nfrom tensorflow.keras.layers import Dense\n\nmodel = Sequential([\n    Dense(64, activation='relu', input_shape=(100,)),\n    Dense(32, activation='relu'),\n    Dense(1, activation='sigmoid')\n])\nmodel.summary()",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "tip",
+            "title": "No Weights Without `build` 🚧",
+            "content": "If you don't pass `input_shape`, the model is just a container. It will infer the shape and create weights only after the first batch of data or after calling `model.build(input_shape)`."
+        }
+    ]
+}

@@ -1,0 +1,14 @@
+{
+    "id": "task3",
+    "chapterId": "ch_3",
+    "title": "Activation Showdown",
+    "description": "Compare different activations on synthetic data.",
+    "estimatedMinutes": 12,
+    "problemStatement": "Compare how two different activation functions affect model performance on a simple synthetic dataset.\n\n1. Generate a synthetic binary classification dataset using `make_classification` from sklearn (or just random data). For simplicity, create 1000 samples of 10 features with random labels 0/1.\n2. Build two identical Sequential models except one uses ReLU in hidden layers and the other uses tanh. Both output sigmoid.\n   - Architecture: input 10, Dense(16, activation='relu'/'tanh'), Dense(8, activation='relu'/'tanh'), Dense(1, activation='sigmoid').\n3. Compile both with Adam and binary crossentropy, tracking accuracy.\n4. Train both for 5 epochs on the same data (set verbose=0).\n5. Compare the final training accuracy of both models and print which one performed better.\n\n**Expected Output:** Two accuracy values and a conclusion statement.",
+    "hints": [
+        "Use `np.random.random((1000,10))` and `np.random.randint(0,2,(1000,))` for synthetic data.",
+        "Store training history and access `history.history['accuracy'][-1]`."
+    ],
+    "expectedOutput": "ReLU model accuracy: 0.xxx\ntanh model accuracy: 0.xxx\nConclusion: (ReLU or tanh) performed better on this random data.",
+    "solutionCode": "import tensorflow as tf\nfrom tensorflow.keras.models import Sequential\nfrom tensorflow.keras.layers import Dense\nimport numpy as np\n\n# Synthetic data\nX = np.random.random((1000, 10))\ny = np.random.randint(0, 2, (1000,))\n\ndef build_model(activation):\n    model = Sequential([\n        Dense(16, activation=activation, input_shape=(10,)),\n        Dense(8, activation=activation),\n        Dense(1, activation='sigmoid')\n    ])\n    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])\n    return model\n\nrelu_model = build_model('relu')\ntanh_model = build_model('tanh')\n\nhist_relu = relu_model.fit(X, y, epochs=5, verbose=0, batch_size=32)\nhist_tanh = tanh_model.fit(X, y, epochs=5, verbose=0, batch_size=32)\n\nrelu_acc = hist_relu.history['accuracy'][-1]\ntanh_acc = hist_tanh.history['accuracy'][-1]\nprint(f\"ReLU model accuracy: {relu_acc:.4f}\")\nprint(f\"tanh model accuracy: {tanh_acc:.4f}\")\nif relu_acc > tanh_acc:\n    print(\"ReLU performed better.\")\nelif tanh_acc > relu_acc:\n    print(\"tanh performed better.\")\nelse:\n    print(\"Both equal.\")"
+}

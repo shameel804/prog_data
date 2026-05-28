@@ -1,0 +1,14 @@
+{
+    "id": "task3",
+    "chapterId": "ch_4",
+    "title": "Callback Combo",
+    "description": "Use EarlyStopping and ModelCheckpoint together to optimise training.",
+    "estimatedMinutes": 12,
+    "problemStatement": "Train a model on a synthetic classification dataset, utilising callbacks to stop early and save the best model.\n\n1. Use `sklearn.datasets.make_classification` (or just random data) to create 2000 samples, 10 features, 2 classes.\n2. Build a model: Dense(32, relu), Dense(16, relu), Dense(1, sigmoid).\n3. Compile with Adam, binary crossentropy, accuracy.\n4. Define:\n   - `EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)`\n   - `ModelCheckpoint('best_model.h5', monitor='val_accuracy', save_best_only=True, mode='max')`\n5. Train for 100 epochs with validation_split=0.2 and the callbacks.\n6. After training, load the saved model and evaluate on the validation set (manually split) or just print that it was saved. Print the epoch where early stopping occurred (from history length).\n\n**Expected Output:** Show that training stopped before 100 epochs, and the saved model has high validation accuracy.",
+    "hints": [
+        "To get the epoch stopped: `len(history.history['loss'])`.",
+        "Use `tf.keras.models.load_model('best_model.h5')` to load."
+    ],
+    "expectedOutput": "Training stopped at epoch 12.\nBest model validation accuracy: 0.92",
+    "solutionCode": "import tensorflow as tf\nimport numpy as np\nfrom sklearn.datasets import make_classification\n\n# Generate data\nX, y = make_classification(n_samples=2000, n_features=10, n_classes=2, random_state=42)\ny = y.reshape(-1,1).astype(np.float32)\nX = X.astype(np.float32)\n\nmodel = tf.keras.Sequential([\n    tf.keras.layers.Dense(32, activation='relu', input_shape=(10,)),\n    tf.keras.layers.Dense(16, activation='relu'),\n    tf.keras.layers.Dense(1, activation='sigmoid')\n])\nmodel.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])\n\nearly_stop = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)\ncheckpoint = tf.keras.callbacks.ModelCheckpoint('best_model.h5', monitor='val_accuracy', save_best_only=True, mode='max')\n\nhistory = model.fit(X, y, epochs=100, validation_split=0.2, callbacks=[early_stop, checkpoint], verbose=0)\n\nstopped_epoch = len(history.history['loss'])\nprint(f\"Training stopped at epoch {stopped_epoch}.\")\n\n# Load best model\nbest_model = tf.keras.models.load_model('best_model.h5')\n# Evaluate on validation set (we'll recreate split)\nval_size = int(0.2 * len(X))\nX_val, y_val = X[-val_size:], y[-val_size:]\nloss, acc = best_model.evaluate(X_val, y_val, verbose=0)\nprint(f\"Best model validation accuracy: {acc:.3f}\")"
+}

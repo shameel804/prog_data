@@ -1,0 +1,14 @@
+{
+    "id": "task1",
+    "chapterId": "ch_10",
+    "title": "Save, Load, and Verify a Model",
+    "description": "Train a tiny model, save as SavedModel, reload, and check predictions match.",
+    "estimatedMinutes": 12,
+    "problemStatement": "Train a simple linear regression model on synthetic data, save it as a SavedModel, then load it back and verify that predictions from the loaded model are identical to the original model.\n\n**Steps:**\n1. Generate random X (100 samples, 3 features) and y = 2*X1 + 3*X2 - 1*X3 + 0.5.\n2. Build a Dense(1) layer model and train for a few epochs to approximate the weights.\n3. Save the model using `model.save('linear_model')`.\n4. Load the model with `tf.keras.models.load_model('linear_model')`.\n5. Pass a test input through both original and loaded models, compute the max difference.\n6. Print \"Predictions match\" if difference < 1e-6.\n\n**Expected Output:** \"Predictions match: True\".",
+    "hints": [
+        "Use `np.testing.assert_allclose` or `tf.reduce_max(tf.abs(orig_pred - loaded_pred))`.",
+        "Make sure to compile before saving? Not needed for inference."
+    ],
+    "expectedOutput": "Predictions match: True",
+    "solutionCode": "import tensorflow as tf\nimport numpy as np\n\n# Data\nnp.random.seed(0)\nX = np.random.randn(100, 3).astype(np.float32)\ny = (2*X[:,0] + 3*X[:,1] - 1*X[:,2] + 0.5).astype(np.float32).reshape(-1,1)\n\nmodel = tf.keras.Sequential([tf.keras.layers.Dense(1)])\nmodel.compile(optimizer='sgd', loss='mse')\nmodel.fit(X, y, epochs=20, verbose=0)\n\nmodel.save('linear_model')\nloaded = tf.keras.models.load_model('linear_model')\n\ntest_X = tf.constant([[0.5, -0.2, 1.0]], dtype=tf.float32)\norig_pred = model.predict(test_X, verbose=0)\nloaded_pred = loaded.predict(test_X, verbose=0)\ndiff = tf.reduce_max(tf.abs(orig_pred - loaded_pred)).numpy()\nprint(f\"Predictions match: {diff < 1e-6}\")"
+}

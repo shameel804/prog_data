@@ -1,0 +1,107 @@
+{
+    "id": "l1",
+    "chapterId": "ch_2",
+    "title": "Tensor Shapes & Ranks Deep Dive 📐",
+    "description": "Go beyond the basics: rank, shape, size, and how to inspect tensors thoroughly.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Rank, Shape, Size Recap 🧠",
+            "content": "# Tensor Anatomy\n- **Rank** = number of dimensions (axes).\n- **Shape** = length along each axis.\n- **Size** = total number of elements (product of shape).\n\nExample: `tf.constant([[1,2,3],[4,5,6]])`\n- Rank: 2\n- Shape: `(2, 3)`\n- Size: 6\n\n> Analogy: Think of a spreadsheet – rows × columns."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "code",
+            "title": "Inspecting Tensors 🔍",
+            "content": "Use these properties and methods:",
+            "codeSnippet": "import tensorflow as tf\n\nt = tf.constant([[[1,2],[3,4]],[[5,6],[7,8]]])\nprint('Rank:', tf.rank(t).numpy())       # 3\nprint('Shape:', t.shape)                 # (2, 2, 2)\nprint('Number of dims:', t.ndim)         # 3\nprint('Total elements:', tf.size(t).numpy())  # 8",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Shape Quiz 🧪",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What is the rank of a tensor with shape (4, 3, 2, 1)?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "4",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "10",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "3",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "24",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Rank = number of dimensions = length of the shape tuple, which is 4 here.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "Dynamic Shapes & Static Shapes 🔄",
+            "content": "# Two Shape Concepts\n- **Static shape**: known at graph construction time (can be partially `None`).\n- **Dynamic shape**: determined at runtime.\n\n```python\nt = tf.placeholder(tf.float32, shape=[None, 3])\n# Static shape: (None, 3) – first dim unknown\n# Dynamic shape: (batch_size, 3) after feeding\n```\n\nIn eager mode, they are usually the same, but `tf.function` graphs may differ."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "Exploring `tf.shape` vs `.shape`",
+            "content": "`t.shape` returns a `TensorShape` object. `tf.shape(t)` returns a tensor.",
+            "codeSnippet": "t = tf.constant([[1,2],[3,4]])\nprint(type(t.shape))     # tensorflow.python.framework.tensor_shape.TensorShape\nprint(tf.shape(t))        # tf.Tensor([2 2], shape=(2,), dtype=int32)\nprint(tf.shape(t).numpy()) # array([2, 2])",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "Dynamic Shape 🧮",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "true_false",
+                "question": "True or False: In eager mode, `t.shape` always returns a tuple of integers with no `None` entries.",
+                "options": [
+                    {
+                        "id": "t",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "f",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Even in eager mode, a tensor may have a partially defined shape if it was created with unknown dimensions (e.g., via `tf.placeholder`-like behavior in tf.function). So `None` can appear.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_7",
+            "type": "tip",
+            "title": "Golden Rule ✨",
+            "content": "When debugging, **always** print `t.shape` and `t.dtype` first. 90% of errors come from mismatched shapes or types."
+        }
+    ]
+}

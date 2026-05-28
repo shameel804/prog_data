@@ -1,0 +1,82 @@
+{
+    "id": "sq_tensorflow_4",
+    "title": "Final Bug Hunt 🏆",
+    "triggerChapterIndex": 11,
+    "metadata": {
+        "type": "debug"
+    },
+    "questions": [
+        {
+            "id": "sq_tensorflow_4_q1",
+            "type": "multiple_choice",
+            "question": "This code is supposed to save a Keras model and then load it. Find the bug.",
+            "codeSnippet": "import tensorflow as tf\nmodel = tf.keras.Sequential([tf.keras.layers.Dense(10, input_shape=(784,))])\nmodel.save('my_model')\nloaded_model = tf.keras.models.load_model('my_model.h5')",
+            "bugLineIndex": 3,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The model was saved as a SavedModel directory 'my_model', but the loading line tries to load an HDF5 file 'my_model.h5'. It should load from the same directory or save as HDF5.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_tensorflow_4_q2",
+            "type": "multiple_choice",
+            "question": "What's wrong with this TFLite conversion code?",
+            "codeSnippet": "converter = tf.lite.TFLiteConverter.from_saved_model('model')\nconverter.optimizations = [tf.lite.Optimize.DEFAULT]\ntflite_model = converter.convert()\nwith open('model.tflite', 'rb') as f:\n    f.write(tflite_model)",
+            "bugLineIndex": 4,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The file is opened in read-binary mode ('rb') instead of write-binary mode ('wb'). It should be 'wb' to write the TFLite file.",
+            "xpReward": 25,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_tensorflow_4_q3",
+            "type": "multiple_choice",
+            "question": "This TensorFlow Serving signature definition has an error. Spot it.",
+            "codeSnippet": "import tensorflow as tf\n\n@tf.function\ndef serve(x):\n    return model(x)\n\ntf.saved_model.save(model, 'serving/1', signatures={'serving': serve})",
+            "bugLineIndex": 2,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The `@tf.function` decorator lacks an `input_signature`, so the concrete function is ambiguous. For serving, you should specify `input_signature=[tf.TensorSpec(...)]` to define the expected input shape and dtype.",
+            "xpReward": 25,
+            "difficulty": 3
+        },
+        {
+            "id": "sq_tensorflow_4_q4",
+            "type": "multiple_choice",
+            "question": "Find the bug preventing this gradient tape from working.",
+            "codeSnippet": "x = tf.Variable(3.0)\nwith tf.GradientTape() as tape:\n    y = x**2\ngrad = tape.gradient(y, x)  # later we reuse tape\ngrad2 = tape.gradient(y, x)",
+            "bugLineIndex": 5,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "By default, a GradientTape is not persistent. After the first `tape.gradient()` call, the tape is consumed. Use `persistent=True` to call gradient multiple times.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_tensorflow_4_q5",
+            "type": "multiple_choice",
+            "question": "What is wrong with this custom layer implementation?",
+            "codeSnippet": "class MyLayer(tf.keras.layers.Layer):\n    def __init__(self, units):\n        super().__init__()\n        self.units = units\n    def call(self, inputs):\n        w = tf.Variable(tf.random.normal((inputs.shape[-1], self.units)))\n        return tf.matmul(inputs, w)",
+            "bugLineIndex": 5,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "Creating a `tf.Variable` inside `call()` creates a new variable every time the layer is called. Weights should be created in `build()` using `self.add_weight()` to ensure they are tracked and reused.",
+            "xpReward": 25,
+            "difficulty": 3
+        },
+        {
+            "id": "sq_tensorflow_4_q6",
+            "type": "multiple_choice",
+            "question": "This code tries to use a GPU delegate but fails. Where's the bug?",
+            "codeSnippet": "# 'quant_model.tflite' is an int8 quantized model\ninterpreter = tf.lite.Interpreter(model_path='quant_model.tflite',\n                                  experimental_delegates=[\n                                      tf.lite.experimental.load_delegate('libtensorflowlite_gpu_delegate.so')\n                                  ])\ninterpreter.allocate_tensors()",
+            "bugLineIndex": 1,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "GPU delegate works only with float models. Using it with an int8 quantized model will cause an error or fallback to CPU without warning (but may cause issues). The correct approach is to use CPU or NNAPI for int8.",
+            "xpReward": 25,
+            "difficulty": 2
+        }
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_4",
+    "title": "Training Loop Inspector",
+    "description": "Implement a custom training loop with GradientTape and compare to model.fit.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Write a custom training loop that replicates what `model.fit` does for a simple linear model.\n\n1. Create a synthetic dataset: `y = 2*x1 + 3*x2 + 5` plus some noise. Use 1000 samples, 2 features.\n2. Build a Sequential model with a single Dense(1) layer (no activation).\n3. Define a loss function (MSE) and optimizer (SGD with lr=0.01).\n4. Write a loop for 10 epochs, iterating over batches of size 32. For each batch:\n   - Use `tf.GradientTape()` to compute loss.\n   - Get gradients w.r.t trainable variables.\n   - Apply gradients with optimizer.\n5. After training, print the learned weights and bias. Compare them to the true values (2,3,5).\n6. Then train the same model with `model.fit()` for 10 epochs and print weights. They should be similar.\n\n**Expected Output:** Weights from custom loop and from fit, both approximating [2,3] and bias 5.",
+    "hints": [
+        "Use `tf.data.Dataset.from_tensor_slices` to create batches.",
+        "Inside loop: `with tf.GradientTape() as tape: predictions = model(batch_x, training=True); loss = loss_fn(batch_y, predictions)`",
+        "`grads = tape.gradient(loss, model.trainable_variables)`",
+        "`optimizer.apply_gradients(zip(grads, model.trainable_variables))`"
+    ],
+    "expectedOutput": "Custom loop weights: [[2.01, 3.02]], bias: 4.98\nFit loop weights: [[2.02, 3.01]], bias: 4.99",
+    "solutionCode": "import tensorflow as tf\nimport numpy as np\n\n# Synthetic data\nnp.random.seed(0)\nX = np.random.randn(1000, 2).astype(np.float32)\ntrue_weights = np.array([[2.0], [3.0]])\ntrue_bias = 5.0\ny = (X @ true_weights + true_bias).astype(np.float32) + np.random.randn(1000, 1).astype(np.float32)*0.1\n\n# Model\nmodel = tf.keras.Sequential([tf.keras.layers.Dense(1)])\n\n# Custom loop\noptimizer = tf.keras.optimizers.SGD(learning_rate=0.01)\nloss_fn = tf.keras.losses.MeanSquaredError()\n\ndataset = tf.data.Dataset.from_tensor_slices((X, y)).batch(32)\nfor epoch in range(10):\n    for step, (batch_x, batch_y) in enumerate(dataset):\n        with tf.GradientTape() as tape:\n            pred = model(batch_x, training=True)\n            loss = loss_fn(batch_y, pred)\n        grads = tape.gradient(loss, model.trainable_variables)\n        optimizer.apply_gradients(zip(grads, model.trainable_variables))\n\nweights_custom, bias_custom = model.layers[0].get_weights()\nprint(\"Custom loop weights:\", weights_custom.flatten(), \"bias:\", bias_custom)\n\n# Compare with fit\nmodel2 = tf.keras.Sequential([tf.keras.layers.Dense(1)])\nmodel2.compile(optimizer=tf.keras.optimizers.SGD(0.01), loss='mse')\nmodel2.fit(X, y, epochs=10, batch_size=32, verbose=0)\nweights_fit, bias_fit = model2.layers[0].get_weights()\nprint(\"Fit loop weights:\", weights_fit.flatten(), \"bias:\", bias_fit)"
+}

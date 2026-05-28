@@ -1,0 +1,79 @@
+{
+    "id": "l2",
+    "chapterId": "ch_10",
+    "title": "Introduction to TensorFlow Serving 🍽️",
+    "description": "Learn how TF Serving delivers models via high‑performance gRPC/REST APIs.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Serving",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "From Training to Production 🏭",
+            "content": "# The Model Serving Problem\n\nOnce you have a trained model, how do you make it available to applications?\n- Embed it directly (Python only, not scalable).\n- Write a custom web server (Flask, FastAPI) with TensorFlow backend.\n- Use a specialised system: **TensorFlow Serving**.\n\nTF Serving is a high‑performance, production‑ready system for serving machine learning models."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "What is TensorFlow Serving? ⚙️",
+            "content": "# Key Features\n\n- **C++ server** (high throughput, low latency).\n- **gRPC and REST** endpoints.\n- **Model versioning**: serve multiple versions simultaneously; canary deployments.\n- **Automatic batching** of requests.\n- **Hot reloading**: add new models without downtime.\n\n> Analogy: A professional restaurant kitchen (TF Serving) vs a home cook (Flask + TF). Both serve food, but one is designed for thousands of orders per second."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Serving Architecture (Conceptual)",
+            "content": "Your app sends a request to the server, which loads the SavedModel and returns predictions.",
+            "codeSnippet": "# Not actual code; illustrates interaction\nimport requests\n\ndata = {\"instances\": [[1.0, 2.0, 3.0]]}\nresponse = requests.post('http://localhost:8501/v1/models/my_model:predict', json=data)\nprint(response.json())  # {'predictions': [[0.1, 0.9]]}",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Serving Check 🍽️",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which communication protocols does TensorFlow Serving support?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "HTTP only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "gRPC and REST",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "WebSockets",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "TCP raw sockets",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "TF Serving provides both gRPC and RESTful HTTP endpoints.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Model Versioning 📚",
+            "content": "# Serve Multiple Versions Smoothly\n\nBy default, TF Serving serves the highest version number. You can specify a specific version in the request URL.\n\nFolder structure:\n```\nmodels/\n  my_model/\n    1/\n      saved_model.pb\n      variables/\n    2/\n      saved_model.pb\n      variables/\n```\n\nThis allows A/B testing and gradual rollbacks."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "tip",
+            "title": "Serving is Not Just for Production 💡",
+            "content": "You can run TF Serving locally inside Docker to test your SavedModel exactly as it will run in production, catching issues early."
+        }
+    ]
+}

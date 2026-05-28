@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_8",
+    "title": "Shuffle and Window a Time Series",
+    "description": "Create a sliding window dataset for temperature forecasting.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Given a synthetic temperature time series (daily temps for 3 years), create a windowed dataset that predicts the next day's temperature from the previous 7 days.\n\n**Steps:**\n1. Create a sine‑based temperature series of length 1095 (3 years).\n2. Create a dataset from the series.\n3. Use `.window(size=8, shift=1, drop_remainder=True)` to create windows of 8 consecutive days.\n4. Flatten each window into a tensor via `flat_map(lambda w: w.batch(8))`.\n5. Map each window: first 7 values are features, last value is label.\n6. Shuffle, batch (batch_size=32), prefetch.\n7. Print the shape of one batch of features and labels.\n\n**Expected Output:** Features shape: (32, 7), Labels shape: (32,)",
+    "hints": [
+        "`w.batch(8)` will return a dataset with one tensor of shape (8,).",
+        "In map: `features = window[:-1]`, `label = window[-1]`.",
+        "Shuffle before batching."
+    ],
+    "expectedOutput": "Features shape: (32, 7), Labels shape: (32,)",
+    "solutionCode": "import tensorflow as tf\nimport numpy as np\n\n# Generate synthetic series\nseries = np.sin(np.linspace(0, 3*np.pi, 1095)).astype(np.float32)\n\nds = tf.data.Dataset.from_tensor_slices(series)\nwindows = ds.window(8, shift=1, drop_remainder=True)\n# Convert each window dataset to a tensor\nwindow_ds = windows.flat_map(lambda w: w.batch(8))\n\ndef split_window(window):\n    features = window[:-1]\n    label = window[-1]\n    return features, label\n\ndataset = window_ds.map(split_window)\ndataset = dataset.shuffle(1000)\ndataset = dataset.batch(32)\ndataset = dataset.prefetch(tf.data.AUTOTUNE)\n\nfor features, labels in dataset.take(1):\n    print(f\"Features shape: {features.shape}, Labels shape: {labels.shape}\")"
+}

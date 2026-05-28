@@ -1,0 +1,123 @@
+{
+    "id": "l2",
+    "chapterId": "ch_5",
+    "title": "The Convolution Operation 🔍",
+    "description": "Deep dive into filters, strides, padding, and feature maps.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Sliding a Filter Over an Image 🏂",
+            "content": "# The Convolution\n\nA **filter** (or kernel) is a small matrix of weights (e.g., 3×3). It slides across the image, computing element‑wise multiplication and sum at each position.\n\nThe result is a **feature map** that highlights where the pattern matches.\n\n> Analogy: Running a highlighter over text to mark specific words – the filter is the highlighter, the image is the page."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Filter Example (Conceptual)",
+            "content": "A 3×3 filter that detects vertical edges: `[[1,0,-1],[1,0,-1],[1,0,-1]]`.",
+            "codeSnippet": "import tensorflow as tf\n\n# A simple vertical edge filter\nfilter_vert = tf.constant([[1,0,-1],[1,0,-1],[1,0,-1]], dtype=tf.float32)\n# Reshape for Conv2D: (height, width, in_channels, out_channels)\nfilter_4d = tf.reshape(filter_vert, (3,3,1,1))",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Filter Size 📏",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the typical size of a convolution filter in modern CNNs?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "1×1",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "3×3",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "7×7",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "100×100",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "3×3 filters are the most common because they capture local patterns while keeping parameters low.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Strides & Padding 🦶",
+            "content": "# Stride\nHow many pixels the filter moves each step. Stride=1 → dense output; Stride=2 → downsamples.\n\n# Padding\n- **'valid'**: no padding, output shrinks.\n- **'same'**: zero‑padding to keep output size same as input (when stride=1).\n\nOutput size formula (valid): `(W - F + 1) / stride`, where W = input width, F = filter size."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "quiz",
+            "title": "Output Shape Math 🧮",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Input 32×32, filter 5×5, stride 1, padding 'valid'. What is output spatial size?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "28×28",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "32×32",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "30×30",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "27×27",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "(32 - 5 + 1) = 28, so output is 28×28.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Multiple Filters = Multiple Feature Maps 🗺️",
+            "content": "# A Conv2D layer uses many filters\n\nEach filter learns a different pattern: edges, textures, colors, etc.\n- Input: (batch, height, width, channels)\n- Output: (batch, new_height, new_width, filters)\n\n```python\ntf.keras.layers.Conv2D(filters=32, kernel_size=3, activation='relu', padding='same')\n```"
+        },
+        {
+            "id": "s_l2_7",
+            "type": "code",
+            "title": "Conv2D in Action",
+            "content": "Create a Conv2D layer and see weight shapes:",
+            "codeSnippet": "import tensorflow as tf\nfrom tensorflow.keras.layers import Conv2D\n\nconv = Conv2D(16, (3,3), activation='relu', input_shape=(28,28,1))\nprint('Kernel shape:', conv.kernel.shape)  # (3,3,1,16)\nprint('Bias shape:', conv.bias.shape)      # (16,)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "1×1 Convolutions 🎯",
+            "content": "A 1×1 filter mixes channels without affecting spatial dimensions. It's used to reduce depth or add non‑linearity cheaply (e.g., in Inception networks)."
+        }
+    ]
+}

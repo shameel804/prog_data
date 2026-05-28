@@ -1,0 +1,88 @@
+{
+    "id": "l1",
+    "chapterId": "ch_10",
+    "title": "Saving and Loading Models 💾",
+    "description": "Master SavedModel, HDF5, and weights‑only formats to persist your trained models.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Why Save? 📦",
+            "content": "# Training is Expensive – Don't Lose It!\n\nAfter hours (or days) of training, you need to **persist** the model to:\n- Share with colleagues or the community.\n- Deploy to production (server, mobile, browser).\n- Resume training later.\n- Keep a checkpoint for safety.\n\nTensorFlow offers multiple formats, but the **SavedModel** format is the standard for serving."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "Saving Formats Overview 📋",
+            "content": "# Three Main Options\n\n1. **SavedModel** (directory) – contains the complete model (architecture, weights, computation graph). Used for **TensorFlow Serving**, TF Hub, TF.js, and TFLite.\n2. **HDF5** (`.h5` file) – single file, Keras‑native. Good for checkpointing, but less portable.\n3. **Weights‑only** – only the values (no architecture). Use `model.save_weights('weights/')`.\n\n> Analogy: SavedModel is a fully assembled, ready‑to‑cook meal kit; HDF5 is a frozen meal that works in your microwave (Keras)."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "code",
+            "title": "Saving a Keras Model",
+            "content": "The simplest: `model.save('path/to/folder')` creates a SavedModel.",
+            "codeSnippet": "import tensorflow as tf\n\nmodel = tf.keras.Sequential([\n    tf.keras.layers.Dense(10, activation='relu', input_shape=(784,)),\n    tf.keras.layers.Dense(10, activation='softmax')\n])\nmodel.compile(optimizer='adam', loss='sparse_categorical_crossentropy')\n# train...\nmodel.save('my_model')  # creates folder with assets, variables, saved_model.pb",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_4",
+            "type": "quiz",
+            "title": "Save Format 🧪",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Which saving format is preferred for TensorFlow Serving?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "HDF5 (.h5)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "SavedModel directory",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Weights only (checkpoint)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Pickle file",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "SavedModel is the standard format for deployment, containing the complete graph and signature definitions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "Loading a SavedModel",
+            "content": "Use `tf.keras.models.load_model()`.",
+            "codeSnippet": "loaded = tf.keras.models.load_model('my_model')\n# Ready for inference or continued training\nprint(loaded.predict(test_data))",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_6",
+            "type": "text",
+            "title": "Saving & Loading Weights Only ⚖️",
+            "content": "# When You Need Flexibility\n\n`model.save_weights('checkpoint/')` writes checkpoints (can be used with `tf.train.Checkpoint`).\n\nRestore with `model.load_weights('checkpoint/')`. Useful for:\n- Transfer learning (load pre‑trained weights into a different architecture).\n- Continuing training after a crash.\n\n> Note: The architecture must be re‑created in code before loading weights."
+        },
+        {
+            "id": "s_l1_7",
+            "type": "warning",
+            "title": "Custom Objects 🧩",
+            "content": "If your model uses custom layers or losses, you must pass them to `load_model` via `custom_objects` dict, or save in the newer Keras v3 format that includes everything."
+        }
+    ]
+}

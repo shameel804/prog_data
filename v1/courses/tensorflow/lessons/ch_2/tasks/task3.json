@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_2",
+    "title": "Precision & Randomness Control",
+    "description": "Work with data types, casting, and random seeds.",
+    "estimatedMinutes": 10,
+    "problemStatement": "Implement the following tasks to demonstrate control over data types and randomness.\n\n1. Create a float32 tensor `f` from [1.5, 2.7, 3.14]. Print its dtype.\n2. Cast `f` to int32 and print the values.\n3. Set the global random seed to 123. Generate a normal random tensor of shape (3,) and print it.\n4. Reset the seed to 123 again, generate another normal tensor of shape (3,). Are they the same? Print both and compare.\n5. Create a `tf.random.Generator` from seed 999 and generate two uniform tensors of shape (2,2) with `rng.uniform()`. Print them and show they are different but reproducible.\n\n**Expected Output:** values will differ but structure follows.",
+    "hints": [
+        "Use `tf.random.set_seed()`.",
+        "`rng = tf.random.Generator.from_seed(999)`.",
+        "To compare tensors, use `tf.reduce_all(tf.equal(a,b))`."
+    ],
+    "expectedOutput": "f dtype: tf.float32\nf as int32: [1 2 3]\nAfter seed 123: (random values)\nResetting seed 123 gives same values: True\nGenerator uniform1: [[0.123 0.456] [0.789 0.012]]\nGenerator uniform2: [[0.345 0.678] ...] (different from uniform1)\nReproducible: if you run again with same seed, uniform1 will be identical.",
+    "solutionCode": "import tensorflow as tf\n\n# 1\nf = tf.constant([1.5, 2.7, 3.14], dtype=tf.float32)\nprint(\"f dtype:\", f.dtype)\n\n# 2\nf_int = tf.cast(f, tf.int32)\nprint(\"f as int32:\", f_int.numpy())\n\n# 3\ntf.random.set_seed(123)\na = tf.random.normal((3,))\nprint(\"After seed 123:\", a.numpy())\n\n# 4\ntf.random.set_seed(123)\nb = tf.random.normal((3,))\nprint(\"Resetting seed 123 gives same values:\", tf.reduce_all(tf.equal(a,b)).numpy())\n\n# 5\nrng = tf.random.Generator.from_seed(999)\nu1 = rng.uniform((2,2))\nprint(\"Generator uniform1:\")\nprint(u1.numpy())\nu2 = rng.uniform((2,2))\nprint(\"Generator uniform2:\")\nprint(u2.numpy())\nprint(\"(They are different)\")"
+}

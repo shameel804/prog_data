@@ -1,0 +1,14 @@
+{
+    "id": "task1",
+    "chapterId": "ch_6",
+    "title": "Sentiment Classifier with SimpleRNN",
+    "description": "Train a SimpleRNN on IMDB reviews and observe the vanishing gradient effect.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Build a sentiment classifier on IMDB using `SimpleRNN` instead of LSTM. Observe training behaviour and compare conceptually to LSTM.\n\n**Steps:**\n1. Load IMDB data (vocab size 10000) and pad sequences to length 200.\n2. Build model: `Embedding(10000, 128, input_length=200)` → `SimpleRNN(64, return_sequences=False)` → `Dense(1, activation='sigmoid')`.\n3. Compile with Adam, binary crossentropy, accuracy.\n4. Train for 5 epochs with validation_split=0.2, verbose=1 (but suppress for output, just capture history).\n5. Plot training vs validation accuracy over epochs (conceptual, print final values).\n6. Comment on the maximum validation accuracy. Is it lower than what you'd expect from an LSTM? (Print a message noting that SimpleRNN struggles with long dependencies.)\n\n**Expected Output:** Max validation accuracy likely around 50‑60% (poor).",
+    "hints": [
+        "Use `SimpleRNN` like `LSTM`.",
+        "Print final validation accuracy."
+    ],
+    "expectedOutput": "SimpleRNN max validation accuracy: 0.58\nSimpleRNN struggles with long sequences due to vanishing gradients.",
+    "solutionCode": "import tensorflow as tf\nfrom tensorflow.keras.datasets import imdb\nfrom tensorflow.keras.preprocessing.sequence import pad_sequences\nfrom tensorflow.keras.models import Sequential\nfrom tensorflow.keras.layers import Embedding, SimpleRNN, Dense\n\nvocab_size = 10000\nmaxlen = 200\n(x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=vocab_size)\nx_train = pad_sequences(x_train, maxlen=maxlen, padding='post', truncating='post')\n\nmodel = Sequential([\n    Embedding(vocab_size, 128, input_length=maxlen),\n    SimpleRNN(64, return_sequences=False),\n    Dense(1, activation='sigmoid')\n])\nmodel.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])\n\nhistory = model.fit(x_train, y_train, epochs=5, batch_size=64, validation_split=0.2, verbose=0)\nmax_val_acc = max(history.history['val_accuracy'])\nprint(f\"SimpleRNN max validation accuracy: {max_val_acc:.3f}\")\nprint(\"SimpleRNN struggles with long sequences due to vanishing gradients.\")"
+}

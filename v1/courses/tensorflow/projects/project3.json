@@ -1,0 +1,26 @@
+{
+    "id": "project3",
+    "title": "Edge Time Series Forecaster",
+    "description": "Predict future sensor values using a CNN‑LSTM model, optimize with quantization, and deploy on a Raspberry Pi.",
+    "difficulty": "Advanced",
+    "estimatedHours": "4-6",
+    "problemStatement": "## Scenario\nYou are an IoT engineer designing a **smart greenhouse**. Temperature sensors upload hourly readings to a Raspberry Pi hub. You want the Pi to predict the next 24 hours of temperature, using only the past 72 hours as input, without an internet connection.\n\n## Your Mission\nDevelop a forecasting model that:\n- Takes 72 hours of temperature data (shape `[batch, 72, 1]`).\n- Predicts the next 24 hours (shape `[batch, 24]`).\n- Runs efficiently on a Raspberry Pi (ARM CPU).\n\nYou will need to **design a model**, **train on synthetic or real time‑series data**, **quantize to int8**, and **deploy with the TFLite C++ API** (or Python interpreter, with guidance for C++).\n\n## Dataset\nUse a synthetic sinusoidal signal with noise and trend to simulate temperature (or a real public dataset like weather station records). Ensure the data reflects realistic hourly patterns.\n\n## Deliverables\n1. Data generation code that produces at least 2 years of hourly data.\n2. A `tf.data` pipeline that creates sliding windows (input 72, output 24) with batching and prefetching.\n3. A CNN‑LSTM model: 1D convolutions for local patterns, then an LSTM, then Dense layers to output 24 values.\n4. Training and validation loss curves (plot or printed values).\n5. Conversion to int8 TFLite using full integer quantization (representative dataset).\n6. Evaluation of the TFLite model on a test period, reporting Mean Absolute Error.\n7. (Bonus) A C++ or Python script for the Raspberry Pi that loads the `.tflite`, reads a temperature file, and prints the forecast.\n\nYou will synthesize **data engineering**, **hybrid CNN‑LSTM modeling**, **advanced quantization**, and **edge deployment**.",
+    "requirements": [
+        "Generate a 3‑year hourly temperature series using a sine wave with daily and seasonal patterns, plus Gaussian noise (e.g., `15*sin(2*pi*t/24) + 5*sin(2*pi*t/(365*24)) + 20 + noise`).",
+        "Use `tf.data.Dataset.window()` to create sliding windows with `input_width=72`, `label_width=24`, `shift=1`.",
+        "Reshape input to `(batch, 72, 1)` and labels to `(batch, 24)`.",
+        "Build a model with: `Conv1D(filters=32, kernel_size=5, activation='relu')`, `MaxPooling1D(pool_size=2)`, `Conv1D(64,5, relu)`, `LSTM(64, return_sequences=False)`, `Dense(32, relu)`, `Dense(24)`.",
+        "Train with MSE loss and Adam optimizer for at least 20 epochs. Use validation split and early stopping.",
+        "Perform full integer quantization with a representative dataset (use 100 windows from the validation set).",
+        "Evaluate the int8 TFLite model's MAE on the test set and compare it with the float32 TFLite MAE (ensure accuracy drop is small, < 10%).",
+        "Provide a Python script that simulates edge inference: loads the TFLite model, takes a 72‑hour array, and outputs the 24‑hour forecast."
+    ],
+    "hints": [
+        "The windowing logic: `window(72+24, shift=1, drop_remainder=True)`, then `flat_map` and `map` to split features/labels.",
+        "For full integer quantization, set `converter.representative_dataset` to a generator yielding representative input samples, and `converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]`; also set input/output types to `tf.int8` or `tf.uint8`.",
+        "The representative dataset must provide examples in the same preprocessing as training.",
+        "On Raspberry Pi, use the pre‑built TFLite C++ library or Python wheel; the interpreter API is identical.",
+        "Plot the ground truth vs prediction for the test period to visually assess performance."
+    ],
+    "expectedOutput": "A complete pipeline that outputs:\n- Test MAE of the float32 model and the int8 TFLite model (e.g., float MAE 1.5°C, int8 MAE 1.55°C).\n- TFLite file size (should be < 100 KB).\n- A forecast plot for a random test window.\n- The Python edge inference script."
+}

@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_11",
+    "title": "Build a TFLite Image Classifier App (Android Simulation)",
+    "description": "Write the complete Android Kotlin code (in a simulated environment) to classify images using the Task Library.",
+    "estimatedMinutes": 20,
+    "problemStatement": "Write a Kotlin function (as if inside an Android Activity) that uses the TF Lite Task Library to classify an image from a given file path. The code should create an `ImageClassifier`, load the model from assets, preprocess a `Bitmap` into a `TensorImage`, run classification, and return the top‑1 label and confidence.\n\n**Steps:**\n1. Define a function `fun classifyImage(context: Context, bitmap: Bitmap): Pair<String, Float>`.\n2. Inside, create `ImageClassifier.createFromFile(context, \"mobilenet_v2.tflite\")`.\n3. Convert bitmap to `TensorImage` using `TensorImage.fromBitmap(bitmap)`.\n4. Call `classifier.classify(image)` and retrieve the first classification.\n5. Return label and confidence.\n6. Also write the dependency lines needed in `build.gradle`.\n\n**Expected Output:** Provided code that compiles; print the dependency lines.",
+    "hints": [
+        "Use `org.tensorflow:tensorflow-lite-task-vision`.",
+        "Don't forget to import the classes.",
+        "Assume the model file is in assets."
+    ],
+    "expectedOutput": "dependencies {\n    implementation 'org.tensorflow:tensorflow-lite-task-vision:0.4.0'\n}\n\nfun classifyImage(context: Context, bitmap: Bitmap): Pair<String, Float> {\n    val classifier = ImageClassifier.createFromFile(context, \"mobilenet_v2.tflite\")\n    val image = TensorImage.fromBitmap(bitmap)\n    val results = classifier.classify(image)\n    val topResult = results.firstOrNull()\n    return Pair(topResult?.label ?: \"unknown\", topResult?.confidence ?: 0f)\n}",
+    "solutionCode": "// build.gradle (app level)\n// dependencies {\n//     implementation 'org.tensorflow:tensorflow-lite-task-vision:0.4.0'\n// }\n\n// In Kotlin Activity\nimport android.content.Context\nimport android.graphics.Bitmap\nimport org.tensorflow.lite.support.image.TensorImage\nimport org.tensorflow.lite.task.vision.classifier.ImageClassifier\n\nfun classifyImage(context: Context, bitmap: Bitmap): Pair<String, Float> {\n    val classifier = ImageClassifier.createFromFile(context, \"mobilenet_v2.tflite\")\n    val image = TensorImage.fromBitmap(bitmap)\n    val results = classifier.classify(image)\n    val topResult = results.firstOrNull()\n    return Pair(topResult?.label ?: \"unknown\", topResult?.confidence ?: 0f)\n}"
+}

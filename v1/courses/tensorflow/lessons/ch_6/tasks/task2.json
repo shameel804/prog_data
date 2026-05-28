@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_6",
+    "title": "LSTM vs GRU Showdown",
+    "description": "Build identical models with LSTM and GRU on a synthetic sequence problem and compare.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Create a synthetic sequence classification task: sequences of length 20 with 1 feature, label = 1 if the sum of the sequence > 10, else 0. Train an LSTM and a GRU with the same architecture and compare validation accuracy.\n\n**Steps:**\n1. Generate 5000 random sequences of length 20, values in [0,1]. Labels = (sum over sequence) > 10 → 1.0, else 0.0.\n2. Split into train/validation (80‑20).\n3. Build two models, each with one RNN layer (64 units), then Dense(1, sigmoid). One uses LSTM, other GRU.\n4. Compile both with Adam, binary crossentropy, accuracy.\n5. Train for 10 epochs (verbose=0) and record validation accuracy.\n6. Print the maximum validation accuracy of each and state which performed better (or tie).\n\n**Expected Output:** Both should perform well (maybe GRU slightly faster/similar). Print comparison.",
+    "hints": [
+        "Use `np.random.rand(5000, 20, 1)`.",
+        "Set `input_shape=(20,1)` in first RNN layer.",
+        "Track `val_accuracy` in history."
+    ],
+    "expectedOutput": "LSTM max val accuracy: 0.96\nGRU max val accuracy: 0.95\nBoth performed similarly.",
+    "solutionCode": "import numpy as np\nimport tensorflow as tf\nfrom tensorflow.keras.models import Sequential\nfrom tensorflow.keras.layers import LSTM, GRU, Dense\n\n# Generate data\nnp.random.seed(0)\nX = np.random.rand(5000, 20, 1).astype(np.float32)\ny = (np.sum(X, axis=(1,2)) > 10).astype(np.float32)\n\nsplit = int(0.8 * len(X))\nX_train, X_val = X[:split], X[split:]\ny_train, y_val = y[:split], y[split:]\n\ndef build_model(rnn_type):\n    model = Sequential()\n    if rnn_type == 'lstm':\n        model.add(LSTM(64, input_shape=(20,1)))\n    else:\n        model.add(GRU(64, input_shape=(20,1)))\n    model.add(Dense(1, activation='sigmoid'))\n    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])\n    return model\n\nlstm_model = build_model('lstm')\ngru_model = build_model('gru')\n\nhist_lstm = lstm_model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_val, y_val), verbose=0)\nhist_gru = gru_model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_val, y_val), verbose=0)\n\nmax_lstm = max(hist_lstm.history['val_accuracy'])\nmax_gru = max(hist_gru.history['val_accuracy'])\nprint(f\"LSTM max val accuracy: {max_lstm:.3f}\")\nprint(f\"GRU max val accuracy: {max_gru:.3f}\")\nif abs(max_lstm - max_gru) < 0.02:\n    print(\"Both performed similarly.\")\nelif max_lstm > max_gru:\n    print(\"LSTM performed better.\")\nelse:\n    print(\"GRU performed better.\")"
+}

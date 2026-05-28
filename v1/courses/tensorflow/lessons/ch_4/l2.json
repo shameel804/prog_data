@@ -1,0 +1,79 @@
+{
+    "id": "l2",
+    "chapterId": "ch_4",
+    "title": "Loss Functions in Depth 📉",
+    "description": "Explore loss landscapes, cross‑entropy, MSE, and how loss guides learning.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "What is a Loss Function? 🎯",
+            "content": "# The Compass of Training\n\nA loss function **quantifies the error** between predictions and true labels. The goal: **minimise** this loss.\n\n> Analogy: A hot‑cold game – the loss tells you how far you are from the target."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Common Losses 📋",
+            "content": "# Classification\n- **Binary Cross‑entropy**: for two classes (spam/not spam).\n- **Categorical Cross‑entropy**: multi‑class with one‑hot labels.\n- **Sparse Categorical Cross‑entropy**: multi‑class with integer labels.\n\n# Regression\n- **Mean Squared Error (MSE)**: `mean((y_true - y_pred)^2)`\n- **Mean Absolute Error (MAE)**: `mean(|y_true - y_pred|)`\n- **Huber**: combination, less sensitive to outliers."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Loss Match 🔗",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which loss is best for a network predicting house prices (a continuous value)?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Binary cross‑entropy",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Categorical cross‑entropy",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Mean Squared Error",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Softmax cross‑entropy",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "MSE is the standard for regression tasks.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Inside Cross‑entropy",
+            "content": "Binary cross‑entropy: `- [ y*log(p) + (1-y)*log(1-p) ]`",
+            "codeSnippet": "import tensorflow as tf\n\nbce = tf.keras.losses.BinaryCrossentropy()\ny_true = tf.constant([1, 0, 1])\ny_pred = tf.constant([0.9, 0.1, 0.8])\nloss = bce(y_true, y_pred).numpy()\nprint(loss)  # ~0.1446",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "The Loss Landscape 🏔️",
+            "content": "# Visualising Optimisation\n\nImagine a hilly terrain where height = loss. Weight combinations give a point on the map. Training finds the **lowest valley** (global minimum).\n\nOptimisers navigate this landscape using gradients."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "warning",
+            "title": "Watch Out! ⚠️",
+            "content": "Using the wrong loss can ruin training. For example, MSE on classification can produce very slow learning compared to cross‑entropy."
+        }
+    ]
+}

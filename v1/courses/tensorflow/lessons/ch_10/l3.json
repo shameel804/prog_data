@@ -1,0 +1,82 @@
+{
+    "id": "l3",
+    "chapterId": "ch_10",
+    "title": "Exporting Models for Serving 📤",
+    "description": "Prepare a SavedModel with signatures so TF Serving can serve it correctly.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Practice",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The Serving Signature ✍️",
+            "content": "# What is a Signature?\n\nA **signature** defines the inputs and outputs of your model. Without a clear signature, the serving system doesn't know what to feed or what to expect.\n\nThere are two main types:\n- `serving_default`: the default function used when you don't specify a signature.\n- Custom signatures: e.g., `classify`, `regress`, `embed`.\n\nKeras automatically creates a `serving_default` signature when you save with `model.save()`."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Inspecting Signatures",
+            "content": "Use `saved_model_cli` to see what's inside a SavedModel.",
+            "codeSnippet": "# In terminal (not Python):\nsaved_model_cli show --dir my_model --all\n\n# Output shows:\n# signature_def['serving_default']:\n#   The given SavedModel SignatureDef contains the following input(s):\n#     inputs['dense_input'] tensor_info:\n#         dtype: DT_FLOAT shape: (-1, 784) name: serving_default_dense_input:0\n#   The given SavedModel SignatureDef contains the following output(s):\n#     outputs['dense_1'] tensor_info:\n#         dtype: DT_FLOAT shape: (-1, 10) name: StatefulPartitionedCall:0",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Signature Sense ✍️",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the purpose of the `serving_default` signature?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To train the model further",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To define the default input/output tensors for serving",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To save model weights",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To convert to TFLite",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It specifies which tensors serve as input and output when no explicit signature is requested.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Creating a Custom Serving Signature 🔧",
+            "content": "# When You Need More Control\n\nUse `tf.function` and `get_concrete_function` to define explicit input shapes, then export.\n\n```python\nclass MyModel(tf.keras.Model):\n    @tf.function(input_signature=[tf.TensorSpec(shape=[None, 784], dtype=tf.float32)])\n    def serve(self, x):\n        return self(x)\n\nmodel = MyModel()\n# ... train\nmodel.save('model_serving', signatures={'serving_default': model.serve})\n```\n\nThis guarantees the server knows the exact input shape and dtype."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Export with Concrete Function",
+            "content": "",
+            "codeSnippet": "import tensorflow as tf\n\nclass ExportModel(tf.keras.Model):\n    def __init__(self):\n        super().__init__()\n        self.dense = tf.keras.layers.Dense(1)\n\n    def call(self, inputs):\n        return self.dense(inputs)\n\nmodel = ExportModel()\n# create a concrete function\ncall = tf.function(lambda x: model(x))\nconcrete = call.get_concrete_function(\n    tf.TensorSpec(shape=[None, 10], dtype=tf.float32))\n\n# Save with explicit signature\ntf.saved_model.save(model, 'export_model', signatures={'serving_default': concrete})",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "tip",
+            "title": "Input Batch Dimension 🧮",
+            "content": "Always set the first dimension to `None` (dynamic) unless you need a fixed batch size. This allows the server to accept variable‑size batches."
+        }
+    ]
+}

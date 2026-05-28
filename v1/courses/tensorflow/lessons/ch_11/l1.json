@@ -1,0 +1,94 @@
+{
+    "id": "l1",
+    "chapterId": "ch_11",
+    "title": "Model Optimization Toolkit 🧰",
+    "description": "Quantization‑aware training, pruning, and clustering to maximize model efficiency without sacrificing accuracy.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Optimization",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Beyond Post‑Training Quantization 🚀",
+            "content": "# When Post‑Training is Not Enough\n\nPost‑training quantization (dynamic/float16/int8) often works great. But for some models, the accuracy drop is too large.\n\n**Quantization‑Aware Training (QAT)** simulates quantization during training, so the model learns to compensate. It gives much better accuracy after quantization.\n\n> Analogy: Practicing a speech with a slightly muffled microphone so you can still sound clear when the real mic is fuzzy."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "Quantization‑Aware Training (QAT) in TensorFlow 📚",
+            "content": "# How QAT Works\n\n- Inserts fake quantization nodes into the model (quantize → dequantize).\n- During forward pass, weights and activations are rounded to lower bit‑width, then restored.\n- The model learns to be robust to this rounding error.\n- After training, the fake nodes are replaced with true quantized operations.\n\n```python\nimport tensorflow_model_optimization as tfmot\n\nqat_model = tfmot.quantization.keras.quantize_model(model)\n# Then compile and train as usual\n```"
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "QAT Check 🧪",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "When is quantization‑aware training most beneficial?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "When the model is already very small",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "When post‑training quantization causes a significant accuracy drop",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "When training on GPU only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "When converting to TFLite without quantization",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "QAT recovers accuracy lost due to aggressive quantization by simulating it during training.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "code",
+            "title": "QAT Example (Conceptual)",
+            "content": "Use the TensorFlow Model Optimization Toolkit (`pip install tensorflow-model-optimization`).",
+            "codeSnippet": "import tensorflow as tf\nimport tensorflow_model_optimization as tfmot\n\n# Original model\nmodel = tf.keras.applications.MobileNetV2(weights=None, input_shape=(224,224,3), classes=10)\n\n# Apply QAT\nquantize_model = tfmot.quantization.keras.quantize_model(model)\n\n# Fine‑tune\nquantize_model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])\nquantize_model.fit(train_ds, epochs=3, validation_data=val_ds)\n\n# Convert to TFLite with int8 support\nconverter = tf.lite.TFLiteConverter.from_keras_model(quantize_model)\nconverter.optimizations = [tf.lite.Optimize.DEFAULT]\nqat_tflite = converter.convert()",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_5",
+            "type": "text",
+            "title": "Weight Pruning ✂️",
+            "content": "# Remove Unnecessary Weights\n\n- Pruning sets the smallest weights to zero during training.\n- This creates sparse models that can be compressed (zip‑style) and sometimes run faster with sparse kernels.\n- Use `tfmot.sparsity.keras.prune_low_magnitude` to wrap layers.\n\nAfter pruning, strip the pruning wrappers and convert to TFLite. The sparse model may have lower latency on devices with sparse compute support."
+        },
+        {
+            "id": "s_l1_6",
+            "type": "code",
+            "title": "Weight Pruning Example",
+            "content": "",
+            "codeSnippet": "import tensorflow_model_optimization as tfmot\n\npruning_schedule = tfmot.sparsity.keras.PolynomialDecay(\n    initial_sparsity=0.0, final_sparsity=0.8, begin_step=0, end_step=1000)\nprune_low_magnitude = tfmot.sparsity.keras.prune_low_magnitude\n\npruned_model = tf.keras.Sequential([\n    prune_low_magnitude(tf.keras.layers.Dense(128, activation='relu'),\n                        pruning_schedule=pruning_schedule),\n    tf.keras.layers.Dense(10, activation='softmax')\n])\n# Compile, train, then strip pruning and convert",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_7",
+            "type": "text",
+            "title": "Weight Clustering 🧬",
+            "content": "# Reduce Weight Entropy\n\n- Clustering groups similar weights and replaces them by their centroid.\n- Reduces model size via dictionary‑based compression.\n- `tfmot.clustering.keras.cluster_weights`.\n\nOften used in combination with quantization. After training, remove clustering and compress."
+        },
+        {
+            "id": "s_l1_8",
+            "type": "tip",
+            "title": "Optimization Order 🧭",
+            "content": "Apply pruning first, then quantization‑aware training, then clustering. Always fine‑tune after applying each technique."
+        }
+    ]
+}

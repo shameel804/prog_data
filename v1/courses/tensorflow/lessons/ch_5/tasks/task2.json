@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_5",
+    "title": "Filter Visualisation",
+    "description": "Visualise the learned filters of a trained CNN.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Train a small CNN on MNIST (or use the model from task1), then visualise the filters from the first Conv2D layer.\n\n**Steps:**\n1. Train the same MNIST CNN from Task 1 (or load a saved model).\n2. Retrieve the weights of the first Conv2D layer using `model.layers[0].get_weights()[0]`.\n3. The weight shape is (3,3,1,32). Plot each of the 32 filters as 3×3 grayscale images in a grid (e.g., 4×8 subplots) using matplotlib.\n4. Save the plot as 'filters.png' or display it (conceptual).\n5. Print the number of filters visualised.\n\n**Expected Output:** A message 'Visualised 32 filters from first convolutional layer.'",
+    "hints": [
+        "Use `import matplotlib.pyplot as plt`.",
+        "Filters are 3×3×1; you can squeeze to (3,3) for plotting.",
+        "Normalise filter values for better visualisation."
+    ],
+    "expectedOutput": "Visualised 32 filters from first convolutional layer.",
+    "solutionCode": "import tensorflow as tf\nfrom tensorflow.keras import layers, models\nimport matplotlib.pyplot as plt\n\n# Train MNIST CNN quickly\n(x_train, y_train), _ = tf.keras.datasets.mnist.load_data()\nx_train = x_train[..., tf.newaxis] / 255.0\n\nmodel = models.Sequential([\n    layers.Conv2D(32, (3,3), activation='relu', input_shape=(28,28,1)),\n    layers.MaxPooling2D((2,2)),\n    layers.Flatten(),\n    layers.Dense(10, activation='softmax')\n])\nmodel.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])\nmodel.fit(x_train, y_train, epochs=1, verbose=0)  # quick train\n\n# Get filters\nfilters, biases = model.layers[0].get_weights()\nfilters = filters.squeeze()  # shape (3,3,32)\n\n# Plot\nfig, axes = plt.subplots(4, 8, figsize=(8,4))\nfor i, ax in enumerate(axes.flat):\n    ax.imshow(filters[:,:,i], cmap='gray')\n    ax.axis('off')\nplt.tight_layout()\nplt.savefig('filters.png')\nprint(f\"Visualised {filters.shape[-1]} filters from first convolutional layer.\")"
+}

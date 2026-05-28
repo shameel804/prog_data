@@ -1,0 +1,79 @@
+{
+    "id": "l5",
+    "chapterId": "ch_8",
+    "title": "Working with Images, Text, and TFRecords 📁",
+    "description": "Efficiently load images from directories, text lines, and binary TFRecord files.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Formats",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Image Datasets from Directories 🖼️",
+            "content": "# `image_dataset_from_directory`\n\nKeras provides a convenient utility to load images from folders (each subfolder = class).\n\n```python\ntrain_ds = tf.keras.utils.image_dataset_from_directory(\n    'data/train',\n    image_size=(224, 224),\n    batch_size=32,\n    label_mode='int'\n)\n```\nReturns a `tf.data.Dataset` of (image_batch, label_batch).\n\nFor large datasets, this may be I/O bound; you can combine with `.cache()`."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Custom Image Loading with `map`",
+            "content": "Read file paths, decode images.",
+            "codeSnippet": "def load_image(file_path, label):\n    image = tf.io.read_file(file_path)\n    image = tf.image.decode_jpeg(image, channels=3)\n    image = tf.image.resize(image, (224, 224))\n    return image, label\n\nfile_ds = tf.data.Dataset.from_tensor_slices((file_paths, labels))\nimage_ds = file_ds.map(load_image, num_parallel_calls=tf.data.AUTOTUNE)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Image Loading I/O 📸",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which function reads the raw bytes of an image file?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "tf.image.decode_jpeg",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "tf.io.read_file",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "tf.data.Dataset.from_tensor_slices",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "tf.image.resize",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`tf.io.read_file` reads the file contents as a string tensor; then `decode_jpeg` decodes it.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Text Datasets 📝",
+            "content": "# `TextLineDataset`\n\nReads each line of text files as a string tensor.\n\n```python\ntext_ds = tf.data.TextLineDataset('corpus.txt')\ntext_ds = text_ds.filter(lambda line: tf.strings.length(line) > 0)  # skip empty\n```\nFor multiple files, use `list_files` + `interleave` with `TextLineDataset`."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "TFRecord Format 📦",
+            "content": "# Binary, Efficient Storage\n\nTFRecord is TensorFlow's native format for storing sequences of binary records. Ideal for huge datasets.\n\nWriting:\n```python\nwith tf.io.TFRecordWriter('data.tfrecord') as writer:\n    for example in examples:\n        writer.write(example.SerializeToString())\n```\n\nReading:\n```python\nraw_dataset = tf.data.TFRecordDataset('data.tfrecord')\nparsed_dataset = raw_dataset.map(_parse_function)\n```\nThe `_parse_function` decodes the protobuf using `tf.io.parse_single_example`."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "When to Use TFRecord 📂",
+            "content": "If you have millions of small files, combine them into sharded TFRecords for faster I/O and better shuffling."
+        }
+    ]
+}

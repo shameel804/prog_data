@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_8",
+    "title": "Build an Optimised Image Pipeline",
+    "description": "Create a tf.data pipeline that loads, augments, and batches images from disk.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Given a directory of images (use a placeholder or create dummy files), build a complete input pipeline that:\n1. Lists all `.jpg` files.\n2. Reads and decodes each image.\n3. Resizes to 128×128.\n4. Applies random horizontal flip and random brightness.\n5. Normalises pixel values to [0,1].\n6. Shuffles with buffer 1000.\n7. Batches with size 32.\n8. Prefetches with AUTOTUNE.\n9. Returns the number of batches in the dataset.\n\nPrint the shape of one batch to verify.\n\n**Expected Output:** Batch shape: (32, 128, 128, 3) (if enough images; otherwise smaller last batch).",
+    "hints": [
+        "Use `tf.data.Dataset.list_files` to get file paths.",
+        "Use `map` with a custom load_and_preprocess function.",
+        "Add augmentations inside that function using `tf.image` random ops.",
+        "Use `for batch in dataset.take(1): print(batch.shape)` to check."
+    ],
+    "expectedOutput": "Batch shape: (32, 128, 128, 3)",
+    "solutionCode": "import tensorflow as tf\nimport os\n\n# Create dummy image files if none exist (for demo)\nos.makedirs('dummy_images', exist_ok=True)\nfor i in range(200):\n    img = tf.random.uniform((100,100,3), maxval=255, dtype=tf.int32)\n    encoded = tf.io.encode_jpeg(tf.cast(img, tf.uint8))\n    tf.io.write_file(f'dummy_images/img_{i:03d}.jpg', encoded)\n\nfile_ds = tf.data.Dataset.list_files('dummy_images/*.jpg')\n\ndef load_and_preprocess(file_path):\n    image = tf.io.read_file(file_path)\n    image = tf.image.decode_jpeg(image, channels=3)\n    image = tf.image.resize(image, (128, 128))\n    image = tf.image.random_flip_left_right(image)\n    image = tf.image.random_brightness(image, max_delta=0.2)\n    image = tf.cast(image, tf.float32) / 255.0\n    return image\n\n# Since we have no labels, we'll just use images as both (or create dummy label 0)\ndataset = file_ds.map(lambda fp: load_and_preprocess(fp), num_parallel_calls=tf.data.AUTOTUNE)\ndataset = dataset.shuffle(1000)\ndataset = dataset.batch(32)\ndataset = dataset.prefetch(tf.data.AUTOTUNE)\n\nfor batch in dataset.take(1):\n    print(f\"Batch shape: {batch.shape}\")\n\n# Cleanup optional\nimport shutil\nshutil.rmtree('dummy_images')"
+}

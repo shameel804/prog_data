@@ -1,0 +1,82 @@
+{
+    "id": "l3",
+    "chapterId": "ch_9",
+    "title": "Writing a Custom Training Loop 🏋️",
+    "description": "Step‑by‑step: forward pass, compute loss, get gradients, apply optimizer.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Practice",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The Training Loop Recipe 📜",
+            "content": "# Ingredients\n\n1. **Dataset** (tf.data) providing batches.\n2. **Model** (any Keras model or custom).\n3. **Loss function**.\n4. **Optimizer**.\n5. **Metrics** (to track performance).\n\nLoop over epochs and batches; for each batch:\n- Forward pass (predictions)\n- Loss\n- Gradients via tape\n- Optimizer applies gradients\n- Update metrics"
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Complete Custom Loop",
+            "content": "Train a simple linear model on synthetic data.",
+            "codeSnippet": "import tensorflow as tf\nimport numpy as np\n\n# Data\nX = np.random.randn(1000, 2).astype(np.float32)\nY = (X[:,0] * 3 + X[:,1] * 2 + 1).astype(np.float32).reshape(-1,1)\ndataset = tf.data.Dataset.from_tensor_slices((X, Y)).batch(32)\n\n# Model, loss, optimizer\nmodel = tf.keras.Sequential([tf.keras.layers.Dense(1)])\nloss_fn = tf.keras.losses.MeanSquaredError()\noptimizer = tf.keras.optimizers.SGD(learning_rate=0.01)\n\nepochs = 10\nfor epoch in range(epochs):\n    epoch_loss = tf.keras.metrics.Mean()\n    for step, (x_batch, y_batch) in enumerate(dataset):\n        with tf.GradientTape() as tape:\n            pred = model(x_batch, training=True)\n            loss = loss_fn(y_batch, pred)\n        grads = tape.gradient(loss, model.trainable_variables)\n        optimizer.apply_gradients(zip(grads, model.trainable_variables))\n        epoch_loss.update_state(loss)\n    print(f'Epoch {epoch+1}: loss = {epoch_loss.result().numpy():.4f}')",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Loop Check 🔁",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "In the custom loop, what does `tape.gradient(loss, model.trainable_variables)` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The loss value",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A list of gradients with respect to each trainable variable",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The updated weights",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The predictions",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It returns the gradient of the loss with respect to each trainable variable of the model.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Adding Validation & Metrics 📊",
+            "content": "# Complete the Loop\n\nAfter each epoch, run a validation loop (without tape) to evaluate.\n\n```python\nfor x_val_batch, y_val_batch in val_dataset:\n    val_pred = model(x_val_batch, training=False)\n    val_loss = loss_fn(y_val_batch, val_pred)\n    val_metric.update_state(val_loss)\nprint(f'Val loss: {val_metric.result()}')\n```\n\nUse `tf.keras.metrics` like `Mean`, `Accuracy`, etc."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Using @tf.function for Speed",
+            "content": "Wrap the train step in a function to compile a graph.",
+            "codeSnippet": "@tf.function\ndef train_step(x, y):\n    with tf.GradientTape() as tape:\n        pred = model(x, training=True)\n        loss = loss_fn(y, pred)\n    grads = tape.gradient(loss, model.trainable_variables)\n    optimizer.apply_gradients(zip(grads, model.trainable_variables))\n    return loss\n\nfor epoch in range(epochs):\n    for x_batch, y_batch in dataset:\n        loss = train_step(x_batch, y_batch)\n        epoch_loss.update_state(loss)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "tip",
+            "title": "Remember training=True/False 🎓",
+            "content": "Always pass `training` parameter when calling layers/models that have behaviour differing between train and inference (e.g., Dropout, BatchNorm)."
+        }
+    ]
+}

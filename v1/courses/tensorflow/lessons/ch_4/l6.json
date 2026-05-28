@@ -1,0 +1,69 @@
+{
+    "id": "l6",
+    "chapterId": "ch_4",
+    "title": "Validation & Overfitting 🛡️",
+    "description": "Use validation sets, spot overfitting, and apply dropout and regularisation.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Generalisation",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Generalisation – The Real Goal 🎯",
+            "content": "# We Want a Model that Works on New Data\n\n- **Training set**: used to update weights.\n- **Validation set**: used to tune hyperparameters and monitor overfitting.\n- **Test set**: final unbiased evaluation.\n\nOverfitting: model memorises training data, performs poorly on validation."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "Spotting Overfitting 🔍",
+            "content": "# The Tell‑Tale Sign\n\nTraining loss keeps decreasing, but validation loss starts increasing.\n\nGraphically: two curves diverge.\n\n> Analogy: A student who memorises answers to past papers but fails new questions."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "Overfit IQ 🧪",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "true_false",
+                "question": "If training accuracy is 99% and validation accuracy is 80%, the model is likely overfitting.",
+                "options": [
+                    {
+                        "id": "t",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "f",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A large gap between training and validation performance indicates overfitting.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Countermeasures 🛡️",
+            "content": "# Techniques to Fight Overfitting\n1. **More data** (or data augmentation).\n2. **Regularisation** (L1, L2): add penalty to large weights.\n3. **Dropout**: randomly drop neurons during training.\n4. **Early stopping**: halt training when validation loss stops improving.\n\n```python\ntf.keras.layers.Dense(64, kernel_regularizer='l2')\ntf.keras.layers.Dropout(0.5)\n```"
+        },
+        {
+            "id": "s_l6_5",
+            "type": "code",
+            "title": "Dropout in Action",
+            "content": "Dropout randomly sets a fraction of inputs to 0 at each update.",
+            "codeSnippet": "from tensorflow.keras.layers import Dropout\n\nmodel = Sequential([\n    Dense(128, activation='relu'),\n    Dropout(0.5),\n    Dense(64, activation='relu'),\n    Dropout(0.3),\n    Dense(10, activation='softmax')\n])",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_6",
+            "type": "tip",
+            "title": "Validation Split in `fit()` 💡",
+            "content": "Pass `validation_split=0.2` to `fit()` to automatically hold out 20% of training data for validation. Or use a separate `validation_data` tuple."
+        }
+    ]
+}

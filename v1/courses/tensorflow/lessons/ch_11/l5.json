@@ -1,0 +1,88 @@
+{
+    "id": "l5",
+    "chapterId": "ch_11",
+    "title": "Performance Profiling & Benchmarking 📊",
+    "description": "Measure latency, memory, and power with TFLite benchmark tools and Android Studio profiler.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Performance",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Don't Guess – Measure! ⏱️",
+            "content": "# Why Profiling Matters\n\nA model that takes 500ms per frame is useless for real‑time video. You need to know:\n- **Inference latency** (min, max, average).\n- **Memory consumption** (RAM and GPU memory).\n- **Power usage** (battery drain).\n- **Whether you are CPU‑bound or memory‑bound**.\n\nTensorFlow Lite provides a **benchmark tool** and **profiling API**."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "TFLite Benchmark Tool (Command Line)",
+            "content": "Run on desktop or Android to get detailed timing.",
+            "codeSnippet": "# Linux/macOS\ntensorflow/lite/tools/benchmark/benchmark_model \\\n  --graph=model.tflite \\\n  --num_threads=4 \\\n  --warmup_runs=10 \\\n  --num_runs=50\n\n# Android (via adb)\nadb push model.tflite /data/local/tmp\nadb shell /data/local/tmp/benchmark_model \\\n  --graph=/data/local/tmp/model.tflite \\\n  --use_gpu=true",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Benchmark Basics ⏱️",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Why include warmup runs in benchmarking?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To heat the device",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To stabilise performance and avoid cold‑start overhead",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To increase accuracy",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To fill memory",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Warmup runs allow the system to cache necessary resources, giving more representative steady‑state measurements.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "In‑App Profiling with TFLite Interpreter API 📊",
+            "content": "# Programmatically Measure Latency\n\n```kotlin\nval start = SystemClock.uptimeMillis()\ninterpreter.run(input, output)\nval end = SystemClock.uptimeMillis()\nval latency = end - start\n```\n\nFor a robust measurement, run multiple times and collect statistics.\n\nAlso use `Interpreter.Options().setUseXNNPACK(true)` for optimised CPU execution."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Using Android Studio Profiler",
+            "content": "Attach to running app and monitor CPU, memory, and energy. Look for:\n- High CPU spikes during inference.\n- Memory allocations per run.\n- GPU utilisation if using GPU delegate.",
+            "codeSnippet": "// In Android Studio: View -> Tool Windows -> Profiler\n// Select your device and app, then record a session.\n// You'll see traces for each thread.",
+            "codeLanguage": "text",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "Use XNNPACK for CPU Boost 🚀",
+            "content": "XNNPACK is a highly optimised CPU backend. Enable it in the interpreter options. It's often the default in newer TFLite builds and can rival GPU delegates for small models."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "exercise",
+            "title": "Benchmark Your Model 🛠️",
+            "content": "Take the MNIST model from the previous lesson, run the benchmark tool with CPU and GPU delegates, and compare the average latency. Share your findings!"
+        }
+    ]
+}

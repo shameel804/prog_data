@@ -1,0 +1,62 @@
+{
+    "id": "l2",
+    "chapterId": "ch_12",
+    "title": "Capstone 2: Sentiment Analysis API with TF Serving 📡",
+    "description": "Train a text model, export a SavedModel, and deploy a REST API for real‑time predictions.",
+    "xpReward": 40,
+    "estimatedMinutes": 12,
+    "section": "Project",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Goal: Instant Sentiment 🚀",
+            "content": "# Deploy a Model as a Web Service\n\nYou'll build a model that classifies movie reviews as positive or negative, then wrap it in a **TensorFlow Serving**‑compatible SavedModel and test it with a REST client.\n\nWe'll cover:\n- Data pipeline with `TextLineDataset`.\n- Text vectorisation and Embedding.\n- LSTM model.\n- Export with signature.\n- Test via `curl` (conceptual)."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Load and Preprocess Text",
+            "content": "Assume you have a `reviews.txt` and `labels.txt`. We'll simulate with IMDB dataset for demonstration.",
+            "codeSnippet": "import tensorflow as tf\nfrom tensorflow.keras.layers import TextVectorization\n\n# Load IMDB\n(x_train, y_train), (x_test, y_test) = tf.keras.datasets.imdb.load_data(num_words=10000)\n\n# Pad sequences\nmaxlen = 200\nx_train = tf.keras.preprocessing.sequence.pad_sequences(x_train, maxlen=maxlen)\nx_test = tf.keras.preprocessing.sequence.pad_sequences(x_test, maxlen=maxlen)\n\ntrain_ds = tf.data.Dataset.from_tensor_slices((x_train, y_train)).batch(32).prefetch(1)\ntest_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(32).prefetch(1)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Build the LSTM Model",
+            "content": "",
+            "codeSnippet": "model = tf.keras.Sequential([\n    tf.keras.layers.Embedding(10000, 128, input_length=maxlen),\n    tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(64, dropout=0.2, recurrent_dropout=0.2)),\n    tf.keras.layers.Dense(1, activation='sigmoid')\n])\nmodel.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])\nmodel.fit(train_ds, validation_data=test_ds, epochs=5)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Export for Serving",
+            "content": "# Create a Serving Signature\n\nWe need a function that accepts raw strings (or token ids) and returns probabilities. Here we'll create a signature that takes integer sequences and outputs sentiment.\n\n```python\n@tf.function(input_signature=[tf.TensorSpec(shape=[None, maxlen], dtype=tf.int32, name='input_text')])\ndef serve_fn(input_text):\n    return model(input_text)\n\ntf.saved_model.save(model, 'sentiment_model/1/', signatures={'serving_default': serve_fn})\n```"
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Inspect and Test Locally",
+            "content": "Use `saved_model_cli` or load and test.",
+            "codeSnippet": "# Load SavedModel\nloaded = tf.saved_model.load('sentiment_model/1/')\ninfer = loaded.signatures['serving_default']\nsample_input = tf.constant([x_test[0]])\npred = infer(input_text=sample_input)\nprint(pred['output_0'].numpy())",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Deploy with Docker & TF Serving",
+            "content": "# Run the Server\n\n```bash\ndocker run -p 8501:8501 \\\n  -v \"$PWD/sentiment_model:/models/sentiment\" \\\n  -e MODEL_NAME=sentiment \\\n  tensorflow/serving\n```\n\nThen send a request:\n```bash\ncurl -d '{\"instances\": [[1,2,3,...,200]]}' \\\n  -H 'Content-Type: application/json' \\\n  http://localhost:8501/v1/models/sentiment:predict\n```\n\nYour model is now a live API!"
+        },
+        {
+            "id": "s_l2_7",
+            "type": "exercise",
+            "title": "Go Live 🛠️",
+            "content": "If you have Docker, run the server and send a real request. Observe the latency and response format."
+        }
+    ]
+}

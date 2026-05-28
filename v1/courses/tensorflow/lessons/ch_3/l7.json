@@ -1,0 +1,73 @@
+{
+    "id": "l7",
+    "chapterId": "ch_3",
+    "title": "Your First Neural Network – Full Pipeline 🏁",
+    "description": "Walk through the complete workflow: data, model, compile, predict.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Practice",
+    "slides": [
+        {
+            "id": "s_l7_1",
+            "type": "text",
+            "title": "The Full Recipe 🧾",
+            "content": "# Steps to Build a Neural Network\n\n1. Prepare data (features & labels).\n2. Define model architecture (Sequential + Dense).\n3. Compile (loss, optimizer, metrics).\n4. Train with `model.fit()`.\n5. Evaluate on test data.\n6. Make predictions with `model.predict()`."
+        },
+        {
+            "id": "s_l7_2",
+            "type": "code",
+            "title": "Complete Example with Random Data",
+            "content": "We'll simulate a 3‑class problem with 4 features.",
+            "codeSnippet": "import tensorflow as tf\nfrom tensorflow.keras.models import Sequential\nfrom tensorflow.keras.layers import Dense\nimport numpy as np\n\n# 1. Fake data: 1000 samples, 4 features\nX = np.random.random((1000, 4))\ny = np.random.randint(0, 3, (1000,))  # 3 classes\n\n# 2. Build model\nmodel = Sequential([\n    Dense(16, activation='relu', input_shape=(4,)),\n    Dense(8, activation='relu'),\n    Dense(3, activation='softmax')\n])\n\n# 3. Compile\nmodel.compile(optimizer='adam',\n              loss='sparse_categorical_crossentropy',\n              metrics=['accuracy'])\n\n# 4. Train (silent, just for demo)\nhistory = model.fit(X, y, epochs=10, batch_size=32, verbose=0)\n\n# 5. Predict\nprobs = model.predict(X[:5])\npreds = tf.argmax(probs, axis=1)\nprint('Probabilities shape:', probs.shape)\nprint('Predicted classes:', preds.numpy())",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l7_3",
+            "type": "quiz",
+            "title": "Workflow Check ✅",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_1",
+                "type": "multiple_choice",
+                "question": "Which method actually trains the model (adjusts weights)?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "model.compile()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "model.fit()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "model.predict()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "model.evaluate()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`fit()` runs the training loop, updating weights via backpropagation.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l7_4",
+            "type": "text",
+            "title": "Understanding Model Output 📤",
+            "content": "# For classification, `predict()` returns probabilities.\n- Use `tf.argmax` to get the predicted class index.\n- For regression, `predict()` gives the raw number.\n\n```python\npredictions = model.predict(test_data)\nclasses = tf.argmax(predictions, axis=1)\n```"
+        },
+        {
+            "id": "s_l7_5",
+            "type": "exercise",
+            "title": "Try It 🛠️",
+            "content": "Modify the example: add another hidden layer with 12 neurons, change activation to `tanh` in the first layer, and compile with `'sgd'` optimizer. Observe how accuracy changes."
+        }
+    ]
+}

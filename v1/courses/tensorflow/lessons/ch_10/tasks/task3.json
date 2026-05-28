@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_10",
+    "title": "Create a Model with Custom Serving Signature",
+    "description": "Export a model with a named input/output signature and inspect with saved_model_cli.",
+    "estimatedMinutes": 12,
+    "problemStatement": "Create a simple model that doubles its input, then export it with a custom serving signature named 'double' that accepts a float32 tensor of shape (None, 1) and outputs the doubled value. Verify the signature using `saved_model_cli` (conceptually, or print the signature with `tf.saved_model.load`).\n\n**Steps:**\n1. Build a Sequential model with a Dense(1) layer with kernel initialized to [2.0] and bias to 0.0.\n2. Create a serving function `serve(inputs)` that calls the model.\n3. Get concrete function with input signature `[tf.TensorSpec(shape=[None,1], dtype=tf.float32)]`.\n4. Save the model using `tf.saved_model.save` with signatures={'double': concrete_func}.\n5. Load the SavedModel with `tf.saved_model.load` and list the signatures.\n6. Run an inference through the loaded signature and print that the output is indeed input*2.\n\n**Expected Output:** Signature found: double; Input: 5.0 -> Output: 10.0.",
+    "hints": [
+        "Set kernel initializer `tf.constant_initializer([[2.0]])`.",
+        "Use `model.save` or `tf.saved_model.save` with signatures arg.",
+        "To get signatures: `loaded = tf.saved_model.load('model_double'); print(loaded.signatures.keys())`."
+    ],
+    "expectedOutput": "Signature: double\n5.0 -> 10.000",
+    "solutionCode": "import tensorflow as tf\n\n# Create model that doubles\nmodel = tf.keras.Sequential([\n    tf.keras.layers.Dense(1, kernel_initializer=tf.constant_initializer([[2.0]]), bias_initializer='zeros')\n])\nmodel.build(input_shape=(None,1))\n\n@tf.function(input_signature=[tf.TensorSpec(shape=[None, 1], dtype=tf.float32)])\ndef serve(inputs):\n    return model(inputs)\n\ntf.saved_model.save(model, 'model_double', signatures={'double': serve})\n\n# Load and inspect\nloaded = tf.saved_model.load('model_double')\nprint(\"Signature:\", list(loaded.signatures.keys())[0])\n\ndouble_fn = loaded.signatures['double']\noutput = double_fn(tf.constant([[5.0]]))\nprint(f\"5.0 -> {output['output_0'].numpy()[0,0]:.3f}\")"
+}

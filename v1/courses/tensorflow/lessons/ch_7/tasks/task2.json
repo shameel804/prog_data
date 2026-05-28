@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_7",
+    "title": "Fine‑Tuning a Pre‑trained Model",
+    "description": "Take the cats vs dogs model and fine‑tune the top layers of the base.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Starting from the feature extraction model from Task 1, fine‑tune the last 10 layers of MobileNetV2.\n\n**Steps:**\n1. Use the same dataset (or the dummy one) and the trained head from Task 1 (or rebuild and train head quickly).\n2. Unfreeze the base model, then freeze all layers except the last 10.\n3. Compile with a low learning rate (1e-5).\n4. Train for 5 more epochs.\n5. Evaluate and compare the test accuracy before and after fine‑tuning.\n\n**Expected Output:** Accuracy should improve slightly; print before and after accuracies.",
+    "hints": [
+        "Set `base_model.trainable = True`, then iterate through `base_model.layers[:-10]` and set `trainable=False`.",
+        "Re‑compile after changing trainable status."
+    ],
+    "expectedOutput": "Accuracy before fine‑tuning: 0.95\nAccuracy after fine‑tuning: 0.97",
+    "solutionCode": "import tensorflow as tf\nfrom tensorflow.keras import layers, models\nfrom tensorflow.keras.applications import MobileNetV2\nfrom tensorflow.keras.applications.mobilenet_v2 import preprocess_input\nimport numpy as np\n\n# Dummy data\nX_train = np.random.rand(800,224,224,3).astype(np.float32)\ny_train = np.random.randint(0,2,(800,))\nX_val = np.random.rand(200,224,224,3).astype(np.float32)\ny_val = np.random.randint(0,2,(200,))\ntrain_ds = tf.data.Dataset.from_tensor_slices((X_train, y_train)).batch(32)\nval_ds = tf.data.Dataset.from_tensor_slices((X_val, y_val)).batch(32)\n\nbase_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=(224,224,3))\nbase_model.trainable = False\n\ninputs = tf.keras.Input(shape=(224,224,3))\nx = preprocess_input(inputs)\nx = base_model(x, training=False)\nx = layers.GlobalAveragePooling2D()(x)\nx = layers.Dropout(0.2)(x)\noutputs = layers.Dense(1, activation='sigmoid')(x)\nmodel = tf.keras.Model(inputs, outputs)\nmodel.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])\nmodel.fit(train_ds, epochs=3, verbose=0)  # quick feature extraction\n\n_, acc_before = model.evaluate(val_ds, verbose=0)\n\n# Fine‑tuning\nbase_model.trainable = True\nfor layer in base_model.layers[:-10]:\n    layer.trainable = False\n\nmodel.compile(optimizer=tf.keras.optimizers.Adam(1e-5), loss='binary_crossentropy', metrics=['accuracy'])\nmodel.fit(train_ds, epochs=5, verbose=0)\n\n_, acc_after = model.evaluate(val_ds, verbose=0)\nprint(f\"Accuracy before fine‑tuning: {acc_before:.2f}\")\nprint(f\"Accuracy after fine‑tuning: {acc_after:.2f}\")"
+}

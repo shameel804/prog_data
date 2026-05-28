@@ -1,0 +1,72 @@
+{
+    "id": "l2",
+    "chapterId": "ch_9",
+    "title": "GradientTape in Depth 📼",
+    "description": "Master automatic differentiation: persistent tapes, watch, and higher‑order gradients.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Automatic Differentiation with GradientTape 🎞️",
+            "content": "# How TensorFlow Computes Gradients\n\n`tf.GradientTape` records operations on `tf.Variable`s and can compute the gradient of any scalar output with respect to any variable.\n\n- **Context manager**: `with tf.GradientTape() as tape:`\n- All differentiable ops inside are recorded.\n- `tape.gradient(target, sources)` returns gradients.\n\n> Analogy: A black box recorder that tracks every calculation, so later you can ask \"how much did each input affect the output?\""
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Basic GradientTape Example",
+            "content": "Compute gradient of `y = x^2` at `x=3.0`.",
+            "codeSnippet": "import tensorflow as tf\n\nx = tf.Variable(3.0)\nwith tf.GradientTape() as tape:\n    y = x**2\ngrad = tape.gradient(y, x)\nprint(grad.numpy())  # 6.0 = 2*3",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Tape Basics 🎥",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "true_false",
+                "question": "GradientTape automatically watches all tensors inside its context.",
+                "options": [
+                    {
+                        "id": "t",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "f",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "By default, it only watches trainable `tf.Variable` objects. For other tensors, you must use `tape.watch(tensor)`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Persistent Tapes & Watching 🎞️",
+            "content": "# Computing Multiple Gradients\n\nBy default, `GradientTape` is consumed after one `tape.gradient()` call. For multiple gradients, use `persistent=True`.\n\n```python\nwith tf.GradientTape(persistent=True) as tape:\n    y = x**3 + 2*x\ngrad1 = tape.gradient(y, x)  # 3x^2+2\ngrad2 = tape.gradient(grad1, x) # 6x  (second derivative)\n```\n\nTo watch a non‑variable tensor: `tape.watch(tensor)`."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Persistent Tape & Watch",
+            "content": "Demonstrate second‑order gradient and watching.",
+            "codeSnippet": "x = tf.Variable(3.0)\nwith tf.GradientTape(persistent=True) as tape:\n    y = x**3 + 2*x\nfirst = tape.gradient(y, x)\nprint('First:', first.numpy())  # 29.0\nsecond = tape.gradient(first, x)\nprint('Second:', second.numpy()) # 18.0\n\ndel tape  # free resources",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_6",
+            "type": "tip",
+            "title": "Performance Note 💨",
+            "content": "Recording operations has overhead. In production, decorate functions with `@tf.function` to compile graphs and speed up tape‑based training."
+        }
+    ]
+}

@@ -1,0 +1,72 @@
+{
+    "id": "l5",
+    "chapterId": "ch_5",
+    "title": "Data Augmentation for Images 🎨",
+    "description": "Artificially expand your dataset with rotations, flips, zooms, and more.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Data",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "More Data = Better Model 📈",
+            "content": "# But Collecting Real Data is Expensive\n\n**Data augmentation** generates new training samples from existing ones by applying random transformations:\n\n- Rotation, shift, shear, zoom\n- Flip horizontally/vertically\n- Brightness/contrast adjustments\n\nAll these preserve the label (a rotated cat is still a cat)."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "ImageDataGenerator (Legacy) & Preprocessing Layers",
+            "content": "TF 2.x offers `tf.keras.layers.RandomFlip`, `RandomRotation`, etc., as part of the model or `tf.keras.preprocessing.image.ImageDataGenerator` for on‑the‑fly augmentation.",
+            "codeSnippet": "from tensorflow.keras.layers import RandomFlip, RandomRotation\n\ndata_augmentation = Sequential([\n    RandomFlip('horizontal'),\n    RandomRotation(0.1),\n])",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Augmentation Check ✅",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "true_false",
+                "question": "Data augmentation is only applied during training, not validation/testing.",
+                "options": [
+                    {
+                        "id": "t",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "f",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Augmentation artificially increases training variety; evaluation should be on original, unaugmented data.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Common Augmentations 🛠️",
+            "content": "# Visual Examples\n- **RandomFlip('horizontal')**: mirrors image left‑right.\n- **RandomRotation(0.2)**: rotate by random angle up to 0.2*2π (~72°).\n- **RandomZoom(0.2)**: zoom in/out by ±20%.\n- **RandomContrast(0.2)**: adjust contrast.\n\nYou can compose them in a Sequential model and apply as part of the data pipeline or inside the model itself."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Integrating Augmentation into the Model",
+            "content": "Place augmentation layers at the very beginning:",
+            "codeSnippet": "model = Sequential([\n    RandomFlip('horizontal', input_shape=(32,32,3)),\n    RandomRotation(0.1),\n    Conv2D(32, (3,3), activation='relu'),\n    # ... rest of CNN\n])",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "warning",
+            "title": "Be Careful with Augmentation ⚠️",
+            "content": "Don't augment validation/test data. Also, avoid transformations that change the label (e.g., vertical flip of a digit '6' becomes '9')."
+        }
+    ]
+}

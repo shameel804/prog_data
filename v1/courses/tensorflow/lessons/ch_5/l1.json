@@ -1,0 +1,73 @@
+{
+    "id": "l1",
+    "chapterId": "ch_5",
+    "title": "From Pixels to Patterns: Why CNNs? 🖼️",
+    "description": "Understand the limitations of Dense networks on images and how CNNs overcome them.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Images Are Different 🧩",
+            "content": "# Why Dense Networks Struggle with Images\n\nA 224×224 RGB image has 150,528 pixels. If we use a Dense layer with 1000 neurons, that's **150+ million weights** just for the first layer!\n\n- **Huge parameter count** → overfitting, slow training.\n- **No spatial awareness** – Dense layers treat each pixel independently, losing the 2D structure."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Parameter Explosion 💥",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "For a 64×64 grayscale image flattened, how many input features does a Dense network receive?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "64",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "64×64 = 4096",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "64×64×3 = 12288",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "4096×3",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Grayscale has 1 channel, so total pixels = 64×64 = 4096.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "Convolutional Neural Networks – The Solution 🧠",
+            "content": "# CNNs Are Specialised for Images\n\n- **Local connectivity**: each neuron looks at a small patch (receptive field).\n- **Weight sharing**: the same filter slides across the whole image, drastically reducing parameters.\n- **Hierarchical features**: earlier layers detect edges, deeper layers detect shapes and objects.\n\n> Analogy: Instead of reading every letter (pixel) individually, you look for familiar words (patterns) using a sliding window."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "code",
+            "title": "Visualising the Difference",
+            "content": "A quick comparison of parameter counts:",
+            "codeSnippet": "from tensorflow.keras.layers import Dense, Conv2D\n\n# Dense: 64x64 image, 128 neurons\ndense_params = 64*64*128 + 128  # weights + biases\nprint(f\"Dense params: {dense_params}\")   # 524,416\n\n# Conv2D: 3x3 filter, 32 filters, 1 channel\nconv_params = 3*3*1*32 + 32  # kernel + biases\nprint(f\"Conv2D params: {conv_params}\")   # 320",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_5",
+            "type": "tip",
+            "title": "Key Insight 💡",
+            "content": "CNNs use **prior knowledge**: nearby pixels are more related than distant ones. This inductive bias makes them extremely effective for image tasks."
+        }
+    ]
+}

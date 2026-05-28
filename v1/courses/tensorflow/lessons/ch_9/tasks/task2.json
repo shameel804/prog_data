@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_9",
+    "title": "Build a Custom Layer with Spectral Normalisation",
+    "description": "Implement a custom Dense layer that applies spectral normalisation to its kernel.",
+    "estimatedMinutes": 20,
+    "problemStatement": "Create a custom Keras layer `SpectralNormalizedDense` that applies spectral normalisation to its kernel after each weight update. Spectral normalisation constrains the spectral norm (largest singular value) of the weight matrix to 1.\n\n**Steps:**\n1. Subclass `tf.keras.layers.Layer`.\n2. In `__init__`, accept `units` and store.\n3. In `build`, create a standard kernel `w` (no bias for simplicity).\n4. Implement `normalize_weights()`: compute `w_sn = w / tf.linalg.svd(w, compute_uv=False)[0]` (the maximum singular value).\n5. In `call`, use the normalised weight: `output = tf.matmul(inputs, self.w_sn)`.\n6. Override `trainable_weights` to include `w` and track `w_sn` as non‑trainable (or just compute on the fly).\n7. Test the layer by training a tiny model on random data and verify the spectral norm of the kernel stays ≤ 1.\n\n**Expected Output:** After training, print spectral norm of kernel; it should be ≤ 1.",
+    "hints": [
+        "Use `tf.linalg.svd(w, compute_uv=False)` to get singular values.",
+        "Take the first singular value (maximum).",
+        "Re‑compute `w_sn` in `call` or via `add_weight` and update manually; simplest is compute in `call`."
+    ],
+    "expectedOutput": "Spectral norm of kernel after training: 1.000",
+    "solutionCode": "import tensorflow as tf\nimport numpy as np\n\nclass SpectralNormalizedDense(tf.keras.layers.Layer):\n    def __init__(self, units):\n        super().__init__()\n        self.units = units\n\n    def build(self, input_shape):\n        self.w = self.add_weight(shape=(input_shape[-1], self.units),\n                                initializer='random_normal', trainable=True)\n\n    def call(self, inputs):\n        # Compute spectral norm of w and normalize\n        s = tf.linalg.svd(self.w, compute_uv=False)\n        # s[0] is the largest singular value\n        w_sn = self.w / s[0]\n        return tf.matmul(inputs, w_sn)\n\n# Test on random data\nX = np.random.randn(500, 5).astype(np.float32)\ny = np.random.randn(500, 1).astype(np.float32)\ndataset = tf.data.Dataset.from_tensor_slices((X, y)).batch(32)\n\nmodel = tf.keras.Sequential([SpectralNormalizedDense(10), tf.keras.layers.Dense(1)])\nmodel.compile(optimizer='adam', loss='mse')\nmodel.fit(dataset, epochs=5, verbose=0)\n\n# Check spectral norm\nlayer = model.layers[0]\ns_max = tf.linalg.svd(layer.w, compute_uv=False)[0].numpy()\nprint(f\"Spectral norm of kernel after training: {s_max:.4f}\")"
+}

@@ -1,0 +1,91 @@
+{
+    "id": "l3",
+    "chapterId": "ch_8",
+    "title": "Advanced Dataset Operations 🧬",
+    "description": "Master interleave, flat_map, window, zip, and handling multiple files.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Beyond the Basics 🧰",
+            "content": "# When Simple Shuffle/Batch Isn't Enough\n\n- **Interleave**: read from many files in parallel, mixing records.\n- **Flat_map**: map each element to a dataset and flatten.\n- **Window**: group elements into fixed‑size windows for time series.\n- **Zip**: combine multiple datasets element‑wise.\n- **Concatenate**: append one dataset to another."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Interleave for File Reading",
+            "content": "Efficiently read multiple file shards.",
+            "codeSnippet": "files = tf.data.Dataset.list_files('data/train/*.tfrecord')\ndataset = files.interleave(\n    tf.data.TFRecordDataset,\n    cycle_length=4,          # how many files to read in parallel\n    num_parallel_calls=tf.data.AUTOTUNE\n)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Interleave Insight 💡",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What does `cycle_length` control in `interleave`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The number of output elements per input file",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The number of input elements to interleave concurrently",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The buffer size for shuffling",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The batch size",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`cycle_length` determines how many files (or datasets) are processed in parallel at a time.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Flat_map for Tokenisation 🪙",
+            "content": "# Flatten Nested Sequences\n\nWhen each file contains multiple records and you want to output records one by one:\n\n```python\ndef parse_file(filename):\n    return tf.data.TextLineDataset(filename)\n\nfiles = tf.data.Dataset.list_files('data/*.txt')\nlines = files.flat_map(parse_file)\n```\nEach file yields lines; `flat_map` concatenates all lines into a single dataset."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Windowing for Time Series 🪟",
+            "content": "Create sliding windows of data points.",
+            "codeSnippet": "data = tf.data.Dataset.range(100)\nwindows = data.window(size=10, shift=5, drop_remainder=True)\n# Each window is itself a dataset; use flat_map to process\nwindows = windows.flat_map(lambda w: w.batch(10))\n# Now each element is a tensor of shape (10,)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "code",
+            "title": "Zip & Concatenate",
+            "content": "Combine datasets.",
+            "codeSnippet": "# Zip: pair features and labels from separate sources\nfeatures = tf.data.Dataset.from_tensor_slices([...])\nlabels = tf.data.Dataset.from_tensor_slices([...])\ndataset = tf.data.Dataset.zip((features, labels))\n\n# Concatenate\ndataset = dataset_A.concatenate(dataset_B)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_7",
+            "type": "tip",
+            "title": "Use Interleave for Scalability 📈",
+            "content": "When you have thousands of files, interleave with a high `cycle_length` and `num_parallel_calls` can keep I/O busy, drastically reducing training time."
+        }
+    ]
+}

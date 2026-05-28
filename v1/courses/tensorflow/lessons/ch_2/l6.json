@@ -1,0 +1,107 @@
+{
+    "id": "l6",
+    "chapterId": "ch_2",
+    "title": "Random Tensors & Seeding 🎲",
+    "description": "Create reproducible random numbers for initializations and shuffling.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Why Randomness? 🎰",
+            "content": "# Neural Nets Need Randomness\n- Weight initialization\n- Dropout layers\n- Data shuffling\n\nBut for **reproducibility**, we control randomness with seeds.\n\nTensorFlow provides `tf.random` module."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Basic Random Functions",
+            "content": "Generate random values from different distributions.",
+            "codeSnippet": "import tensorflow as tf\n\n# Uniform [0,1) of shape (2,2)\nunif = tf.random.uniform((2,2))\nprint(unif)\n\n# Normal (mean=0, std=1)\nnorm = tf.random.normal((2,2))\nprint(norm)\n\n# Integer uniform [0,10) shape (3,)\nints = tf.random.uniform((3,), maxval=10, dtype=tf.int32)\nprint(ints)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "Random Range 🎲",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What range of values does `tf.random.uniform((4,), minval=2, maxval=5)` produce?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "[2, 5] inclusive",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "[2, 5)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "(2, 5]",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "(2, 5)",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Uniform returns values in [minval, maxval).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Seeding for Reproducibility 🌱",
+            "content": "# `tf.random.set_seed(seed)`\n\nSets the global seed. Run it once at the start.\n\n```python\ntf.random.set_seed(42)\na = tf.random.normal((2,))\ntf.random.set_seed(42)\nb = tf.random.normal((2,))  # a == b\n```\n\nFor independent streams, use a `tf.random.Generator`."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "code",
+            "title": "Using a Generator (Better)",
+            "content": "Create a local generator object.",
+            "codeSnippet": "rng = tf.random.Generator.from_seed(1234)\na = rng.normal((3,))\nb = rng.normal((3,))  # different, but reproducible if you re-create rng with same seed",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l6_6",
+            "type": "quiz",
+            "title": "Seed Sense 🌱",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "true_false",
+                "question": "If you set `tf.random.set_seed(42)` and then call `tf.random.normal((3,))` twice, you get the same values both times.",
+                "options": [
+                    {
+                        "id": "t",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "f",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "After setting the seed, the first call yields random numbers, the second call yields a different set because the RNG state advances.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_7",
+            "type": "tip",
+            "title": "Shuffling Data 🔀",
+            "content": "Use `tf.random.shuffle(tensor)` to randomly permute along the first axis. This is crucial for training."
+        }
+    ]
+}

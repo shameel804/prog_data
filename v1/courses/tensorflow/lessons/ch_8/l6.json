@@ -1,0 +1,88 @@
+{
+    "id": "l6",
+    "chapterId": "ch_8",
+    "title": "Performance Optimization: Parallelism & Caching ⚡",
+    "description": "Use prefetch, cache, autotune, and interleaving to feed your GPU without starvation.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Optimization",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "The Perfect Pipeline 🏎️",
+            "content": "# Goal: GPU Never Waits for Data\n\nA well‑optimised pipeline performs:\n- Reading\n- Decoding\n- Augmentation\n- Batching\n\nAll on CPU, **in parallel** with GPU training. The magic ingredients:\n- **Prefetch**\n- **Parallel map**\n- **Interleave**\n- **Caching**\n- **Autotune**\n\n> Analogy: A kitchen where sous‑chefs (CPU) prepare ingredients while the head chef (GPU) cooks continuously."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Prefetch & Autotune",
+            "content": "`prefetch` overlaps preprocessing and model execution.",
+            "codeSnippet": "dataset = dataset.prefetch(buffer_size=tf.data.AUTOTUNE)\n# buffer_size: how many batches to prepare in advance. AUTOTUNE chooses the best value dynamically.",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "Prefetch Power ⚡",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What does `prefetch` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Loads the entire dataset into memory",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Prepares the next batch while the current one is being processed",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Saves the dataset to disk",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Repeats the dataset indefinitely",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Prefetch creates a buffer that prepares the next batch(es) in background, overlapping CPU and GPU work.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Caching: Store in Memory or Disk 💾",
+            "content": "# Avoid Re‑reading Data Every Epoch\n\n- `dataset.cache()` stores the dataset after the first epoch.\n- If the dataset fits in RAM, caching eliminates disk I/O after epoch 1.\n- Can also cache to a local file: `dataset.cache('/tmp/my_cache')`.\n\n**Place cache after `map` and `batch` if you want to cache the processed version.**"
+        },
+        {
+            "id": "s_l6_5",
+            "type": "code",
+            "title": "Optimised Pipeline Example",
+            "content": "A production‑ready pipeline:",
+            "codeSnippet": "dataset = tf.data.Dataset.list_files('data/train/*.jpg')\ndataset = dataset.interleave(\n    lambda x: tf.data.Dataset.from_tensor_slices([x]),\n    cycle_length=tf.data.AUTOTUNE,\n    num_parallel_calls=tf.data.AUTOTUNE\n)\ndataset = dataset.map(load_and_preprocess, num_parallel_calls=tf.data.AUTOTUNE)\ndataset = dataset.batch(32)\ndataset = dataset.cache()          # cache after batching\ndataset = dataset.prefetch(tf.data.AUTOTUNE)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_6",
+            "type": "warning",
+            "title": "Caching Large Datasets ⚠️",
+            "content": "If your processed dataset is larger than RAM, don't cache in memory. Use a file cache or skip caching altogether."
+        },
+        {
+            "id": "s_l6_7",
+            "type": "exercise",
+            "title": "Benchmark Your Pipeline ⏱️",
+            "content": "Add `tf.data.experimental.OptimizationOptions` or use `model.fit` with `verbose=1` and watch GPU utilisation via `nvidia‑smi`. If GPU utilisation is low, your pipeline is the bottleneck."
+        }
+    ]
+}

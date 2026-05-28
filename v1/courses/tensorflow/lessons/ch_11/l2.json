@@ -1,0 +1,82 @@
+{
+    "id": "l2",
+    "chapterId": "ch_11",
+    "title": "Hardware Acceleration with Delegates ⚡",
+    "description": "Use GPU, NNAPI, and Core ML delegates to speed up TFLite inference dramatically.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Acceleration",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Delegates: Turbo‑Boost Your Inference 🚄",
+            "content": "# What is a Delegate?\n\nA delegate offloads graph operations to specialised hardware:\n- **GPU delegate** (OpenGL ES / OpenCL) – for heavy maths.\n- **NNAPI delegate** (Android Neural Networks API) – uses DSP, NPU, or CPU efficiently.\n- **Core ML delegate** (iOS) – uses Apple's Neural Engine.\n- **XNNPACK delegate** – optimised CPU kernels.\n\nAdding a delegate can cut latency by 2‑10× compared to plain CPU.\n\n> Analogy: Using a dedicated graphics card for gaming instead of the CPU alone."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Adding a Delegate (Python side testing)",
+            "content": "In the Python TFLite interpreter, you can try GPU delegate if built.",
+            "codeSnippet": "import tensorflow as tf\n\n# Load model\ninterpreter = tf.lite.Interpreter(model_path='model.tflite',\n                                  experimental_delegates=[\n                                      tf.lite.experimental.load_delegate('libedgetpu.so.1')  # Edge TPU example\n                                  ])\n# Or for GPU (requires built with GPU delegate)\n# interpreter = tf.lite.Interpreter(model_path='model.tflite',\n#                                   experimental_delegates=[tf.lite.experimental.load_delegate('libtensorflowlite_gpu_delegate.so')])",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Delegate IQ 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which delegate leverages Android's DSP and NPU hardware?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "GPU delegate",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "NNAPI delegate",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Core ML delegate",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "XNNPACK delegate",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The NNAPI delegate routes ops to the most efficient Android hardware (DSP, NPU, GPU).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Android: Integrate GPU Delegate in Kotlin",
+            "content": "# Add Dependency and Configure Interpreter\n\nIn your `build.gradle`:\n```\nimplementation 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly'\n```\n\nKotlin code:\n```kotlin\nval delegate = GpuDelegate()\nval interpreter = Interpreter(modelFile, Interpreter.Options().apply { addDelegate(delegate) })\n```\n\nGPU delegate is best for models with many convolutions or matrix multiplications."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "iOS: Core ML Delegate",
+            "content": "In Swift, use Core ML delegate for massive speedups on Apple Neural Engine.",
+            "codeSnippet": "// Swift\nimport TensorFlowLite\nimport TensorFlowLiteCoreML\n\nlet coreMLDelegate = CoreMLDelegate()\nvar interpreter: Interpreter\ndo {\n    interpreter = try Interpreter(modelPath: modelPath,\n                                  delegates: [coreMLDelegate])\n} catch {\n    print(\"Error\")\n}",
+            "codeLanguage": "swift",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "tip",
+            "title": "Fallback Strategy 🛡️",
+            "content": "If a delegate doesn't support certain ops, it falls back to CPU automatically. You can set `options.setCancellable(true)` or use `allowFp16PrecisionForFp32` for extra speed."
+        }
+    ]
+}

@@ -1,0 +1,79 @@
+{
+    "id": "l4",
+    "chapterId": "ch_6",
+    "title": "Long Short‑Term Memory (LSTM) 🧠",
+    "description": "Master the LSTM: its cell state, forget/input/output gates, and how it remembers long sequences.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Architectures",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "LSTM: A Smarter Memory Unit 🧠",
+            "content": "# How to Remember for a Long Time\n\nLSTM (Hochreiter & Schmidhuber, 1997) introduces a **cell state** – a dedicated highway for information to flow across time steps with minimal change.\n\nIt also uses **three gates**:\n- **Forget gate**: what to discard from the past.\n- **Input gate**: what new information to add.\n- **Output gate**: what to output from the current state.\n\n> Analogy: A notebook with a smart pen – you decide what to erase, what to write, and what to read out."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "LSTM Cell Equations (Simplified) 📝",
+            "content": "# Gates and States\n```\nf_t = σ(W_f · [h_{t-1}, x_t] + b_f)    (forget)\ni_t = σ(W_i · [h_{t-1}, x_t] + b_i)    (input)\nC̃_t = tanh(W_C · [h_{t-1}, x_t] + b_C) (candidate)\nC_t = f_t * C_{t-1} + i_t * C̃_t       (cell state update)\no_t = σ(W_o · [h_{t-1}, x_t] + b_o)    (output)\nh_t = o_t * tanh(C_t)                  (hidden state)\n```\n*σ* = sigmoid, * = element‑wise multiplication."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Gate Keeper 🔑",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does the forget gate in an LSTM do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Decides which new information to store",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Decides what to remove from the cell state",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Decides the output",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Controls the learning rate",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The forget gate multiplies the previous cell state element‑wise by a value between 0 and 1, erasing irrelevant parts.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "LSTM in Keras",
+            "content": "Use `LSTM` layer just like `SimpleRNN`.",
+            "codeSnippet": "from tensorflow.keras.layers import LSTM\n\nlstm = LSTM(64, return_sequences=True, input_shape=(None, 10))\n# For classification: LSTM(64, return_sequences=False)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Why LSTM Works 🧪",
+            "content": "# Constant Error Carousel\n\nThe cell state `C_t` can propagate gradients unchanged across many time steps because the update is additive and gated. This avoids the repeated multiplication of the same weight matrix that caused vanishing gradients in SimpleRNN."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Bidirectional LSTM ↔️",
+            "content": "Wrap `LSTM` with `Bidirectional` to process the sequence both forward and backward. This gives context from past and future – great for text classification."
+        }
+    ]
+}

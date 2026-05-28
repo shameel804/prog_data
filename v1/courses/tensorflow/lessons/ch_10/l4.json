@@ -1,0 +1,82 @@
+{
+    "id": "l4",
+    "chapterId": "ch_10",
+    "title": "TensorFlow Lite: Convert & Optimize 🪶",
+    "description": "Shrink models for mobile and edge with TFLite conversion, quantization, and pruning.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Mobile",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Why TensorFlow Lite? 📱",
+            "content": "# Models for Tiny Devices\n\nFull TensorFlow models are too big and slow for phones, microcontrollers, and IoT devices. TensorFlow Lite (TFLite) addresses this by:\n- Using a **smaller interpreter** (no Python dependency).\n- Applying **optimisations** (quantization, pruning, operator fusion).\n- Supporting **hardware acceleration** (GPU, DSP, CoreML).\n\n> Analogy: Compressing a 4K movie to a mobile‑friendly resolution without losing the story."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Basic Conversion: SavedModel → .tflite",
+            "content": "Use the `TFLiteConverter`.",
+            "codeSnippet": "import tensorflow as tf\n\n# Convert Keras SavedModel\nconverter = tf.lite.TFLiteConverter.from_saved_model('my_model')\ntflite_model = converter.convert()\n\n# Save to disk\nwith open('model.tflite', 'wb') as f:\n    f.write(tflite_model)\nprint(f\"Size: {len(tflite_model)} bytes\")",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Lite Basics 🪶",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does TFLite primarily target?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Training on GPUs",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Inference on mobile and embedded devices",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Serving models in the cloud",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Data augmentation",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "TFLite is designed for efficient inference on resource‑constrained devices.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Quantization: Smaller & Faster ⚡",
+            "content": "# Reducing Precision\n\nDefault TF models use `float32`. TFLite can quantize to `float16` or `int8`:\n- **float16**: 2× smaller, little accuracy loss, works on GPU.\n- **int8 (full integer quantization)**: 4× smaller, faster, works on CPU with integer ops.\n\nExample: convert with dynamic range quantization:\n```python\nconverter = tf.lite.TFLiteConverter.from_saved_model('my_model')\nconverter.optimizations = [tf.lite.Optimize.DEFAULT]\ntflite_quant_model = converter.convert()\n```"
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Post‑Training Integer Quantization",
+            "content": "Need a representative dataset for calibration.",
+            "codeSnippet": "def representative_dataset():\n    for data in calibration_data.batch(1).take(100):\n        yield [tf.cast(data, tf.float32)]\n\nconverter = tf.lite.TFLiteConverter.from_saved_model('my_model')\nconverter.optimizations = [tf.lite.Optimize.DEFAULT]\nconverter.representative_dataset = representative_dataset\nconverter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]\nconverter.inference_input_type = tf.uint8  # or tf.int8\nconverter.inference_output_type = tf.uint8\nint8_model = converter.convert()",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Model Size Trade‑offs ⚖️",
+            "content": "Quantization may reduce accuracy slightly. Always evaluate on a test set before deploying. For many tasks, the drop is negligible."
+        }
+    ]
+}

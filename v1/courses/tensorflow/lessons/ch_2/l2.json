@@ -1,0 +1,123 @@
+{
+    "id": "l2",
+    "chapterId": "ch_2",
+    "title": "Indexing & Slicing Tensors 🔪",
+    "description": "Extract parts of a tensor using NumPy-style slicing and advanced indexing.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Basic Indexing 🔢",
+            "content": "# Like Python Lists, but Multi‑Axis\n\n- Use square brackets `tensor[row, col, ...]`.\n- Indices start at 0.\n- Negative indices count from the end.\n\n```python\nt = tf.constant([[10,20,30],[40,50,60]])\nt[0,1]   # 20\n```\n\n> Analogy: A bookshelf with shelves (axis 0) and positions on each shelf (axis 1)."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Multi‑Dimensional Indexing",
+            "content": "Access elements across 3+ dimensions.",
+            "codeSnippet": "import tensorflow as tf\n\nt3d = tf.constant([[[1,2],[3,4]], [[5,6],[7,8]]])\nprint(t3d[0,1,0])   # 3\nprint(t3d[1,0,1])   # 6",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Index Check 🔍",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "If `t = tf.constant([[1,2],[3,4],[5,6]])`, what is `t[-1,0]`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "5",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "6",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "3",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Negative index -1 means last row (third row), column 0 gives value 5.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Slicing Like a Pro 🍕",
+            "content": "# The Colon `:` Syntax\n\n- `start:stop:step` – works per axis.\n- `:` alone means all elements along that axis.\n\n```python\nt = tf.constant([[10,20,30],[40,50,60],[70,80,90]])\nt[1:, ::2]   # rows 1-end, columns skip by 2\n# -> [[40,60],[70,90]]\n```"
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Practical Slicing",
+            "content": "Extract corners, sub‑volumes.",
+            "codeSnippet": "t = tf.constant([[10,20,30],[40,50,60],[70,80,90]])\n# first two rows, last two columns\nsub = t[:2, 1:]\nprint(sub)   # [[20,30],[50,60]]\n\n# every other element of first row\nprint(t[0,::2])  # [10,30]",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Slice Challenge 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What does `tf.constant([1,2,3,4,5])[::-1]` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "[5,4,3,2,1]",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "[1,2,3,4,5]",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "[1,3,5]",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The slice `[::-1]` reverses the tensor.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "Advanced Indexing with `tf.gather` & `tf.gather_nd`",
+            "content": "# Gather Slices by Index List\n\n`tf.gather` picks out rows (or other axis) by index.\n`tf.gather_nd` collects individual elements.\n\n```python\nparams = tf.constant([[1,2],[3,4],[5,6]])\ntf.gather(params, [0,2])   # rows 0 and 2 -> [[1,2],[5,6]]\ntf.gather_nd(params, [[0,1],[2,0]])  # elements (0,1)=2, (2,0)=5\n```"
+        },
+        {
+            "id": "s_l2_8",
+            "type": "exercise",
+            "title": "Try It: Slice a 3D Cube 🧊",
+            "content": "Create a `(4,4,4)` tensor of random integers. Extract the central 2×2×2 subcube (indices 1:3 on each axis)."
+        }
+    ]
+}

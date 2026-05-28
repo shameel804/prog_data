@@ -1,0 +1,82 @@
+{
+    "id": "l2",
+    "chapterId": "ch_8",
+    "title": "Essential Transformations: map, batch, shuffle 📊",
+    "description": "Learn the core dataset transformations to prepare data for training.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Chaining Transformations ⛓️",
+            "content": "# Datasets Are Lazy and Composable\n\nEach transformation returns a **new Dataset** object. No computation happens until you iterate or call `.fit()`.\n\nCommon transformations:\n- `.map(fn)` – apply a function to each element.\n- `.batch(batch_size)` – group elements into batches.\n- `.shuffle(buffer_size)` – randomly shuffle elements.\n- `.repeat(count)` – repeat the dataset indefinitely or N times.\n- `.prefetch(buffer_size)` – prepare next batch while current one is processed."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "A Typical Pipeline",
+            "content": "Load, shuffle, batch, map, prefetch.",
+            "codeSnippet": "dataset = tf.data.Dataset.from_tensor_slices((X_train, y_train))\ndataset = dataset.shuffle(buffer_size=1000)\ndataset = dataset.batch(32)\ndataset = dataset.map(preprocess_fn, num_parallel_calls=tf.data.AUTOTUNE)\ndataset = dataset.prefetch(tf.data.AUTOTUNE)\n\nmodel.fit(dataset, epochs=5)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Pipeline Order 📋",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Why should `batch` usually come before `map` for heavy operations?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It doesn't matter",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "So the map function processes whole batches, enabling vectorised operations",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Because shuffle requires batches",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To reduce the number of files",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Mapping after batching applies the function to batches, which is often more efficient than per‑element.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "The `map` Function 🗺️",
+            "content": "# Transform Each Element\n\n- Takes a function that receives one element (or a tuple if multiple components).\n- Returns the transformed element.\n- Use `num_parallel_calls=tf.data.AUTOTUNE` for parallel execution.\n\n```python\ndef rescale(x, y):\n    return x / 255.0, y\n\ndataset = dataset.map(rescale, num_parallel_calls=tf.data.AUTOTUNE)\n```"
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Shuffle & Batch Mechanics",
+            "content": "Shuffle uses a buffer; it randomly picks elements from the buffer.",
+            "codeSnippet": "# Shuffle: good buffer size ~ dataset size for perfect randomness (if memory allows)\ndataset = dataset.shuffle(buffer_size=10000)\n\n# Batch: groups consecutive elements\ndataset = dataset.batch(32)\n\n# Drop remainder if uneven last batch?\ndataset = dataset.batch(32, drop_remainder=True)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "tip",
+            "title": "Shuffle Buffer Size 💡",
+            "content": "A buffer larger than your dataset gives uniform randomness. If memory is tight, use a fraction (e.g., 10%). Larger = better randomness but more RAM."
+        }
+    ]
+}

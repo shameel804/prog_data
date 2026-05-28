@@ -1,0 +1,77 @@
+{
+    "id": "l1",
+    "chapterId": "ch_12",
+    "title": "Capstone 1: End‑to‑End Image Classifier 🖼️",
+    "description": "Go from zero to a fully trained and converted TFLite model, ready for a mobile app.",
+    "xpReward": 40,
+    "estimatedMinutes": 12,
+    "section": "Project",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The Mission 🎯",
+            "content": "# Build a Complete Image Classifier\n\nYou have a folder of images of **five animal species** (cat, dog, bird, fish, horse). You want an app that can recognise them from the camera.\n\nWe'll:\n1. Load and preprocess the images with `tf.data`.\n2. Build and fine‑tune a MobileNetV2 model.\n3. Apply Quantization‑Aware Training.\n4. Convert to TFLite with metadata.\n5. Write a simple Task Library caller (conceptual).\n\nAll steps in one notebook – this is the capstone of everything you've learned."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "code",
+            "title": "Step 1: Load and Augment Data",
+            "content": "Use `image_dataset_from_directory` to create training and validation sets.",
+            "codeSnippet": "import tensorflow as tf\n\nIMG_SIZE = (224, 224)\nBATCH = 32\n\ntrain_ds = tf.keras.utils.image_dataset_from_directory(\n    'animals/train',\n    validation_split=0.2,\n    subset='training',\n    seed=42,\n    image_size=IMG_SIZE,\n    batch_size=BATCH\n)\nval_ds = tf.keras.utils.image_dataset_from_directory(\n    'animals/train',\n    validation_split=0.2,\n    subset='validation',\n    seed=42,\n    image_size=IMG_SIZE,\n    batch_size=BATCH\n)\n\n# Prefetch for performance\ntrain_ds = train_ds.prefetch(tf.data.AUTOTUNE)\nval_ds = val_ds.prefetch(tf.data.AUTOTUNE)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "Step 2: Build the Model (Transfer Learning)",
+            "content": "# MobileNetV2 Base + Custom Head\n\nFreeze the base, add GlobalAveragePooling, Dropout, Dense with softmax.\n\nWe'll also add data augmentation layers at the start to keep the model self‑contained."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "code",
+            "title": "Model Architecture",
+            "content": "",
+            "codeSnippet": "from tensorflow.keras import layers, models\n\ndata_augmentation = tf.keras.Sequential([\n    layers.RandomFlip('horizontal'),\n    layers.RandomRotation(0.1),\n    layers.RandomZoom(0.1)\n])\n\nbase_model = tf.keras.applications.MobileNetV2(\n    weights='imagenet', include_top=False, input_shape=(224,224,3)\n)\nbase_model.trainable = False\n\ninputs = tf.keras.Input(shape=(224,224,3))\nx = data_augmentation(inputs)\n# Preprocess for MobileNetV2\nx = tf.keras.applications.mobilenet_v2.preprocess_input(x)\nx = base_model(x, training=False)\nx = layers.GlobalAveragePooling2D()(x)\nx = layers.Dropout(0.2)(x)\noutputs = layers.Dense(5, activation='softmax')(x)\nmodel = tf.keras.Model(inputs, outputs)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_5",
+            "type": "text",
+            "title": "Step 3: Train (Feature Extraction Phase)",
+            "content": "# Compile and Fit\n\n```python\nmodel.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])\nhistory = model.fit(train_ds, validation_data=val_ds, epochs=10)\n```\n\nAfter this, the head is trained. Now we can fine‑tune."
+        },
+        {
+            "id": "s_l1_6",
+            "type": "code",
+            "title": "Step 4: Fine‑tune and QAT",
+            "content": "Unfreeze some base layers, then apply Quantization‑Aware Training.",
+            "codeSnippet": "# Fine‑tune\nbase_model.trainable = True\nfor layer in base_model.layers[:-20]:\n    layer.trainable = False\nmodel.compile(optimizer=tf.keras.optimizers.Adam(1e-5), loss='sparse_categorical_crossentropy', metrics=['accuracy'])\nmodel.fit(train_ds, validation_data=val_ds, epochs=5)\n\n# QAT\nimport tensorflow_model_optimization as tfmot\nqat_model = tfmot.quantization.keras.quantize_model(model)\nqat_model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])\nqat_model.fit(train_ds, validation_data=val_ds, epochs=3)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_7",
+            "type": "text",
+            "title": "Step 5: Convert to TFLite with Metadata",
+            "content": "# Add Metadata for Task Library\n\n- Convert the QAT model.\n- Use the TFLite Metadata Writer to embed labels and normalization info.\n- The resulting model is ready for `ImageClassifier.createFromFile` on Android."
+        },
+        {
+            "id": "s_l1_8",
+            "type": "code",
+            "title": "Conversion & Metadata",
+            "content": "",
+            "codeSnippet": "converter = tf.lite.TFLiteConverter.from_keras_model(qat_model)\nconverter.optimizations = [tf.lite.Optimize.DEFAULT]\ntflite_model = converter.convert()\n\n# Save model\nwith open('animal_classifier.tflite', 'wb') as f:\n    f.write(tflite_model)\n\n# (Optional: use flatbuffers to add label file and metadata – see documentation)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_9",
+            "type": "tip",
+            "title": "You Did It! 🎉",
+            "content": "This pipeline is exactly what professional ML engineers use. You've taken raw images to a production‑ready mobile model."
+        }
+    ]
+}

@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_3",
+    "title": "Multi‑class Model & Architecture Experiment",
+    "description": "Design a 3‑class classifier and observe parameter counts.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Build a model for a 3‑class classification task with 20 input features.\n\n1. Create a Sequential model with:\n   - Input shape (20,).\n   - Dense(32, activation='relu')\n   - Dense(16, activation='relu')\n   - Dense(3, activation='softmax')\n2. Print summary.\n3. Manually calculate the number of parameters in the first Dense layer: weight matrix 20x32 + bias 32 = 672. Verify with summary.\n4. Change the first Dense layer to have 64 neurons. How many parameters does it have now? Print the new model summary and note the total parameter count.\n5. Compile with `optimizer='rmsprop'`, `loss='sparse_categorical_crossentropy'`, `metrics=['accuracy']`.\n\n**Expected Output:** Parameter counts and compilation confirmation.",
+    "hints": [
+        "Formula: (input_units * units) + units (bias).",
+        "Softmax ensures output probabilities sum to 1."
+    ],
+    "expectedOutput": "Initial model: first Dense params = 20*32+32 = 672. Total trainable params: ...\nAfter widening to 64: first Dense params = 20*64+64 = 1344. Total params increase.\nModel compiled.",
+    "solutionCode": "import tensorflow as tf\nfrom tensorflow.keras.models import Sequential\nfrom tensorflow.keras.layers import Dense\n\n# Initial model\nmodel = Sequential([\n    Dense(32, activation='relu', input_shape=(20,)),\n    Dense(16, activation='relu'),\n    Dense(3, activation='softmax')\n])\nmodel.summary()\n\n# Change first layer to 64\nmodel2 = Sequential([\n    Dense(64, activation='relu', input_shape=(20,)),\n    Dense(16, activation='relu'),\n    Dense(3, activation='softmax')\n])\nmodel2.summary()\n\nmodel2.compile(optimizer='rmsprop',\n               loss='sparse_categorical_crossentropy',\n               metrics=['accuracy'])\nprint(\"Model compiled.\")"
+}

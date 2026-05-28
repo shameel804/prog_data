@@ -1,0 +1,85 @@
+{
+    "id": "l5",
+    "chapterId": "ch_7",
+    "title": "Advanced Transfer Learning & Best Practices 🏆",
+    "description": "Fine‑tune effectively, schedule learning rates, augment data, and handle different input sizes.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Optimization",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "The Fine‑Tuning Process Step‑by‑Step 📋",
+            "content": "# Golden Recipe\n1. Train the new classifier head with base frozen (feature extraction).\n2. Unfreeze only the top layers of the base (e.g., last 10‑20%).\n3. Use a **very low learning rate** (1e‑5 or lower).\n4. Monitor validation loss; use EarlyStopping.\n5. Optionally, gradually unfreeze more layers in stages.\n\nThis progressive unfreezing preserves useful low‑level features."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Fine‑Tuning Wisdom 🦉",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Why use a low learning rate during fine‑tuning?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To speed up training",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To prevent destroying useful pre‑trained weights",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To increase model size",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To reduce validation loss to zero",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Fine‑tuning makes small adjustments; a large learning rate can distort the learned features.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Dynamic Learning Rate Scheduling",
+            "content": "Use `ReduceLROnPlateau` or a manual decay.",
+            "codeSnippet": "reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(\n    monitor='val_loss', factor=0.2, patience=2, min_lr=1e-6\n)\nmodel.fit(train_ds, epochs=20, validation_data=val_ds, callbacks=[reduce_lr])",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Data Augmentation for Transfer Learning 🎨",
+            "content": "# Augment to Combat Small Datasets\n\nEven with transfer learning, data augmentation helps regularise the model. Apply random flips, rotations, zooms.\n\nAdd augmentation layers at the start of the model (after input) so they run on GPU and are part of the graph.\n\n```python\ndata_augmentation = tf.keras.Sequential([\n    layers.RandomFlip('horizontal'),\n    layers.RandomRotation(0.1),\n])\n```"
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Handling Different Image Sizes 🖼️",
+            "content": "# What if my images are not 224×224?\n\nMost pre‑trained models expect a specific size (e.g., 224×224 for VGG16/ResNet50, 299×299 for InceptionV3). You can:\n- Resize images to the expected size (use `image_size` in `image_dataset_from_directory`).\n- Change `input_shape` and allow the model to adapt (may work if no global pooling or dense layers assume fixed size).\n\nBetter to match the original training size."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "When to Stop Fine‑Tuning 🛑",
+            "content": "If your dataset is very small (<1000 images), stick to feature extraction. Fine‑tuning risks overfitting. Use it when you have a few thousand images per class."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "exercise",
+            "title": "Experiment 🧪",
+            "content": "Take a pre‑trained MobileNetV2 and fine‑tune it on a 5‑class animal dataset. Compare performance with and without fine‑tuning. Observe the improvement."
+        }
+    ]
+}

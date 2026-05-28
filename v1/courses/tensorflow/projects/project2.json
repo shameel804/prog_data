@@ -1,0 +1,26 @@
+{
+    "id": "project2",
+    "title": "Sentiment Analysis API with TF Serving",
+    "description": "Train an LSTM model, export as a SavedModel, and deploy a scalable REST API for text sentiment.",
+    "difficulty": "Intermediate",
+    "estimatedHours": "2-4",
+    "projectStatement": "## Scenario\nYou work for a social media analytics company. They need a **real‑time sentiment analysis service** that can accept a text review and return a positive/negative probability.\n\n## Your Mission\nBuild and serve a deep learning model that:\n- Uses the IMDB movie review dataset (or a similar binary text dataset).\n- Trains a Bidirectional LSTM with an embedding layer.\n- Exports the model as a TensorFlow SavedModel with a well‑defined serving signature.\n- Launches a local TensorFlow Serving instance via Docker.\n- Provides example REST calls using `curl` or Python `requests`.\n\nYou will demonstrate mastery of **sequence modelling**, **model deployment**, and **serving infrastructure**.\n\n## Dataset\nThe IMDB dataset from `tensorflow.keras.datasets.imdb` (25,000 reviews, binary labels).\n\n## Deliverables\n1. Python code to preprocess, train, and evaluate the model (including validation monitoring).\n2. A SavedModel directory with a custom serving signature that accepts integer sequences (shape `[None, maxlen]`, dtype `int32`) and returns probabilities.\n3. A `docker` command to launch TF Serving.\n4. A test request using `curl` or Python `requests` that sends a sample review and prints the response.\n5. Documentation of model accuracy (validation set) and an example prediction for a positive and a negative review.",
+    "requirements": [
+        "Load the IMDB dataset and pad/truncate sequences to a fixed length (e.g., 200).",
+        "Build a model with an `Embedding` layer (vocab size 10,000, embedding dim 128), a `Bidirectional LSTM` (64 units), and a `Dense(1, sigmoid)` output.",
+        "Train for at least 5 epochs with `validation_split=0.2` and use early stopping (patience=2) and model checkpoint (save best weights).",
+        "Create a serving function with `@tf.function` and `input_signature` that accepts `tf.int32` tensors of shape `[None, maxlen]` and returns a dictionary `{'output': predictions}`.",
+        "Save the model using `tf.saved_model.save(model, 'sentiment_model/1/', signatures={'serving_default': serving_fn})`.",
+        "Verify the SavedModel with `saved_model_cli show --dir sentiment_model/1 --all`.",
+        "Provide the Docker command to run TF Serving: mount the model directory, set MODEL_NAME, expose port 8501.",
+        "Write a Python test script that loads a sample review from the IMDB word index, pads it, and sends a POST request to `http://localhost:8501/v1/models/sentiment:predict`."
+    ],
+    "hints": [
+        "Use `tf.keras.preprocessing.sequence.pad_sequences` with `padding='post'` and `truncating='post'`.",
+        "The `input_signature` can be `[tf.TensorSpec(shape=[None, maxlen], dtype=tf.int32, name='input_text')]`.",
+        "TF Serving expects the request body: `{\"instances\": [[list_of_word_indices]]}`.",
+        "To map integer labels back to words for demonstration, use `imdb.get_word_index()` (remember to shift indices by 3).",
+        "Test the Docker setup with a small batch: `curl -d '{\"instances\": [[1,2,3,...,200]]}' -H 'Content-Type: application/json' -X POST http://localhost:8501/v1/models/sentiment:predict`."
+    ],
+    "expectedOutput": "A working end‑to‑end system where you can:\n- Run the Docker container.\n- Send a test review and receive a JSON response with sentiment probability.\n- The model should achieve > 85% validation accuracy.\n- Provide the Python evaluation and serving client script."
+}

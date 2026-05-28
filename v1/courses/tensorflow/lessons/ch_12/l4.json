@@ -1,0 +1,59 @@
+{
+    "id": "l4",
+    "chapterId": "ch_12",
+    "title": "Capstone 4: Generative AI – Variational Autoencoder 🎨",
+    "description": "Build a VAE that learns to generate MNIST digits, mastering custom layers and training loops.",
+    "xpReward": 40,
+    "estimatedMinutes": 12,
+    "section": "Project",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Generating New Data 🤖",
+            "content": "# What is a Variational Autoencoder (VAE)?\n\n- An autoencoder compresses input into a latent code and reconstructs it.\n- A VAE adds a probabilistic twist: the latent space is forced to follow a normal distribution.\n- After training, you can sample random points in latent space and generate **new** realistic digits.\n\nWe'll implement:\n- Custom encoder and decoder models.\n- Reparameterization trick.\n- Custom training loop with KL divergence loss."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Define the Encoder and Decoder",
+            "content": "Encoder outputs mean and log‑variance; decoder reconstructs the image.",
+            "codeSnippet": "import tensorflow as tf\nfrom tensorflow.keras import layers\n\nclass Encoder(tf.keras.Model):\n    def __init__(self, latent_dim):\n        super().__init__()\n        self.conv1 = layers.Conv2D(32, 3, activation='relu', strides=2, padding='same')\n        self.conv2 = layers.Conv2D(64, 3, activation='relu', strides=2, padding='same')\n        self.flatten = layers.Flatten()\n        self.dense_mean = layers.Dense(latent_dim)\n        self.dense_logvar = layers.Dense(latent_dim)\n\n    def call(self, x):\n        x = self.conv1(x)\n        x = self.conv2(x)\n        x = self.flatten(x)\n        z_mean = self.dense_mean(x)\n        z_logvar = self.dense_logvar(x)\n        return z_mean, z_logvar",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Decoder and Reparameterization",
+            "content": "Decoder uses `Conv2DTranspose` to upsample back to image.",
+            "codeSnippet": "class Decoder(tf.keras.Model):\n    def __init__(self, latent_dim):\n        super().__init__()\n        self.dense = layers.Dense(7*7*32, activation='relu')\n        self.reshape = layers.Reshape((7,7,32))\n        self.deconv1 = layers.Conv2DTranspose(64, 3, activation='relu', strides=2, padding='same')\n        self.deconv2 = layers.Conv2DTranspose(32, 3, activation='relu', strides=2, padding='same')\n        self.out = layers.Conv2DTranspose(1, 3, activation='sigmoid', padding='same')\n\n    def call(self, z):\n        x = self.dense(z)\n        x = self.reshape(x)\n        x = self.deconv1(x)\n        x = self.deconv2(x)\n        return self.out(x)\n\ndef reparameterize(mean, logvar):\n    eps = tf.random.normal(shape=mean.shape)\n    return eps * tf.exp(logvar * 0.5) + mean",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "VAE Model and Custom Train Step",
+            "content": "Override `train_step` to add KL divergence loss.",
+            "codeSnippet": "class VAE(tf.keras.Model):\n    def __init__(self, latent_dim):\n        super().__init__()\n        self.encoder = Encoder(latent_dim)\n        self.decoder = Decoder(latent_dim)\n\n    def call(self, x):\n        z_mean, z_logvar = self.encoder(x)\n        z = reparameterize(z_mean, z_logvar)\n        return self.decoder(z)\n\n    def train_step(self, data):\n        with tf.GradientTape() as tape:\n            z_mean, z_logvar = self.encoder(data)\n            z = reparameterize(z_mean, z_logvar)\n            reconstruction = self.decoder(z)\n            reconstruction_loss = tf.reduce_mean(\n                tf.keras.losses.binary_crossentropy(data, reconstruction)\n            ) * 28 * 28\n            kl_loss = -0.5 * tf.reduce_mean(1 + z_logvar - tf.square(z_mean) - tf.exp(z_logvar))\n            total_loss = reconstruction_loss + kl_loss\n        grads = tape.gradient(total_loss, self.trainable_variables)\n        self.optimizer.apply_gradients(zip(grads, self.trainable_variables))\n        return {\"loss\": total_loss, \"reconstruction_loss\": reconstruction_loss, \"kl_loss\": kl_loss}",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Train and Generate New Digits",
+            "content": "",
+            "codeSnippet": "# Load MNIST\n(x_train, _), (x_test, _) = tf.keras.datasets.mnist.load_data()\nx_train = x_train.astype('float32') / 255.0\nx_train = x_train[..., tf.newaxis]  # add channel\n\ntrain_ds = tf.data.Dataset.from_tensor_slices(x_train).shuffle(1000).batch(64)\n\nvae = VAE(latent_dim=2)  # small for visualisation\nvae.compile(optimizer='adam')\nvae.fit(train_ds, epochs=10)\n\n# Generate new samples\nrandom_z = tf.random.normal(shape=(16, 2))\ngenerated = vae.decoder(random_z)\n# Plot generated images...",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "You Built a Generative Model! 🎉",
+            "content": "# What You've Mastered\n\n- Custom Keras layers and models.\n- Subclassing and overriding `train_step`.\n- Loss combination and the reparameterization trick.\n- Generative AI fundamentals.\n\nThis is the frontier of deep learning – and you now understand it hands‑on."
+        }
+    ]
+}

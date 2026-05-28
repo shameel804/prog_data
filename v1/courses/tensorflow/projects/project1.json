@@ -1,0 +1,27 @@
+{
+    "id": "project1",
+    "title": "Image Classifier App: From Data to Mobile",
+    "description": "Build a complete mobile‑ready image classifier using transfer learning, TFLite, and the Task Library.",
+    "difficulty": "Intermediate",
+    "estimatedHours": "3-5",
+    "problemStatement": "## Scenario\nYou are an ML engineer at a startup that wants to build an app to identify **flower species** (daisy, dandelion, roses, sunflowers, tulips) from a smartphone camera.\n\n## Your Mission\nCreate an end‑to‑end pipeline that:\n- Loads and processes a dataset of flower images.\n- Fine‑tunes a pre‑trained MobileNetV2 model.\n- Applies quantization‑aware training (QAT) for mobile efficiency.\n- Converts the model to TensorFlow Lite with metadata.\n- Writes a client‑side inference code snippet (Android/Kotlin) using the TFLite Task Library.\n\nYou will **combine everything** from this course: data pipelines with `tf.data`, transfer learning, fine‑tuning, QAT, TFLite conversion, and mobile integration.\n\n## Dataset\nThe project uses the TF Flowers dataset (or you can create a synthetic substitute). The dataset contains 3,670 images of 5 flower classes, split into training and validation.\n\n## Deliverables\n1. A Jupyter notebook (or Python script) that performs the full training‑to‑conversion workflow.\n2. A `.tflite` file with metadata (at minimum, the model file).\n3. The key metrics: final test accuracy, TFLite model size, and average inference latency on a batch of images.\n4. A short Kotlin code snippet showing how to use the produced `.tflite` file in an Android app.",
+    "requirements": [
+        "Use `tf.keras.utils.image_dataset_from_directory` (or `tf.data` with file paths) to load and preprocess the dataset.",
+        "Apply data augmentation (RandomFlip, RandomRotation) as part of the model or the input pipeline.",
+        "Build the model with a frozen MobileNetV2 base and a custom classifier head (GlobalAveragePooling + Dropout + Dense).",
+        "Fine‑tune the top 20% of the base layers with a very low learning rate (≤1e-5).",
+        "Apply quantization‑aware training (QAT) using the TensorFlow Model Optimization Toolkit and train for at least 2 additional epochs.",
+        "Convert the QAT model to TFLite with dynamic‑range quantization (`tf.lite.Optimize.DEFAULT`).",
+        "Add metadata (labels, normalization) to the TFLite file using the Metadata Writer API (optional but recommended).",
+        "Evaluate the TFLite model with a `tf.lite.Interpreter` on the test set and report the accuracy, file size, and average inference time.",
+        "Write a Kotlin `classifyImage()` function that uses `ImageClassifier.createFromFile` from the TFLite Task Library to return the top‑1 prediction."
+    ],
+    "hints": [
+        "Use `tf.keras.applications.mobilenet_v2.preprocess_input` as a Lambda layer (or inside a map function) to normalize inputs.",
+        "To fine‑tune, unfreeze the base, then freeze all layers except the last 20% using `for layer in base_model.layers[:-int(len(base_model.layers)*0.2)]: layer.trainable = False`.",
+        "The TFLite Metadata Writer can be installed via `pip install tflite-support`. Follow the official guide to attach labels and normalization parameters.",
+        "For measuring inference time, use `time.perf_counter()` over many runs and remove warmup iterations.",
+        "The Kotlin Task Library dependency is `org.tensorflow:tensorflow-lite-task-vision`."
+    ],
+    "expectedOutput": "A complete Python script that trains, converts, and evaluates the model, outputting:\n- Test accuracy of the final TFLite model (≥ 75% on the flowers dataset, or reasonable performance on synthetic data).\n- TFLite file size (≤ 5 MB).\n- Average inference time per image (≤ 50 ms on a typical CPU).\n- The Kotlin function for mobile classification."
+}

@@ -1,0 +1,82 @@
+{
+    "id": "l6",
+    "chapterId": "ch_5",
+    "title": "Training a CNN on Real Data 🏁",
+    "description": "End‑to‑end example: load CIFAR‑10, build a CNN, train, and evaluate.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Practice",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "CIFAR‑10: 60,000 Color Images 🌈",
+            "content": "# 10 Classes: airplane, automobile, bird, cat, deer, dog, frog, horse, ship, truck\n\n- 50,000 training, 10,000 test\n- Each image: 32×32×3\n\nWe'll build a CNN to classify them."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Load and Preprocess Data",
+            "content": "Normalise pixel values to [0,1].",
+            "codeSnippet": "import tensorflow as tf\n\n(x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()\nx_train = x_train.astype('float32') / 255.0\nx_test = x_test.astype('float32') / 255.0\nprint(x_train.shape, y_train.shape)  # (50000, 32, 32, 3) (50000, 1)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "CIFAR Prep 🧹",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Why do we divide pixel values by 255?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To increase contrast",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To normalise to [0,1] for faster convergence",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To make the images smaller",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's required by the dataset",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Normalising inputs to a small range helps gradient descent converge faster.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "code",
+            "title": "Build the CIFAR‑10 CNN",
+            "content": "A deeper CNN with augmentation.",
+            "codeSnippet": "from tensorflow.keras import layers, models\n\nmodel = models.Sequential([\n    layers.RandomFlip('horizontal', input_shape=(32,32,3)),\n    layers.RandomRotation(0.1),\n    layers.Conv2D(32, (3,3), padding='same', activation='relu'),\n    layers.MaxPooling2D((2,2)),\n    layers.Conv2D(64, (3,3), padding='same', activation='relu'),\n    layers.MaxPooling2D((2,2)),\n    layers.Conv2D(128, (3,3), padding='same', activation='relu'),\n    layers.MaxPooling2D((2,2)),\n    layers.Flatten(),\n    layers.Dropout(0.5),\n    layers.Dense(128, activation='relu'),\n    layers.Dense(10, activation='softmax')\n])\nmodel.compile(optimizer='adam',\n              loss='sparse_categorical_crossentropy',\n              metrics=['accuracy'])\nmodel.summary()",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_5",
+            "type": "text",
+            "title": "Train and Evaluate 🏋️",
+            "content": "# Using Callbacks\n\nWe'll add EarlyStopping and ModelCheckpoint to avoid overfitting.\n\n```python\ncallbacks = [\n    tf.keras.callbacks.EarlyStopping(patience=5, restore_best_weights=True),\n    tf.keras.callbacks.ModelCheckpoint('cifar_cnn.h5', save_best_only=True)\n]\n\nhistory = model.fit(x_train, y_train, epochs=30, batch_size=64,\n                    validation_split=0.2, callbacks=callbacks)\n```\n\nEvaluate on test set: `model.evaluate(x_test, y_test)`."
+        },
+        {
+            "id": "s_l6_6",
+            "type": "exercise",
+            "title": "Your Turn 🛠️",
+            "content": "Train this CNN (or a smaller version) on CIFAR‑10. Experiment: remove dropout, change number of filters, or add more Conv2D layers. How does test accuracy change?"
+        }
+    ]
+}
