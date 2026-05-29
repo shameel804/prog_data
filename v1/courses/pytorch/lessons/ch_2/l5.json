@@ -1,0 +1,132 @@
+{
+    "id": "l5",
+    "chapterId": "ch_2",
+    "title": "In‑Place Ops & Chaining 🔗",
+    "description": "Modify tensors directly and build complex pipelines.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Operations",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "In‑Place Operations 🔄",
+            "content": "# Modifying Tensors Directly\n\nPyTorch methods ending with `_` perform **in‑place** operations, modifying the original tensor.\n\nExamples:\n* `t.add_(5)`  (add 5 in‑place)\n* `t.mul_(2)`  (multiply by 2 in‑place)\n* `t.zero_()`  (set all elements to 0)\n\n**Why use them?** They save memory by avoiding copies. **But**: they can interfere with autograd, so use cautiously with gradients."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "In‑Place vs. Out‑of‑Place",
+            "content": "Compare the two approaches.",
+            "codeSnippet": "a = torch.tensor([1.0, 2.0, 3.0])\nb = a + 5            # new tensor\nprint(\"a unchanged:\", a)\na.add_(5)            # modifies a\nprint(\"a after add_:\", a)",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "In‑Place IQ 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What does `t.zero_()` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Returns a new zero tensor",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Sets all elements of t to 0 in‑place",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Deletes the tensor",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Returns the number of zeros",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The underscore convention means the operation is performed in‑place.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Chaining Operations 🔗",
+            "content": "## Fluent Tensor Manipulation\n\nYou can chain multiple operations for concise code:\n\n```python\nresult = t.float().pow(2).sum()\n```\n\nThis is safe when each method returns a new tensor. Avoid chaining in‑place ops after autograd is needed."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Method Chaining Example",
+            "content": "Compute the sum of squared elements in a single line.",
+            "codeSnippet": "t = torch.tensor([1, 2, 3, 4])\ntotal = t.float().pow(2).sum()\nprint(total)   # 1+4+9+16 = 30.0",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Chaining Challenge 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What is the value of `torch.tensor([2,4]).add(3).mul(2)`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "[10, 14]",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "[10, 11]",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "[5, 7]",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "[7, 11]",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`add(3)` → [5,7]; `.mul(2)` → [10,14].",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Stack & Concatenate 🧱",
+            "content": "## Combining Multiple Tensors\n\n* `torch.cat(tensors, dim)` – concatenates along an existing dimension.\n* `torch.stack(tensors, dim)` – adds a new dimension and stacks tensors.\n\nUseful for merging batches, feature maps, etc."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "code",
+            "title": "Cat vs Stack",
+            "content": "See the difference between concatenating and stacking.",
+            "codeSnippet": "a = torch.tensor([[1,2],[3,4]])  # (2,2)\nb = torch.tensor([[5,6],[7,8]])  # (2,2)\n# cat along rows (dim=0)\ncat_0 = torch.cat([a, b], dim=0)\nprint(\"Cat dim=0 shape:\", cat_0.shape)  # (4,2)\n# stack along new dim=0\nstk_0 = torch.stack([a, b], dim=0)\nprint(\"Stack dim=0 shape:\", stk_0.shape) # (2,2,2)",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## GPU and In‑Place Ops\n\nIn‑place ops can cause `RuntimeError: one of the variables needed for gradient computation has been modified by an inplace operation`. If you need gradients, favor out‑of‑place versions."
+        }
+    ]
+}

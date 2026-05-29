@@ -1,0 +1,252 @@
+{
+    "id": "quiz_ch_2",
+    "chapterId": "ch_2",
+    "title": "Chapter 2 Quiz",
+    "description": "Test your knowledge of tensor operations, indexing, reshaping, and broadcasting!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What does `torch.tensor([1,2,3]) * torch.tensor([4,5,6])` return?",
+            "options": [
+                "[4, 10, 18]",
+                "[5, 7, 9]",
+                "32",
+                "[1,2,3,4,5,6]"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Element‑wise multiplication yields [1*4, 2*5, 3*6] = [4,10,18]."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "What is the shape of the result of `torch.rand(2,3) @ torch.rand(3,5)`?",
+            "options": [
+                "(2, 3)",
+                "(3, 5)",
+                "(2, 5)",
+                "(5, 2)"
+            ],
+            "correctAnswer": 2,
+            "explanation": "(2x3) @ (3x5) -> inner dim 3 matches, result is (2x5)."
+        },
+        {
+            "id": "q3",
+            "type": "true_false",
+            "question": "Matrix multiplication `A @ B` is the same as element‑wise multiplication `A * B`.",
+            "correctAnswer": false,
+            "explanation": "`@` performs matrix multiplication while `*` multiplies element‑wise."
+        },
+        {
+            "id": "q4",
+            "type": "fill_blank",
+            "question": "To perform matrix multiplication, you can use `torch._____(A, B)`.",
+            "options": [
+                "matmul",
+                "mul",
+                "mm",
+                "dot"
+            ],
+            "correctAnswer": "matmul",
+            "explanation": "`torch.matmul` is the general matrix multiplication function."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "Given `t = torch.arange(12).reshape(3,4)`, what is `t[1, 2]`?",
+            "options": [
+                "6",
+                "5",
+                "7",
+                "10"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Reshaped row 1: [4,5,6,7]; column 2 (0‑based) = 6."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "What does `t[1:, :2]` return for a tensor `t` of shape (4,3)?",
+            "options": [
+                "Rows 1 to end, columns 0 and 1",
+                "Rows 1 to end, columns 0 to 1",
+                "Rows 1 to end, columns 1 and 2",
+                "Rows 1 to 2, columns 0 and 1"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`1:` means from index 1 to last; `:2` means up to (but not including) index 2, so columns 0,1."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "How do you select all elements greater than 5 from tensor `x`?",
+            "options": [
+                "x[x > 5]",
+                "x.greater(5)",
+                "x.where(x > 5)",
+                "x.select(x > 5)"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Boolean indexing: `x[x > 5]` returns a 1D tensor of values satisfying the condition."
+        },
+        {
+            "id": "q8",
+            "type": "true_false",
+            "question": "`tensor.view(2, -1)` automatically infers the size of the second dimension.",
+            "correctAnswer": true,
+            "explanation": "Using `-1` tells PyTorch to infer the size based on the other dimensions and total elements."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "What does `torch.rand(4,6).reshape(2, 12)` return?",
+            "options": [
+                "A tensor of shape (2,12) with the same data",
+                "A copy of the tensor reshaped to (2,12)",
+                "A view of the original if memory is contiguous, otherwise a copy",
+                "An error because 4*6 != 2*12"
+            ],
+            "correctAnswer": 2,
+            "explanation": "`reshape` will return a view if possible, otherwise a copy. Shape product matches, so it succeeds."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "What is the output shape after `torch.rand(2,3,4).permute(2,0,1)`?",
+            "options": [
+                "(2,3,4)",
+                "(4,2,3)",
+                "(2,4,3)",
+                "(3,4,2)"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Permute moves dimension 2 to position 0, 0 to position 1, and 1 to position 2 → (4,2,3)."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "Which operation adds a dimension of size 1 at a specified position?",
+            "options": [
+                "unsqueeze()",
+                "squeeze()",
+                "expand()",
+                "flatten()"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`unsqueeze(dim)` inserts a singleton dimension at index `dim`."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "What is the result of `torch.tensor([[[1],[2]]]).squeeze()`?",
+            "options": [
+                "tensor([1,2])",
+                "tensor([[[1,2]]])",
+                "tensor([[1],[2]])",
+                "Error"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Original shape (1,2,1). Squeeze removes all size-1 dims leaving shape (2)."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "Can `torch.ones(3,4) + torch.ones(4)` be broadcast successfully?",
+            "options": [
+                "Yes, resulting shape (3,4)",
+                "No, because shape (3,4) and (4) are incompatible",
+                "Only if you use .view(1,4)",
+                "Yes, but resulting shape (4,3)"
+            ],
+            "correctAnswer": 0,
+            "explanation": "(4,) is broadcast to (1,4) then (3,4) → works perfectly."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "Which of the following pairs can be broadcast together?",
+            "options": [
+                "(3,4) and (4,3)",
+                "(5,1) and (1,6)",
+                "(2,3,4) and (2,4)",
+                "All of the above"
+            ],
+            "correctAnswer": 1,
+            "explanation": "(5,1) and (1,6) can broadcast to (5,6). (3,4) and (4,3) fail (4 vs 3). (2,3,4) and (2,4) fail (3 vs 2)."
+        },
+        {
+            "id": "q15",
+            "type": "true_false",
+            "question": "Broadcasting copies data to match the larger shape.",
+            "correctAnswer": false,
+            "explanation": "Broadcasting does not actually copy data; it virtually repeats elements in a memory‑efficient way."
+        },
+        {
+            "id": "q16",
+            "type": "fill_blank",
+            "question": "In‑place operations in PyTorch are denoted by a trailing `_`, e.g., `t._____()` to add 5.",
+            "options": [
+                "add_",
+                "add",
+                "_add",
+                "inplace_add"
+            ],
+            "correctAnswer": "add_",
+            "explanation": "`t.add_(5)` adds 5 to the tensor in‑place."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "What is a potential risk of using in‑place operations with autograd?",
+            "options": [
+                "They use more memory",
+                "They can corrupt gradients",
+                "They are slower",
+                "They require a GPU"
+            ],
+            "correctAnswer": 1,
+            "explanation": "In‑place ops can overwrite values needed for gradient computation, leading to runtime errors."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "What does `torch.cat([a, b], dim=0)` do when `a` and `b` have shape (3,4)?",
+            "options": [
+                "Stacks them to shape (2,3,4)",
+                "Concatenates along rows to shape (6,4)",
+                "Concatenates along columns to shape (3,8)",
+                "Adds a new dimension and joins"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Concatenating along dim=0 (rows) combines the 3 rows from each → (6,4)."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "What is the difference between `torch.stack([a,b], dim=0)` and `torch.cat([a.unsqueeze(0), b.unsqueeze(0)], dim=0)`?",
+            "options": [
+                "They produce different shapes",
+                "They are equivalent",
+                "cat can only work on 2D tensors",
+                "stack requires all tensors to be 2D"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Both operations result in a (2,3,4) tensor, stacking along a new first dimension. They are essentially the same."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "Which method would you use to flatten a batch of images `(32, 3, 28, 28)` into vectors for a linear layer?",
+            "options": [
+                "x.view(32, -1)",
+                "x.reshape(32, -1)",
+                "x.flatten(1)",
+                "All of the above"
+            ],
+            "correctAnswer": 3,
+            "explanation": "All three methods correctly flatten starting from dimension 1. `x.view(32, -1)` and `x.reshape(32, -1)` explicitly set the batch size, while `x.flatten(1)` flattens all dimensions after the batch."
+        }
+    ]
+}

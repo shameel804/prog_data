@@ -1,0 +1,132 @@
+{
+    "id": "l2",
+    "chapterId": "ch_2",
+    "title": "Indexing & Slicing 🔪",
+    "description": "Extract, modify, and access tensor elements like a pro.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Operations",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Accessing Elements 🎯",
+            "content": "# Tensor Indexing\n\nTensor indexing works just like NumPy:\n* Use square brackets `[row, col]`\n* Python slicing `start:stop:step`\n* Negative indices count from the end.\n\nExample for a 2D tensor:\n* `t[0, 1]` – element at row 0, column 1.\n* `t[:, 1]` – all rows, column 1 (a 1D tensor)."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Basic Indexing",
+            "content": "Create a 3x4 tensor and practice indexing.",
+            "codeSnippet": "t = torch.arange(1, 13).reshape(3, 4)\nprint(\"Tensor:\\n\", t)\nprint(\"First row:\", t[0])\nprint(\"Element [1,2]:\", t[1, 2])\nprint(\"Last column:\", t[:, -1])",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Quick Indexing 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "For a tensor `t` of shape (4,5), what does `t[1:, :3]` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Rows 1 to end, first 3 columns",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Rows 0 to 2, first 3 columns",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Rows 1 to end, columns 0 to 2",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Rows 1 to end, columns 1 to 3",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`1:` means from row index 1 to the end; `:3` means columns 0,1,2 (up to but not including 3).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Fancy Indexing & Masks 🎭",
+            "content": "## Advanced Selection\n\nYou can pass a **list** or a **boolean mask** to select arbitrary elements.\n\n```python\nt[ [0, 2] ]       # selects rows 0 and 2\nmask = t > 5\nt[mask]            # returns a 1D tensor of elements > 5\n```"
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Boolean Masking",
+            "content": "Use a condition to create a mask and extract values.",
+            "codeSnippet": "t = torch.tensor([[1, 2], [3, 4], [5, 6]])\nmask = t % 2 == 0   # even numbers\nprint(\"Mask:\\n\", mask)\nprint(\"Even values:\", t[mask])",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Mask Magic 🪄",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What does `t[t > 3]` return if `t = torch.tensor([2,4,1,5])`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "tensor([4,5])",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "tensor([2,4,1,5])",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "tensor([True, False, True, False])",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "tensor([2,1])",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The condition `>3` yields a mask selecting only elements 4 and 5, as a 1D tensor.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "Assigning Values via Indexing ✏️",
+            "content": "## Modifying Parts of a Tensor\n\nYou can assign new values to sliced regions:\n```python\nt[0, :] = 0       # set first row to zeros\nt[:, 1] = 99      # set second column to 99\n```\n**Note**: This modifies the original tensor (in‑place)."
+        },
+        {
+            "id": "s_l2_8",
+            "type": "code",
+            "title": "Slice Assignment",
+            "content": "Modify a sub‑tensor and observe the change.",
+            "codeSnippet": "t = torch.ones(3, 3)\nt[1, :] = 5   # set middle row to 5\nprint(t)",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_9",
+            "type": "warning",
+            "title": "⚠️ Contiguity Warning",
+            "content": "## View after Indexing\n\nSometimes a sliced tensor shares storage with the original. Use `.clone()` if you need an independent copy."
+        }
+    ]
+}

@@ -1,0 +1,167 @@
+{
+    "id": "l1",
+    "chapterId": "ch_2",
+    "title": "Arithmetic & Matrix Multiplication ✖️",
+    "description": "Master element-wise arithmetic and the all-important matrix multiplication.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Operations",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Beyond Basics 🔢",
+            "content": "# Arithmetic Operations\n\nYou've seen `+`, `-`, `*`, `/`. These are **element-wise**: they work on corresponding elements.\n\nPyTorch also provides:\n* `torch.add()`, `torch.sub()`, `torch.mul()`, `torch.div()`\n* In‑place versions ending with `_` (e.g., `add_()`)\n* Matrix multiplication (`@` or `torch.matmul()`)"
+        },
+        {
+            "id": "s_l1_2",
+            "type": "code",
+            "title": "Element‑wise vs. Matmul",
+            "content": "Run the code to see the difference between `*` and `@`.",
+            "codeSnippet": "a = torch.tensor([[1,2],[3,4]])\nb = torch.tensor([[2,0],[1,3]])\n\nprint(\"Element‑wise *:\", a * b)\nprint(\"Matrix multiplication @:\", a @ b)\nprint(\"torch.matmul:\", torch.matmul(a, b))",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Spot the Difference 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What is the result of `torch.tensor([1,2]) * torch.tensor([3,4])`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "[3, 8]",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "[4, 6]",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "11",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A scalar 11",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Element‑wise multiplication: 1*3=3, 2*4=8 → tensor([3,8]).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "Matrix Multiplication Rules 📐",
+            "content": "## When can you multiply matrices?\n\nFor `A @ B` to work:\n* The inner dimensions must match: if A is `(m x n)`, B must be `(n x p)`.\n* Result shape is `(m x p)`.\n\nThis is the **workhorse** of neural networks – each layer is a matmul plus activation."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "Shape Compatibility",
+            "content": "Try a mismatched matmul to see the error, then fix it with `.T` (transpose).",
+            "codeSnippet": "A = torch.rand(3, 4)   # 3x4\nB = torch.rand(5, 4)   # 5x4 (inner dims: 4 vs 5 – mismatch)\n\n# Uncomment to see error:\n# C = A @ B\n\n# Correct: transpose B to (4,5) and then matmul\nC = A @ B.T\nprint(C.shape)  # [3, 5]",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "Shape Logic 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "If A has shape (2,3) and B has shape (3,4), what is the shape of A @ B?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "(2, 4)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "(3, 3)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "(2, 3, 4)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "(4, 2)",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Matmul of (2,3) and (3,4) gives (2,4). The inner dimension 3 is consumed.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Batch Matrix Multiplication\n\nNeed to multiply many matrices at once? Use `torch.bmm()` (batch matmul) or `torch.matmul()` with 3D tensors – it automatically performs batched multiplication."
+        },
+        {
+            "id": "s_l1_8",
+            "type": "text",
+            "title": "More Arithmetic Functions 📚",
+            "content": "## Exp, Log, Abs, Pow\n\nPyTorch also has:\n* `torch.exp(t)` – e^element\n* `torch.log(t)` – natural logarithm\n* `torch.abs(t)` – absolute value\n* `torch.pow(t, exponent)` – raise to a power\n\nThese are **element‑wise** and differentiable (crucial for backprop)."
+        },
+        {
+            "id": "s_l1_9",
+            "type": "code",
+            "title": "Applying Math Functions",
+            "content": "Try some common mathematical operations on tensors.",
+            "codeSnippet": "x = torch.tensor([1.0, 2.0, 3.0])\nprint(\"exp:\", torch.exp(x))\nprint(\"log:\", torch.log(x))\nprint(\"abs:\", torch.abs(torch.tensor([-1, -2, 3])))\nprint(\"pow:\", torch.pow(x, 2))",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_10",
+            "type": "quiz",
+            "title": "Function Recall 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_3",
+                "type": "multiple_choice",
+                "question": "What does `torch.pow(tensor, 2)` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Element-wise square",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Matrix power",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Sum of squares",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "2 raised to each element",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`torch.pow(tensor, 2)` squares each element individually.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

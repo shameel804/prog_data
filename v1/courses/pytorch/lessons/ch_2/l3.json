@@ -1,0 +1,167 @@
+{
+    "id": "l3",
+    "chapterId": "ch_2",
+    "title": "Reshaping & Transposing 🔄",
+    "description": "Change tensor shapes and dimensions using view, reshape, transpose, and permute.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Operations",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Why Reshape? 🧱",
+            "content": "# Changing a Tensor's Shape\n\nNeural networks often demand specific input shapes. You'll frequently need to:\n* **Flatten** images into vectors for fully‑connected layers.\n* **Transpose** dimensions for matrix multiplication.\n* **Unsqueeze** to add batch dimensions.\n\nMain functions:\n* `.view()`, `.reshape()`\n* `.T`, `.transpose()`, `.permute()`\n* `.squeeze()`, `.unsqueeze()`"
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Using view() and reshape()",
+            "content": "Both change shape, but `view()` requires contiguous memory. `reshape()` is safer.",
+            "codeSnippet": "t = torch.arange(1, 13)   # 1D, 12 elements\n# change to 3x4\nv = t.view(3, 4)\nr = t.reshape(3, 4)\nprint(v.shape, r.shape)\n# reshape can infer one dimension with -1\nprint(t.reshape(2, -1).shape)   # (2, 6)",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Shape Shift 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What does `torch.arange(24).reshape(2, 3, 4)` produce?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A 2x3x4 tensor with values 0 to 23",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A 24x1 tensor",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A 2x12 tensor",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "An error because shape doesn't match",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "24 elements fit perfectly into shape (2,3,4). The numbers are arranged in row‑major order.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Transpose & Permute 🔀",
+            "content": "## Swapping Dimensions\n\n* `.T` – transpose of a 2D tensor (swap rows and columns).\n* `.transpose(dim0, dim1)` – swap two specific dimensions.\n* `.permute(dims...)` – reorder all dimensions arbitrarily.\n\n**Important**: These functions return **views** (sharing data) unless you clone."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Transpose Example",
+            "content": "Transpose a 2x3 matrix to 3x2.",
+            "codeSnippet": "m = torch.tensor([[1,2,3],[4,5,6]])\nprint(\"Original:\\n\", m)\nprint(\"Transpose:\\n\", m.T)\n# For 3D+, use permute\nx = torch.rand(2,3,4)\nprint(\"Permute (2,0,1) shape:\", x.permute(2,0,1).shape)",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Transpose Check 🎯",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "What is the shape of `torch.rand(4,5).T`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "(4,5)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "(5,4)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "(1,20)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "(20)",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`.T` swaps the two dimensions, so (4,5) becomes (5,4).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Squeeze & Unsqueeze 🧽",
+            "content": "## Adding/Removing Singleton Dimensions\n\n* `.unsqueeze(dim)` – adds a dimension of size 1 at position `dim`. Essential for batch processing (e.g., turning a single image into a batch of 1).\n* `.squeeze()` – removes all dimensions of size 1.\n\nExample: `(3,224,224)` → unsqueeze(0) → `(1,3,224,224)`."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "code",
+            "title": "Batchify with Unsqueeze",
+            "content": "Turn a single image tensor into a batch of 1.",
+            "codeSnippet": "img = torch.rand(3, 224, 224)   # channels, height, width\nbatch = img.unsqueeze(0)         # add batch dim\nprint(batch.shape)               # torch.Size([1, 3, 224, 224])",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_9",
+            "type": "quiz",
+            "title": "Squeeze Sense 🤔",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_3",
+                "type": "multiple_choice",
+                "question": "What does `torch.tensor([[[1,2]]]).squeeze()` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "tensor([1,2])",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "tensor([[[1,2]]])",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "tensor(1,2)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The original shape is (1,1,2). Squeeze removes both size‑1 dims → (2).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Flattening with view\n\nTo flatten a batch while keeping the batch dimension: `x.view(x.size(0), -1)` – very common before linear layers."
+        }
+    ]
+}

@@ -1,0 +1,111 @@
+{
+    "id": "l4",
+    "chapterId": "ch_2",
+    "title": "Broadcasting Explained 📡",
+    "description": "Learn how PyTorch automatically expands tensors to make operations compatible.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Operations",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Magic Behind Incompatible Shapes ✨",
+            "content": "# What is Broadcasting?\n\nBroadcasting allows element‑wise operations between tensors of different shapes, **without copying data**.\n\nIt follows strict rules:\n1. Align shapes from the right.\n2. For each dimension, if sizes are equal or one is 1, that dimension is \"stretched\".\n3. If they are different and neither is 1, it fails."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Simple Broadcasting Example",
+            "content": "Adding a scalar to a tensor – the scalar is broadcast to match the tensor shape.",
+            "codeSnippet": "a = torch.ones(3, 3)\nb = torch.tensor(10)   # scalar\nc = a + b\nprint(c)\n# Scalar 10 becomes a 3x3 tensor of 10s",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Scalar Broadcast 🎓",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "true_false",
+                "question": "`torch.tensor(5) + torch.tensor([1,2,3])` works through broadcasting.",
+                "isTrue": true,
+                "explanation": "Scalar 5 is broadcast to shape (3,) by repeating its value.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Rule in Action: (4,3) + (3,) 🔍",
+            "content": "## Broadcasting a 1D vector to a 2D matrix\n\n* `A` shape: `(4, 3)`\n* `B` shape: `(3,)`\nAlign right: dimension 0: 3 vs 3 → match. Then prepend 1 to the smaller: B becomes `(1,3)`. Then stretch to `(4,3)`.\n\nThis is how we add bias terms to a batch of activations!"
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Matrix + Vector Broadcast",
+            "content": "Add a bias vector to every row of a matrix.",
+            "codeSnippet": "A = torch.rand(4, 3)\nb = torch.tensor([1.0, 2.0, 3.0])   # shape (3,)\nresult = A + b\nprint(result.shape)   # (4,3)\n# Equivalent to A + b.unsqueeze(0)",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Broadcast Logic 🤓",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Will `torch.rand(5,4) + torch.rand(1,4)` work?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Yes, the (1,4) is stretched to (5,4)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "No, because first dims 5 and 1 are different and neither is 1 (misunderstanding)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only if .reshape() is used",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Yes, but result shape is (5,4,4)",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Rules: align right: (5,4) and (1,4). Second dim 4=4 OK; first dim 5 vs 1 – size 1 can broadcast to 5.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "code",
+            "title": "Broadcasting Failure Case",
+            "content": "When shapes are incompatible, PyTorch raises an error. This prevents silent bugs.",
+            "codeSnippet": "A = torch.rand(3, 4)\nB = torch.rand(3, 2)\n# A + B   -> RuntimeError: The size of tensor a (4) must match the size of tensor b (2) at non-singleton dimension 1",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_8",
+            "type": "text",
+            "title": "Broadcasting in Practice 🏭",
+            "content": "## Common Patterns\n\n* **Adding bias**: `(batch, features) + (features,)`\n* **Scaling**: `(H, W, C) * (C,)` (per‑channel scaling)\n* **Mean subtraction**: `(N, D) - (D,)` for normalization.\n\nBroadcasting makes code cleaner and often faster than explicit looping."
+        },
+        {
+            "id": "s_l4_9",
+            "type": "tip",
+            "title": "Debugging Broadcasts 🚀",
+            "content": "## Use `torch.broadcast_shapes()`\n\nIf you're unsure about the resulting shape, use `torch.broadcast_shapes(shape1, shape2)` to check without executing the op."
+        }
+    ]
+}
