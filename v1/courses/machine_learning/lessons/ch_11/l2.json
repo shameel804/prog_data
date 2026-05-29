@@ -1,0 +1,107 @@
+{
+    "id": "l2",
+    "chapterId": "ch_11",
+    "title": "Serving Models with APIs 🌐",
+    "description": "Wrap your model into a REST API with FastAPI, serialize with pickle/ONNX, and containerize with Docker.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Deployment",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "REST APIs for ML 🖥️",
+            "content": "# Turning a Model into a Web Service\n\nA REST API exposes your model over HTTP. Clients send input data (e.g., JSON) and receive predictions.\n\n**FastAPI** is a modern Python web framework ideal for ML:\n- Automatic request validation (Pydantic models).\n- Auto‑generated interactive docs (Swagger UI).\n- Async support for high throughput.\n\nBasic pattern:\n1. Load model at startup.\n2. Define `/predict` endpoint.\n3. Return JSON with prediction."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Minimal FastAPI Server 🐍",
+            "content": "A complete API for a pre‑trained model:",
+            "codeSnippet": "from fastapi import FastAPI\nfrom pydantic import BaseModel\nimport joblib\n\napp = FastAPI()\nmodel = joblib.load('model.pkl')\n\nclass InputData(BaseModel):\n    features: list[float]\n\n@app.post('/predict')\ndef predict(data: InputData):\n    pred = model.predict([data.features])\n    return {'prediction': pred.tolist()}",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "API Check 🌐",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the main purpose of a REST API for a machine learning model?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To train the model faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To allow external systems to send data and receive predictions over HTTP",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To convert the model into a neural network",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To visualise the model's decision tree",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "An API provides a standard interface for clients to request predictions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Model Serialization 💾",
+            "content": "# Saving and Loading Models\n\n- **Pickle / Joblib**: quick for scikit‑learn models, but Python‑specific and insecure for untrusted sources.\n- **ONNX (Open Neural Network Exchange)**: open format, framework‑agnostic, supports most libraries (sklearn, PyTorch, TensorFlow).\n- **TensorFlow SavedModel / PyTorch TorchScript**: native serialization for deep learning.\n\nBest practice: use a framework‑agnostic format if the serving environment differs from training."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Export to ONNX 🐍",
+            "content": "Convert a scikit‑learn model to ONNX:",
+            "codeSnippet": "from skl2onnx import convert_sklearn\nfrom skl2onnx.common.data_types import FloatTensorType\n\ninitial_type = [('float_input', FloatTensorType([None, 4]))]\nonx = convert_sklearn(model, initial_types=initial_type)\nwith open('model.onnx', 'wb') as f:\n    f.write(onx.SerializeToString())",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Containerization with Docker 📦",
+            "content": "# Run Anywhere\n\nDocker packages your model, API code, and all dependencies into a lightweight container. It ensures the exact same environment in development and production.\n\nBasic steps:\n1. Write a `Dockerfile` with Python base, copy files, install requirements.\n2. Build image: `docker build -t my-model .`\n3. Run container: `docker run -p 8000:8000 my-model`\n\nContainer orchestration (Kubernetes) handles scaling and reliability."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "Serialization Sense 📦",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "true_false",
+                "question": "ONNX models can only be used with Python.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "False. ONNX is an open format designed to be framework and language‑agnostic.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

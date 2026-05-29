@@ -1,0 +1,114 @@
+{
+    "id": "l2",
+    "chapterId": "ch_9",
+    "title": "Convolutional Layers 🧱",
+    "description": "Understand filters, feature maps, stride, padding, and how convolution extracts visual patterns.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "CNN Fundamentals",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Magic Filter 🪄",
+            "content": "# Convolution Operation\n\nA convolutional layer applies small **filters** (kernels) that slide across the input image, computing dot products at each position. Each filter detects a specific pattern: edges, corners, textures.\n\n- Filter size: 3×3, 5×5 are typical.\n- The filter's weights are learned.\n- Output is a **feature map** — a 2D activation map showing where the pattern appears.\n\nAnalogy: a flashlight beam scanning a dark image, highlighting where the filter pattern matches."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Filter Example: Edge Detection 🔍",
+            "content": "# Simple Hand‑Crafted Filters\n\n| -1 -1 -1 |\n|  0  0  0 |  → detects horizontal edges (top light, bottom dark)\n|  1  1  1 |\n\n| -1  0  1 |\n| -1  0  1 |  → detects vertical edges\n| -1  0  1 |\n\nIn CNNs, the filter values are learned from data, not hand‑designed. The network learns which patterns are useful for the task."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Conv Basics 🧮",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What does a filter in a convolutional layer compute?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The average of all pixels",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Dot product between filter weights and a local patch of the input",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The maximum pixel value",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A random number",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A filter slides over the input, computing dot products to produce a feature map.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Stride & Padding 🏃",
+            "content": "# Controlling Output Size\n\n- **Stride (s)**: step size when sliding the filter. s=1 moves one pixel at a time; s=2 downsamples.\n- **Padding (p)**: adding border pixels (usually zeros) to the input to preserve spatial size.\n\nWithout padding, output size shrinks: `output_size = (input_size − filter_size + 2p) / s + 1`\n\n- `padding='valid'`: no padding, size reduces.\n- `padding='same'`: pads so output size ≈ input size / stride."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Convolution in Keras 🐍",
+            "content": "A Conv2D layer with 32 filters, 3×3 kernel:",
+            "codeSnippet": "from tensorflow.keras.layers import Conv2D\n\nconv_layer = Conv2D(filters=32, kernel_size=(3,3),\n                    strides=(1,1), padding='same',\n                    activation='relu', input_shape=(28,28,1))",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Multiple Filters = Multiple Feature Maps 🗺️",
+            "content": "# Depth Dimension\n\nEach convolutional layer has many filters (e.g., 32, 64). Each filter produces one feature map. These are stacked along the **channel** dimension.\n\n- Input: (Height × Width × Channels) e.g., RGB image = (224,224,3).\n- Output: (NewHeight × NewWidth × NumberOfFilters).\n\nEarly layers learn low‑level features (edges, colours). Deeper layers learn high‑level features (shapes, object parts)."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "Channel Check 🧪",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "If a Conv2D layer has 64 filters, how many feature maps does it output?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "1",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "64",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Depends on input channels",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The same as the input",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Each filter produces a separate feature map, so 64 filters = 64 output channels.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,114 @@
+{
+    "id": "l3",
+    "chapterId": "ch_7",
+    "title": "Boosting: From Weak to Strong 🏋️",
+    "description": "AdaBoost, Gradient Boosting, XGBoost, LightGBM — turn simple models into a powerhouse with sequential learning.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Boosting",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Sequential Learning 📈",
+            "content": "# Learn from Mistakes\n\nUnlike bagging where models are independent, boosting trains models **sequentially**. Each new model focuses on the errors of the previous ensemble.\n\nThe idea: build a strong learner from many weak learners (e.g., shallow trees, “stumps”).\n\nTwo classic algorithms:\n- **AdaBoost** (Adaptive Boosting): adjusts weights of training examples, giving higher weight to misclassified ones.\n- **Gradient Boosting**: each new model fits the **residuals** (negative gradients) of the loss function of the current ensemble."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "AdaBoost Step by Step 👣",
+            "content": "# Reweighting Instances\n\n1. Start with all examples equally weighted.\n2. Train a weak learner on the weighted data.\n3. Compute the weighted error.\n4. Assign a weight (influence) to this learner based on its error. Better learner → higher weight.\n5. Increase weights of misclassified examples, decrease weights of correctly classified ones.\n6. Repeat: next learner focuses on hard examples.\n7. Final prediction is a weighted majority vote of all learners.\n\nAdaBoost can overfit if weak learners are too complex, but with stumps it’s robust."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "AdaBoost Understanding 💡",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "In AdaBoost, what happens to the weight of a misclassified example?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It stays the same",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It decreases",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It increases so the next learner focuses on it more",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It is removed from the dataset",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Higher weights force subsequent learners to pay more attention to previously misclassified examples.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Gradient Boosting 🚂",
+            "content": "# Fitting Residuals\n\nGradient Boosting generalises the idea. Instead of reweighting, each new tree predicts the **residual errors** (the difference between actual and current predicted values).\n\n- Step 1: Train a base model (e.g., mean prediction).\n- Step 2: Compute residuals rᵢ = yᵢ − ŷᵢ.\n- Step 3: Train a new tree to predict rᵢ using features.\n- Step 4: Update predictions: ŷᵢ = ŷᵢ + learning_rate * new_tree_prediction.\n- Repeat.\n\nThe **learning rate** (shrinkage) scales the contribution of each tree. A small learning rate (e.g., 0.1) with many trees often yields excellent results but requires tuning."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Gradient Boosting in Scikit‑Learn 🐍",
+            "content": "`GradientBoostingClassifier` (and `HistGradientBoostingClassifier` for speed):",
+            "codeSnippet": "from sklearn.ensemble import GradientBoostingClassifier\n\ngbc = GradientBoostingClassifier(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42)\ngbc.fit(X_train, y_train)\nprint(\"Accuracy:\", gbc.score(X_test, y_test))",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "XGBoost, LightGBM, CatBoost ⚡",
+            "content": "# Optimised Implementations\n\nThese libraries offer highly optimised gradient boosting with features like regularisation, pruning, categorical feature handling, and GPU acceleration.\n\n- **XGBoost**: pioneers of the modern boosting era; uses second‑order gradients, tree pruning, and built‑in regularisation.\n- **LightGBM**: histogram‑based, leaf‑wise growth, extremely fast, great for large datasets.\n- **CatBoost**: handles categorical features natively, robust to overfitting with ordered boosting.\n\nFor most real‑world tabular data, one of these is the go‑to model."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "quiz",
+            "title": "Boosting vs Bagging 🤔",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Which statement is true about boosting compared to bagging?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Boosting models are trained independently",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Boosting typically reduces bias while bagging reduces variance",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Boosting cannot overfit",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Boosting uses only full‑depth trees",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Boosting reduces bias by sequentially improving on errors; bagging reduces variance by averaging.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

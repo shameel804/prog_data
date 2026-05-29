@@ -1,0 +1,85 @@
+{
+    "id": "l4",
+    "chapterId": "ch_10",
+    "title": "Word Embeddings: Meaning in Space 🧠",
+    "description": "Learn dense vectors that capture semantic relationships: Word2Vec, GloVe, and how to use pretrained embeddings.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Word Representations",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Beyond Sparse Vectors 🌐",
+            "content": "# The Problem with BoW/TF‑IDF\n\n- Vectors are huge (vocabulary size, often 10k–1M).\n- Mostly zeros (sparse).\n- No semantic similarity: 'happy' and 'joyful' are completely different indices.\n\nWord embeddings solve this by representing words as **dense, low‑dimensional vectors** (e.g., 100–300 dimensions) where similar words are close in vector space.\n\nFamous example: king − man + woman ≈ queen."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Word2Vec: Learning from Context 📚",
+            "content": "# Predicting Neighbors\n\nWord2Vec (Mikolov et al., 2013) uses a shallow neural network to learn word vectors. Two architectures:\n- **CBOW (Continuous Bag of Words)**: predict a target word from surrounding context words.\n- **Skip‑gram**: predict surrounding context words from a target word.\n\nIt’s trained on large corpora; words appearing in similar contexts get similar vectors.\n\nImportant: Word2Vec captures relationships like gender, tense, capital‑country."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Using Pre‑trained Word2Vec with Gensim 🐍",
+            "content": "Load Google News vectors (large, but demo):",
+            "codeSnippet": "from gensim.models import KeyedVectors\n# Download from https://code.google.com/archive/p/word2vec/\n# model = KeyedVectors.load_word2vec_format('GoogleNews-vectors-negative300.bin', binary=True)\n# print(model.most_similar('king'))\n# For quick demo, use a smaller glove model or built‑in",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "GloVe: Global Vectors 🌍",
+            "content": "# Count‑Based + Prediction\n\nGloVe (Global Vectors) combines matrix factorization of word‑word co‑occurrence with prediction. It trains on global co‑occurrence statistics, producing high‑quality embeddings.\n\n- Fast training, good for large corpora.\n- Pre‑trained vectors available (Twitter, Wikipedia).\n\nBoth Word2Vec and GloVe produce similar quality; choice often depends on task and available pre‑trained models."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Embedding Layer in Deep Learning 🧩",
+            "content": "# Train Embeddings for Your Task\n\nIn neural networks, an `Embedding` layer is a lookup table that maps integer word indices to dense vectors. It can be trained from scratch or initialised with pre‑trained weights.\n\n```python\ntf.keras.layers.Embedding(input_dim=vocab_size, output_dim=300)\n```\n\nThis layer learns task‑specific embeddings, often better than frozen pre‑trained ones when you have enough data."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Embedding Insight 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is a key advantage of word embeddings over one‑hot vectors?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They require less memory because they are sparse",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They capture semantic similarity: similar words have similar vectors",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They represent each word with a unique index",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They are always binary",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Embeddings place semantically related words close in vector space.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Pre‑trained + Fine‑tuning\nInitialize your Embedding layer with GloVe/Word2Vec weights and set `trainable=True` to fine‑tune them on your task. This often works best."
+        }
+    ]
+}

@@ -1,0 +1,107 @@
+{
+    "id": "l6",
+    "chapterId": "ch_6",
+    "title": "LDA, t‑SNE & When to Use What 🧭",
+    "description": "Supervised dimensionality reduction, stunning visualisations, and rules of thumb for picking the right technique.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Beyond PCA",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Linear Discriminant Analysis (LDA) 🎯",
+            "content": "# Supervised Dimensionality Reduction\n\nWhile PCA ignores class labels, LDA finds axes that maximise class **separability**.\n\n- LDA projects data to a lower dimension while trying to keep classes as far apart as possible and within‑class scatter as small as possible.\n- It assumes features are normally distributed and classes share the same covariance matrix.\n- Output dimension is at most (number of classes − 1). For binary classification, you get 1 component.\n\nLDA can be used both for dimensionality reduction and as a classifier."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "LDA with Scikit‑Learn 🐍",
+            "content": "Reduce Iris to 2 components:",
+            "codeSnippet": "from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA\nfrom sklearn.datasets import load_iris\n\nX, y = load_iris(return_X_y=True)\nlda = LDA(n_components=2)\nX_lda = lda.fit_transform(X, y)\nprint(\"Explained variance ratio:\", lda.explained_variance_ratio_)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "LDA vs PCA 🤔",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "When would LDA be preferred over PCA for dimensionality reduction?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "When you don’t have labels",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "When you want to maximise class separability in a classification task",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "When you need more than 2 components",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "When data is non‑linear",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "LDA uses class labels to find projections that best separate classes, making it ideal for classification preprocessing.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "t‑SNE: Stunning Visualizations 🌈",
+            "content": "# t‑Distributed Stochastic Neighbor Embedding\n\nt‑SNE is a non‑linear technique primarily for **visualisation** (2D/3D plots).\n\n- It preserves local structure: points that are close in high‑D remain close in low‑D.\n- It’s excellent for revealing clusters in data.\n- **Limitations**: \n  - Computationally heavy (O(n²)). Not for large datasets.\n  - Cannot be used for new test data (no transform function). Must re‑run on combined dataset.\n  - Global structure may be distorted; distances between clusters are not reliable.\n  - Sensitive to hyperparameters (perplexity).\n\nUse t‑SNE for exploration, not for feature extraction in a pipeline."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "code",
+            "title": "t‑SNE in Python 🐍",
+            "content": "Visualise MNIST digits subset:",
+            "codeSnippet": "from sklearn.manifold import TSNE\nfrom sklearn.datasets import load_digits\n\nX, y = load_digits(return_X_y=True)\nX_tsne = TSNE(n_components=2, random_state=42).fit_transform(X)\nplt.scatter(X_tsne[:,0], X_tsne[:,1], c=y, cmap='tab10')\nplt.show()",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_6",
+            "type": "quiz",
+            "title": "t‑SNE Traits 🎨",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "true_false",
+                "question": "t‑SNE can be used to transform new unseen data points using a learned mapping.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "False. t‑SNE has no transform method; it only embeds the given data. For new points, you must run it again on the combined set.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_7",
+            "type": "text",
+            "title": "Cheat Sheet: Which Method to Choose? 📋",
+            "content": "# Quick Decision Guide\n\n- **Linear, unsupervised, speed important**: → PCA.\n- **Supervised, want to separate classes**: → LDA.\n- **Visualise high‑D data (small/medium)**: → t‑SNE.\n- **Preserve both local and global structure, scalable**: → UMAP (advanced, similar to t‑SNE but faster).\n- **Non‑linear manifold learning**: → Kernel PCA, Isomap.\n\nAlways scale before PCA/LDA. t‑SNE doesn’t strictly require scaling but it’s recommended."
+        }
+    ]
+}

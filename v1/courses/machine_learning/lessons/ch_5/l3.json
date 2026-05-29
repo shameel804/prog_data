@@ -1,0 +1,108 @@
+{
+    "id": "l3",
+    "chapterId": "ch_5",
+    "title": "Hierarchical Clustering 🌳",
+    "description": "Build tree‑like clusters with agglomerative methods, linkage criteria, and dendrogram interpretation.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Core Algorithms",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "A Family Tree of Data 👨‍👩‍👧‍👦",
+            "content": "# Hierarchical Clustering\n\nInstead of partitioning into a flat set of clusters, hierarchical clustering builds a **tree** (dendrogram) showing how clusters merge or split at different similarity levels.\n\nTwo approaches:\n- **Agglomerative (bottom‑up)**: start with each point as its own cluster, then repeatedly merge the closest pair. Most common.\n- **Divisive (top‑down)**: start with one big cluster and split recursively.\n\nThe result is a hierarchy; you can cut the dendrogram at any level to get a desired number of clusters."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Linkage: Measuring Distance Between Clusters 📏",
+            "content": "# How to Merge?\n\nWhen merging, we need a distance between **sets** of points, not just single points. Common linkage criteria:\n\n- **Single linkage**: distance between closest pair of points from two clusters. Tends to create long, chain‑like clusters.\n- **Complete linkage**: distance between farthest pair. Favours compact clusters.\n- **Average linkage**: average distance between all pairs. A compromise.\n- **Ward’s method**: minimises the increase in total within‑cluster variance after merging. Often produces balanced clusters.\n\nWard’s is popular because it tries to create clusters of similar size."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Linkage Check 🔗",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which linkage method uses the maximum distance between any two points of two clusters?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Single linkage",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Complete linkage",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Average linkage",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Ward’s method",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Complete linkage considers the farthest pair, promoting compact clusters.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Reading a Dendrogram 🔬",
+            "content": "# The Tree Diagram\n\nA dendrogram shows the merging history:\n- **Vertical axis**: distance (or dissimilarity) at which merges happen.\n- **Horizontal axis**: individual data points (leaves).\n\nTo choose the number of clusters, draw a horizontal line across the dendrogram. The number of vertical lines it intersects equals the number of clusters. Cutting at a greater height yields fewer clusters (more dissimilar).\n\nExample: if the dendrogram shows a big jump in merge distance, that’s a natural cut‑off point."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Agglomerative Clustering in Python 🐍",
+            "content": "Using scikit‑learn to cluster and SciPy for dendrogram:",
+            "codeSnippet": "from sklearn.cluster import AgglomerativeClustering\nfrom scipy.cluster.hierarchy import dendrogram, linkage\nimport matplotlib.pyplot as plt\n\n# Compute linkage matrix\nZ = linkage(X, method='ward')\ndendrogram(Z)\nplt.show()\n\n# Then cluster with chosen k\nmodel = AgglomerativeClustering(n_clusters=2, linkage='ward')\nlabels = model.fit_predict(X)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Dendrogram Decision ✂️",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "In a dendrogram, a large vertical jump right before merging into a single cluster suggests:",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The data is just one natural cluster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Two well‑separated clusters might be appropriate",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The algorithm failed",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "You must use K‑Means instead",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A large gap indicates that merging those groups would combine very dissimilar entities; a cut just before that jump is often optimal.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

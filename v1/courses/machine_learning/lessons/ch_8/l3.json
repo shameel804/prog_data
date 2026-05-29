@@ -1,0 +1,114 @@
+{
+    "id": "l3",
+    "chapterId": "ch_8",
+    "title": "Activation Functions 🔌",
+    "description": "Sigmoid, Tanh, ReLU, and friends — why nonlinearities give networks their power.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Core Components",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Why Non‑Linearity? 🌊",
+            "content": "# Without Activation, It's Just Linear Regression\n\nStacking linear layers (weighted sums) just results in another linear transformation. No matter how many layers, the model remains linear.\n\nActivation functions introduce **non‑linearity**, enabling networks to approximate any continuous function. That's the key to learning complex patterns like image recognition.\n\nCommon activations: Sigmoid, Tanh, ReLU, Leaky ReLU, Softmax (for output)."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Sigmoid & Tanh 📈",
+            "content": "# Classic S‑Shaped Functions\n\n- **Sigmoid**: σ(x) = 1/(1+e⁻ˣ) → output in (0,1). Used historically in hidden layers and output for binary classification. Drawbacks: saturating (gradients vanish at extremes), not zero‑centered.\n- **Tanh**: tanh(x) = (eˣ − e⁻ˣ)/(eˣ + e⁻ˣ) → output in (−1,1). Zero‑centered, but still saturates.\n\nBoth suffer from the **vanishing gradient** problem for deep networks."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Saturation Understanding 🧽",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Why is the vanishing gradient a problem for sigmoid/tanh?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Because their derivative is always zero",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "When inputs are large/small, the derivative is near zero, so weights stop updating in early layers",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They make the network too fast",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They require integer inputs",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Saturation means gradients are tiny, so deep networks learn very slowly or not at all.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "ReLU & Variants ⚡",
+            "content": "# The Modern Workhorse\n\n- **ReLU (Rectified Linear Unit)**: f(x) = max(0, x). Simple, non‑saturating for positive values, computationally cheap. Problem: \"dying ReLU\" — neurons can get stuck outputting 0 if gradient is 0, never activating again.\n- **Leaky ReLU**: f(x) = max(αx, x) with small α (e.g., 0.01). Gives small gradient for negative inputs, preventing dead neurons.\n- **ELU, SELU**: similar improvements.\n\nReLU is the default for hidden layers in most modern networks."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Activation Functions in Code 🐍",
+            "content": "You can implement them easily:",
+            "codeSnippet": "import numpy as np\n\ndef relu(x):\n    return np.maximum(0, x)\n\ndef leaky_relu(x, alpha=0.01):\n    return np.where(x > 0, x, alpha * x)\n\n# ReLU derivative (for backprop)\ndef relu_derivative(x):\n    return (x > 0).astype(float)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "Softmax for Multi‑Class Output 🎰",
+            "content": "# Converting Scores to Probabilities\n\nFor classification with C classes, the output layer often uses Softmax:\n```\nsoftmax(zᵢ) = e^(zᵢ) / Σ e^(zⱼ)\n```\nIt maps a vector of raw scores to a probability distribution over classes (sums to 1).\n\nIt's typically paired with cross‑entropy loss for multi‑class classification."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "quiz",
+            "title": "Activation Choice 🧐",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Which activation function is most commonly used in hidden layers of deep networks today?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Sigmoid",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Tanh",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "ReLU",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Softmax",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "ReLU is the default for hidden layers due to its simplicity and avoidance of vanishing gradients.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

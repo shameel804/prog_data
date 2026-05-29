@@ -1,0 +1,104 @@
+{
+    "id": "l6",
+    "chapterId": "ch_8",
+    "title": "Training Neural Networks & Regularization 🏋️",
+    "description": "SGD, epochs, batches, dropout, weight decay, and practical tips to avoid overfitting.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Optimization Algorithms ⚙️",
+            "content": "# Beyond Vanilla SGD\n\n- **SGD** (Stochastic Gradient Descent): updates weights using a single example or mini‑batch. Fast but noisy.\n- **Momentum**: accelerates SGD by accumulating a velocity vector, dampening oscillations.\n- **Adam**: adaptive learning rate per parameter, combining momentum and RMSprop. Default choice in many projects.\n\n`learning_rate` (or η) is the most critical hyperparameter — start small (0.001) and adjust."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "Mini‑batch Training & Epochs 🔄",
+            "content": "# Feeding Data\n\nNetworks train on **batches** (subsets of data). One pass over the entire dataset is an **epoch**.\n\n- Batch size: typical 32, 64, 128. Larger batches utilise GPU parallelism but may generalise worse.\n- Many epochs are needed; monitor validation loss to stop when overfitting begins.\n\nIn scikit‑learn, `batch_size` and `max_iter` (epochs) can be set."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "MLP Training Example 🐍",
+            "content": "Setting solver, batch size, early stopping:",
+            "codeSnippet": "mlp = MLPClassifier(hidden_layer_sizes=(100,), activation='relu',\n                    solver='adam', batch_size=32,\n                    learning_rate_init=0.001, max_iter=200,\n                    early_stopping=True, validation_fraction=0.1,\n                    random_state=42)\nmlp.fit(X_train, y_train)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Regularization: Fight Overfitting 🛡️",
+            "content": "# Techniques to Generalise Better\n\n- **L2 Regularization (Weight Decay)**: adds penalty λΣw² to loss, encouraging small weights. Scikit‑learn `alpha` parameter.\n- **Dropout**: randomly drops a fraction of neurons during each training batch, forcing network to be redundant.\n- **Early Stopping**: stop training when validation loss plateaus.\n- **Batch Normalization**: normalises layer inputs, allowing higher learning rates and acting as a regulariser.\n\nCombining these is standard practice."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "quiz",
+            "title": "Regularization Check 🧹",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "How does dropout work during training?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It permanently removes neurons from the network",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It randomly sets a fraction of neuron outputs to zero at each batch, preventing co‑adaptation",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It increases the number of neurons",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It duplicates the data",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Dropout temporarily disables neurons, making the network learn robust features.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_6",
+            "type": "text",
+            "title": "Practical Tips 💡",
+            "content": "# Training Neural Nets Well\n\n1. **Scale input features** (StandardScaler).\n2. **Start with a simple architecture** (1‑2 hidden layers) and increase if underfitting.\n3. **Monitor training/validation curves** to diagnose bias/variance.\n4. **Use Adam optimiser** with default parameters.\n5. **Shuffle training data** each epoch.\n6. **Be patient** — training can take many epochs.\n\nWith these, you can train effective neural nets on a variety of problems."
+        },
+        {
+            "id": "s_l6_7",
+            "type": "quiz",
+            "title": "Final NN Wisdom 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "true_false",
+                "question": "Increasing the number of hidden layers always improves test accuracy.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "False. More layers can lead to overfitting, especially with small data. Architecture must balance complexity with data size.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

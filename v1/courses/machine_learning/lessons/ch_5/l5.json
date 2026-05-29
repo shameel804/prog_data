@@ -1,0 +1,104 @@
+{
+    "id": "l5",
+    "chapterId": "ch_5",
+    "title": "Evaluating Cluster Quality 🧪",
+    "description": "Silhouette score, Davies‑Bouldin index, and strategies to pick the right clustering method.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Validation",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Is This a Good Cluster? 🤷",
+            "content": "# Clustering Validation\n\nIn supervised learning, we have ground truth. In clustering, we don’t. Yet we still need to judge cluster quality.\n\nValidation metrics fall into two categories:\n- **Internal metrics**: use only the clustered data (e.g., silhouette score).\n- **External metrics**: compare to a known labelling (rarely available, like adjusted Rand index).\n\nMost of the time, internal metrics guide us."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Silhouette Score 🎨",
+            "content": "# The Most Popular Internal Metric\n\nFor each point i:\n- **a(i)**: average distance from i to all other points in its own cluster (cohesion).\n- **b(i)**: average distance from i to all points in the nearest neighbouring cluster (separation).\n\nThe silhouette coefficient for point i is:\n```\ns(i) = (b(i) − a(i)) / max(a(i), b(i))\n```\nOverall silhouette = average s(i) across all points.\n\nRange: [-1, 1]. \n- Close to +1: well separated, dense clusters.\n- 0: overlapping clusters.\n- Negative: points may be assigned to wrong clusters.\n\nA good silhouette score typically > 0.5."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Compute Silhouette Score 🐍",
+            "content": "Using sklearn:",
+            "codeSnippet": "from sklearn.metrics import silhouette_score\nfrom sklearn.cluster import KMeans\n\nkmeans = KMeans(n_clusters=3, random_state=0, n_init='auto')\nlabels = kmeans.fit_predict(X)\nprint(\"Silhouette:\", silhouette_score(X, labels))",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Davies‑Bouldin Index 📉",
+            "content": "# Another Internal Metric\n\nThe Davies‑Bouldin (DB) index measures the average similarity between each cluster and its most similar one. Similarity is based on the ratio of within‑cluster scatter to between‑cluster separation.\n\n**Lower DB index means better clustering.**\n\nIt’s simple and doesn’t require distance computations over all pairs, but can be less intuitive than silhouette.\n\nUse both silhouette and DB index together to confirm your choice."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Silhouette Reasoning 🤔",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "A high silhouette score for a cluster indicates:",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Points within the cluster are far apart",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The cluster is well separated from others and cohesive",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The cluster contains outliers",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The number of clusters is too small",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "High silhouette means a(i) is small (compact) and b(i) is large (far from other clusters).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Choosing the Best Algorithm & Parameters ⚙️",
+            "content": "# Practical Guidelines\n\n- For spherical, equal‑sized clusters → try K‑Means first (fast).\n- For varying shapes, noise → DBSCAN or hierarchical.\n- For small datasets and need a dendrogram → hierarchical.\n- Use silhouette score to compare different k values in K‑Means (often combined with elbow method).\n- For DBSCAN, experiment with ε and MinPts; visualise with a scatter plot colored by label.\n\n**Always scale data** before distance‑based clustering (all three methods). The scaling pipeline is the same as for supervised learners."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Final Check ✅",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "true_false",
+                "question": "The Davies‑Bouldin index should be as high as possible.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "False. Lower DB index indicates better clustering (less similarity between clusters).",
+                "xpReward": 10
+            }
+        }
+    ]
+}

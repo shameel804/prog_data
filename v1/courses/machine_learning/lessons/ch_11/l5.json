@@ -1,0 +1,104 @@
+{
+    "id": "l5",
+    "chapterId": "ch_11",
+    "title": "Building Trustworthy AI 🛡️",
+    "description": "Explainability (SHAP, LIME), privacy, adversarial attacks, and the principles of responsible AI.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Trust & Safety",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "The Black Box Problem 🕶️",
+            "content": "# Why Explainability Matters\n\nMany high‑performing models (deep nets, ensembles) are opaque. If a loan application is denied, the applicant deserves an explanation.\n\nRegulations like GDPR (EU) include a 'right to explanation' for automated decisions.\n\nExplainability helps:\n- Debug models.\n- Build user trust.\n- Comply with laws.\n- Ensure fairness."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Interpretable Models vs Post‑hoc Explanations 🔬",
+            "content": "# Two Paths to Understanding\n\n- **Inherently interpretable models**: linear regression, decision trees (small). You can read the coefficients or tree paths.\n- **Post‑hoc explanation methods**: applied after training to explain predictions of any model.\n  - **SHAP** (SHapley Additive exPlanations): game‑theory based, shows contribution of each feature to a prediction.\n  - **LIME** (Local Interpretable Model‑agnostic Explanations): approximates the model locally with an interpretable surrogate.\n\nSHAP is widely adopted for both global and local interpretability."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "SHAP in Python 🐍",
+            "content": "Explain a single prediction with SHAP:",
+            "codeSnippet": "import shap\n# model is a trained tree/ensemble\n# X is a sample\nshap.initjs()\nexplainer = shap.TreeExplainer(model)\nshap_values = explainer.shap_values(X)\nshap.force_plot(explainer.expected_value, shap_values[0], X.iloc[0])",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Explainability Check 🔎",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the key difference between SHAP and LIME?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "SHAP only works on tree models",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "SHAP provides consistent global and local feature attributions based on Shapley values; LIME fits a local surrogate model",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "LIME is model‑specific",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "There is no difference",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "SHAP uses game‑theoretic Shapley values; LIME approximates the decision boundary locally with a simple model.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Privacy & Security 🔒",
+            "content": "# Models Can Leak Information\n\n- **Membership inference**: determine if a specific record was in the training set.\n- **Model inversion**: reconstruct training data from model outputs.\n- **Adversarial examples**: small, carefully crafted perturbations to input that completely change the prediction.\n\nTechniques for privacy:\n- **Differential privacy**: add noise to training or outputs to mask individual contributions.\n- **Federated learning**: train on decentralized data without sharing raw data.\n\nDefence against adversarial attacks: adversarial training, defensive distillation."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Principles of Responsible AI 🤝",
+            "content": "# A Framework for Trust\n\nMany organizations (Google, Microsoft, EU) have published AI principles:\n\n- **Fairness**: avoid bias and discrimination.\n- **Accountability**: humans are responsible for AI decisions.\n- **Transparency**: be open about data and model limitations.\n- **Privacy & Security**: protect user data.\n- **Reliability & Safety**: models should perform as intended, especially in high‑stakes scenarios.\n\nIncorporate these from the start, not as an afterthought."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Responsible AI Reflection 🤔",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "true_false",
+                "question": "Adversarial examples demonstrate that even high‑accuracy models can be fragile.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "True. Small input changes can cause misclassifications, revealing lack of robustness.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

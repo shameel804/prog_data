@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_5",
+    "title": "K‑Means Clustering with Elbow and Silhouette",
+    "description": "Load the Iris dataset, scale features, find optimal k with elbow method and silhouette, and visualise clusters.",
+    "estimatedMinutes": 20,
+    "problemStatement": "# Task: K‑Means on Iris Data\n\nUse the famous Iris dataset (loaded from `sklearn.datasets.load_iris()`). We will ignore the true labels (treat it as unsupervised) and try to find natural groupings.\n\n## Steps:\n1. Load Iris data (features only, no target). Scale features using `StandardScaler`.\n2. Run K‑Means for k from 1 to 10. Record the inertia for each k.\n3. Plot inertia vs k (you can use `print` statements with values if plotting not possible, but print formatted `k: inertia`).\n4. Identify the likely elbow point. Print the k you would choose.\n5. For k values 2,3,4,5, compute the silhouette score (using the scaled data and K‑Means labels). Print `k: silhouette` for each.\n6. Based on silhouette, which k is best? Print a final statement like: `Best k by silhouette: X`.\n\n**Hints**: `KMeans(n_clusters=k, random_state=0, n_init='auto')`, `silhouette_score(X_scaled, labels)`.\n\nExpected output: list of inertia values, identified elbow, silhouette scores, and best k.",
+    "hints": [
+        "Load Iris: `data = load_iris(); X = data.data`.",
+        "Scale with StandardScaler before K‑Means.",
+        "Use `kmeans.inertia_` to get inertia after fitting.",
+        "For silhouette, use `silhouette_score` from `sklearn.metrics`."
+    ],
+    "expectedOutput": "Inertia values and silhouette scores printed; best k by silhouette clearly stated (likely 2 or 3).",
+    "solutionCode": "import numpy as np\nfrom sklearn.datasets import load_iris\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.cluster import KMeans\nfrom sklearn.metrics import silhouette_score\n\n# Load and scale\ndata = load_iris()\nX = data.data\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X)\n\n# Elbow method\ninertias = []\nK_range = range(1, 11)\nfor k in K_range:\n    kmeans = KMeans(n_clusters=k, random_state=0, n_init='auto')\n    kmeans.fit(X_scaled)\n    inertias.append(kmeans.inertia_)\n    print(f\"k={k}: Inertia={kmeans.inertia_:.2f}\")\n\n# Identify elbow (we'll just suggest a typical value)\nprint(\"\\nElbow likely at k=3 (or 2).\")\n\n# Silhouette for k=2,3,4,5\nprint(\"\\nSilhouette scores:\")\nbest_k = None\nbest_score = -1\nfor k in [2,3,4,5]:\n    kmeans = KMeans(n_clusters=k, random_state=0, n_init='auto')\n    labels = kmeans.fit_predict(X_scaled)\n    score = silhouette_score(X_scaled, labels)\n    print(f\"k={k}: Silhouette={score:.4f}\")\n    if score > best_score:\n        best_score = score\n        best_k = k\n\nprint(f\"\\nBest k by silhouette: {best_k}\")\n"
+}

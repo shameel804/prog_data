@@ -1,0 +1,108 @@
+{
+    "id": "l6",
+    "chapterId": "ch_4",
+    "title": "Evaluation Metrics for Classification 📊",
+    "description": "Confusion matrix, accuracy, precision, recall, F1‑score, and the ROC‑AUC curve — pick the right metric.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Validation",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Beyond Accuracy 🎯",
+            "content": "# Why Accuracy Isn’t Enough\n\nImagine a fraud detection system where only 0.1% of transactions are fraud. A model that predicts “not fraud” for everything gets **99.9% accuracy** but is completely useless.\n\nWe need metrics that distinguish between different types of errors:\n- False Positive (FP): predicted positive, but actually negative (false alarm).\n- False Negative (FN): predicted negative, but actually positive (missed detection).\n\nThe **confusion matrix** shows counts of TP, TN, FP, FN."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "Precision, Recall, F1‑Score 📐",
+            "content": "# Key Metrics Defined\n\n- **Precision**: TP / (TP + FP) → Of all predicted positives, how many are truly positive? (Exactness)\n- **Recall** (Sensitivity): TP / (TP + FN) → Of all actual positives, how many did we capture? (Completeness)\n- **F1‑Score**: Harmonic mean of precision and recall.\n  ```\n  F1 = 2 * (Precision * Recall) / (Precision + Recall)\n  ```\n  Balances the two. High F1 requires both high precision and high recall.\n\nWhen to emphasise which? Spam detection: high precision (don’t mark good email as spam). Cancer screening: high recall (don’t miss any cancer)."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "Metric Match 🏥",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "In a medical test for a serious disease, which metric is more critical?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Precision",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Recall",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Accuracy",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Specificity",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Recall (sensitivity) ensures we catch as many actual cases as possible, even at the cost of some false positives.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "ROC Curve and AUC 📈",
+            "content": "# Ranking Quality of Probabilities\n\nThe **ROC curve** plots True Positive Rate (Recall) vs False Positive Rate (FPR = FP / (FP+TN)) at various classification thresholds. \n\n- A perfect model goes to top‑left corner.\n- A random model follows the diagonal.\n- **AUC** (Area Under the Curve) summarises the curve. AUC = 1 is perfect, AUC = 0.5 is random.\n\nAUC is threshold‑independent and works well even for imbalanced datasets."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "code",
+            "title": "Metrics in Python 🐍",
+            "content": "Compute confusion matrix and classification report:",
+            "codeSnippet": "from sklearn.metrics import confusion_matrix, classification_report, roc_auc_score\n\ny_pred = model.predict(X_test)\nprint(confusion_matrix(y_test, y_pred))\nprint(classification_report(y_test, y_pred))\n\n# For AUC, need probabilities\ny_prob = model.predict_proba(X_test)[:, 1]\nprint(\"AUC:\", roc_auc_score(y_test, y_prob))",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_6",
+            "type": "quiz",
+            "title": "AUC Intuition 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "multiple_choice",
+                "question": "What does an AUC of 0.9 indicate?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The model misclassifies 90% of examples",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "There is a 90% chance the model ranks a random positive higher than a random negative",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The model's accuracy is 90%",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The model is overfitting",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "AUC can be interpreted as the probability that a randomly chosen positive instance is ranked higher than a randomly chosen negative instance. 0.9 is excellent.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

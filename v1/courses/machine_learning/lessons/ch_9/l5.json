@@ -1,0 +1,107 @@
+{
+    "id": "l5",
+    "chapterId": "ch_9",
+    "title": "Training CNNs & Data Augmentation 🏋️",
+    "description": "Fight overfitting with augmentation, dropout, and transfer learning; tune a CNN effectively.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Practical Training",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "CNNs Overfit Easily 📉",
+            "content": "# The Data Hungry Beast\n\nCNNs have millions of parameters. If training data is limited, they can memorise instead of generalise.\n\nSigns:\n- High training accuracy, low validation accuracy.\n- Training loss keeps decreasing, validation loss increases.\n\nSolutions: data augmentation, dropout, regularisation, transfer learning."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Data Augmentation: More Data for Free 🎨",
+            "content": "# Synthetic Variations\n\nData augmentation applies random transformations to training images, creating new, realistic variations. The model sees a slightly different version each epoch, reducing overfitting.\n\nCommon augmentations:\n- Random horizontal/vertical flips.\n- Rotation (±15°).\n- Zoom, shift, shear.\n- Brightness/contrast adjustment.\n- Cutout (random erasing).\n\nIn Keras, `ImageDataGenerator` or `tf.keras.layers.RandomFlip`, `RandomRotation`, etc. (in tf 2.8+)."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Augmentation in Keras 🐍",
+            "content": "Using preprocessing layers:",
+            "codeSnippet": "from tensorflow.keras.layers import RandomFlip, RandomRotation\n\ndata_augmentation = Sequential([\n    RandomFlip('horizontal'),\n    RandomRotation(0.1),\n])\n# Apply to inputs before model",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Augmentation Purpose 🎯",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "How does data augmentation help regularise a CNN?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "By reducing the number of parameters",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "By providing diverse, transformed copies of training images, preventing memorisation",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "By lowering the learning rate",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "By making images larger",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Augmentation exposes the model to more variations, improving generalisation.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Transfer Learning Workflow 🔄",
+            "content": "# Steps for Fine‑tuning\n\n1. Load pre‑trained base model (without top classifier).\n2. Freeze base layers (`base_model.trainable = False`).\n3. Add a new classifier head (GlobalAveragePooling + Dense).\n4. Train the head for a few epochs.\n5. Unfreeze some top layers of the base model and fine‑tune with very low learning rate.\n\nThis adapts generic features to your specific dataset with minimal data."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "code",
+            "title": "Transfer Learning Snippet 🐍",
+            "content": "Example with MobileNetV2:",
+            "codeSnippet": "base_model = tf.keras.applications.MobileNetV2(input_shape=(224,224,3),\n                                               include_top=False,\n                                               weights='imagenet')\nbase_model.trainable = False\n\nmodel = tf.keras.Sequential([\n    base_model,\n    GlobalAveragePooling2D(),\n    Dense(128, activation='relu'),\n    Dense(10, activation='softmax')\n])",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Transfer Learning Check 🧪",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "true_false",
+                "question": "In transfer learning, you must always train all layers from the beginning.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "False. Usually you freeze the base model and only train the new head first, then optionally fine‑tune some layers.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

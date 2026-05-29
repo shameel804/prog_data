@@ -1,0 +1,101 @@
+{
+    "id": "l4",
+    "chapterId": "ch_7",
+    "title": "Stacking & Voting Classifiers 🗳️",
+    "description": "Blend heterogeneous models with a meta‑learner; hard vs soft voting; when to use stacking over boosting.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Stacking",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Combine Different Model Types 🧩",
+            "content": "# Voting Classifier\n\nA **voting classifier** takes the predictions of several different base classifiers and combines them by:\n- **Hard voting**: each classifier votes for a class; the majority wins.\n- **Soft voting**: each classifier provides class probabilities; the probabilities are averaged, and the class with highest average probability wins (often works better because confident predictions carry more weight).\n\nScikit‑learn: `VotingClassifier` with `voting='hard'` or `'soft'`."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Voting Classifier Example 🐍",
+            "content": "Combine Logistic Regression, Decision Tree, and k‑NN:",
+            "codeSnippet": "from sklearn.ensemble import VotingClassifier\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.neighbors import KNeighborsClassifier\n\nclf1 = LogisticRegression()\nclf2 = DecisionTreeClassifier(max_depth=5)\nclf3 = KNeighborsClassifier(n_neighbors=5)\n\nvc = VotingClassifier(estimators=[('lr', clf1), ('dt', clf2), ('knn', clf3)], voting='soft')\nvc.fit(X_train, y_train)\nprint(\"Accuracy:\", vc.score(X_test, y_test))",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Voting Check 🗳️",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Soft voting usually outperforms hard voting because:",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It uses more classifiers",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It accounts for prediction confidence via probabilities",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It is faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It ignores probabilities",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Soft voting averages probabilities, giving more weight to confident predictions, improving results.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Stacking (Stacked Generalization) 🏗️",
+            "content": "# Learn to Combine\n\nStacking takes voting a step further: instead of a fixed rule (averaging), it trains a **meta‑model** (blender) to learn how to best combine base model predictions.\n\n1. Split training data into two parts (or use cross‑validation).\n2. Train base models on the first part.\n3. Generate predictions (probabilities) for the second part.\n4. Use these predictions as features to train the meta‑model.\n5. Final prediction: base models on the whole train set, meta‑model on their outputs.\n\nScikit‑learn: `StackingClassifier` (automatically uses cross‑validation internally to create unbiased training data for the meta‑model)."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Stacking with Scikit‑Learn 🐍",
+            "content": "Stacking is straightforward:",
+            "codeSnippet": "from sklearn.ensemble import StackingClassifier\nfrom sklearn.linear_model import LogisticRegression\n\nbase_models = [\n    ('rf', RandomForestClassifier(n_estimators=100, random_state=42)),\n    ('gb', GradientBoostingClassifier(n_estimators=100, random_state=42))\n]\nstack = StackingClassifier(estimators=base_models, final_estimator=LogisticRegression())\nstack.fit(X_train, y_train)\nprint(\"Accuracy:\", stack.score(X_test, y_test))",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Stacking vs Voting ⚖️",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "In stacking, the meta‑model is trained on the raw input features.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "False. The meta‑model uses the outputs (predictions) of the base models as input features.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

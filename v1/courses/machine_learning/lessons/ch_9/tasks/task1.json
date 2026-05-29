@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_9",
+    "title": "Build a Simple CNN for MNIST",
+    "description": "Create a basic CNN in Keras for digit classification, train it, and achieve >98% test accuracy.",
+    "estimatedMinutes": 25,
+    "problemStatement": "# Task: MNIST CNN\n\nBuild and train a convolutional neural network to recognise handwritten digits (MNIST dataset).\n\n## Objectives\n1. Load MNIST data (`tf.keras.datasets.mnist.load_data()`). Normalise pixel values to [0,1]. Reshape from (28,28) to (28,28,1) for CNN input.\n2. Define a Sequential model:\n   - Conv2D(32, kernel_size=3, activation='relu', input_shape=(28,28,1))\n   - MaxPooling2D(2,2)\n   - Conv2D(64, kernel_size=3, activation='relu')\n   - MaxPooling2D(2,2)\n   - Flatten()\n   - Dense(128, activation='relu')\n   - Dropout(0.5)\n   - Dense(10, activation='softmax')\n3. Compile: optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'].\n4. Train for 10 epochs, validation_split=0.1, batch_size=64. Record history.\n5. Evaluate on test set; print test accuracy.\n6. Use `matplotlib` to plot training and validation accuracy over epochs (or just print final values).\n7. Ensure test accuracy is > 98%. If not, adjust architecture or epochs slightly.\n\n**Hint**: Use `sparse_categorical_crossentropy` because labels are integers (0‑9), not one‑hot.\n\nExpected output: Test accuracy printed, plot shown (or described).",
+    "hints": [
+        "Reshape X: `X_train = X_train.reshape(-1, 28, 28, 1) / 255.0`.",
+        "`model.fit(..., validation_split=0.1)`",
+        "Plot: `plt.plot(history.history['accuracy'], label='train'); plt.plot(history.history['val_accuracy'], label='val'); plt.legend()`."
+    ],
+    "expectedOutput": "Test accuracy > 0.98, plot of accuracy curves.",
+    "solutionCode": "import tensorflow as tf\nimport matplotlib.pyplot as plt\n\n# Load data\n(X_train, y_train), (X_test, y_test) = tf.keras.datasets.mnist.load_data()\nX_train = X_train.reshape(-1, 28, 28, 1).astype('float32') / 255.0\nX_test = X_test.reshape(-1, 28, 28, 1).astype('float32') / 255.0\n\n# Model\nmodel = tf.keras.Sequential([\n    tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(28,28,1)),\n    tf.keras.layers.MaxPooling2D((2,2)),\n    tf.keras.layers.Conv2D(64, (3,3), activation='relu'),\n    tf.keras.layers.MaxPooling2D((2,2)),\n    tf.keras.layers.Flatten(),\n    tf.keras.layers.Dense(128, activation='relu'),\n    tf.keras.layers.Dropout(0.5),\n    tf.keras.layers.Dense(10, activation='softmax')\n])\n\nmodel.compile(optimizer='adam',\n              loss='sparse_categorical_crossentropy',\n              metrics=['accuracy'])\n\nhistory = model.fit(X_train, y_train, epochs=10, validation_split=0.1, batch_size=64, verbose=1)\n\ntest_loss, test_acc = model.evaluate(X_test, y_test, verbose=0)\nprint(f\"Test accuracy: {test_acc:.4f}\")\n\n# Plot\nplt.plot(history.history['accuracy'], label='Train')\nplt.plot(history.history['val_accuracy'], label='Validation')\nplt.legend()\nplt.title('Accuracy over epochs')\nplt.show()\n"
+}

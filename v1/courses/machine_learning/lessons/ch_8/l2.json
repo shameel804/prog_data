@@ -1,0 +1,73 @@
+{
+    "id": "l2",
+    "chapterId": "ch_8",
+    "title": "The Perceptron: A Single Neuron ⚛️",
+    "description": "Weights, bias, weighted sum, step function, and training the simplest neural unit.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Core Building Block",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Simplest Neural Unit 🧱",
+            "content": "# Perceptron = Linear Classifier\n\nA perceptron takes multiple inputs (x₁, x₂, …, xₚ), each multiplied by a weight (w₁, w₂, …, wₚ), adds a bias b, and applies a **step function**:\n```\noutput = 1  if  w·x + b ≥ 0\noutput = 0  otherwise\n```\nIt's essentially a linear binary classifier. It can only separate classes that are **linearly separable**.\n\nHistorical note: The perceptron was invented in 1958 by Frank Rosenblatt."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Perceptron Learning Rule 📚",
+            "content": "# How a Perceptron Learns\n\n1. Initialise weights and bias (often to 0 or small random numbers).\n2. For each training example, compute predicted output ŷ.\n3. If ŷ == y (correct), do nothing.\n4. If ŷ ≠ y, update weights and bias:\n   - `wⱼ := wⱼ + η * (y − ŷ) * xⱼ`\n   - `b := b + η * (y − ŷ)`\n   - η is the learning rate.\n5. Repeat for many epochs.\n\nThe perceptron algorithm guarantees convergence if the data is linearly separable."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Perceptron with Scikit‑Learn 🐍",
+            "content": "Scikit‑learn has `Perceptron` class:",
+            "codeSnippet": "from sklearn.linear_model import Perceptron\nfrom sklearn.datasets import make_classification\n\nX, y = make_classification(n_samples=200, n_features=2, n_informative=2, n_redundant=0, random_state=42)\nppn = Perceptron(eta0=0.1, random_state=42)\nppn.fit(X, y)\nprint(\"Accuracy:\", ppn.score(X, y))",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Perceptron Check 🧪",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the main limitation of a single perceptron?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It cannot handle binary classification",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It can only learn linearly separable patterns",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It requires a GPU",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It cannot update weights",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A perceptron's decision boundary is a straight line (hyperplane); it fails on non‑linear problems like XOR.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "From Perceptron to Neuron 🔀",
+            "content": "# Replacing the Step Function\n\nModern artificial neurons use smooth activation functions (like sigmoid, ReLU) instead of a hard step. This allows the output to be continuous and differentiable, which is crucial for gradient‑based learning (backpropagation).\n\nIn essence: **neuron = weighted sum + bias + activation function**."
+        }
+    ]
+}

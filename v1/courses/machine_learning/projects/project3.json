@@ -1,0 +1,27 @@
+{
+    "id": "project3",
+    "title": "😊 Multimodal Sentiment Analyzer",
+    "description": "Design a deep learning system that combines text and optional image data to classify sentiment, showcasing CNNs and NLP.",
+    "difficulty": "Advanced",
+    "estimatedHours": "6-8",
+    "problemStatement": "# Project 3: Multimodal Sentiment Analysis\n\nModern sentiment analysis can leverage multiple data sources: text reviews, images, and even video. In this project, you will build a **multimodal sentiment classifier** that predicts whether a product review is positive, neutral, or negative using both the review text and an associated product image.\n\nYou will work with the **Yelp Review dataset** (text) and optionally download product images from a provided URL or use a synthetic image dataset that represents sentiment (e.g., happy/sad faces). To keep it manageable, we'll focus primarily on **text** and optionally incorporate **image** features via transfer learning.\n\n## Tasks:\n1. Load and preprocess the text data: clean, tokenize, pad sequences.\n2. Build a text‑only LSTM/GRU model that achieves a baseline validation accuracy of >65% on sentiment classification (3 classes).\n3. (Optional Image Branch) Use a pre‑trained CNN (e.g., MobileNetV2) to extract features from images. Freeze the base and train a small classifier head.\n4. Fuse the text and image features into a **multimodal model** by concatenating the output embeddings from the LSTM and the CNN before the final classifier.\n5. Train the combined model end‑to‑end (or fine‑tune). Compare its performance against the text‑only baseline.\n6. Implement **Explainability**: use LIME or Integrated Gradients to show which words influence the prediction most.\n7. Package the final model and a simple inference script. Show an example prediction for a new review + image.\n\n## Dataset\n- For text: Yelp reviews (subset with star ratings; map stars to sentiment). Or use IMDB for binary and adjust to 3 classes by adding neutral?\n- For images: you can download Yelp photos, or use a small set of emoticons/stock images that match sentiments (happy, neutral, sad). Simplicity is key.\n\n## Expected Output\n- A Jupyter notebook documenting each step.\n- Baseline text‑only accuracy, then multimodal accuracy (target improvement >3%).\n- At least one LIME explanation for a test prediction.\n- A small function `predict_sentiment(review_text, image_path)` that outputs the predicted class and confidence.",
+    "requirements": [
+        "Text preprocessing: tokenization, padding, optionally remove stop words.",
+        "Text model must use an Embedding layer followed by an LSTM or GRU.",
+        "Image branch must use a pre‑trained CNN (transfer learning).",
+        "Multimodal fusion: concatenation of text and image feature vectors before dense layers.",
+        "Train for at least 10 epochs with validation monitoring.",
+        "Evaluate using accuracy and macro F1‑score.",
+        "Provide an explanation using LIME for at least one text sample.",
+        "Code must be modular and reproducible."
+    ],
+    "hints": [
+        "For the text branch, use `tf.keras.preprocessing.text.Tokenizer` and `pad_sequences`.",
+        "Use `tf.keras.layers.Bidirectional` for the LSTM to capture context better.",
+        "For images, consider using `tf.keras.applications.MobileNetV2` with `include_top=False` and `GlobalAveragePooling2D`.",
+        "When concatenating, ensure both embeddings are the same number of dimensions (e.g., 128 each).",
+        "Use `tf.keras.models.Model` and `Concatenate` layer for fusion.",
+        "If you don't have images, simulate a dummy image input (e.g., a constant black image) to showcase the architecture; focus on the text pipeline."
+    ],
+    "expectedOutput": "Multimodal model surpasses text‑only baseline by at least 3% accuracy. A working inference function and one LIME explanation."
+}

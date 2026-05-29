@@ -1,0 +1,70 @@
+{
+    "id": "sq_machine_learning_1",
+    "title": "Bug Hunt: Regression Riddles",
+    "triggerChapterIndex": 2,
+    "metadata": {
+        "type": "debug"
+    },
+    "questions": [
+        {
+            "id": "sq_machine_learning_1_q1",
+            "type": "multiple_choice",
+            "question": "Find the bug in the code below.",
+            "codeSnippet": "from sklearn.preprocessing import StandardScaler\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X)\nX_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2)",
+            "bugLineIndex": 2,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "Scaling before splitting causes data leakage: information from the test set influences the scaling parameters. Always split first, then fit the scaler on the training data only.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_machine_learning_1_q2",
+            "type": "multiple_choice",
+            "question": "Something is missing that prevents this code from running. What's the bug?",
+            "codeSnippet": "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)\nmodel = LinearRegression()\nmodel.fit(X_train, y_train)",
+            "bugLineIndex": 0,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The function `train_test_split` is not imported. You need `from sklearn.model_selection import train_test_split`.",
+            "xpReward": 20,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_machine_learning_1_q3",
+            "type": "multiple_choice",
+            "question": "This code runs, but the evaluation is wrong. Which line contains the conceptual bug?",
+            "codeSnippet": "from sklearn.metrics import accuracy_score\ny_pred = model.predict(X_test)\nacc = accuracy_score(y_test, y_pred)\nprint(acc)",
+            "bugLineIndex": 2,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "`accuracy_score` is meant for classification, not regression. For regression use metrics like MSE, MAE, or R².",
+            "xpReward": 20,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_machine_learning_1_q4",
+            "type": "multiple_choice",
+            "question": "Why will this code fail?",
+            "codeSnippet": "model = LinearRegression()\ny_pred = model.predict(X_test)\nprint(y_pred)",
+            "bugLineIndex": 1,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The model has not been trained (`.fit()` was never called), so it has no coefficients to make predictions.",
+            "xpReward": 20,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_machine_learning_1_q5",
+            "type": "multiple_choice",
+            "question": "What is the bug in this regression attempt?",
+            "codeSnippet": "import pandas as pd\nfrom sklearn.linear_model import LinearRegression\nmodel = LinearRegression()\nmodel.fit(df[['city', 'size']], df['price'])",
+            "bugLineIndex": 3,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The feature 'city' is categorical. Linear regression requires numerical inputs; you must encode it first (e.g., one‑hot encoding).",
+            "xpReward": 20,
+            "difficulty": 2
+        }
+    ]
+}

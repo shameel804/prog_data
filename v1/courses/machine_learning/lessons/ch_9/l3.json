@@ -1,0 +1,98 @@
+{
+    "id": "l3",
+    "chapterId": "ch_9",
+    "title": "Pooling & Fully Connected Layers 🏊",
+    "description": "Downsample with pooling, flatten feature maps, and connect to a classifier for image recognition.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "CNN Fundamentals",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Downsampling the Feature Maps ⬇️",
+            "content": "# Pooling Layers\n\nPooling reduces spatial dimensions (height, width) while retaining important information. It helps:\n- Reduce computational load.\n- Increase receptive field (each neuron sees more of the image).\n- Provide translation invariance (small shifts don’t change the output much).\n\nTwo types:\n- **Max Pooling**: takes the maximum value in each patch.\n- **Average Pooling**: takes the average.\n\nTypical parameters: pool size 2×2, stride 2 — halves height and width."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Max Pooling in Action 🏊",
+            "content": "# Example\n\nInput:\n```\n[[1, 3, 2, 4],\n [5, 6, 7, 8],\n [9, 2, 1, 0],\n [3, 4, 5, 6]]\n```\nMax pooling 2×2, stride 2:\n```\n[[6, 8],\n [9, 6]]\n```\n\nMax pooling preserves strong activations and discards weaker ones."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Pooling Purpose 🎯",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is a primary benefit of max pooling?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It increases the number of parameters",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It reduces spatial size while keeping the strongest features, adding translation invariance",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It adds non‑linearity",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It replaces convolution",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Max pooling downsamples and makes detection robust to small translations.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Flattening & Fully Connected Layers 🔗",
+            "content": "# From Convolution to Classification\n\nAfter several convolutional and pooling layers, the feature maps are **flattened** into a 1D vector. This vector feeds into one or more **fully connected (dense)** layers, which finally output class scores (or probabilities via softmax).\n\n- The convolutional layers act as feature extractors.\n- The fully connected layers act as the classifier.\n\nExample flow: Conv → ReLU → Pool → Conv → ReLU → Pool → Flatten → Dense → Softmax."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Keras Pooling & Dense 🐍",
+            "content": "Stacking typical CNN layers:",
+            "codeSnippet": "from tensorflow.keras.models import Sequential\nfrom tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense\n\nmodel = Sequential([\n    Conv2D(32, (3,3), activation='relu', input_shape=(32,32,3)),\n    MaxPooling2D((2,2)),\n    Conv2D(64, (3,3), activation='relu'),\n    MaxPooling2D((2,2)),\n    Flatten(),\n    Dense(128, activation='relu'),\n    Dense(10, activation='softmax')  # 10 classes\n])",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "CNN Pipeline 🛤️",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "true_false",
+                "question": "The fully connected layers in a CNN are responsible for feature extraction.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "False. Feature extraction is done by conv/pool layers; dense layers do classification based on extracted features.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

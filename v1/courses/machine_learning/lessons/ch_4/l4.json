@@ -1,0 +1,104 @@
+{
+    "id": "l4",
+    "chapterId": "ch_4",
+    "title": "Decision Trees: Pick a Path 🌳",
+    "description": "Build a tree that asks questions; impurity measures (Gini, entropy) and information gain explained.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Core Algorithm",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "A Flowchart for Decisions 📋",
+            "content": "# What is a Decision Tree?\n\nA decision tree is a **tree‑shaped** model that splits data by asking a series of yes/no questions about features. Each internal node tests a feature, each branch an outcome, and each leaf a class prediction.\n\nExample: Is age < 30? → yes → Is income > $50k? → yes → predict “buy”.\n\nTrees are intuitive, easy to interpret, and can handle both numerical and categorical features without scaling."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Building a Tree: Splitting Criteria 🌱",
+            "content": "# How to Choose the Best Split?\n\nAt each node, we pick the feature and threshold that make the child subsets as **pure** as possible (same class). Two common impurity measures:\n\n- **Gini impurity**: probability of misclassifying a randomly chosen element if it were labelled according to the class distribution of the node.\n  ```\n  Gini = 1 − Σ pⱼ²\n  ```\n- **Entropy**: measure of randomness.\n  ```\n  Entropy = − Σ pⱼ·log₂(pⱼ)\n  ```\n\nWe then compute **Information Gain** = impurity before split − weighted impurity after split. The split with highest gain is chosen."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Impurity Check 🌿",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "A node has 50% class A and 50% class B. What is its Gini impurity?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "0.25",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "0.5",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "0.75",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "1.0",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Gini = 1 - (0.5² + 0.5²) = 1 - (0.25+0.25) = 0.5.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Overfitting Trees & Pruning ✂️",
+            "content": "# Too Many Branches Spoil the Tree\n\nA fully grown tree can perfectly memorise the training data (every leaf pure), but it will overfit. We control tree size with:\n\n- **Max depth**: limit how deep the tree can grow.\n- **Min samples split**: don’t split nodes with fewer than N samples.\n- **Min samples leaf**: ensure leaves have at least M samples.\n- **Pruning**: remove branches that contribute little to accuracy on a validation set.\n\nIn scikit‑learn, `DecisionTreeClassifier` has parameters like `max_depth`, `min_samples_split`, etc."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Decision Tree in Python 🐍",
+            "content": "Training a tree classifier:",
+            "codeSnippet": "from sklearn.tree import DecisionTreeClassifier\nfrom sklearn.model_selection import train_test_split\n\n# Assume X, y defined\nX_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)\n\nclf = DecisionTreeClassifier(max_depth=5, random_state=42)\nclf.fit(X_train, y_train)\nprint(\"Accuracy:\", clf.score(X_test, y_test))",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Tree Tuning 🌲",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "Increasing max_depth of a decision tree will always improve test accuracy.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "False. Too large depth leads to overfitting, reducing test accuracy. There’s a sweet spot.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Feature Importance 🌟",
+            "content": "# How Important is Each Feature?\n\nDecision trees can output **feature importances**, computed as the normalized total reduction in impurity brought by each feature across all splits. This helps you understand which features drive predictions.\n\n```python\nimportances = clf.feature_importances_\n```\n\nBut careful: these importances can be biased towards high‑cardinality numerical features."
+        }
+    ]
+}

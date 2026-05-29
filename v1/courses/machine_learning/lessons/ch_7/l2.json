@@ -1,0 +1,107 @@
+{
+    "id": "l2",
+    "chapterId": "ch_7",
+    "title": "Bagging & Random Forests 🌲🌲",
+    "description": "Bootstrap sampling, averaging, feature subsampling, out‑of‑bag error, and why Random Forests dominate.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Bagging",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Bootstrap Aggregating (Bagging) 🎒",
+            "content": "# Parallel Ensemble\n\nBagging creates multiple copies of a model by training each on a **bootstrap sample** of the original data — a random sample **with replacement** of the same size.\n\n- Because of replacement, each bootstrap sample contains about 63.2% unique instances; the rest are duplicates.\n- The remaining ~36.8% not selected for a given model are called **out‑of‑bag (OOB)** samples.\n- Predictions are aggregated: averaging for regression, majority vote for classification.\n\nBagging reduces variance without increasing bias. It’s especially effective with unstable models like deep decision trees."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Random Forest: Bagging on Steroids 🌳🌳",
+            "content": "# Adding Feature Randomness\n\nRandom Forest takes bagging further: at each split in each tree, it considers only a **random subset of features** (e.g., √p for classification, p/3 for regression). This decorrelates the trees and reduces variance even more.\n\nKey hyperparameters:\n- `n_estimators`: number of trees (more = better, but diminishing returns).\n- `max_features`: size of the random feature subset.\n- `max_depth`, `min_samples_split`, etc., to control tree complexity.\n\nRandom Forest can also output **feature importances** (averaged over all trees), a great tool for feature selection."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Random Forest in Scikit‑Learn 🐍",
+            "content": "Simple and powerful:",
+            "codeSnippet": "from sklearn.ensemble import RandomForestClassifier\nfrom sklearn.datasets import make_classification\n\nX, y = make_classification(n_samples=1000, n_features=20, random_state=42)\nrf = RandomForestClassifier(n_estimators=100, max_features='sqrt', random_state=42)\nrf.fit(X, y)\nprint(\"Feature importances:\", rf.feature_importances_[:5])",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Bagging Check 🔍",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the main purpose of bootstrapping in bagging?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To speed up training",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To create diverse training sets by sampling with replacement",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To reduce the number of features",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To balance the classes",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Bootstrapping creates varied datasets, promoting model diversity.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Out‑of‑Bag (OOB) Error 📊",
+            "content": "# Free Validation\n\nFor each tree, the OOB samples (those not in its bootstrap) can be used as a validation set. The OOB error is the average error on these samples across all trees.\n\n- It’s an unbiased estimate of generalisation error, similar to cross‑validation, but obtained without extra computation.\n- In scikit‑learn, set `oob_score=True` to get OOB accuracy.\n\nThis is a handy way to evaluate your Random Forest without needing a separate validation set."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "code",
+            "title": "OOB Score Example 🐍",
+            "content": "Get OOB accuracy with a few lines:",
+            "codeSnippet": "rf = RandomForestClassifier(n_estimators=100, oob_score=True, random_state=42)\nrf.fit(X, y)\nprint(f\"OOB Accuracy: {rf.oob_score_:.3f}\")",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "Random Forest Insight 🌲",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "true_false",
+                "question": "A Random Forest with 1,000 trees will always outperform one with 100 trees.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "False. Beyond a certain point, adding trees yields diminishing returns and only increases computation. Often 100‑300 trees are sufficient.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

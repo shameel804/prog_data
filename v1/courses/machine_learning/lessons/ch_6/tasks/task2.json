@@ -1,0 +1,16 @@
+{
+    "id": "task2",
+    "chapterId": "ch_6",
+    "title": "PCA on High‑Dimensional Data",
+    "description": "Apply PCA to the digits dataset, determine optimal components, and visualise the first two PCs.",
+    "estimatedMinutes": 20,
+    "problemStatement": "# Task: PCA on Handwritten Digits\n\nUse the built‑in digits dataset (8×8 pixel images, 64 features) to perform PCA.\n\n## Steps:\n1. Load the digits dataset from `sklearn.datasets.load_digits()`. Separate features X and target y.\n2. Scale X using `StandardScaler`.\n3. Instantiate PCA and fit it to the scaled data. Do not reduce dimensions yet.\n4. Plot (or print) the cumulative explained variance ratio vs number of components. Print the number of components required to explain 85% and 95% of variance.\n5. Using the number of components needed for 95% variance, fit a new PCA and transform the data.\n6. Print the shape of the transformed data.\n7. For visualisation, reduce the data to 2 components with PCA. Create a scatter plot of the first two principal components, coloured by digit label. (Since actual plotting may not be possible in all environments, just print the first 5 rows of the transformed 2‑component data and state that a plot would be created.)\n\n**Hints**:\n- `pca.explained_variance_ratio_` returns variance ratios.\n- `np.cumsum` to get cumulative.\n- Use `PCA(n_components=0.95)` to automatically select components.\n\nExpected output: number of components for 85% and 95%, shape after reduction, and first 5 rows of 2‑component data.",
+    "hints": [
+        "Load digits: `from sklearn.datasets import load_digits`; `digits = load_digits()`.",
+        "Cumulative sum: `cumsum = np.cumsum(pca.explained_variance_ratio_)`.",
+        "Find where cumsum >= 0.85: `np.argmax(cumsum >= 0.85) + 1`.",
+        "When using 2 components, just `PCA(n_components=2)`."
+    ],
+    "expectedOutput": "Components for 85%: X\nComponents for 95%: Y\nReduced shape: (n_samples, Z)\nFirst 5 rows of 2‑component data.",
+    "solutionCode": "import numpy as np\nfrom sklearn.datasets import load_digits\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\n\ndigits = load_digits()\nX, y = digits.data, digits.target\n\n# Scale\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X)\n\n# Fit PCA on all components\npca_full = PCA().fit(X_scaled)\ncumsum = np.cumsum(pca_full.explained_variance_ratio_)\n\nn_85 = np.argmax(cumsum >= 0.85) + 1\nn_95 = np.argmax(cumsum >= 0.95) + 1\nprint(f\"Components for 85% variance: {n_85}\")\nprint(f\"Components for 95% variance: {n_95}\")\n\n# Reduce to 95% variance\npca_95 = PCA(n_components=0.95)\nX_reduced = pca_95.fit_transform(X_scaled)\nprint(f\"Reduced shape: {X_reduced.shape}\")\n\n# Visualise with 2 components\npca_2 = PCA(n_components=2)\nX_2 = pca_2.fit_transform(X_scaled)\nprint(\"First 5 rows of 2‑component PCA data:\")\nprint(X_2[:5])\nprint(\"\\n(Plot would show a scatter plot coloured by digit label.)\")\n"
+}

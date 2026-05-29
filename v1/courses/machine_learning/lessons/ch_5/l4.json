@@ -1,0 +1,104 @@
+{
+    "id": "l4",
+    "chapterId": "ch_5",
+    "title": "DBSCAN: Density‑Based Clustering 🌌",
+    "description": "Discover clusters of arbitrary shape, detect noise, and choose epsilon and min_samples wisely.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Core Algorithms",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Beyond Circles: Why DBSCAN? 🌀",
+            "content": "# Handling Real‑World Shapes\n\nK‑Means assumes clusters are spherical and similar in size. Real data often has complex, intertwined shapes with noise.\n\n**DBSCAN** (Density‑Based Spatial Clustering of Applications with Noise) groups together points that are tightly packed, marking points in low‑density regions as outliers.\n\nThink of it as connecting dots on a page where many dots are close together, but isolated dots are ignored."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "DBSCAN Core Concepts 🧠",
+            "content": "# Epsilon & MinPts\n\nDBSCAN uses two parameters:\n- **ε (epsilon)**: the radius of a neighbourhood around a point.\n- **MinPts**: minimum number of points required within ε to form a dense region.\n\nPoints are classified as:\n- **Core point**: has at least MinPts within ε.\n- **Border point**: has fewer than MinPts, but is within ε of a core point.\n- **Noise (outlier)**: neither core nor border.\n\nClusters are formed by linking core points that are within ε of each other; border points attach to them."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "DBSCAN Definitions 📐",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What makes a point a core point in DBSCAN?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It is the centroid of a cluster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It has at least MinPts neighbours within distance ε",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It has the highest density in the dataset",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It is the point closest to ε",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A core point is densely surrounded: at least MinPts points (including itself) within ε.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Choosing ε and MinPts 🔧",
+            "content": "# No Magic Numbers\n\n- **MinPts**: generally, set to at least the number of dimensions + 1, or a small value like 5-10. Larger values produce more robust clusters but may miss small ones.\n- **ε**: often determined via a **k‑distance graph**. For each point, compute the distance to its k‑th nearest neighbour (k=MinPts-1). Sort these distances; a sharp bend indicates a good ε.\n\nTypical approach: start with MinPts=5, examine the k‑distance plot, and pick ε at the elbow."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "DBSCAN with Scikit‑Learn 🐍",
+            "content": "Only a few lines:",
+            "codeSnippet": "from sklearn.cluster import DBSCAN\nfrom sklearn.datasets import make_moons\n\n# Create moon‑shaped data (non‑spherical)\nX, _ = make_moons(n_samples=200, noise=0.05, random_state=0)\n\ndb = DBSCAN(eps=0.2, min_samples=5)\nlabels = db.fit_predict(X)\nprint(\"Cluster labels (noise marked as -1):\", labels)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Strengths & Weaknesses ⚖️",
+            "content": "# Pros:\n- Does not require specifying the number of clusters.\n- Finds arbitrarily shaped clusters.\n- Naturally identifies outliers (noise points).\n\n# Cons:\n- Struggles with varying densities across clusters; one global ε may not fit all.\n- Sensitivity to parameters; small ε changes can alter results drastically.\n- Scalability: basic DBSCAN is O(n²), though optimised versions (e.g., using kd‑trees) improve this.\n- Works best on lower‑dimensional data (curse of dimensionality)."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "DBSCAN vs K‑Means 🥊",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "DBSCAN requires you to specify the number of clusters beforehand.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "False. DBSCAN determines the number of clusters based on density, unlike K‑Means.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

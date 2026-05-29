@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_11",
+    "title": "Build a Model API with FastAPI",
+    "description": "Create a REST endpoint that accepts features and returns predictions from a pre‑trained model.",
+    "estimatedMinutes": 25,
+    "problemStatement": "# Task: Deploy a Model API\n\nYou have a trained linear regression model saved as `model.pkl` (using joblib). The model expects two features: `area` (sq ft) and `bedrooms`.\n\nYour task is to build a FastAPI application that loads the model and serves predictions.\n\n## Requirements\n1. Write a Python script `app.py`.\n2. Load the model at startup using `joblib.load('model.pkl')`.\n3. Define a Pydantic model `HouseFeatures` with fields `area: float` and `bedrooms: int`.\n4. Create a POST endpoint `/predict` that accepts JSON matching `HouseFeatures`, runs the model prediction, and returns JSON `{\"predicted_price\": value}`.\n5. Add a root endpoint `/` that returns a welcome message.\n6. Include instructions to run the server with `uvicorn app:app --reload`.\n\n**Note**: We'll simulate the model file creation in the solution code. In practice, the file exists.\n\n## Expected Behavior\nStart the server, then test with:\n```bash\ncurl -X POST \"http://127.0.0.1:8000/predict\" -H \"Content-Type: application/json\" -d '{\"area\": 1500, \"bedrooms\": 3}'\n```\nResponse should be like `{\"predicted_price\": 300000.0}` (depending on model).\n\nWrite the complete `app.py` code.",
+    "hints": [
+        "Use `from fastapi import FastAPI`.",
+        "Create `class HouseFeatures(BaseModel): ...`",
+        "`model.predict([[data.area, data.bedrooms]])` returns array; convert to float.",
+        "Run with: `uvicorn app:app --reload`"
+    ],
+    "expectedOutput": "Running server with API endpoints; code is correct if endpoints work as described.",
+    "solutionCode": "# app.py\nfrom fastapi import FastAPI\nfrom pydantic import BaseModel\nimport joblib\nimport numpy as np\n\n# Simulate model creation (in real scenario, model.pkl already exists)\nfrom sklearn.linear_model import LinearRegression\nimport pickle\n# Create a dummy model and save\nmodel = LinearRegression()\nmodel.fit([[1000, 2], [1500, 3], [2000, 4]], [200000, 300000, 400000])\njoblib.dump(model, 'model.pkl')\n\napp = FastAPI()\n\n# Load model\nmodel = joblib.load('model.pkl')\n\nclass HouseFeatures(BaseModel):\n    area: float\n    bedrooms: int\n\n@app.get('/')\ndef root():\n    return {\"message\": \"House Price Prediction API\"}\n\n@app.post('/predict')\ndef predict(features: HouseFeatures):\n    input_data = np.array([[features.area, features.bedrooms]])\n    prediction = model.predict(input_data)[0]\n    return {\"predicted_price\": round(float(prediction), 2)}\n\n# To run: uvicorn app:app --reload\n"
+}

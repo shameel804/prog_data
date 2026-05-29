@@ -1,0 +1,98 @@
+{
+    "id": "l5",
+    "chapterId": "ch_8",
+    "title": "Backpropagation: The Learning Magic 🪄",
+    "description": "Chain rule, gradient flow, and how networks adjust weights from output to input.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Training",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "How Does a Network Learn? 🤔",
+            "content": "# Backpropagation = Gradient Descent + Chain Rule\n\nTo train a neural network, we need to compute the gradient of the loss with respect to every weight. How? By applying the **chain rule** from calculus backwards through the network.\n\n- **Forward pass**: compute predictions and loss.\n- **Backward pass**: compute gradients starting from the output layer, propagating error signals to earlier layers.\n- **Update**: adjust weights using an optimiser (e.g., SGD).\n\nBackpropagation is not a new learning algorithm; it’s the efficient way to compute gradients."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "The Chain Rule in Action 🔗",
+            "content": "# Gradient Flow\n\nConsider a simple network: input x → hidden neuron h (sigmoid) → output ŷ.\nLoss L = (ŷ − y)².\n\nTo update weight w connecting input to hidden, we need ∂L/∂w.\nBy chain rule:\n```\n∂L/∂w = (∂L/∂ŷ) * (∂ŷ/∂h) * (∂h/∂z) * (∂z/∂w)\n```\nWhere z = w·x + b, h = σ(z). Each partial derivative is easy to compute.\n\nIn a deep network, this chain extends through all layers. The gradients propagate backward."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Backpropagation Algorithm 👣",
+            "content": "# High‑Level Steps\n\n1. Perform forward pass, store all intermediate z, a.\n2. Compute loss at output.\n3. Compute gradient of loss w.r.t. output activation.\n4. For each layer from last to first:\n   - Compute gradients w.r.t. weights and biases using stored activations and current error.\n   - Propagate error to previous layer using the chain rule.\n5. Update all weights (e.g., w = w − η * ∂L/∂w).\n\nModern frameworks (TensorFlow, PyTorch) do this automatically via **automatic differentiation**."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Backprop Deep Dive 🧮",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "true_false",
+                "question": "Backpropagation is used to compute the loss function.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "False. Backpropagation computes the gradients of the loss with respect to weights; the loss itself is computed in the forward pass.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Backprop from Scratch (Concept) 🐍",
+            "content": "A tiny two‑layer network with manual backprop (conceptual snippet):",
+            "codeSnippet": "# Forward\nz1 = np.dot(X, W1) + b1\na1 = sigmoid(z1)\nz2 = np.dot(a1, W2) + b2\ny_pred = sigmoid(z2)\nloss = -np.mean(y * np.log(y_pred) + (1-y)*np.log(1-y_pred))\n\n# Backward (simplified)\ndz2 = y_pred - y\ndW2 = np.dot(a1.T, dz2) / n\ndb2 = np.mean(dz2, axis=0)\nda1 = np.dot(dz2, W2.T)\ndz1 = da1 * sigmoid_derivative(z1)\ndW1 = np.dot(X.T, dz1) / n\ndb1 = np.mean(dz1, axis=0)\n# Update W1, b1, W2, b2",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Chain Rule Flow 🏞️",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "Why is the derivative of sigmoid useful in backprop?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's always 1",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It's σ(z)*(1-σ(z)), simple and efficient to compute from stored activations",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's not used",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It replaces the loss function",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The sigmoid derivative can be expressed directly from the output σ(z), avoiding recomputation, crucial for backprop efficiency.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

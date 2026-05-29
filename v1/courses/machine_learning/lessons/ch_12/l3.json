@@ -1,0 +1,104 @@
+{
+    "id": "l3",
+    "chapterId": "ch_12",
+    "title": "Build & Evaluate Your Model 🏗️",
+    "description": "Implement preprocessing, try multiple models, tune, evaluate with cross‑validation, and interpret results.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Capstone",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Time to Code! 💻",
+            "content": "# Hands‑On Execution\n\nNow take your plan and implement it in a Jupyter notebook (or Python script). We’ll walk through each stage with best practices.\n\n- Load data and do a quick sanity check (`df.head()`, `df.info()`).\n- Handle missing values and outliers as you did in Chapter 2.\n- Split early to avoid data leakage."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Feature Engineering & Selection 🔧",
+            "content": "# Apply What You Learned\n\n- Scale numerical features with `StandardScaler`.\n- Encode categoricals with one‑hot or target encoding.\n- Create datetime features if applicable.\n- Try `PolynomialFeatures` for non‑linear relationships.\n- Use `SelectKBest` or Lasso for feature selection.\n- If you have many features, consider PCA.\n\nRemember: fit transformations **only on training data**, then transform test."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Preprocessing Reminder 🔎",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "true_false",
+                "question": "When scaling features, you should compute the mean and standard deviation on the entire dataset (train+test) before splitting.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "False. Fit the scaler on training data only, then apply to test. Using test data during fitting causes data leakage.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Model Training & Tuning ⚙️",
+            "content": "# Try Several Models\n\nCreate a benchmark of algorithms:\n```python\nmodels = {\n    'Logistic Regression': LogisticRegression(),\n    'Decision Tree': DecisionTreeClassifier(max_depth=5),\n    'Random Forest': RandomForestClassifier(),\n    'XGBoost': XGBClassifier(),\n    'MLP': MLPClassifier(max_iter=1000)\n}\n```\nFor each, use **cross‑validation** (`cross_val_score`) to estimate performance. Then perform **hyperparameter tuning** on the best 1‑2 models using `GridSearchCV` or `RandomizedSearchCV`.\n\nAlways keep a final **test set** untouched until the very end."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Evaluation Code Snippet 🐍",
+            "content": "Comprehensive evaluation example:",
+            "codeSnippet": "from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, roc_auc_score\n\ny_pred = best_model.predict(X_test)\nprint(\"Accuracy:\", accuracy_score(y_test, y_pred))\nprint(\"Precision:\", precision_score(y_test, y_pred))\nprint(\"Recall:\", recall_score(y_test, y_pred))\nprint(\"F1:\", f1_score(y_test, y_pred))\nprint(\"ROC‑AUC:\", roc_auc_score(y_test, best_model.predict_proba(X_test)[:,1]))\nprint(\"Confusion Matrix:\\n\", confusion_matrix(y_test, y_pred))",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "Interpretation & Analysis 📈",
+            "content": "# Beyond the Numbers\n\n- Plot feature importances (for tree models) or SHAP values.\n- Show a confusion matrix with a heatmap.\n- Display a ROC curve.\n- Discuss: What features matter most? Are there errors concentrated in certain subgroups? (Fairness check!)\n\nWrap up with a conclusion: What did you achieve? What could be improved? What would you do with more time/data?\n\nThis narrative transforms a notebook into a compelling portfolio piece."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "quiz",
+            "title": "Project Closure ✅",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Why is it important to keep a separate test set untouched until the final evaluation?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To save memory",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To prevent overfitting hyperparameters to the test data",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Because algorithms require exactly three sets",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To make the training set larger",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Using the test set repeatedly leaks information, making performance estimates overly optimistic.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

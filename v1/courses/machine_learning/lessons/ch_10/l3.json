@@ -1,0 +1,114 @@
+{
+    "id": "l3",
+    "chapterId": "ch_10",
+    "title": "From Text to Numbers: Bag of Words & TF‑IDF 🔢",
+    "description": "Convert documents into vectors with count‑based and frequency‑weighted representations; n‑grams add context.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Feature Extraction",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Machine Learning Needs Numbers 🧮",
+            "content": "# Vectorizing Text\n\nAlgorithms can't process raw strings. We must convert text into numerical feature vectors. Two foundational approaches:\n\n- **Bag of Words (BoW)**: represent a document by counting how often each word appears, ignoring order.\n- **TF‑IDF**: weigh word counts by how rare/common they are across all documents.\n\nThese produce sparse, high‑dimensional vectors (size = vocabulary size)."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Bag of Words (BoW) 🎒",
+            "content": "# Count Vectors\n\nGiven a vocabulary of all unique words in the corpus, each document becomes a vector of length |V| with word frequencies.\n\nExample:\n- Corpus: [\"cat sat on mat\", \"dog sat on log\"]\n- Vocabulary: [\"cat\", \"dog\", \"sat\", \"on\", \"mat\", \"log\"] (6 words)\n- Doc1 vector: [1,0,1,1,1,0]\n- Doc2 vector: [0,1,1,1,0,1]\n\nBoW loses word order but captures topic. Works surprisingly well for classification with linear models."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "BoW Understanding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is a major limitation of the Bag of Words model?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It produces dense vectors",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It completely ignores word order and context",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It cannot handle large vocabularies",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It requires deep learning",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "BoW discards grammar and word sequence, treating 'cat bites dog' and 'dog bites cat' identically.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "TF‑IDF: Weighting Importance ⚖️",
+            "content": "# Term Frequency – Inverse Document Frequency\n\nTF‑IDF adjusts raw counts by how often a word appears across documents. Common words like 'the' get low weight; rare, distinctive words get high weight.\n\n- **TF (Term Frequency)**: how often a word appears in a document (often log‑scaled).\n- **IDF (Inverse Document Frequency)**: log(TotalDocs / DocsContainingWord).\n- **TF‑IDF = TF × IDF**.\n\nThis boosts words that are uniquely important to a document, improving classification accuracy over raw counts."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "TF‑IDF with Scikit‑Learn 🐍",
+            "content": "Vectorize a small corpus:",
+            "codeSnippet": "from sklearn.feature_extraction.text import TfidfVectorizer\n\ncorpus = [\n    \"I love machine learning\",\n    \"I love deep learning\",\n    \"I hate bugs\"\n]\nvectorizer = TfidfVectorizer()\nX = vectorizer.fit_transform(corpus)\nprint(vectorizer.get_feature_names_out())\nprint(X.toarray())",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "N‑grams: Adding Local Context 🔗",
+            "content": "# Capturing Phrases\n\nAn n‑gram is a continuous sequence of n words. Unigrams = single words, bigrams = two‑word phrases, trigrams = three‑word sequences.\n\nExample: \"I love NLP\" → bigrams: \"I love\", \"love NLP\".\n\nIncluding bigrams/trigrams adds some positional information. `TfidfVectorizer(ngram_range=(1,2))` includes unigrams and bigrams.\n\nBe careful: n‑grams explode the feature space, so use with feature selection."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "quiz",
+            "title": "TF‑IDF vs BoW ⚡",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Why does TF‑IDF often outperform raw BoW counts?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It uses deep neural networks",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It down‑weights common words and highlights discriminative words",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It keeps word order",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It reduces vocabulary size",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "IDF reduces the influence of frequent, less meaningful words, making the vectors more informative.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,108 @@
+{
+    "id": "l3",
+    "chapterId": "ch_4",
+    "title": "Logistic Regression: Cost & Learning 📉",
+    "description": "Master log‑loss, gradient descent for classification, and interpreting the decision boundary.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Training",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Why Not MSE? 🤔",
+            "content": "# A New Cost Function\n\nIn regression, we used MSE. But for classification, MSE with sigmoid leads to a non‑convex cost surface with many local minima, making gradient descent unreliable.\n\nInstead, we use **cross‑entropy loss** (log loss). For a single training example:\n```\nL = −[ y·ln(p) + (1−y)·ln(1−p) ]\n```\n- y = actual label (0 or 1).\n- p = predicted probability σ(z).\n\nIf y=1, we want p close to 1 → loss small. If y=0, we want p close to 0 → loss small.\n\nThis loss is **convex**, so gradient descent finds the global minimum."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Cost Function (Log Loss) for All Data 📊",
+            "content": "# Average Over All Examples\n\n```\nJ(w,b) = −(1/n) * Σ [ yᵢ·ln(pᵢ) + (1−yᵢ)·ln(1−pᵢ) ]\n```\n\n- n = number of training examples.\n- pᵢ = σ(zᵢ) = σ(w·xᵢ + b).\n\nThe derivatives for gradient descent turn out to be surprisingly clean:\n```\n∂J/∂w = (1/n) * Σ (pᵢ − yᵢ)·xᵢ\n∂J/∂b = (1/n) * Σ (pᵢ − yᵢ)\n```\n\nNotice the error term (pᵢ − yᵢ) — similar form to linear regression, but pᵢ comes from the sigmoid."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Loss Check 🧮",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "For a positive example (y=1), if the model predicts p=0.99, the log loss is approximately:",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Large (e.g., 4.6)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Small (e.g., 0.01)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Exactly 1",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "0.5",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "L = −ln(0.99) ≈ 0.01005, very small because the prediction is almost correct.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Decision Boundary Visualization 🎯",
+            "content": "# Where Does the Line Cross?\n\nFor two features, the decision boundary is a line (or hyperplane) where z = w·x + b = 0. Points on one side get probability >0.5, on the other <0.5.\n\nUnlike linear regression, logistic regression doesn’t just fit a line through points; it finds a line that best separates the two classes in terms of probability.\n\nIf the data is not linearly separable, we might need polynomial features or a different algorithm (like kernel SVM, but that’s advanced). Logistic regression can still find a reasonable boundary."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Logistic Regression with Scikit‑Learn 🐍",
+            "content": "Training is almost identical to linear regression:",
+            "codeSnippet": "from sklearn.linear_model import LogisticRegression\nfrom sklearn.model_selection import train_test_split\n\n# X_train, X_test, y_train, y_test already defined\nmodel = LogisticRegression()\nmodel.fit(X_train, y_train)\ny_pred = model.predict(X_test)\ny_prob = model.predict_proba(X_test)[:, 1]  # probability of class 1",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Parameters 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "What does the `.predict_proba()` method return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The final class labels (0 or 1)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The raw linear score z",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Probability of each class (shape n×2 for binary)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The confusion matrix",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`predict_proba` returns an array of shape (n_samples, n_classes) with probabilities.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

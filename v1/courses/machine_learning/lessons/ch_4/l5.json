@@ -1,0 +1,104 @@
+{
+    "id": "l5",
+    "chapterId": "ch_4",
+    "title": "k‑Nearest Neighbors (k‑NN) 👥",
+    "description": "Classify by majority vote; distance metrics, the curse of dimensionality, and choosing k.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Core Algorithm",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Lazy Learning 🦥",
+            "content": "# No Training Phase!\n\nk‑Nearest Neighbors is a non‑parametric, **instance‑based** algorithm. It doesn’t build a model — it just stores the training data. When you ask for a prediction, it looks at the k closest training examples and returns the majority class (for classification) or the average (for regression).\n\nThink of it like asking your neighbours for advice — the most common opinion wins.\n\nIt’s simple but powerful for low‑dimensional data."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Distance Measures 📏",
+            "content": "# How to Define ‘Close’\n\n- **Euclidean distance**: straight‑line distance, the most common. \n  `d = √( Σ (xᵢ − yᵢ)² )`\n- **Manhattan distance**: sum of absolute differences, less sensitive to outliers.\n  `d = Σ |xᵢ − yᵢ|`\n- **Minkowski distance**: generalisation; with p=1 it’s Manhattan, p=2 it’s Euclidean.\n\nFeature scaling is critical! If one feature ranges 0‑1000 and another 0‑1, distance will be dominated by the first."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Distance Know‑How 🔎",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which distance metric is computed as the sum of absolute differences?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Euclidean",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Manhattan",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Cosine",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Hamming",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Manhattan distance = sum of |xᵢ - yᵢ|. Also called L1 norm.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Choosing k 🤔",
+            "content": "# The Hyperparameter Sweet Spot\n\n- **k too small** (e.g., 1) → very sensitive to noise; overfits.\n- **k too large** → underfits; decision boundary becomes too smooth and may misclassify small groups.\n- Typical strategy: try odd k values (to avoid ties) via cross‑validation and pick the one with lowest validation error.\n\nAlso, consider **weighted k‑NN**: closer neighbours get a stronger vote, which can improve performance."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "k‑NN with Scikit‑Learn 🐍",
+            "content": "Training is just storing data; prediction uses distance:",
+            "codeSnippet": "from sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.preprocessing import StandardScaler\n\n# Scale features first!\nscaler = StandardScaler()\nX_train_scaled = scaler.fit_transform(X_train)\nX_test_scaled = scaler.transform(X_test)\n\nknn = KNeighborsClassifier(n_neighbors=5)\nknn.fit(X_train_scaled, y_train)\nprint(\"Accuracy:\", knn.score(X_test_scaled, y_test))",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "The Curse of Dimensionality 🧙‍♂️",
+            "content": "# When k‑NN Fails\n\nAs the number of features grows, data becomes sparse — all points tend to be roughly equidistant. This makes the notion of “nearest neighbour” meaningless.\n\n- Low dimensions (e.g., 2‑10): k‑NN works well.\n- High dimensions (e.g., 100+): performance degrades.\n\nDimensionality reduction (PCA) can help, but k‑NN is often not the best choice for high‑dimensional data."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Curse Check 🧪",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "true_false",
+                "question": "k‑NN works best with unscaled features because distance is independent of scale.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "False. Features must be scaled so that one doesn’t dominate the distance calculation.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,98 @@
+{
+    "id": "l3",
+    "chapterId": "ch_11",
+    "title": "Monitoring & Maintaining Models 🩺",
+    "description": "Detect data drift, concept drift, set up retraining pipelines, and keep your model healthy in production.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "MLOps",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Models Decay Over Time ⏳",
+            "content": "# Why Monitoring Matters\n\nA deployed model isn't a 'set it and forget it' artifact. Real‑world data changes, and model performance degrades.\n\n- **Data drift**: the distribution of input features shifts (e.g., users become younger, economic indicators change).\n- **Concept drift**: the relationship between features and target changes (e.g., what defines 'spam' evolves).\n\nIf you don't monitor, you'll serve increasingly bad predictions without knowing."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Detecting Drift 🔍",
+            "content": "# Statistical Tests & Metrics\n\n- **Population Stability Index (PSI)**: measures distribution shift between reference and current data.\n- **Kolmogorov‑Smirnov (KS) test**: detects if two samples come from different distributions.\n- **Model performance monitoring**: track accuracy, precision, recall on ground truth labels (when available) over time.\n\nTools: Evidently AI, WhyLogs, NannyML, or custom pipelines.\n\nSet up alerts when drift exceeds a threshold."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Drift Diagnosis 🩺",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is data drift?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The model's accuracy dropping over time",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A change in the distribution of input features compared to training data",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The model file becoming corrupted",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Data being lost during transfer",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Data drift is a shift in the input data distribution, which can degrade model performance.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Retraining Strategies 🔄",
+            "content": "# Keeping the Model Fresh\n\n- **Scheduled retraining**: retrain weekly/monthly on new data.\n- **Triggered retraining**: retrain when a drift metric exceeds threshold.\n- **Online learning**: update model incrementally with each new sample (e.g., SGDRegressor with `partial_fit`).\n\nAutomate the retraining pipeline (data ingestion → preprocessing → training → evaluation → deployment). This is the heart of **MLOps**."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Simple Drift Check with PSI 🐍",
+            "content": "Compute PSI to compare two distributions:",
+            "codeSnippet": "import numpy as np\n\ndef calculate_psi(expected, actual, buckets=10):\n    breakpoints = np.linspace(0, 1, buckets+1)\n    expected_percents = np.histogram(expected, bins=breakpoints)[0] / len(expected)\n    actual_percents = np.histogram(actual, bins=breakpoints)[0] / len(actual)\n    # avoid division by zero\n    expected_percents = np.clip(expected_percents, 1e-6, 1)\n    actual_percents = np.clip(actual_percents, 1e-6, 1)\n    psi = np.sum((actual_percents - expected_percents) * np.log(actual_percents / expected_percents))\n    return psi",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Retraining Triggers 🧪",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "true_false",
+                "question": "A model that is never retrained will eventually become less accurate if the data distribution changes over time.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "True. Without updates, the model's assumptions become stale, leading to decreased performance.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

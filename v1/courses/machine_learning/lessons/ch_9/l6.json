@@ -1,0 +1,91 @@
+{
+    "id": "l6",
+    "chapterId": "ch_9",
+    "title": "Building a CNN with Keras 🐍",
+    "description": "Hands‑on: code a CNN for MNIST or CIFAR‑10, compile, train, and evaluate — from scratch to high accuracy.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Implementation",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "End‑to‑End CNN Pipeline 🛠️",
+            "content": "# Plan of Attack\n\nWe’ll build a CNN for the CIFAR‑10 dataset (60,000 32×32 colour images in 10 classes). Steps:\n\n1. Load and preprocess data.\n2. Define a CNN architecture (Conv → Pool → Conv → Pool → Dense).\n3. Compile (loss, optimiser, metrics).\n4. Train with validation split.\n5. Evaluate and plot results.\n\nWe’ll use `tensorflow.keras`."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Load CIFAR‑10 🐍",
+            "content": "Data preparation:",
+            "codeSnippet": "import tensorflow as tf\n\n(X_train, y_train), (X_test, y_test) = tf.keras.datasets.cifar10.load_data()\nX_train = X_train.astype('float32') / 255.0\nX_test = X_test.astype('float32') / 255.0\n\n# Convert labels to one‑hot (or use sparse categorical crossentropy)\ny_train = tf.keras.utils.to_categorical(y_train, 10)\ny_test = tf.keras.utils.to_categorical(y_test, 10)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Model Definition 🏗️",
+            "content": "A simple yet effective CNN:",
+            "codeSnippet": "from tensorflow.keras.models import Sequential\nfrom tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout\n\nmodel = Sequential([\n    Conv2D(32, (3,3), activation='relu', padding='same', input_shape=(32,32,3)),\n    MaxPooling2D((2,2)),\n    Conv2D(64, (3,3), activation='relu', padding='same'),\n    MaxPooling2D((2,2)),\n    Flatten(),\n    Dense(128, activation='relu'),\n    Dropout(0.5),\n    Dense(10, activation='softmax')\n])\nmodel.summary()",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Compile & Train 🏋️",
+            "content": "# Set Optimizer, Loss, Metrics\n\n```python\nmodel.compile(optimizer='adam',\n              loss='categorical_crossentropy',\n              metrics=['accuracy'])\n\nhistory = model.fit(X_train, y_train,\n                    validation_split=0.2,\n                    epochs=15,\n                    batch_size=64)\n```\nWe monitor validation accuracy to see if model is improving."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "quiz",
+            "title": "Compile Components 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Why do we use categorical_crossentropy loss with softmax output?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's the default for all Keras models",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It measures the distance between predicted probability distribution and true distribution, suitable for multi‑class",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's required for ReLU activation",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It only works with binary classification",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Cross‑entropy compares two probability distributions; combined with softmax, it's the standard multi‑class loss.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_6",
+            "type": "code",
+            "title": "Evaluate & Plot 📊",
+            "content": "Test accuracy and training curves:",
+            "codeSnippet": "test_loss, test_acc = model.evaluate(X_test, y_test, verbose=0)\nprint(f'Test accuracy: {test_acc:.3f}')\n\nimport matplotlib.pyplot as plt\nplt.plot(history.history['accuracy'], label='train')\nplt.plot(history.history['val_accuracy'], label='val')\nplt.legend(); plt.show()",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_7",
+            "type": "tip",
+            "title": "Next Steps 🚀",
+            "content": "## Improve This Model\n- Add data augmentation (`RandomFlip`, `RandomRotation`).\n- Use BatchNormalization after Conv layers.\n- Increase filters or depth.\n- Use a pre‑trained model (transfer learning).\n\nThis basic CNN already reaches ~70% on CIFAR‑10; with these tweaks you can exceed 85%+."
+        }
+    ]
+}

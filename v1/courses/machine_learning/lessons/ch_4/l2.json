@@ -1,0 +1,79 @@
+{
+    "id": "l2",
+    "chapterId": "ch_4",
+    "title": "Logistic Regression: The Sigmoid 🧬",
+    "description": "Understand odds, log‑odds, and the sigmoid function that turns a line into a probability.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Core Algorithm",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "From Line to Probability ⚖️",
+            "content": "# Logistic Regression = Linear Model + Sigmoid\n\nDespite its name, logistic regression is a **classification** algorithm. It predicts the probability that an instance belongs to the positive class (e.g., “yes”).\n\nFirst, it computes a linear combination of features:\n```\nz = w₁x₁ + w₂x₂ + … + wₚxₚ + b\n```\nThen it squeezes z through the **sigmoid** (logistic) function to get a value between 0 and 1:\n```\nσ(z) = 1 / (1 + e⁻ᶻ)\n```\nInterpretation: σ(z) is the estimated probability P(y=1 | x)."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "The Sigmoid Shape 📈",
+            "content": "# S‑Curve Magic\n\n- When z is very large (e.g., +∞), e⁻ᶻ ≈ 0 → σ(z) ≈ 1.\n- When z is very small (e.g., −∞), e⁻ᶻ → ∞ → σ(z) ≈ 0.\n- When z = 0, σ(0) = 0.5.\n\nThe sigmoid smoothly maps any real number to a probability. This is the heart of logistic regression.\n\nIt also has a beautiful derivative: σ'(z) = σ(z)(1 − σ(z)), which makes gradient descent easy."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Sigmoid Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the output of σ(0)?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "0",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "0.5",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "1",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It depends on the data",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "σ(0) = 1 / (1 + e⁰) = 1/2 = 0.5.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Odds and Log‑Odds 🎲",
+            "content": "# Another Perspective\n\nLogistic regression models the **log‑odds** of the positive class as a linear function:\n\n```\nodds = P(y=1) / (1 − P(y=1))\nlog‑odds = ln(odds) = w·x + b\n```\n\nSo we can write:\n```\nP(y=1) = σ(z) = 1 / (1 + e⁻ᶻ) = eᶻ / (1 + eᶻ)\n```\n\nThis means a one‑unit increase in feature xⱼ multiplies the odds by e^(wⱼ). This is why logistic regression is popular in fields like medicine — odds ratios are easy to interpret."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Sigmoid in Python 🐍",
+            "content": "A simple implementation:",
+            "codeSnippet": "import numpy as np\n\ndef sigmoid(z):\n    return 1 / (1 + np.exp(-z))\n\nprint(sigmoid(0))   # 0.5\nprint(sigmoid(3))   # 0.9525\nprint(sigmoid(-3))  # 0.0474",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "tip",
+            "title": "Remember 📌",
+            "content": "## Threshold = 0.5\nUsually we predict class 1 if P(y=1) ≥ 0.5, which is equivalent to z ≥ 0 (since σ(0)=0.5). The line z=0 is the **decision boundary**."
+        }
+    ]
+}

@@ -1,0 +1,104 @@
+{
+    "id": "l5",
+    "chapterId": "ch_10",
+    "title": "Recurrent Neural Networks & LSTMs ⏳",
+    "description": "Process sequences with memory: RNNs, vanishing gradients, and the LSTM cell that remembers long‑range dependencies.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Sequence Models",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Why Sequence Models? 🔁",
+            "content": "# Text is Sequential\n\nWord order matters. 'The movie was not good, it was great' vs 'The movie was not great, it was good' — meaning flips. \n\nFeedforward networks ignore order. Recurrent Neural Networks (RNNs) process sequences step‑by‑step, maintaining a **hidden state** that acts as memory.\n\n- Input: a sequence of word vectors.\n- Each step: combine current input with previous hidden state to produce output and new hidden state.\n\nRNNs can handle variable‑length sequences and model temporal dependencies."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "The Vanishing Gradient Problem 🕳️",
+            "content": "# Why Simple RNNs Struggle\n\nWhen unrolled through many time steps, RNNs suffer from vanishing/exploding gradients. Early tokens have almost no influence on the final loss because gradients become tiny (or huge).\n\nThis makes it hard for RNNs to learn long‑range dependencies (e.g., linking a pronoun to a subject 10 words back).\n\nSolutions: use gated architectures like **LSTM** or **GRU**."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Long Short‑Term Memory (LSTM) 🧠",
+            "content": "# Gates to the Rescue\n\nAn LSTM cell has a more complex structure with three gates (forget, input, output) and a cell state that acts as a conveyor belt of information.\n\n- **Forget gate**: decides what to discard from cell state.\n- **Input gate**: decides what new information to store.\n- **Output gate**: decides what to output based on cell state.\n\nThis architecture allows LSTMs to remember relevant information for many steps, overcoming vanishing gradients.\n\nGRU (Gated Recurrent Unit) is a simpler variant with two gates, often similar performance."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "LSTM in Keras 🐍",
+            "content": "A simple LSTM layer:",
+            "codeSnippet": "from tensorflow.keras.layers import LSTM, Embedding, Dense\n\nmodel = tf.keras.Sequential([\n    Embedding(vocab_size, 128, input_length=max_len),\n    LSTM(64, dropout=0.2, recurrent_dropout=0.2),\n    Dense(1, activation='sigmoid')\n])\nmodel.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "LSTM Understanding 🔍",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What problem does an LSTM solve that a basic RNN struggles with?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Overfitting on small datasets",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Learning long‑range dependencies by mitigating vanishing gradients",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Handling images",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Computing word frequencies",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "LSTMs use gating mechanisms to preserve gradients over many time steps.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Bidirectional RNNs ↔️",
+            "content": "# Looking Both Ways\n\nA Bidirectional LSTM (BiLSTM) processes the sequence forwards and backwards, concatenating the two hidden states. This gives context from both past and future words.\n\n```python\nfrom tensorflow.keras.layers import Bidirectional\nBidirectional(LSTM(64, return_sequences=False))\n```\n\nExcellent for tasks where whole sequence is available (e.g., classification, NER)."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Sequence Model Choice ⚙️",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "true_false",
+                "question": "A simple RNN can easily capture dependencies between words 50 steps apart.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "False. Due to vanishing gradients, basic RNNs fail to learn very long dependencies.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

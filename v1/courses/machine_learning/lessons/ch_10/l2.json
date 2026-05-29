@@ -1,0 +1,113 @@
+{
+    "id": "l2",
+    "chapterId": "ch_10",
+    "title": "Text Preprocessing 🧹",
+    "description": "Clean raw text into machine‑friendly form: tokenization, stop words, stemming, lemmatization, and regex.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Data Preparation",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Why Preprocess? 🧼",
+            "content": "# From Raw Text to Clean Tokens\n\nRaw text contains noise: HTML tags, punctuation, emojis, inconsistent casing, and words with little meaning (stop words). Preprocessing standardises and simplifies text so models can focus on signal.\n\nKey steps (not all always needed):\n- Lowercasing\n- Removing punctuation/numbers\n- Tokenization\n- Stop word removal\n- Stemming / Lemmatization\n\nThink of it like peeling and chopping vegetables before cooking."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Tokenization ✂️",
+            "content": "# Splitting Text into Pieces\n\nTokenization breaks text into words, subwords, or sentences. Word tokenization: 'I love NLP!' → ['I', 'love', 'NLP', '!']\n\n- White‑space tokenizer: simple but fails on punctuation.\n- Advanced: use NLTK `word_tokenize`, spaCy, or Keras `Tokenizer`.\n\nGood tokenization handles contractions ('don't' → 'do', 'not') and punctuation correctly."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Tokenization with Python 🐍",
+            "content": "Using NLTK (natural language toolkit):",
+            "codeSnippet": "import nltk\nnltk.download('punkt')\nfrom nltk.tokenize import word_tokenize\n\ntext = \"I can't believe it's already 2026!\"\ntokens = word_tokenize(text)\nprint(tokens)\n# Output: ['I', 'ca', \"n't\", 'believe', 'it', \"'s\", 'already', '2026', '!']",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Tokenization Check 🔍",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What does word tokenization do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Removes punctuation from text",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Splits text into individual words or subwords",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Converts words to lowercase",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Identifies the grammatical structure",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Tokenization breaks a string into its constituent tokens (words, punctuation, etc.).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Stop Words & Noise Removal 🗑️",
+            "content": "# Filtering Out the Common Chaff\n\nStop words are frequent, low‑information words like 'the', 'is', 'in', 'and'. Removing them can reduce dimensionality and noise, but sometimes they carry meaning (e.g., 'not' in sentiment).\n\nAlso remove: URLs, HTML tags, special characters, numbers (if not relevant).\n\nLibraries like NLTK and spaCy provide stop word lists. Always consider your task — for translation, 'the' matters; for topic classification, maybe not."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Stemming & Lemmatization 🌱",
+            "content": "# Reducing Words to Their Root\n\n- **Stemming**: crude chopping of word endings. 'running' → 'run', 'better' → 'better' (doesn't understand irregulars). Fast but often produces non‑words.\n- **Lemmatization**: uses vocabulary and morphological analysis to return the base dictionary form (lemma). 'better' → 'good', 'running' → 'run'. Slower but more accurate.\n\nPorter Stemmer (NLTK) is a common stemmer. WordNet Lemmatizer is common for English lemmatization."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "code",
+            "title": "Stemming vs Lemmatization 🐍",
+            "content": "Example using NLTK:",
+            "codeSnippet": "from nltk.stem import PorterStemmer, WordNetLemmatizer\nnltk.download('wordnet')\nstemmer = PorterStemmer()\nlemmatizer = WordNetLemmatizer()\n\nword = \"running\"\nprint(stemmer.stem(word))       # 'run'\nprint(lemmatizer.lemmatize(word, pos='v'))  # 'run'\n\nword2 = \"better\"\nprint(stemmer.stem(word2))      # 'better'\nprint(lemmatizer.lemmatize(word2, pos='a')) # 'good'",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_8",
+            "type": "quiz",
+            "title": "Stem vs Lemma 🆚",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "true_false",
+                "question": "Lemmatization always returns a valid dictionary word.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "True. Lemmatization maps words to their canonical form (lemma), which is an actual word.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

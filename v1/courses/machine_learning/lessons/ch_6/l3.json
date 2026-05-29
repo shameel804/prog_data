@@ -1,0 +1,113 @@
+{
+    "id": "l3",
+    "chapterId": "ch_6",
+    "title": "Feature Selection: Filters & Wrappers 🔍",
+    "description": "Remove noise and redundancy with variance thresholds, mutual information, and recursive feature elimination.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Feature Selection",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Why Throw Away Features? 🗑️",
+            "content": "# The Benefits of Feature Selection\n\n- **Reduces overfitting**: less noise, more generalisation.\n- **Speeds up training**: fewer features → faster computation.\n- **Improves interpretability**: a model with 5 features is easier to explain than one with 500.\n\nThree families of methods:\n- **Filter methods**: rank features by statistical scores (independent of any model).\n- **Wrapper methods**: use a model to evaluate subsets of features.\n- **Embedded methods**: feature selection is built into the model training (e.g., Lasso)."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Filter Methods 📊",
+            "content": "# Quick and Model‑Agnostic\n\n- **Variance Threshold**: remove features with very low variance (almost constant).\n- **Correlation**: drop one of two highly correlated features.\n- **Mutual Information**: measures how much knowing one variable reduces uncertainty about the other. Works for both numerical and categorical features and can detect non‑linear relationships.\n- **Chi‑squared test**: for categorical features vs categorical target.\n\nScikit‑learn provides `VarianceThreshold`, `SelectKBest` with `mutual_info_classif` / `mutual_info_regression`, `f_classif`, etc."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Univariate Feature Selection with Scikit‑Learn 🐍",
+            "content": "Select top K features using mutual information for classification:",
+            "codeSnippet": "from sklearn.feature_selection import SelectKBest, mutual_info_classif\nfrom sklearn.preprocessing import StandardScaler\n\n# X_train, y_train defined\nselector = SelectKBest(mutual_info_classif, k=10)\nX_new = selector.fit_transform(X_train, y_train)\nselected_features = selector.get_support(indices=True)\nprint(selected_features)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "Filter Knowledge 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which filter method can detect non‑linear dependencies between a feature and target?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Pearson correlation",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Mutual information",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Variance threshold",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Chi‑squared test",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Mutual information captures any kind of dependency, not just linear.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Wrapper Methods 🔁",
+            "content": "# Let a Model Decide\n\nWrapper methods train a model on different feature subsets and pick the best‑performing combination.\n\n- **Forward selection**: start with no features, add one at a time that improves performance most.\n- **Backward elimination**: start with all features, remove the least useful one at a time.\n- **Recursive Feature Elimination (RFE)**: train a model, remove the least important feature(s), repeat. `sklearn.feature_selection.RFE` does this.\n\nWrapper methods are computationally expensive but often find a better subset than filters."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "code",
+            "title": "RFE Example 🐍",
+            "content": "Using a decision tree to select top 5 features:",
+            "codeSnippet": "from sklearn.feature_selection import RFE\nfrom sklearn.tree import DecisionTreeClassifier\n\nestimator = DecisionTreeClassifier()\nselector = RFE(estimator, n_features_to_select=5, step=1)\nselector = selector.fit(X_train, y_train)\nprint(\"Selected features:\", selector.support_)\nprint(\"Ranking:\", selector.ranking_)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Embedded Methods: Lasso & Trees 🌲",
+            "content": "# Selection as Part of Training\n\n- **Lasso (L1 regularisation)**: adds penalty λΣ|wⱼ|. This pushes some coefficients exactly to zero, performing automatic feature selection.\n- **Tree‑based models**: naturally provide feature importances, which can be used to discard low‑importance features.\n\nLasso is great for linear models; for non‑linear, using feature importance from a Random Forest as a filter is common."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "quiz",
+            "title": "Wrapper vs Embedded ⚖️",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "true_false",
+                "question": "Recursive Feature Elimination (RFE) is a filter method.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "False. RFE is a wrapper method because it trains a model iteratively to evaluate subsets.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

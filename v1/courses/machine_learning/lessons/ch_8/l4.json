@@ -1,0 +1,79 @@
+{
+    "id": "l4",
+    "chapterId": "ch_8",
+    "title": "Multi‑Layer Perceptrons (MLPs) 🏗️",
+    "description": "Stack neurons into layers; hidden layers, universal approximation, and the forward pass.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Architecture",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Layers of Neurons 🧅",
+            "content": "# Feedforward Neural Network\n\nAn MLP is a fully connected feedforward network with:\n- **Input layer**: features (x₁…xₚ). No computation, just passes values.\n- **Hidden layers**: one or more layers of neurons with activation functions.\n- **Output layer**: produces the final prediction (e.g., regression value, class probabilities).\n\nEach neuron in a layer connects to all neurons in the next layer. These connections have weights."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "The Forward Pass ➡️",
+            "content": "# Computing Predictions\n\nFor a hidden layer l:\n```\nz^[l] = W^[l]·a^[l-1] + b^[l]\na^[l] = g(z^[l])\n```\n- `a^[l-1]`: output of previous layer (input if l=1).\n- `W^[l]`, `b^[l]`: weights and biases for layer l.\n- `g`: activation function (e.g., ReLU).\n- `a^[l]`: activations of layer l.\n\nThis propagates forward until the output layer. That's why it's called feedforward."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "MLP Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does a hidden layer do in an MLP?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It directly outputs the final prediction",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It applies a non‑linear transformation to the inputs, learning intermediate representations",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It stores training data",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It reduces the number of features only",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Hidden layers transform data through multiple non‑linear steps, enabling the network to learn complex patterns.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Universal Approximation Theorem 🌐",
+            "content": "# Any Function Can Be Learned\n\nThe Universal Approximation Theorem states that an MLP with at least one hidden layer and a finite number of neurons can approximate any continuous function on a compact set, given appropriate activation (like sigmoid).\n\nThis is why deep networks are so powerful — theoretically, they can learn almost any mapping from input to output.\n\nBut the theorem doesn't tell us how many neurons or how to train them; practice requires architecture design and optimisation tricks."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "MLP with Scikit‑Learn 🐍",
+            "content": "Use `MLPClassifier`:",
+            "codeSnippet": "from sklearn.neural_network import MLPClassifier\nfrom sklearn.datasets import make_moons\n\nX, y = make_moons(n_samples=300, noise=0.2, random_state=42)\nmlp = MLPClassifier(hidden_layer_sizes=(100, 50), activation='relu', max_iter=500, random_state=42)\nmlp.fit(X, y)\nprint(\"Accuracy:\", mlp.score(X, y))",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Design Intuition 🛠️",
+            "content": "## Start Simple\nFor tabular data, start with 1‑2 hidden layers (e.g., (64, 32)). For images/text, use specialised architectures (CNNs, RNNs). Deep (many layers) often beats wide (many neurons per layer)."
+        }
+    ]
+}

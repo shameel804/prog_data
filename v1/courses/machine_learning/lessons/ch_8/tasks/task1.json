@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_8",
+    "title": "Build a Perceptron from Scratch",
+    "description": "Implement the perceptron learning algorithm for binary classification on a simple dataset.",
+    "estimatedMinutes": 20,
+    "problemStatement": "# Task: DIY Perceptron\n\nImplement a single perceptron that learns the logical AND function (binary classification).\n\n## Background\nAND function: given two binary inputs x1, x2, output 1 if both are 1, else 0.\n\n## Steps:\n1. Define the training data: X = [[0,0],[0,1],[1,0],[1,1]], y = [0,0,0,1].\n2. Initialise weights w = [0, 0], bias b = 0, learning rate η = 0.1.\n3. Implement a function `predict(X_i)` that returns 1 if `np.dot(w, X_i) + b >= 0` else 0.\n4. Train for 10 epochs (pass through all samples). For each sample:\n   - compute prediction.\n   - if prediction != y_true, update: `w = w + η * (y_true - prediction) * X_i`, `b = b + η * (y_true - prediction)`.\n5. After training, print the final w, b, and predictions on the training data.\n6. Verify that the perceptron learned correctly (predictions should match y).\n\n**Hint**: Use numpy for array operations.\n\nExpected output: Final weights, bias, and predictions like [0,0,0,1].",
+    "hints": [
+        "Use `np.array` for X and y.",
+        "Loop over epochs, and inside loop over samples (zip X and y).",
+        "Update rule: w = w + lr * error * x_i (element‑wise)."
+    ],
+    "expectedOutput": "Final w: [something], b: something\nPredictions: [0 0 0 1]",
+    "solutionCode": "import numpy as np\n\n# AND data\nX = np.array([[0,0],[0,1],[1,0],[1,1]])\ny = np.array([0,0,0,1])\n\n# Initialisation\nw = np.zeros(2)\nb = 0.0\nlr = 0.1\nepochs = 10\n\nfor epoch in range(epochs):\n    for i in range(len(X)):\n        x_i = X[i]\n        y_true = y[i]\n        # Prediction\n        linear = np.dot(w, x_i) + b\n        y_pred = 1 if linear >= 0 else 0\n        # Update if wrong\n        if y_pred != y_true:\n            error = y_true - y_pred\n            w = w + lr * error * x_i\n            b = b + lr * error\n\nprint(\"Final w:\", w)\nprint(\"Final b:\", b)\npredictions = [1 if (np.dot(w, X[i]) + b) >= 0 else 0 for i in range(len(X))]\nprint(\"Predictions:\", predictions)\n"
+}

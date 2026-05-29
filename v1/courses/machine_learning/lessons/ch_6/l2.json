@@ -1,0 +1,88 @@
+{
+    "id": "l2",
+    "chapterId": "ch_6",
+    "title": "Advanced Feature Engineering 🔧",
+    "description": "Go beyond basic scaling/encoding: target encoding, datetime features, text vectors, and polynomial combinations.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Feature Creation",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Creating Better Features 🛠️",
+            "content": "# Feature Engineering Revisited\n\nWe’ve already seen scaling and one‑hot encoding. Now we’ll look at techniques that extract more signal from raw data:\n\n- **Datetime features**: split a timestamp into year, month, day, day‑of‑week, hour. These cyclical features may need encoding (sine/cosine).\n- **Text features**: convert text into numbers using Bag‑of‑Words, TF‑IDF, or embeddings (later chapters).\n- **Polynomial features**: create interaction terms and higher‑order terms (e.g., x², x₁x₂).\n- **Binning**: turn continuous variables into ordinal categories (e.g., age groups).\n- **Target encoding**: replace a categorical value with the mean of the target variable for that category (careful: can cause overfitting)."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Datetime Features in Python 🐍",
+            "content": "Extract components from a datetime column:",
+            "codeSnippet": "import pandas as pd\n\n# Sample data\ndf = pd.DataFrame({'date': ['2023-01-15', '2023-06-30']})\ndf['date'] = pd.to_datetime(df['date'])\n\ndf['year'] = df['date'].dt.year\ndf['month'] = df['date'].dt.month\ndf['day'] = df['date'].dt.day\ndf['weekday'] = df['date'].dt.weekday\nprint(df)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Polynomial & Interaction Features 🔗",
+            "content": "# Capturing Non‑linearity\n\nLinear models assume a straight‑line relationship. By adding polynomial terms, we can fit curves:\n- Original: y = w₁x₁ + w₂x₂ + b\n- With degree‑2 polynomials: y = w₁x₁ + w₂x₂ + w₃x₁² + w₄x₂² + w₅x₁x₂ + b\n\n`sklearn.preprocessing.PolynomialFeatures` generates all polynomial combinations up to a given degree. Be cautious — number of features grows fast (combinatorial explosion).\n\n`PolynomialFeatures(degree=2, interaction_only=True)` creates only interaction terms (x₁x₂) without squares."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Engineering Check 🔧",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is target encoding?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Encoding the target variable as a feature",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Replacing each category with the mean of the target variable for that category",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "One‑hot encoding the target",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Scaling the target variable",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Target encoding uses the target's average per category, capturing the relationship between the category and the target.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Handling Cyclical Features 🔄",
+            "content": "# Days and Hours Are Circular\n\nWeekday 6 (Sunday) and weekday 0 (Monday) are actually closer than 6 and 0 numerically suggest. A better encoding is sine/cosine:\n- `sin(2π * hour / 24)`, `cos(2π * hour / 24)`\n- `sin(2π * month / 12)`, `cos(2π * month / 12)`\n\nThis preserves the circular distance."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "code",
+            "title": "Cyclical Encoding Snippet 🐍",
+            "content": "Transform a 'hour' column:",
+            "codeSnippet": "import numpy as np\n\ndf['hour_sin'] = np.sin(2 * np.pi * df['hour']/24)\ndf['hour_cos'] = np.cos(2 * np.pi * df['hour']/24)\n# Now 23:00 and 01:00 are close in sine/cosine space",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Avoid Data Leakage in Target Encoding\nWhen doing target encoding, compute the mean on the training set only, or use cross‑validation‑based target encoding to prevent overfitting. Libraries like `category_encoders` handle this."
+        }
+    ]
+}

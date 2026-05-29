@@ -1,0 +1,104 @@
+{
+    "id": "l7",
+    "chapterId": "ch_4",
+    "title": "Comparing Classifiers & Bias‑Variance 🧭",
+    "description": "How to choose the best algorithm, tackle overfitting/underfitting, and use cross‑validation in classification.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l7_1",
+            "type": "text",
+            "title": "No Free Lunch 🍽️",
+            "content": "# Which Classifier is Best?\n\nThere’s no single best algorithm for all problems. The choice depends on data size, feature types, interpretability needs, and compute budget.\n\n| Algorithm | Strengths | Weaknesses |\n|-----------|-----------|------------|\n| Logistic Regression | Fast, probabilistic, interpretable coefficients | Assumes linear decision boundary |\n| Decision Trees | Interpretable, handles non‑linearity, no scaling needed | Prone to overfitting, high variance |\n| k‑NN | Simple, non‑parametric, adapts to any shape | Slow prediction, needs scaling, curse of dimensionality |\n\nOften we compare multiple models using cross‑validation and pick the winner."
+        },
+        {
+            "id": "s_l7_2",
+            "type": "text",
+            "title": "Bias‑Variance in Classification 🎭",
+            "content": "# Overfitting vs Underfitting\n\n- **High bias (underfitting)**: model too simple (e.g., linear boundary for non‑linear data). Training and test error are both high.\n- **High variance (overfitting)**: model too complex (e.g., deep tree). Training error low, test error high.\n\nThe goal is the sweet spot. Regularisation in logistic regression (L1/L2 penalty) and pruning in trees help control variance."
+        },
+        {
+            "id": "s_l7_3",
+            "type": "text",
+            "title": "Cross‑Validation for Model Selection 🔁",
+            "content": "# Don’t Trust a Single Split\n\nA single train/test split can give a lucky (or unlucky) estimate. **k‑Fold Cross‑Validation** splits data into k folds; trains on k‑1 folds and validates on the remaining one, repeating k times, then averaging the metric.\n\n```python\nfrom sklearn.model_selection import cross_val_score\nscores = cross_val_score(model, X, y, cv=5, scoring='accuracy')\nprint(scores.mean())\n```\n\nThis gives a more robust performance estimate and helps choose hyperparameters.\n\n**Stratified k‑fold** preserves class proportions in each fold — essential for classification."
+        },
+        {
+            "id": "s_l7_4",
+            "type": "quiz",
+            "title": "CV Check ✅",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_1",
+                "type": "multiple_choice",
+                "question": "What is the main advantage of k‑fold cross‑validation over a single train/test split?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It makes training faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It provides a more reliable estimate of model performance by averaging over multiple splits",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It eliminates the need for a test set",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It automatically selects the best hyperparameters",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Cross‑validation reduces the variance of performance estimation by using different train‑validation splits.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l7_5",
+            "type": "code",
+            "title": "Comparing Models with CV 🐍",
+            "content": "Loop over classifiers and compute cross‑val AUC:",
+            "codeSnippet": "from sklearn.model_selection import cross_val_score\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.tree import DecisionTreeClassifier\nfrom sklearn.neighbors import KNeighborsClassifier\n\nmodels = {\n    'Logistic': LogisticRegression(),\n    'Tree': DecisionTreeClassifier(max_depth=5),\n    'kNN': KNeighborsClassifier(n_neighbors=5)\n}\n\nfor name, model in models.items():\n    scores = cross_val_score(model, X_train, y_train, cv=5, scoring='roc_auc')\n    print(f\"{name}: AUC = {scores.mean():.3f} (±{scores.std():.3f})\")",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l7_6",
+            "type": "quiz",
+            "title": "Final Thought 🤔",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_2",
+                "type": "true_false",
+                "question": "A decision tree with unlimited depth typically has low bias and high variance.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "True. It can capture complex patterns (low bias) but is sensitive to small fluctuations in data (high variance).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l7_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Always Use Stratified CV\nFor classification, use `StratifiedKFold` so each fold has similar class distribution. It’s the default in many classifiers’ built‑in CV."
+        }
+    ]
+}

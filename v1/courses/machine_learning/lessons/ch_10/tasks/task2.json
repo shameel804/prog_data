@@ -1,0 +1,16 @@
+{
+    "id": "task2",
+    "chapterId": "ch_10",
+    "title": "LSTM Sentiment Analysis on IMDB",
+    "description": "Train an LSTM model on the IMDB dataset, tune hyperparameters, and achieve >86% validation accuracy.",
+    "estimatedMinutes": 25,
+    "problemStatement": "# Task: IMDB Sentiment LSTM\n\nBuild and train an LSTM network to classify IMDB reviews as positive or negative.\n\n## Steps\n1. Load the IMDB dataset with `max_features=10000`.\n2. Pad sequences to `maxlen=500`.\n3. Define a Sequential model:\n   - Embedding(input_dim=10000, output_dim=128, input_length=500)\n   - LSTM(64, dropout=0.2, recurrent_dropout=0.2)\n   - Dense(1, activation='sigmoid')\n4. Compile with `optimizer='adam', loss='binary_crossentropy', metrics=['accuracy']`.\n5. Train for 5 epochs, `batch_size=64`, `validation_split=0.2`.\n6. Evaluate on test set; print test accuracy.\n7. Plot (or print final values of) training and validation accuracy over epochs.\n\n**Target**: Validation accuracy > 0.86.\n\n**Note**: Training may take several minutes. If running in a constrained environment, reduce epochs to 3 or use a subset. In solution, we train full.\n\nExpected output: Validation accuracy printed, test accuracy > 0.85, accuracy curves values.",
+    "hints": [
+        "Load data: `(X_train, y_train), (X_test, y_test) = imdb.load_data(num_words=10000)`",
+        "Pad: `pad_sequences(X_train, maxlen=500)`",
+        "Use `model.fit(..., validation_split=0.2, verbose=1)`",
+        "To plot: `import matplotlib.pyplot as plt`; `plt.plot(history.history['accuracy'])` etc."
+    ],
+    "expectedOutput": "Validation accuracy > 0.86, Test accuracy > 0.85, and plot or printed values.",
+    "solutionCode": "import numpy as np\nimport tensorflow as tf\nfrom tensorflow.keras.datasets import imdb\nfrom tensorflow.keras.preprocessing.sequence import pad_sequences\nfrom tensorflow.keras.models import Sequential\nfrom tensorflow.keras.layers import Embedding, LSTM, Dense\nimport matplotlib.pyplot as plt\n\n# Load data\nmax_features = 10000\nmaxlen = 500\n(X_train, y_train), (X_test, y_test) = imdb.load_data(num_words=max_features)\nX_train = pad_sequences(X_train, maxlen=maxlen)\nX_test = pad_sequences(X_test, maxlen=maxlen)\n\n# Model\nmodel = Sequential([\n    Embedding(max_features, 128, input_length=maxlen),\n    LSTM(64, dropout=0.2, recurrent_dropout=0.2),\n    Dense(1, activation='sigmoid')\n])\nmodel.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])\n\n# Train\nhistory = model.fit(X_train, y_train, batch_size=64, epochs=5, validation_split=0.2, verbose=1)\n\n# Evaluate\ntest_loss, test_acc = model.evaluate(X_test, y_test, verbose=0)\nprint(f\"Test accuracy: {test_acc:.4f}\")\n\n# Print final validation accuracy\nval_acc = history.history['val_accuracy'][-1]\nprint(f\"Final validation accuracy: {val_acc:.4f}\")\n\n# Plot\nplt.plot(history.history['accuracy'], label='Train')\nplt.plot(history.history['val_accuracy'], label='Validation')\nplt.xlabel('Epoch')\nplt.ylabel('Accuracy')\nplt.legend()\nplt.title('Model Accuracy')\nplt.show()\n"
+}

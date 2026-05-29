@@ -1,0 +1,104 @@
+{
+    "id": "l5",
+    "chapterId": "ch_7",
+    "title": "Ensemble Tuning & Best Practices ⚙️",
+    "description": "Hyperparameter tuning for Random Forest and Gradient Boosting, early stopping, feature importance, and final recommendations.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Key Hyperparameters to Tune 🔧",
+            "content": "# Random Forest:\n- `n_estimators`: increase until OOB/test error plateaus.\n- `max_depth`: limit to prevent overfitting; None (unlimited) often fine with many trees.\n- `min_samples_split`, `min_samples_leaf`: larger values regularise.\n- `max_features`: lower values increase diversity; typical starts: `sqrt` for classification, `0.33` for regression.\n\n# Gradient Boosting:\n- `n_estimators` + `learning_rate`: trade‑off; small LR (0.01‑0.1) with many trees (early stopping).\n- `max_depth`: typically shallow (3‑5).\n- `subsample`: fraction of data per tree (stochastic gradient boosting) reduces variance.\n- Regularisation: `reg_alpha` (L1), `reg_lambda` (L2) in XGBoost/LightGBM."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Early Stopping for Boosting 🛑",
+            "content": "# Don’t Over‑Iterate\n\nBoosting can overfit if too many trees are added. **Early stopping** monitors a validation set’s performance and stops training when it stops improving.\n\nIn scikit‑learn’s `GradientBoostingClassifier`, use:\n- `validation_fraction=0.1`, `n_iter_no_change=10`.\n\nIn XGBoost/LightGBM, pass `eval_set` and `early_stopping_rounds`.\n\nThis automatically selects the optimal number of trees, preventing overfitting while saving time."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Early Stopping in Scikit‑Learn 🐍",
+            "content": "Gradient Boosting with early stop:",
+            "codeSnippet": "from sklearn.ensemble import GradientBoostingClassifier\n\ngb = GradientBoostingClassifier(n_estimators=1000, learning_rate=0.1, max_depth=3,\n                                validation_fraction=0.1, n_iter_no_change=10, random_state=42)\ngb.fit(X_train, y_train)\nprint(f\"Best n_estimators: {gb.n_estimators_}\")",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Tuning Wisdom 📊",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the effect of decreasing the learning rate in boosting?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Makes training faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Requires more trees but often improves generalisation",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Prevents overfitting without needing more trees",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Reduces model variance to zero",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Smaller learning rate shrinks the contribution of each tree, so you need more trees, but the final model is more robust.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "When to Use What? 🧭",
+            "content": "# Decision Guide\n\n- **Random Forest**: great first choice for tabular data. Robust, low tuning needed, handles missing values (with Surrogate), gives feature importance. Not the best for very high dimensions or sparse data.\n- **Gradient Boosting (XGB/LGBM/CatBoost)**: usually the top performer for structured data. Requires careful tuning but yields higher accuracy. Excellent for competitions.\n- **Stacking**: when you have several well‑performing models and want a final edge. More complex, risk of overfitting if meta‑model is too complex.\n- **Voting**: simple, interpretable. Use when you want to combine heterogeneous models without much overhead."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Feature Importance from Ensembles\nBoth Random Forest and boosting libraries provide feature importance. Use it to drop useless features and improve model simplicity. Be cautious: importance may be biased toward high‑cardinality features."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Final Ensemble Check 🏁",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "true_false",
+                "question": "XGBoost and LightGBM are gradient boosting implementations that include regularisation to prevent overfitting.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "True. Both add L1/L2 regularisation terms to the objective, which helps combat overfitting.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

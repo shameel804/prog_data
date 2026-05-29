@@ -1,0 +1,101 @@
+{
+    "id": "l5",
+    "chapterId": "ch_6",
+    "title": "PCA in Practice with Scikit‑Learn 🐍",
+    "description": "Apply PCA step‑by‑step, choose the right number of components, and interpret explained variance ratios.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Implementation",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "PCA Workflow 🔄",
+            "content": "# Steps to Apply PCA\n\n1. **Scale the data** (StandardScaler). PCA is sensitive to variances.\n2. **Instantiate PCA** with `n_components` (number or desired explained variance ratio).\n3. **Fit** on training data, then **transform** both train and test.\n4. Optionally, inspect `explained_variance_ratio_` and cumulative sum.\n5. Use transformed data for downstream models.\n\nPCA also has `inverse_transform` to reconstruct original (approximate) data."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Basic PCA Example 🐍",
+            "content": "Reduce iris (4 features) to 2 components and plot:",
+            "codeSnippet": "from sklearn.decomposition import PCA\nfrom sklearn.datasets import load_iris\nfrom sklearn.preprocessing import StandardScaler\nimport matplotlib.pyplot as plt\n\nX, y = load_iris(return_X_y=True)\nX_scaled = StandardScaler().fit_transform(X)\n\npca = PCA(n_components=2)\nX_pca = pca.fit_transform(X_scaled)\nprint(\"Explained variance ratio:\", pca.explained_variance_ratio_)\nplt.scatter(X_pca[:,0], X_pca[:,1], c=y)\nplt.show()",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "PCA Steps 🛤️",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Why must we scale data before PCA?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "PCA requires integer inputs",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To ensure features with larger variance don’t dominate the principal components",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "PCA automatically centers but not scales",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Because PCA uses cosine distance",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "PCA seeks directions of maximum variance; if one feature has much larger numeric range, it will dominate the first PC.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Determining n_components Automatically 🤖",
+            "content": "# Using Explained Variance Threshold\n\nInstead of specifying k, you can pass a float between 0 and 1:\n```\npca = PCA(n_components=0.95)  # keep enough components to retain 95% variance\npca.fit(X_scaled)\nprint(pca.n_components_)  # actual number chosen\n```\n\nThis is extremely useful when you have hundreds of features and want to compress data while preserving most information."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Auto Choose k 🐍",
+            "content": "Compress digits dataset (64 dim) while keeping 90% variance:",
+            "codeSnippet": "from sklearn.datasets import load_digits\n\ndigits = load_digits()\nX_scaled = StandardScaler().fit_transform(digits.data)\n\npca = PCA(n_components=0.90)\nX_reduced = pca.fit_transform(X_scaled)\nprint(f\"Reduced from {X_scaled.shape[1]} to {pca.n_components_} components\")",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Reconstruction 🏗️",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "true_false",
+                "question": "After applying PCA, you can perfectly reconstruct the original data if you keep all components.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "True. PCA is an invertible linear transform if you retain all components (no dimension reduction).",
+                "xpReward": 10
+            }
+        }
+    ]
+}
