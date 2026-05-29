@@ -1,0 +1,114 @@
+{
+    "id": "l4",
+    "chapterId": "ch_9",
+    "title": "The Vanishing Gradient & LSTM 🚨",
+    "description": "Learn why RNNs struggle with long sequences and how LSTMs overcome this.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "LSTM",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Long‑Term Dependency Problem 🕳️",
+            "content": "# RNNs Forget\n\nBackpropagation through time multiplies gradients many times. If the gradient is small (<1), it shrinks exponentially (**vanishing gradient**). If large, it explodes.\n\nConsequence: Simple RNNs can't learn dependencies beyond ~10–20 steps. The network quickly 'forgets' earlier inputs."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Vanishing Perception 👻",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Why does the vanishing gradient hurt RNNs?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It makes training faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Gradients for early time steps become zero, preventing the network from learning long‑range dependencies",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It causes overfitting",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It increases memory usage",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "With near‑zero gradients, weights for earlier inputs don't update, so the network can't connect distant events.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "LSTM: Long Short‑Term Memory 🧠",
+            "content": "# A Smarter Cell\n\nLSTM introduces a **cell state** (C_t) that acts like a conveyor belt, allowing information to flow unchanged across many steps.\n\nThree gates regulate information:\n* **Forget gate**: what to discard.\n* **Input gate**: what new information to store.\n* **Output gate**: what to output from current cell state.\n\nAll gates are tiny neural networks with sigmoid/tanh activations."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "LSTM Cell Equations",
+            "content": "A simplified view (not full PyTorch implementation).",
+            "codeSnippet": "# f: forget, i: input, o: output, g: candidate\nf = sigmoid(W_f @ [h_prev, x_t])\ni = sigmoid(W_i @ [h_prev, x_t])\no = sigmoid(W_o @ [h_prev, x_t])\ng = tanh(W_g @ [h_prev, x_t])\nC_t = f * C_prev + i * g\nh_t = o * tanh(C_t)",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Gate Function 🛠️",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What does the forget gate in LSTM do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Decides what information to throw away from the cell state",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Computes the final output",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Adds new input to the hidden state",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Resets the hidden state",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The forget gate multiplies the previous cell state element‑wise, removing irrelevant information.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Why LSTM Solves Vanishing Gradients 💡",
+            "content": "## Constant Error Carousel\n\nThe cell state C_t can pass through time unchanged when forget gate = 1 and input gate = 0. This creates a path where gradients flow without decaying.\n\nResult: LSTMs can learn dependencies over hundreds of time steps."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## GRU – A Simpler Alternative\n\nGated Recurrent Units (GRU) combine forget and input gates into a single 'update gate' and merge cell & hidden state. Often performs similarly to LSTM with fewer parameters."
+        }
+    ]
+}

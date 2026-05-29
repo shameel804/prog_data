@@ -1,0 +1,252 @@
+{
+    "id": "quiz_ch_10",
+    "chapterId": "ch_10",
+    "title": "Chapter 10 Quiz",
+    "description": "Test your knowledge of transfer learning, pretrained models, and fine‑tuning!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is transfer learning?",
+            "options": [
+                "Training a model from scratch on a new dataset",
+                "Reusing knowledge from a pretrained model to solve a different but related task",
+                "Converting a model to ONNX format",
+                "Training only on synthetic data"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Transfer learning leverages pre‑learned features for a new task, reducing data and training time."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "Which of the following is NOT a benefit of transfer learning?",
+            "options": [
+                "Requires less training data",
+                "Often achieves higher accuracy faster",
+                "Eliminates the need for any training",
+                "Leverages features learned from large datasets"
+            ],
+            "correctAnswer": 2,
+            "explanation": "You still need to train the adapted model on the target data, though often for fewer epochs."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "Which method freezes all pretrained layers and trains only a new classifier?",
+            "options": [
+                "Fine‑tuning",
+                "Feature extraction",
+                "Data augmentation",
+                "Transfer learning (general)"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Feature extraction keeps the backbone fixed."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "How do you load a pretrained ResNet18 with default weights in the latest PyTorch API?",
+            "options": [
+                "models.resnet18(pretrained=True)",
+                "models.resnet18(weights='imagenet')",
+                "models.resnet18(weights=models.ResNet18_Weights.DEFAULT)",
+                "models.resnet18(load_weights=True)"
+            ],
+            "correctAnswer": 2,
+            "explanation": "The new API uses `weights` parameter with an enum."
+        },
+        {
+            "id": "q5",
+            "type": "true_false",
+            "question": "When using feature extraction, you can simply replace the final fully connected layer and train it.",
+            "correctAnswer": true,
+            "explanation": "Yes, you freeze the backbone and retrain the head."
+        },
+        {
+            "id": "q6",
+            "type": "fill_blank",
+            "question": "To freeze a layer's parameters, set `param.________ = False`.",
+            "options": [
+                "requires_grad",
+                "trainable",
+                "frozen",
+                "grad"
+            ],
+            "correctAnswer": "requires_grad",
+            "explanation": "Set `requires_grad=False` to exclude parameters from gradient computation."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "What is the typical learning rate for the new head compared to the pretrained backbone during fine‑tuning?",
+            "options": [
+                "Lower",
+                "Higher",
+                "Same",
+                "Zero"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The new head usually has a higher learning rate because its weights are randomly initialized."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "Which PyTorch method returns the preprocessing transforms associated with a pretrained model?",
+            "options": [
+                "model.transforms()",
+                "weights.transforms()",
+                "model.preprocess()",
+                "transforms.load()"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`weights.transforms()` gives the required preprocessing (resize, center crop, normalize)."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "In ResNet18, what is the name of the final classification layer?",
+            "options": [
+                "classifier",
+                "fc",
+                "head",
+                "linear"
+            ],
+            "correctAnswer": 1,
+            "explanation": "ResNet models use `model.fc` for the final linear layer."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "What does `in_features` of the original fc layer represent?",
+            "options": [
+                "Number of output classes",
+                "The input feature dimension from the feature extractor",
+                "Batch size",
+                "Number of layers"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It's the size of the feature vector coming into the classifier."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "Why might you unfreeze only the last few layers of a pretrained model during fine‑tuning?",
+            "options": [
+                "To save GPU memory",
+                "To adapt high‑level features to the new dataset while preserving low‑level features",
+                "To reduce the number of parameters",
+                "To make training faster"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Early layers capture generic features; later layers capture task‑specific details that may need adaptation."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "Which optimizer feature allows different learning rates for different parameter groups?",
+            "options": [
+                "Passing a list of dicts with 'params' and 'lr' keys",
+                "Using a single learning rate for all",
+                "Only SGD supports it",
+                "It's not possible"
+            ],
+            "correctAnswer": 0,
+            "explanation": "You can specify per‑group learning rates in PyTorch optimizers."
+        },
+        {
+            "id": "q13",
+            "type": "true_false",
+            "question": "Fine‑tuning requires a larger dataset than feature extraction.",
+            "correctAnswer": true,
+            "explanation": "Fine‑tuning updates more parameters, so more data is needed to avoid overfitting."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "Which dataset is commonly used to pretrain vision models?",
+            "options": [
+                "CIFAR‑10",
+                "MNIST",
+                "ImageNet",
+                "Fashion‑MNIST"
+            ],
+            "correctAnswer": 2,
+            "explanation": "ImageNet (1.2M images, 1000 classes) is the standard pretraining dataset."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "After you replace `model.fc` with a new Linear layer, are its parameters trainable by default?",
+            "options": [
+                "Yes, `requires_grad=True` by default",
+                "No, you must set it manually",
+                "It inherits the previous layer's setting",
+                "Depends on the optimizer"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Newly created modules have `requires_grad=True` by default."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "What is the risk of using too high a learning rate during fine‑tuning?",
+            "options": [
+                "The model will underfit",
+                "Pretrained features may be destroyed",
+                "Training will be too slow",
+                "BatchNorm will stop working"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Large weight updates can distort the useful pretrained filters."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "What does `torchvision.models.resnet18(weights=None)` do?",
+            "options": [
+                "Loads a randomly initialized ResNet18 (no pretraining)",
+                "Throws an error",
+                "Loads the latest weights",
+                "Loads weights from ImageNet"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`weights=None` gives a fresh, untrained model."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "When using `ImageFolder` for custom data, how are labels assigned?",
+            "options": [
+                "By reading a CSV file",
+                "Alphabetically by subfolder name",
+                "Randomly",
+                "From the file name"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`ImageFolder` treats subfolder names as class labels, sorted alphabetically."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "Which learning rate scheduler is often used during fine‑tuning to reduce LR on plateau?",
+            "options": [
+                "StepLR",
+                "CosineAnnealingLR",
+                "ReduceLROnPlateau",
+                "ExponentialLR"
+            ],
+            "correctAnswer": 2,
+            "explanation": "ReduceLROnPlateau lowers LR when validation loss stops improving."
+        },
+        {
+            "id": "q20",
+            "type": "true_false",
+            "question": "You can fine‑tune a model trained on ImageNet for medical image classification.",
+            "correctAnswer": true,
+            "explanation": "Yes, even though domains differ, low‑level features transfer, and fine‑tuning adapts higher‑level features."
+        }
+    ]
+}

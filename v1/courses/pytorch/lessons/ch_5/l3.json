@@ -1,0 +1,111 @@
+{
+    "id": "l3",
+    "chapterId": "ch_5",
+    "title": "Introduction to Optimizers 🧑‍🏫",
+    "description": "Learn how optimizers update model weights using gradients.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Optimizers",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "From Gradients to Updates 🔄",
+            "content": "# The Learning Step\n\nAfter computing gradients (`loss.backward()`), the optimizer tells **how** to adjust parameters.\n\nThe simplest update rule (SGD):\n```\nw_new = w_old - learning_rate * grad\n```\nThe learning rate controls step size. Too high → diverge. Too low → slow."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Manual Parameter Update (No Optimizer)",
+            "content": "Without an optimizer, you'd manually update each parameter.",
+            "codeSnippet": "w = torch.tensor([2.0], requires_grad=True)\nloss = (w - 3)**2\nloss.backward()\nwith torch.no_grad():\n    w -= 0.1 * w.grad   # learning rate 0.1\nprint(w)  # moves closer to 3",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Update Direction 🧭",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "If gradient is positive, how should we update the weight to minimize loss?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Increase weight",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Decrease weight",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Keep weight unchanged",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Set weight to zero",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Positive gradient means increasing weight increases loss, so we decrease it: w -= lr * grad.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Optimizers in PyTorch ⚡",
+            "content": "## `torch.optim`\n\nThe `torch.optim` package provides various algorithms:\n\n* `SGD` – stochastic gradient descent (+ momentum).\n* `Adam` – adaptive moment estimation (popular default).\n* `RMSprop`, `Adagrad`, `AdamW`, etc.\n\nAll optimizers follow a common API:\n1. Create an optimizer with `model.parameters()`.\n2. Zero gradients: `optimizer.zero_grad()`.\n3. Compute loss, call `loss.backward()`.\n4. Update: `optimizer.step()`."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Optimizer Instantiation",
+            "content": "Create an SGD optimizer for a simple linear layer.",
+            "codeSnippet": "model = nn.Linear(3, 1)\noptimizer = torch.optim.SGD(model.parameters(), lr=0.01)\nprint(optimizer)",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Optimizer Setup 🛠️",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "What do you pass to the optimizer's first argument?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Model instance",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "model.parameters()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Loss function",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Gradients",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Optimizer needs access to the model's parameters (iterable from `model.parameters()`).",
+                "xpReward": 10
+            }
+        }
+    ]
+}

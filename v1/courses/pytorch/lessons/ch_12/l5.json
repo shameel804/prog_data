@@ -1,0 +1,132 @@
+{
+    "id": "l5",
+    "chapterId": "ch_12",
+    "title": "Profiling & torch.compile 🚄",
+    "description": "Analyze performance bottlenecks and accelerate models with torch.compile.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Optimization",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Finding Bottlenecks 🔍",
+            "content": "# `torch.profiler`\n\nPyTorch's profiler records GPU/CPU timing, memory usage, and kernel launches. Use it to find slow operations.\n\n```python\nwith torch.profiler.profile(activities=[...]) as prof:\n    model(input)\nprint(prof.key_averages().table(sort_by='cuda_time_total'))\n```\nView traces in Chrome: `prof.export_chrome_trace('trace.json')`."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Profiler Example",
+            "content": "Profile a simple convolution.",
+            "codeSnippet": "import torch.profiler\n\nmodel = nn.Conv2d(3,64,3).cuda()\ninput = torch.randn(8,3,224,224).cuda()\nwith torch.profiler.profile(activities=[torch.profiler.ProfilerActivity.CPU, torch.profiler.ProfilerActivity.CUDA]) as prof:\n    model(input)\nprint(prof.key_averages().table(sort_by='cuda_time_total', row_limit=5))",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Profiler Purpose 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What can torch.profiler show?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Only CPU time",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "GPU time, CPU time, memory usage, and kernel names",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only memory usage",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The loss curve",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The profiler provides detailed performance metrics for both CPU and GPU.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "torch.compile: The JIT Compiler 🧙",
+            "content": "# PyTorch 2.0 Revolution\n\n`torch.compile` speeds up models by analyzing Python bytecode and generating optimized kernels.\n\n```python\nmodel = torch.compile(model)\n```\nIt works out‑of‑the‑box for most models. Backends: `'inductor'` (default), `'openxla'`, etc.\n\nIn many cases, 30‑200% speedup with no code change!"
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Using torch.compile",
+            "content": "Compile a model for faster training/inference.",
+            "codeSnippet": "model = nn.Sequential(nn.Linear(100,200), nn.ReLU(), nn.Linear(200,10))\ncompiled = torch.compile(model)   # default backend 'inductor'\nx = torch.randn(64, 100)\nout = compiled(x)\nprint(out.shape)",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Compile Effect 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What does `torch.compile` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Converts model to TorchScript only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Applies graph optimizations and generates efficient code, often speeding up execution",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Quantizes the model",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Moves the model to CPU",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It optimizes the model's computation graph, reducing Python overhead and improving GPU utilization.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Memory Optimization 🧹",
+            "content": "## Gradient Checkpointing\n\nTrade compute for memory by not storing intermediate activations. Recompute them during backward.\n\n```python\nfrom torch.utils.checkpoint import checkpoint\n# inside forward:\nx = checkpoint(self.block, x)\n```\nUseful for very deep networks."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "code",
+            "title": "Checkpointing Example",
+            "content": "Apply checkpoint to a large module.",
+            "codeSnippet": "from torch.utils.checkpoint import checkpoint\n\nclass BigBlock(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.seq = nn.Sequential(*[nn.Linear(512,512) for _ in range(5)])\n    def forward(self, x):\n        return checkpoint(self.seq, x, use_reentrant=False)\n\nblock = BigBlock()\nx = torch.randn(2,512)\nout = block(x)\nprint(out.shape)",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Combine torch.compile + AMP + DDP\n\nThese are not mutually exclusive; use all three for maximum training efficiency."
+        }
+    ]
+}

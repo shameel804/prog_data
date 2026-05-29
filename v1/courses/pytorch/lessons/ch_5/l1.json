@@ -1,0 +1,114 @@
+{
+    "id": "l1",
+    "chapterId": "ch_5",
+    "title": "The Purpose of Loss Functions 🎯",
+    "description": "Understand what a loss function is and why it's essential for training.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Loss Functions",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Why Do We Need a Scoreboard? 🏟️",
+            "content": "# Loss Functions: Measuring Mistakes\n\nA neural network makes predictions. But how do we know if those predictions are good? A **loss function** (also called cost or objective function) quantifies the error between predictions and actual targets.\n\n* Lower loss = better model.\n* The training goal: minimize the loss.\n* Gradients from the loss tell the optimizer how to adjust weights."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What does a loss function measure?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Model accuracy",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The difference between predictions and ground truth",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Number of parameters",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Training speed",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The loss function computes a scalar value that represents how far predictions are from the true labels.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "The Gradient Highway 🛣️",
+            "content": "## Loss → Gradients → Update\n\n1. **Forward pass**: Input → model → prediction.\n2. **Loss computation**: Compare prediction with ground truth → scalar loss.\n3. **Backward pass**: Compute gradients of loss w.r.t all parameters.\n4. **Update**: Optimizer adjusts parameters in the opposite direction of gradients.\n\nWithout a loss, we can't compute gradients!"
+        },
+        {
+            "id": "s_l1_4",
+            "type": "code",
+            "title": "Simple Loss Manual Calculation",
+            "content": "Let's see the difference between a target and prediction using Mean Squared Error.",
+            "codeSnippet": "import torch\n# Suppose we predicted 3.0 but target is 2.0\npred = torch.tensor([3.0])\ntarget = torch.tensor([2.0])\nloss = (pred - target)**2   # MSE\nprint(loss)  # 1.0",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_5",
+            "type": "text",
+            "title": "Loss Functions in PyTorch 📦",
+            "content": "## `torch.nn` Loss Classes\n\nPyTorch provides built‑in loss functions as callable modules:\n* `nn.MSELoss` – mean squared error (regression).\n* `nn.CrossEntropyLoss` – combines LogSoftmax + NLLLoss (multi‑class).\n* `nn.BCELoss` – binary cross‑entropy (binary classification).\n\nThey expect tensors of specific shapes and usually average over the batch."
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "Loss Flow 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "What is the correct order of operations in a training step?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Backward → Forward → Loss → Update",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Forward → Loss → Backward → Update",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Loss → Forward → Update → Backward",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Forward → Update → Loss → Backward",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Standard loop: predict (forward), compute loss, compute gradients (backward), update weights.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Loss Shape Matters\n\nAlways ensure your model output shape matches the loss function's expectation. `CrossEntropyLoss` expects raw logits (before softmax), not probabilities."
+        }
+    ]
+}

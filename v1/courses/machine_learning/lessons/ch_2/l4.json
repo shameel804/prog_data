@@ -1,0 +1,98 @@
+{
+    "id": "l4",
+    "chapterId": "ch_2",
+    "title": "Data Cleaning: Missing Values & Outliers 🧹",
+    "description": "Handle gaps and extreme points so they don’t break your model.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Data Preparation",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Dirty Reality 🧽",
+            "content": "# Real-World Data is Messy\n\nMost datasets have:\n- **Missing values** (NaN, blank cells).\n- **Outliers** (values far from the rest).\n- **Inconsistencies** (different date formats, typos).\n\nA model cannot learn from missing values — they must be handled before training. Outliers can skew results dramatically."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Handling Missing Data 🕳️",
+            "content": "# Three Common Strategies\n\n1. **Remove rows/columns**: If few rows have missing values, drop them (`df.dropna()`). But be careful — losing too much data is bad.\n2. **Impute (fill)**: Replace missing values with a reasonable estimate:\n   - Numerical: mean, median, or a constant (like 0).\n   - Categorical: mode, or a new 'Unknown' category.\n3. **Predictive imputation**: Use other features to estimate the missing value (e.g., k‑NN imputation).\n\nSimple imputation is a good start; always ask *why* data is missing."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Missing Value Scenario 📉",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "If 2% of rows in a column 'age' are missing, what's a reasonable first step?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Delete the entire dataset",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Fill missing ages with the median age",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Ignore the column completely",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Set missing ages to 9999",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Median imputation preserves most data while introducing minimal bias for a small percentage of missingness.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Dealing with Outliers 🚨",
+            "content": "# Extreme Values Can Distort Models\n\nOutliers can arise from measurement errors or genuine extremes. For linear models, they can pull the regression line.\n\nDetection methods:\n- **IQR method**: any value below Q1 – 1.5×IQR or above Q3 + 1.5×IQR is a potential outlier.\n- **Z‑score**: how many standard deviations away from mean. Values with |Z| > 3 are often suspicious.\n\nTreatment:\n- Remove if they are errors.\n- Cap (winsorize) at a percentile.\n- Keep if they are legitimate (use robust models like tree‑based)."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Outlier Detection with IQR 🐍",
+            "content": "Example using pandas to find outliers:",
+            "codeSnippet": "import pandas as pd\n\n# Sample house prices (k$)\ndf = pd.DataFrame({'price': [200, 215, 230, 245, 250, 260, 280, 1200]})\nQ1 = df['price'].quantile(0.25)\nQ3 = df['price'].quantile(0.75)\nIQR = Q3 - Q1\noutliers = df[(df['price'] < Q1 - 1.5*IQR) | (df['price'] > Q3 + 1.5*IQR)]\nprint(outliers)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Outlier Wisdom 💡",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "Outliers should always be removed from a dataset.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "False. Some outliers contain important information. Domain knowledge decides whether to remove, cap, or keep them.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

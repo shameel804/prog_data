@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_3",
+    "title": "Accumulation and Zeroing",
+    "description": "Demonstrate gradient accumulation and how to reset gradients.",
+    "estimatedMinutes": 10,
+    "problemStatement": "Write code that:\n1. Creates a tensor `w` with value 2.0 and `requires_grad=True`.\n2. Runs a loop for 3 iterations: each time compute `loss = (w - 3)**2`, call `backward()`, and print `w.grad`.\n3. After each iteration (except the last), zero the gradient using `w.grad.zero_()`.\n\nThe expected output is three lines showing the gradient for each step (without accumulation).",
+    "hints": [
+        "Remember that `loss.backward()` accumulates; you must zero to get clean per‑step gradients.",
+        "The gradient of (w-3)^2 is 2*(w-3). For w=2, grad = -2."
+    ],
+    "expectedOutput": "tensor([-2.])\ntensor([-2.])\ntensor([-2.])",
+    "solutionCode": "import torch\n\nw = torch.tensor([2.0], requires_grad=True)\nfor i in range(3):\n    loss = (w - 3)**2\n    loss.backward()\n    print(w.grad)\n    w.grad.zero_()"
+}

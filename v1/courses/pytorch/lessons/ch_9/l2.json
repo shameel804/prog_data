@@ -1,0 +1,111 @@
+{
+    "id": "l2",
+    "chapterId": "ch_9",
+    "title": "The Simple RNN Cell 🧠",
+    "description": "Understand the recurrent connection, hidden state, and unrolling through time.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "RNN Fundamentals",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Inside the RNN Cell 🧬",
+            "content": "# Math & Architecture\n\nAt each time step `t`:\n* Input: `x_t` (e.g., word embedding).\n* Previous hidden state: `h_{t-1}`.\n* Output hidden state: `h_t = tanh(W_ih * x_t + b_ih + W_hh * h_{t-1} + b_hh)`\n\nBoth `W_ih` (input-to-hidden) and `W_hh` (hidden-to-hidden) are learned weight matrices."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Manual RNN Cell Implementation",
+            "content": "Let's create a single RNN cell using a linear layer.",
+            "codeSnippet": "import torch\nimport torch.nn as nn\n\nclass RNNCell(nn.Module):\n    def __init__(self, input_size, hidden_size):\n        super().__init__()\n        self.i2h = nn.Linear(input_size + hidden_size, hidden_size)\n    \n    def forward(self, x, h):\n        combined = torch.cat((x, h), dim=1)\n        h_new = torch.tanh(self.i2h(combined))\n        return h_new\n\ncell = RNNCell(10, 20)\nh0 = torch.zeros(1, 20)\nx = torch.randn(1, 10)\nprint(cell(x, h0).shape)  # [1, 20]",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Cell Mechanics 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What does the hidden state h_t depend on?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Only the current input x_t",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "x_t and the previous hidden state h_{t-1}",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only h_{t-1}",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "All future inputs",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The recurrent connection feeds the previous hidden state back to influence the current state.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Unrolling Through Time 🕰️",
+            "content": "## Visualizing the Recurrence\n\nThink of an RNN as a deep network where each layer is the same cell but at a different time step. When backpropagating, we go back through time (**BPTT**).\n\nThis is why RNNs can learn dependencies across steps."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Looping Over Sequence",
+            "content": "Pass a sequence of 3 steps through the RNN cell.",
+            "codeSnippet": "seq = torch.randn(3, 1, 10)  # (time, batch, features)\nh = torch.zeros(1, 20)\noutputs = []\nfor t in range(3):\n    h = cell(seq[t], h)\n    outputs.append(h)\nstacked = torch.stack(outputs, dim=0)\nprint(stacked.shape)  # [3, 1, 20]",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Time Dimensions ⌛",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "If input shape is (batch, time, features) in many PyTorch layers, what is the default shape for nn.RNN?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "(time, batch, feature)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "(batch, time, feature)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "(time, feature, batch)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Always 1D",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "By default, nn.RNN expects input shape (seq_len, batch, input_size).",
+                "xpReward": 10
+            }
+        }
+    ]
+}

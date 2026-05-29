@@ -1,0 +1,132 @@
+{
+    "id": "l3",
+    "chapterId": "ch_11",
+    "title": "Device Handling: CPU, GPU & Multi‑GPU 🖥️",
+    "description": "Move models between devices, handle GPU mapping, and use DataParallel.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Model Persistence",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Moving Models Across Devices 🔄",
+            "content": "# CPU ↔ GPU\n\nA model's parameters live on a specific device. To move:\n```python\nmodel.to('cuda')   # move to GPU\nmodel.to('cpu')    # move back to CPU\n```\nThis affects all parameters and buffers (like BatchNorm running means)."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Device‑Agnostic Training",
+            "content": "Define a device variable and move model/data accordingly.",
+            "codeSnippet": "device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')\nmodel = nn.Linear(10, 2).to(device)\nx = torch.randn(5, 10).to(device)\nout = model(x)\nprint(out.device)  # cuda:0 or cpu",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Device Awareness 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What happens if you run a model on GPU with a CPU input tensor?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It automatically moves the input to GPU",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It raises a RuntimeError due to device mismatch",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It computes on CPU",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It ignores the input",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "All tensors in an operation must be on the same device.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Multi‑GPU: DataParallel 🎛️",
+            "content": "## Splitting Batches Across GPUs\n\n`nn.DataParallel` replicates the model on multiple GPUs, splits each batch, and gathers results. Simplest way to use multiple GPUs:\n\n```python\nmodel = nn.DataParallel(model)\n```\nNow `model` can take input on any GPU; it distributes automatically."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Using DataParallel",
+            "content": "Wrap a model and run on multiple GPUs (if available).",
+            "codeSnippet": "device = 'cuda' if torch.cuda.is_available() else 'cpu'\nmodel = nn.Linear(10, 2).to(device)\nif torch.cuda.device_count() > 1:\n    model = nn.DataParallel(model)\nx = torch.randn(64, 10).to(device)\nout = model(x)\nprint(out.shape)",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Multi‑GPU Check 🔍",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "What does `nn.DataParallel` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Trains different models on each GPU",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Replicates the model on each GPU and splits the batch to run in parallel",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Moves data between GPUs",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Reduces model size",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Data parallelism distributes the batch across GPUs, each running a copy of the model.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Saving and Loading with Devices 📂",
+            "content": "## Device‑Safe State Dicts\n\nSaving a GPU model's state_dict and loading on CPU:\n```python\ntorch.save(model.state_dict(), 'weights.pth')\nmodel_cpu = ModelClass()\nmodel_cpu.load_state_dict(torch.load('weights.pth', map_location='cpu'))\n```\n`map_location` remaps storage."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "code",
+            "title": "Loading GPU Weights on CPU",
+            "content": "Remap a CUDA checkpoint to CPU.",
+            "codeSnippet": "# Saved from GPU:\n# torch.save(model.state_dict(), 'gpu_model.pth')\n\n# Load on CPU\nmodel = nn.Linear(10, 2)\nstate_dict = torch.load('gpu_model.pth', map_location='cpu')\nmodel.load_state_dict(state_dict)\nprint('Model loaded on CPU')",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## For Multi‑GPU: Remove module. Prefix\n\nWhen loading a DataParallel‑saved state_dict, keys have 'module.' prefix. Strip them with:\n```python\nfrom collections import OrderedDict\nnew_state = OrderedDict()\nfor k, v in state_dict.items():\n    new_state[k.replace('module.', '')] = v\n```"
+        }
+    ]
+}

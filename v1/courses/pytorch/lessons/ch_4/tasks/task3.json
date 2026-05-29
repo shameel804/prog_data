@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_4",
+    "title": "Custom Initialization",
+    "description": "Apply a custom weight initialization to the model and verify the change.",
+    "estimatedMinutes": 12,
+    "problemStatement": "Write code that:\n1. Creates a simple `nn.Linear(3, 3)` layer (no bias for simplicity).\n2. Defines a function `init_weights(m)` that initializes the weight to constant value 0.5 using `nn.init.constant_`.\n3. Applies the function with `layer.apply(init_weights)`.\n4. Prints the mean of the weight tensor (should be 0.5).\n\nThe output must be exactly the expected string.",
+    "hints": [
+        "Use `nn.init.constant_(m.weight, 0.5)` inside `init_weights`, but only if module has `weight` attribute.",
+        "Check `hasattr(m, 'weight')` to be safe.",
+        "Print with `print(layer.weight.mean().item())`."
+    ],
+    "expectedOutput": "0.5",
+    "solutionCode": "import torch\nimport torch.nn as nn\n\nlayer = nn.Linear(3, 3, bias=False)\n\ndef init_weights(m):\n    if hasattr(m, 'weight'):\n        nn.init.constant_(m.weight, 0.5)\n\nlayer.apply(init_weights)\nprint(layer.weight.mean().item())"
+}

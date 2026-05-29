@@ -1,0 +1,117 @@
+{
+    "id": "l3",
+    "chapterId": "ch_12",
+    "title": "Mixed Precision Training ⚡",
+    "description": "Speed up training and reduce memory with torch.cuda.amp and GradScaler.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "Performance",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Why Mixed Precision? 🏎️",
+            "content": "# Float16 Speed, Float32 Stability\n\nModern GPUs (Volta+) have **Tensor Cores** that accelerate FP16 matrix multiplies. But pure FP16 can cause gradient underflow/loss of precision.\n\n**Mixed precision** uses:\n* FP16 for forward/backward convolutions.\n* FP32 for master weights and reductions.\n\nPyTorch provides `torch.cuda.amp` to automate this."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Automatic Mixed Precision (AMP)",
+            "content": "Use `autocast` and `GradScaler`.",
+            "codeSnippet": "scaler = torch.cuda.amp.GradScaler()\n\nfor data, target in train_loader:\n    optimizer.zero_grad()\n    with torch.cuda.amp.autocast():\n        output = model(data.cuda())\n        loss = criterion(output, target.cuda())\n    scaler.scale(loss).backward()\n    scaler.step(optimizer)\n    scaler.update()",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "AMP Components 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the role of `GradScaler`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It converts model to FP16",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It scales loss up to prevent gradients from underflowing in FP16",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It reduces memory usage",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It increases batch size",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "GradScaler multiplies loss by a large factor so small gradients in FP16 don't vanish.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "How AMP Works 🧪",
+            "content": "## Inside `autocast`\n\n`autocast` context manager casts eligible operations (linear, conv, matmul) to FP16 automatically. Operations unsafe in FP16 (softmax, loss) stay FP32.\n\nGradScaler dynamically adjusts the loss scale: if gradients overflow, it skips the step and reduces scale; otherwise, increases scale gradually."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Memory & Speed Benefits",
+            "content": "Compare memory with and without AMP.",
+            "codeSnippet": "# Typically: 30-50% less memory, 1.5-3x faster on Ampere GPUs\n# Let's just print a placeholder\nprint('AMP ON: memory saved, speed boosted')",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "AMP Operation 🎯",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Which operations typically stay in FP32 under autocast?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Convolution",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Softmax and loss functions",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Linear layers",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "BatchNorm",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Softmax, losses, and other numerically sensitive ops remain in FP32 for stability.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Update to `torch.amp` (PyTorch 1.12+)\n\nNewer API: `torch.amp.autocast(device_type='cuda')` and `torch.amp.GradScaler()`."
+        }
+    ]
+}

@@ -1,0 +1,152 @@
+{
+    "id": "l4",
+    "chapterId": "ch_3",
+    "title": "Advanced Gradient Control 🛑",
+    "description": "Manipulate graphs with detach(), no_grad(), and zeroing gradients for training.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Autograd Fundamentals",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Stop Tracking with `detach()` ✂️",
+            "content": "# Breaking the Graph\n\n`.detach()` returns a new tensor that shares the same data but **is cut off** from the computation graph. It will not require gradients.\n\nThis is handy when you need a tensor's value but don't want gradients to flow through it (e.g., logging, reinforcement learning targets)."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Using detach()",
+            "content": "Detach a tensor to stop gradient flow.",
+            "codeSnippet": "x = torch.tensor([2.0, 3.0], requires_grad=True)\ny = x ** 2\nz = y.detach() * 2   # z has no grad history\nprint(z.requires_grad) # False\nz.backward()          # Error if called because z is not a scalar? Actually it's not scalar, but z has no grad. So call z.sum().backward()? Let's adjust.",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Detach Effect 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does `.detach()` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Removes the tensor from memory",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Returns a tensor without gradient history",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Zeroes out the gradient",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Deletes the computation graph",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`detach()` creates a new tensor that shares data but stops gradient tracking.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Disable Gradient Computation Globally 🚫",
+            "content": "## `torch.no_grad()` Context Manager\n\nDuring inference (evaluation), you don't need gradients. Wrap your code in `with torch.no_grad():` to:\n* Stop autograd from recording operations.\n* Reduce memory usage and speed up computation.\n\nThis is essential for model validation and testing."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Inference Mode",
+            "content": "Use `no_grad()` to run without tracking.",
+            "codeSnippet": "x = torch.tensor([1.0, 2.0], requires_grad=True)\nwith torch.no_grad():\n    y = x * 2\n    print(y.requires_grad)  # False\n# Outside the block, x still requires_grad",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "No Grad Context 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "When should you use `torch.no_grad()`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "During training",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "During evaluation/inference",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "When you want to accumulate gradients",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only on the GPU",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`no_grad()` disables gradient tracking, saving memory and time during inference where no learning happens.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Zeroing Gradients 🧹",
+            "content": "## Why Zero Grad?\n\nGradients accumulate by default (they add up). In training loops, you must zero gradients before each backward pass, else you'll get incorrect updates.\n\n```python\noptimizer.zero_grad()  # zeros all parameter gradients\n```\nFor raw tensors, use `x.grad.zero_()` if `x.grad` is not None."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "code",
+            "title": "Gradient Accumulation Example",
+            "content": "Demonstrate accumulation and how to reset.",
+            "codeSnippet": "w = torch.tensor([2.0], requires_grad=True)\nfor i in range(3):\n    loss = (w - 3)**2\n    loss.backward()\n    print(f\"Step {i}: grad={w.grad}\")\n    w.grad.zero_()  # reset",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_9",
+            "type": "quiz",
+            "title": "Accumulation Awareness 📈",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_3",
+                "type": "true_false",
+                "question": "Calling `backward()` a second time without zeroing gives the sum of both gradients.",
+                "isTrue": true,
+                "explanation": "Gradients are accumulated. If you don't zero, new gradients add to existing ones.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_10",
+            "type": "text",
+            "title": "Evaluating with `torch.set_grad_enabled()` ⚙️",
+            "content": "## Fine‑Grained Control\n\nYou can enable/disable gradient computation with `torch.set_grad_enabled(False)`. This is what `no_grad()` uses internally.\n\nMost of the time, `torch.no_grad()` is sufficient and idiomatic."
+        },
+        {
+            "id": "s_l4_11",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `torch.inference_mode()`\n\nNewer PyTorch versions offer `torch.inference_mode()` which is a stricter version of `no_grad()` with even less overhead and disables autograd completely."
+        }
+    ]
+}

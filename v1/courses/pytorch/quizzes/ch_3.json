@@ -1,0 +1,252 @@
+{
+    "id": "quiz_ch_3",
+    "chapterId": "ch_3",
+    "title": "Chapter 3 Quiz",
+    "description": "Test your knowledge of autograd, gradients, and dynamic computation graphs!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the purpose of autograd in PyTorch?",
+            "options": [
+                "To speed up tensor operations",
+                "To automatically compute gradients",
+                "To create neural network layers",
+                "To load datasets"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Autograd is the automatic differentiation engine that computes gradients."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "Which attribute must be True for a tensor to be tracked by autograd?",
+            "options": [
+                "tensor.grad",
+                "tensor.requires_grad",
+                "tensor.grad_fn",
+                "tensor.is_leaf"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Setting `requires_grad=True` enables gradient tracking for that tensor."
+        },
+        {
+            "id": "q3",
+            "type": "true_false",
+            "question": "A tensor with `requires_grad=False` can still have a `.grad` attribute.",
+            "correctAnswer": false,
+            "explanation": "`.grad` is None for tensors that don't require gradients, unless they are leaf and backward was called with some external gradient, but typically it stays None."
+        },
+        {
+            "id": "q4",
+            "type": "fill_blank",
+            "question": "To compute gradients, you call `tensor._______()` on a scalar output.",
+            "options": [
+                "backward",
+                "back",
+                "grad",
+                "autograd"
+            ],
+            "correctAnswer": "backward",
+            "explanation": "The method is `.backward()`."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "If `x = torch.tensor(4.0, requires_grad=True)` and `y = 3 * x**2`, what is `x.grad` after `y.backward()`?",
+            "options": [
+                "6.0",
+                "12.0",
+                "24.0",
+                "48.0"
+            ],
+            "correctAnswer": 2,
+            "explanation": "dy/dx = 6*x = 6*4 = 24."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "What must you pass to `.backward()` if the output tensor is not a scalar?",
+            "options": [
+                "Nothing",
+                "A gradient tensor of the same shape",
+                "A scalar multiplier",
+                "The input tensor"
+            ],
+            "correctAnswer": 1,
+            "explanation": "For non‑scalar outputs, you need to provide a gradient tensor to start the chain rule."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "How are gradients accumulated if you call `.backward()` twice without zeroing?",
+            "options": [
+                "The second call overwrites the first",
+                "They are summed",
+                "An error is raised",
+                "Only the larger gradient is kept"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Gradients are added to existing `.grad` values; they accumulate."
+        },
+        {
+            "id": "q8",
+            "type": "true_false",
+            "question": "PyTorch's computation graph is static and defined once before execution.",
+            "correctAnswer": false,
+            "explanation": "PyTorch uses dynamic computation graphs (define‑by‑run)."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "What does `.grad_fn` return for a leaf tensor created by the user?",
+            "options": [
+                "The operation that created it",
+                "None",
+                "A GradFn object",
+                "The backward function"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Leaf tensors have `grad_fn = None` because they weren't created by an operation."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "After `y.backward(retain_graph=True)`, what happens to the computation graph?",
+            "options": [
+                "It is immediately deleted",
+                "It is kept for another backward pass",
+                "It is converted to a static graph",
+                "It is saved to disk"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`retain_graph=True` keeps the graph for multiple backward passes."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "Which method stops gradient tracking for a tensor without modifying data?",
+            "options": [
+                "detach()",
+                "zero_grad()",
+                "no_grad()",
+                "requires_grad_(False)"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`.detach()` returns a new tensor sharing the same data but detached from the graph."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "What does `with torch.no_grad():` do?",
+            "options": [
+                "Temporarily disables gradient computation",
+                "Permanently disables autograd",
+                "Deletes all gradients",
+                "Switches to GPU"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`torch.no_grad()` is a context manager that temporarily turns off gradient tracking."
+        },
+        {
+            "id": "q13",
+            "type": "true_false",
+            "question": "`torch.inference_mode()` and `torch.no_grad()` behave identically.",
+            "correctAnswer": false,
+            "explanation": "`inference_mode()` is more restrictive and can offer better performance; it disables autograd more deeply."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "How do you zero the gradients of a raw tensor `w`?",
+            "options": [
+                "w.grad.zero_()",
+                "w.zero_grad()",
+                "w.grad = 0",
+                "torch.zero_grad(w)"
+            ],
+            "correctAnswer": 0,
+            "explanation": "If `w.grad` exists, you can use `w.grad.zero_()` to set it to zero in‑place."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "Why do we zero gradients before each training iteration?",
+            "options": [
+                "To save GPU memory",
+                "To prevent accumulation of gradients from previous iterations",
+                "To reset the model parameters",
+                "To make the backward pass faster"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Gradients accumulate; zeroing ensures each iteration's update is based only on the current batch."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "What happens if you call `.backward()` on a tensor that does not require grad?",
+            "options": [
+                "It computes gradients anyway",
+                "Nothing happens",
+                "It raises an error",
+                "It detaches the tensor"
+            ],
+            "correctAnswer": 2,
+            "explanation": "You cannot call `.backward()` on a tensor that was not created by operations involving requires_grad=True, unless it's a leaf that has .grad set. Typically an error is raised."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "How do you check if a tensor `t` is a leaf tensor in the computation graph?",
+            "options": [
+                "t.is_leaf",
+                "t.requires_grad",
+                "t.grad_fn is None",
+                "t.grad is not None"
+            ],
+            "correctAnswer": 0,
+            "explanation": "The attribute `t.is_leaf` is True if the tensor was directly created by the user, not by an operation."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "Which of the following operations creates a new tensor that does NOT track gradients?",
+            "options": [
+                "t * 2 (if t requires grad)",
+                "t.detach()",
+                "t.unsqueeze(0)",
+                "t + 1"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`t.detach()` returns a tensor without gradient history, while other ops preserve requires_grad."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "What is the typical use of `torch.no_grad()` in a training loop?",
+            "options": [
+                "During the forward pass",
+                "During the backward pass",
+                "During validation/evaluation",
+                "When initializing weights"
+            ],
+            "correctAnswer": 2,
+            "explanation": "We disable gradient tracking during validation to speed up and save memory."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "If you want to compute gradients for a tensor `x` but then use its value for a separate path without gradients, which method do you use?",
+            "options": [
+                "x.clone()",
+                "x.detach()",
+                "x.requires_grad_(False)",
+                "x.data"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`detach()` gives a view without gradient history, perfect for branching."
+        }
+    ]
+}

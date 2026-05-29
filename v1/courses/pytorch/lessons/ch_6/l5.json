@@ -1,0 +1,126 @@
+{
+    "id": "l5",
+    "chapterId": "ch_6",
+    "title": "Training a Classifier on Real Data 🏆",
+    "description": "Build a complete training pipeline for a real classification dataset.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "Training Loop",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Putting It All Together 🧩",
+            "content": "# Full Training Pipeline\n\nWe'll train a neural network on the **Iris dataset** (4 features, 3 flower classes).\n\nSteps:\n1. Load and split data.\n2. Define model, loss, optimizer.\n3. Train with validation and early stopping.\n4. Track metrics and plot (conceptually)."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Load Iris Dataset",
+            "content": "Using sklearn to get the dataset.",
+            "codeSnippet": "from sklearn.datasets import load_iris\nfrom sklearn.model_selection import train_test_split\n\niris = load_iris()\nX = torch.tensor(iris.data, dtype=torch.float32)\ny = torch.tensor(iris.target, dtype=torch.long)\n\nX_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)\nX_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)\n\nprint(len(X_train), len(X_val), len(X_test))",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Data Shapes 🧬",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the shape of X_train from Iris (105 training samples)?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "(105, 4)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "(4, 105)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "(105,)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "(105, 3)",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Iris has 4 features, so X_train is (105, 4).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Define Model & Training Setup",
+            "content": "Iris model: 4 -> 10 -> 10 -> 3.",
+            "codeSnippet": "model = nn.Sequential(\n    nn.Linear(4, 10),\n    nn.ReLU(),\n    nn.Linear(10, 10),\n    nn.ReLU(),\n    nn.Linear(10, 3)\n)\ncriterion = nn.CrossEntropyLoss()\noptimizer = torch.optim.Adam(model.parameters(), lr=0.01)",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Training Loop with Early Stopping",
+            "content": "Full training code for Iris.",
+            "codeSnippet": "best_val_loss = float('inf')\npatience = 10\ncounter = 0\n\nfor epoch in range(200):\n    # Training\n    model.train()\n    optimizer.zero_grad()\n    pred = model(X_train)\n    loss = criterion(pred, y_train)\n    loss.backward()\n    optimizer.step()\n    \n    # Validation\n    model.eval()\n    with torch.no_grad():\n        val_pred = model(X_val)\n        val_loss = criterion(val_pred, y_val)\n    \n    if val_loss < best_val_loss:\n        best_val_loss = val_loss\n        torch.save(model.state_dict(), 'best_iris.pt')\n        counter = 0\n    else:\n        counter += 1\n        if counter >= patience:\n            print(f\"Early stop at epoch {epoch}\")\n            break\n\nprint(f\"Best val loss: {best_val_loss:.4f}\")",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Pipeline Puzzle 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "Why do we load the best model after early stopping?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To get the model with lowest training loss",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To use the model that generalized best on validation",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To reset all weights",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To start training again",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The checkpoint with the lowest validation loss is the best generalization point.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Final Evaluation on Test Set 🧪",
+            "content": "## Holdout Test Set\n\nAfter training and early stopping on validation, evaluate on the untouched test set to get final performance.\n\n```python\nmodel.load_state_dict(torch.load('best_iris.pt'))\nmodel.eval()\nwith torch.no_grad():\n    test_pred = model(X_test)\n    test_loss = criterion(test_pred, y_test)\n    test_acc = (test_pred.argmax(1) == y_test).float().mean()\n```\nThis is your model's true report card."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Reproducibility\n\nSet random seeds for numpy, torch, and python's random module:\n```python\nimport random, numpy, torch\nrandom.seed(42)\nnumpy.random.seed(42)\ntorch.manual_seed(42)\n```"
+        }
+    ]
+}

@@ -1,0 +1,132 @@
+{
+    "id": "l3",
+    "chapterId": "ch_10",
+    "title": "Freezing & Fine-Tuning Strategies ❄️",
+    "description": "Decide which layers to freeze and which to train, and set different learning rates.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "Transfer Learning",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "How to Freeze Layers 🧊",
+            "content": "# `requires_grad = False`\n\nTo freeze a layer, set its parameter's `requires_grad` to `False`. The optimizer will skip them.\n\n```python\nfor param in model.parameters():\n    param.requires_grad = False\n# Then unfreeze the new head\nfor param in model.fc.parameters():\n    param.requires_grad = True\n```"
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Feature Extraction Setup",
+            "content": "Freeze all parameters except the new fc.",
+            "codeSnippet": "model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)\nfor param in model.parameters():\n    param.requires_grad = False\nmodel.fc = nn.Linear(model.fc.in_features, 10)\n# New fc has requires_grad=True by default\nprint(model.fc.weight.requires_grad)  # True",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Freeze Check ❄️",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "After setting `param.requires_grad=False`, what happens during `backward()`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Gradients are computed but not applied",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "No gradients are computed for that parameter",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The parameter is set to zero",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "An error is raised",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`requires_grad=False` excludes the parameter from the computation graph, saving memory and time.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Fine‑Tuning: Unfreeze Some Layers 🔓",
+            "content": "## Gradual Unfreezing\n\nInstead of training only the head, we can unfreeze some of the later layers (e.g., the last convolutional block) and train them with a very low learning rate.\n\nThis allows the pretrained features to **adapt** slightly to the new domain."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Selective Unfreezing",
+            "content": "Unfreeze only the last ResNet block (layer4).",
+            "codeSnippet": "for name, param in model.named_parameters():\n    if 'layer4' in name or 'fc' in name:\n        param.requires_grad = True\n    else:\n        param.requires_grad = False",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "Different Learning Rates 🎚️",
+            "content": "## Fine‑Tuning Learning Rate\n\nWhen unfreezing pretrained layers, use a **lower learning rate** (e.g., 1e-4) than for the new head (1e-3). This prevents destroying the valuable pretrained features.\n\nIn PyTorch, you can pass different parameter groups to the optimizer:\n\n```python\noptimizer = optim.Adam([\n    {'params': model.fc.parameters(), 'lr': 1e-3},\n    {'params': model.layer4.parameters(), 'lr': 1e-4}\n])\n```"
+        },
+        {
+            "id": "s_l3_7",
+            "type": "code",
+            "title": "Differential Learning Rates",
+            "content": "Apply separate learning rates to head and backbone.",
+            "codeSnippet": "optimizer = torch.optim.Adam([\n    {'params': model.fc.parameters(), 'lr': 1e-3},\n    {'params': model.layer4.parameters(), 'lr': 1e-4}\n])",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_8",
+            "type": "quiz",
+            "title": "LR Strategy 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Why use a lower learning rate for pretrained layers?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To speed up training",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To avoid overwriting useful features with large updates",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To increase model capacity",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To reduce memory usage",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Pretrained weights are already good; aggressive updates can erase their knowledge.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Monitor Validation\n\nAlways validate when fine‑tuning. If the loss spikes or accuracy drops, lower the learning rate or freeze more layers."
+        }
+    ]
+}

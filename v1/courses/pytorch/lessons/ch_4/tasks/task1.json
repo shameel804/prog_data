@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_4",
+    "title": "Build a Simple Classifier",
+    "description": "Construct a 2‑layer neural network for the Iris dataset using nn.Module.",
+    "estimatedMinutes": 10,
+    "problemStatement": "Write code that:\n1. Defines a class `IrisNN` inheriting from `nn.Module`.\n2. In `__init__`, creates `self.fc1 = nn.Linear(4, 20)` and `self.fc2 = nn.Linear(20, 3)`.\n3. In `forward(self, x)`, applies ReLU after `fc1` and returns the output of `fc2` (raw logits).\n4. Instantiates the model and prints the total number of trainable parameters (sum of `p.numel()`).\n\nThe output must match the expected string exactly.",
+    "hints": [
+        "Use `torch.nn` and `torch.nn.functional`.",
+        "ReLU can be applied with `F.relu()`.",
+        "Iterate `model.parameters()` to sum `p.numel()`."
+    ],
+    "expectedOutput": "Total parameters: 503",
+    "solutionCode": "import torch\nimport torch.nn as nn\nimport torch.nn.functional as F\n\nclass IrisNN(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.fc1 = nn.Linear(4, 20)\n        self.fc2 = nn.Linear(20, 3)\n    \n    def forward(self, x):\n        x = F.relu(self.fc1(x))\n        x = self.fc2(x)\n        return x\n\nmodel = IrisNN()\ntotal_params = sum(p.numel() for p in model.parameters())\nprint(\"Total parameters:\", total_params)"
+}

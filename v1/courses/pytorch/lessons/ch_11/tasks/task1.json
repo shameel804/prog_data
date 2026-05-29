@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_11",
+    "title": "Save and Load a Model Checkpoint",
+    "description": "Train a simple model, save its state and optimizer as checkpoint, then load and verify weights.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Write code that:\n1. Creates a linear model `nn.Linear(1, 1)`, initializes an SGD optimizer with lr=0.1.\n2. Fits the model for 10 epochs on synthetic data x = [[1.],[2.],[3.]], y = [[2.],[4.],[6.]].\n3. Saves a checkpoint dictionary containing `epoch`, `model_state_dict`, `optimizer_state_dict`, and `loss` (final loss).\n4. Resets the model and optimizer to new instances.\n5. Loads the checkpoint and restores model and optimizer states.\n6. Prints the weight and bias of the loaded model rounded to 4 decimal places in format: \"Weight: XXXX, Bias: XXXX\" (values after 10 epochs should be close to 2 and 0).\n\nThe output must match exactly that format.",
+    "hints": [
+        "Use `torch.save(checkpoint, 'checkpoint.pth')`.",
+        "After reset, load with `checkpoint = torch.load('checkpoint.pth')`.",
+        "Print `model.weight.item()` and `model.bias.item()` with 4 decimal places."
+    ],
+    "expectedOutput": "Weight: 2.0000, Bias: 0.0000 (or close, e.g., Weight: 2.0000, Bias: 0.0000)",
+    "solutionCode": "import torch\nimport torch.nn as nn\nimport torch.optim as optim\n\ntorch.manual_seed(0)\nx = torch.tensor([[1.0], [2.0], [3.0]])\ny = torch.tensor([[2.0], [4.0], [6.0]])\n\nmodel = nn.Linear(1, 1)\noptimizer = optim.SGD(model.parameters(), lr=0.1)\ncriterion = nn.MSELoss()\n\nfor epoch in range(1, 11):\n    optimizer.zero_grad()\n    pred = model(x)\n    loss = criterion(pred, y)\n    loss.backward()\n    optimizer.step()\n\ncheckpoint = {\n    'epoch': 10,\n    'model_state_dict': model.state_dict(),\n    'optimizer_state_dict': optimizer.state_dict(),\n    'loss': loss.item()\n}\ntorch.save(checkpoint, 'checkpoint.pth')\n\n# Reset\nmodel = nn.Linear(1, 1)\noptimizer = optim.SGD(model.parameters(), lr=0.1)\ncheckpoint = torch.load('checkpoint.pth')\nmodel.load_state_dict(checkpoint['model_state_dict'])\noptimizer.load_state_dict(checkpoint['optimizer_state_dict'])\n\nprint(f\"Weight: {model.weight.item():.4f}, Bias: {model.bias.item():.4f}\")"
+}

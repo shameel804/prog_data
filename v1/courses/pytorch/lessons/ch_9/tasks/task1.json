@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_9",
+    "title": "Build a Simple RNN Classifier",
+    "description": "Create an RNN model that classifies sequences of sine waves.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Write code that:\n1. Generates synthetic data: 100 sequences of length 20, each a sine wave with frequency 1 (class 0) or frequency 2 (class 1). Add small noise.\n   Shape: X (100, 20, 1), y (100,) of 0/1.\n2. Defines a class `RNNClassifier` with:\n   - `nn.RNN(input_size=1, hidden_size=16, batch_first=True)`\n   - `nn.Linear(16, 2)`\n   In forward, run RNN, take last output `out[:, -1, :]`, and pass through Linear.\n3. Trains the model for 50 epochs using CrossEntropyLoss and Adam(lr=0.01).\n4. Prints final training accuracy as percentage (e.g., 'Accuracy: XX.X%').\n\nThe output must be exactly 'Accuracy: XX.X%' where XX.X is the accuracy rounded to one decimal place (use `(preds == y).float().mean().item()*100` formatted).",
+    "hints": [
+        "Generate data: `t = torch.linspace(0, 4*3.1416, 20)`, sine1 = sin(t), sine2 = sin(2*t).",
+        "Use `batch_first=True` so input shape is (batch, seq, feature).",
+        "Training loop: zero_grad, forward, loss.backward, step."
+    ],
+    "expectedOutput": "Accuracy: 100.0% (or close, e.g. 100.0%)",
+    "solutionCode": "import torch\nimport torch.nn as nn\nimport torch.optim as optim\n\ntorch.manual_seed(0)\n# Generate data\nn_samples = 100\nseq_len = 20\nt = torch.linspace(0, 4*3.14159, seq_len)\nX = torch.zeros(n_samples, seq_len, 1)\ny = torch.zeros(n_samples, dtype=torch.long)\n\nfor i in range(n_samples):\n    if i % 2 == 0:\n        X[i, :, 0] = torch.sin(t)\n        y[i] = 0\n    else:\n        X[i, :, 0] = torch.sin(2*t)\n        y[i] = 1\nX += torch.randn(n_samples, seq_len, 1) * 0.1\n\nclass RNNClassifier(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.rnn = nn.RNN(1, 16, batch_first=True)\n        self.fc = nn.Linear(16, 2)\n    def forward(self, x):\n        out, _ = self.rnn(x)\n        last = out[:, -1, :]\n        return self.fc(last)\n\nmodel = RNNClassifier()\ncriterion = nn.CrossEntropyLoss()\noptimizer = optim.Adam(model.parameters(), lr=0.01)\n\nfor epoch in range(50):\n    optimizer.zero_grad()\n    logits = model(X)\n    loss = criterion(logits, y)\n    loss.backward()\n    optimizer.step()\n\nmodel.eval()\nwith torch.no_grad():\n    preds = model(X).argmax(dim=1)\n    acc = (preds == y).float().mean().item() * 100\nprint(f\"Accuracy: {acc:.1f}%\")"
+}

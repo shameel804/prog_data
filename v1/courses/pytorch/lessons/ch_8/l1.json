@@ -1,0 +1,79 @@
+{
+    "id": "l1",
+    "chapterId": "ch_8",
+    "title": "Why Convolutional Networks? 🖼️",
+    "description": "Understand why fully‑connected layers fail on images and how convolutions exploit spatial structure.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "CNNs",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The Problem with Fully‑Connected Layers 🚫",
+            "content": "# Images are Not Flat\n\nA 224×224 RGB image has **150,528** input values. A single fully‑connected hidden layer of 1000 neurons would need **150 million** parameters – just for the first layer!\n\n* Too many parameters → overfitting.\n* Ignores spatial structure: nearby pixels are related, far apart are not.\n* Small shifts break the model."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Why do fully‑connected layers struggle with large images?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They can't handle 2D data at all",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The number of parameters explodes and spatial relationships are lost",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They are too slow on GPU",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They require 3D inputs",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "FC layers flatten input, losing spatial context and requiring enormous weight matrices.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "How Our Eyes Work 👁️",
+            "content": "## Receptive Fields\n\nVisual neurons respond to a small region of the retina, not the whole image. Similarly, a **convolutional layer** applies small filters (kernels) that look at local patches, and slides over the image.\n\nThis gives:\n* **Parameter sharing** – same filter used everywhere.\n* **Locality** – a filter only connects to a small region.\n* **Translation invariance** (with pooling)."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "code",
+            "title": "Imagine a 3×3 Filter",
+            "content": "Visualising a simple edge detector kernel.",
+            "codeSnippet": "import torch\n\n# A 3x3 Sobel-like kernel for vertical edges\nkernel = torch.tensor([[-1, 0, 1],\n                       [-2, 0, 2],\n                       [-1, 0, 1]], dtype=torch.float32)\nprint(kernel)\n# This kernel, when convolved over an image, highlights vertical lines.",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_5",
+            "type": "text",
+            "title": "CNNs Preserve Spatial Hierarchy 🌳",
+            "content": "## From Edges to Objects\n\nEarly layers detect edges and textures. Deeper layers combine them into shapes, then object parts, then whole objects – all while keeping spatial arrangement."
+        },
+        {
+            "id": "s_l1_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## The Power of Weight Sharing\n\nA convolutional layer with 32 filters of size 3×3 on 3‑channel input has only 32×3×3×3 + 32 = 896 parameters – tiny compared to millions!"
+        }
+    ]
+}

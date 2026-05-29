@@ -1,0 +1,16 @@
+{
+    "id": "task2",
+    "chapterId": "ch_10",
+    "title": "Feature Extraction on Tiny Dataset",
+    "description": "Train only the new classifier on a small synthetic image dataset using a frozen ResNet18.",
+    "estimatedMinutes": 20,
+    "problemStatement": "Write code that:\n1. Creates a synthetic image dataset: 100 samples of 3×224×224 random tensors, with random labels from 0 to 4 (5 classes). Wrap in TensorDataset and DataLoader (batch_size=10).\n2. Loads a pretrained ResNet18 (as in task1) and freezes all but a new fc for 5 classes.\n3. Trains for 20 epochs using CrossEntropyLoss and SGD with lr=0.01 (only on fc params).\n4. Prints the final training accuracy (as percentage with one decimal) in the format \"Accuracy: XX.X%\".\n\nThe output must be exactly that string (accuracy may vary but will be around 20% initially, but with random data it may stay around 20%; that's fine, just check format).",
+    "hints": [
+        "Use `torch.randn(100, 3, 224, 224)` for X.",
+        "`y = torch.randint(0, 5, (100,))`.",
+        "Create TensorDataset and DataLoader.",
+        "Train only model.fc.parameters() (or pass them to optimizer)."
+    ],
+    "expectedOutput": "Accuracy: XX.X%",
+    "solutionCode": "import torch\nimport torch.nn as nn\nfrom torch.utils.data import DataLoader, TensorDataset\nimport torchvision.models as models\n\ntorch.manual_seed(0)\n# Synthetic data\nX = torch.randn(100, 3, 224, 224)\ny = torch.randint(0, 5, (100,))\nds = TensorDataset(X, y)\nloader = DataLoader(ds, batch_size=10, shuffle=True)\n\nmodel = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)\nfor param in model.parameters():\n    param.requires_grad = False\nmodel.fc = nn.Linear(model.fc.in_features, 5)\n\ncriterion = nn.CrossEntropyLoss()\noptimizer = torch.optim.SGD(model.fc.parameters(), lr=0.01)\n\nmodel.train()\nfor epoch in range(20):\n    for xb, yb in loader:\n        optimizer.zero_grad()\n        out = model(xb)\n        loss = criterion(out, yb)\n        loss.backward()\n        optimizer.step()\n\nmodel.eval()\nwith torch.no_grad():\n    preds = model(X).argmax(dim=1)\n    acc = (preds == y).float().mean().item() * 100\nprint(f\"Accuracy: {acc:.1f}%\")"
+}

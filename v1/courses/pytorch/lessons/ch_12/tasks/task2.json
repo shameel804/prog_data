@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_12",
+    "title": "Custom Autograd Function for Polynomial",
+    "description": "Define a custom Function that computes y = x^3 and its gradient.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Write code that:\n1. Defines a class `CubeFunction(torch.autograd.Function)` with `forward` that computes `x**3`, and `backward` that returns `3*x**2 * grad_output`.\n2. Wraps it in a function `cube(x)` that calls `CubeFunction.apply(x)`.\n3. Creates a tensor `x = torch.tensor([2.0, 3.0], requires_grad=True)`, computes `y = cube(x)`.\n4. Calls `y.sum().backward()` and prints `x.grad` in the format: \"Gradient: tensor([X, Y])\".\n\nThe output must be exactly \"Gradient: tensor([12., 27.])\".",
+    "hints": [
+        "In forward, use `ctx.save_for_backward(x)`.",
+        "In backward, retrieve `x` and compute `grad_input = 3 * x**2 * grad_output`.",
+        "Print using f-string and `x.grad`."
+    ],
+    "expectedOutput": "Gradient: tensor([12., 27.])",
+    "solutionCode": "import torch\n\nclass CubeFunction(torch.autograd.Function):\n    @staticmethod\n    def forward(ctx, x):\n        ctx.save_for_backward(x)\n        return x ** 3\n    \n    @staticmethod\n    def backward(ctx, grad_output):\n        x, = ctx.saved_tensors\n        return 3 * x ** 2 * grad_output\n\ndef cube(x):\n    return CubeFunction.apply(x)\n\nx = torch.tensor([2.0, 3.0], requires_grad=True)\ny = cube(x)\ny.sum().backward()\nprint(f\"Gradient: {x.grad}\")"
+}

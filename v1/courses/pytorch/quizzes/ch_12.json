@@ -1,0 +1,258 @@
+{
+    "id": "quiz_ch_12",
+    "chapterId": "ch_12",
+    "title": "Chapter 12 Quiz",
+    "description": "Test your knowledge of advanced PyTorch features: custom datasets, hooks, AMP, DDP, and profiling!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "Which dataset class is suitable for streaming data that cannot be indexed?",
+            "options": [
+                "torch.utils.data.Dataset",
+                "torch.utils.data.TensorDataset",
+                "torch.utils.data.IterableDataset",
+                "torch.utils.data.ConcatDataset"
+            ],
+            "correctAnswer": 2,
+            "explanation": "IterableDataset is designed for data that can only be iterated, not randomly accessed."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "What method must you override in an IterableDataset?",
+            "options": [
+                "__len__",
+                "__getitem__",
+                "__iter__",
+                "__next__"
+            ],
+            "correctAnswer": 2,
+            "explanation": "You must implement __iter__ to return an iterator."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "How can you handle shuffling in a multi‑worker IterableDataset?",
+            "options": [
+                "It's automatic",
+                "Use a shuffle buffer within each worker",
+                "Use DistributedSampler",
+                "Impossible"
+            ],
+            "correctAnswer": 1,
+            "explanation": "A common pattern is to maintain a local shuffle buffer to randomize the order."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "What is a memory‑mapped tensor?",
+            "options": [
+                "A tensor stored only on GPU",
+                "A tensor backed by a file on disk, loaded on demand",
+                "A tensor stored in CPU RAM",
+                "A compressed tensor"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Memory‑mapped tensors access disk data as if it were in memory, without loading the whole file."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "What does `register_buffer` do in an nn.Module?",
+            "options": [
+                "Adds a tensor that will be trained",
+                "Adds a tensor that is saved/loaded with state_dict but not included in parameters()",
+                "Registers a forward hook",
+                "Moves the module to GPU"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Buffers are persistent state (like running mean) that are not trainable."
+        },
+        {
+            "id": "q6",
+            "type": "true_false",
+            "question": "Buffers are included in `model.parameters()`.",
+            "correctAnswer": false,
+            "explanation": "Buffers are not parameters; they are accessed via `buffers()` and saved in state_dict."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "How do you capture the output of a specific layer using a hook?",
+            "options": [
+                "layer.register_backward_hook(fn)",
+                "layer.register_forward_hook(fn)",
+                "model.apply(fn)",
+                "layer.forward_pre_hook(fn)"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Forward hooks are called after the layer's forward pass, giving access to the output."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "What is the purpose of `torch.autograd.Function`?",
+            "options": [
+                "To define a loss function",
+                "To create custom operations with user‑defined forward and backward",
+                "To load datasets",
+                "To export models"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It allows you to extend autograd with custom differentiable operations."
+        },
+        {
+            "id": "q9",
+            "type": "fill_blank",
+            "question": "In a custom Function, you call it using `______.apply(input)`.",
+            "options": [
+                "ClassName",
+                "module",
+                "function",
+                "torch.autograd"
+            ],
+            "correctAnswer": "ClassName",
+            "explanation": "The class itself is called with `.apply()`, e.g., `MyReLU.apply(x)`."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "What is the main benefit of mixed precision training?",
+            "options": [
+                "It always increases accuracy",
+                "It reduces GPU memory and speeds up computation on Tensor Core GPUs",
+                "It eliminates the need for an optimizer",
+                "It allows training on CPU"
+            ],
+            "correctAnswer": 1,
+            "explanation": "AMP uses FP16 to reduce memory and leverage faster tensor core operations."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "What does `GradScaler` do in AMP?",
+            "options": [
+                "Scales the model weights",
+                "Scales the loss to prevent FP16 gradient underflow",
+                "Scales the learning rate",
+                "Scales the batch size"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It multiplies loss by a factor so that small gradients don't vanish in FP16."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "Which operations typically remain in FP32 under `autocast`?",
+            "options": [
+                "Convolution",
+                "Linear",
+                "Softmax and loss",
+                "BatchNorm"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Softmax, cross‑entropy, etc. stay in FP32 for numerical stability."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "What is the key advantage of DistributedDataParallel over DataParallel?",
+            "options": [
+                "It works on CPU",
+                "It uses multi‑processing with one process per GPU, avoiding GIL and achieving better scaling",
+                "It's simpler to use",
+                "It doesn't require NCCL"
+            ],
+            "correctAnswer": 1,
+            "explanation": "DDP spawns separate processes, leading to better resource utilization and performance."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "How do you ensure each GPU gets a unique subset of data in DDP?",
+            "options": [
+                "Use a random seed",
+                "Use `torch.utils.data.DistributedSampler`",
+                "Manually split the dataset",
+                "Use `DataLoader(shuffle=True)`"
+            ],
+            "correctAnswer": 1,
+            "explanation": "DistributedSampler partitions the dataset based on world size and rank."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "Why call `sampler.set_epoch(epoch)` in each epoch with DDP?",
+            "options": [
+                "To reset the model",
+                "To change the random seed for shuffling in a distributed manner",
+                "To log the epoch",
+                "To adjust batch size"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It ensures proper shuffle ordering across epochs and workers."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "Which tool launches multi‑process distributed training scripts?",
+            "options": [
+                "python",
+                "torchrun",
+                "mpi",
+                "cuda"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`torchrun` is the recommended launcher for DDP jobs."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "What does `torch.profiler.profile` help you identify?",
+            "options": [
+                "Model accuracy",
+                "Performance bottlenecks, GPU/CPU utilization, and kernel times",
+                "Dataset issues",
+                "Hyperparameter tuning"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The profiler records execution details to find slow operations."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "What is the primary purpose of `torch.compile`?",
+            "options": [
+                "To convert the model to ONNX",
+                "To optimize the model's computation graph for faster execution",
+                "To save the model",
+                "To quantize the model"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`torch.compile` applies a series of optimizations, significantly reducing overhead."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "How does gradient checkpointing help?",
+            "options": [
+                "It speeds up forward pass",
+                "It reduces memory usage by recomputing intermediate activations during backward instead of storing them",
+                "It increases accuracy",
+                "It synchronizes gradients"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Checkpointing trades compute for memory, allowing larger models to fit."
+        },
+        {
+            "id": "q20",
+            "type": "true_false",
+            "question": "You can combine mixed precision, DDP, and torch.compile in the same training script.",
+            "correctAnswer": true,
+            "explanation": "Yes, they are designed to work together for maximum efficiency."
+        }
+    ]
+}

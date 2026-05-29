@@ -1,0 +1,111 @@
+{
+    "id": "l1",
+    "chapterId": "ch_11",
+    "title": "Saving & Loading Model Weights 💾",
+    "description": "Learn to save and load model state_dict for inference and resuming.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Model Persistence",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Why Save Models? 🤔",
+            "content": "# Persisting Your Work\n\nAfter hours of training, you want to keep the weights for later use:\n* **Inference**: use the model without retraining.\n* **Resume training**: continue from where you left off.\n* **Share**: distribute your model to others.\n\nPyTorch uses Python's `pickle` format, but you can also save just the trained parameters."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "code",
+            "title": "Saving state_dict",
+            "content": "Save only the learnable parameters (recommended).",
+            "codeSnippet": "import torch\nimport torch.nn as nn\n\nmodel = nn.Linear(10, 2)\ntorch.save(model.state_dict(), 'model_weights.pth')\nprint('Weights saved')",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What does `model.state_dict()` contain?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The entire model code",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A dictionary mapping layer names to parameter tensors",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The optimizer state",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Training history",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`state_dict()` returns an OrderedDict of parameter names to tensors.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "code",
+            "title": "Loading state_dict",
+            "content": "Recreate the model architecture and load weights.",
+            "codeSnippet": "model = nn.Linear(10, 2)  # same architecture\nmodel.load_state_dict(torch.load('model_weights.pth'))\nprint('Weights loaded')\n# Now ready for inference",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_5",
+            "type": "quiz",
+            "title": "Load Requirement 📦",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "What must match between saving and loading state_dict?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The file name",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The model architecture (same layers)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The optimizer",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The batch size",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "You must instantiate an identical model before loading its state_dict.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `.pth` or `.pt` extension\n\nCommon convention for PyTorch checkpoint files, but any extension works."
+        }
+    ]
+}

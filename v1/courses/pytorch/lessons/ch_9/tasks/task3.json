@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_9",
+    "title": "Bidirectional LSTM Exploration",
+    "description": "Compare unidirectional and bidirectional LSTMs on a sequence prediction task.",
+    "estimatedMinutes": 20,
+    "problemStatement": "Write code that:\n1. Generates sequences of length 5: each sequence is a vector of 3 features, and the task is to predict if the sum of the first feature across the sequence is > 7.5 (binary classification). Create 500 samples.\n2. Defines two models:\n   - `UniLSTM`: LSTM(3, 8, batch_first=True) + Linear(8, 2)\n   - `BiLSTM`: LSTM(3, 8, batch_first=True, bidirectional=True) + Linear(16, 2) (since output dim is 8*2=16)\n3. Trains both for 50 epochs on the same data, prints final training accuracy for each in the format:\n   \"Unidirectional accuracy: XX.X%\"\n   \"Bidirectional accuracy: XX.X%\"\n   (Both should be high, but BiLSTM may learn faster; accuracy values will vary.)\n\nEnsure output matches exactly these two lines.",
+    "hints": [
+        "Generate data: X = torch.randn(500,5,3); y = (X[:,:,0].sum(dim=1) > 7.5).long()",
+        "Use batch_first=True.",
+        "In BiLSTM, linear input dim = hidden_size * 2."
+    ],
+    "expectedOutput": "Unidirectional accuracy: XX.X%\nBidirectional accuracy: XX.X%",
+    "solutionCode": "import torch\nimport torch.nn as nn\nimport torch.optim as optim\n\ntorch.manual_seed(42)\n# Data\nn = 500\nX = torch.randn(n, 5, 3)\ny = (X[:,:,0].sum(dim=1) > 7.5).long()\n\nclass UniLSTM(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.lstm = nn.LSTM(3, 8, batch_first=True)\n        self.fc = nn.Linear(8, 2)\n    def forward(self, x):\n        out, _ = self.lstm(x)\n        return self.fc(out[:, -1, :])\n\nclass BiLSTM(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.lstm = nn.LSTM(3, 8, batch_first=True, bidirectional=True)\n        self.fc = nn.Linear(16, 2)\n    def forward(self, x):\n        out, _ = self.lstm(x)\n        return self.fc(out[:, -1, :])\n\ndef train_model(model, X, y, epochs=50):\n    criterion = nn.CrossEntropyLoss()\n    optimizer = optim.Adam(model.parameters(), lr=0.01)\n    for _ in range(epochs):\n        optimizer.zero_grad()\n        loss = criterion(model(X), y)\n        loss.backward()\n        optimizer.step()\n    model.eval()\n    with torch.no_grad():\n        preds = model(X).argmax(1)\n        acc = (preds == y).float().mean().item() * 100\n    return acc\n\nacc_uni = train_model(UniLSTM(), X, y)\nacc_bi = train_model(BiLSTM(), X, y)\nprint(f\"Unidirectional accuracy: {acc_uni:.1f}%\")\nprint(f\"Bidirectional accuracy: {acc_bi:.1f}%\")"
+}

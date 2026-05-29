@@ -1,0 +1,25 @@
+{
+    "id": "project3",
+    "title": "Flower Species Recognizer with Transfer Learning 🌺",
+    "description": "Fine‑tune a pretrained ResNet to recognize 102 flower species using limited data and advanced techniques.",
+    "difficulty": "Advanced",
+    "estimatedHours": "4-5",
+    "problemStatement": "## 🎯 Objective\n\nLeverage a pretrained ResNet18 to classify 102 species of flowers using the Oxford 102 Flower Dataset. You will:\n\n- Load a pretrained model, replace the classifier, and fine‑tune it.\n- Apply advanced data augmentation.\n- Use mixed‑precision training (AMP) for speed.\n- Export the final model to TorchScript for deployment.\n\n## 📂 Dataset\n\nUse `torchvision.datasets.Flowers102`. The dataset contains 102 classes, each with about 40–258 images. The official splits are `train`, `val`, `test`. Use these splits.\n\nBecause the dataset is small, heavy augmentation is crucial.\n\n## 🧱 Model & Transfer Learning Strategy\n\n- Load `torchvision.models.resnet18(weights=ResNet18_Weights.DEFAULT)`.\n- Replace the final fully connected layer to output 102 classes.\n- **Two‑phase training**:\n  1. **Feature extraction**: Freeze all pretrained layers, train only the new classifier head for 20 epochs using Adam, lr=0.001.\n  2. **Fine‑tuning**: Unfreeze the whole network, continue training for another 30 epochs with a **much lower** learning rate (SGD with lr=0.0001, momentum=0.9).\n\n## ⚙️ Data Augmentation\n\nUse the pretrained weights' default transforms (`weights.transforms()`) as a base, then compose with additional augmentations for training:\n\n- RandomResizedCrop(224)\n- RandomHorizontalFlip(p=0.5)\n- RandomRotation(degrees=15)\n- ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1)\n- Convert to tensor and normalize (the weights' transforms already include normalization, but you can chain them carefully; the simplest is to use `weights.transforms()` for validation and a custom train transform that includes the required normalization).\n\nValidation/Test transform: Resize(256) → CenterCrop(224) → ToTensor → Normalize (same stats as training).\n\n## 🚀 Mixed‑Precision Training\n\nUse `torch.cuda.amp.autocast()` and `GradScaler` during both training phases (if GPU available).\n\n## 📊 Evaluation\n\nAfter the second phase, evaluate on the official test set. Report **top‑1 accuracy** in %.\n\n## 🛠️ Deployment Export\n\nAfter training, trace the model with a dummy input of shape (1, 3, 224, 224) and save it as `flowers_model.pt` using `torch.jit.save`. Print a confirmation message.\n\n## 🚀 Deliverables\n\nA script that:\n- Loads the Flowers102 dataset with the defined transforms.\n- Performs the two‑phase training with AMP.\n- Saves the best checkpoint from the fine‑tuning phase.\n- Evaluates on the test set and prints test accuracy.\n- Exports the model to TorchScript.\n\n```\nPhase 1 (Feature Extraction) complete.\nPhase 2 (Fine‑tuning) complete.\nBest test accuracy: <XX.XX>%\nTorchScript model exported successfully.\n```",
+    "requirements": [
+        "Use the official train/val/test splits of Flowers102.",
+        "Implement a two‑phase training strategy (feature extraction then fine‑tuning).",
+        "Include substantial data augmentation on the training set.",
+        "Use automatic mixed precision (AMP) with GradScaler.",
+        "Export the final model to TorchScript and save the file.",
+        "Achieve test accuracy ≥ 85% (with proper tuning this is feasible)."
+    ],
+    "hints": [
+        "In the feature extraction phase, ensure only `model.fc.parameters()` are passed to the optimizer.",
+        "When unfreezing for fine‑tuning, you can use different learning rates for the backbone and the classifier by passing parameter groups to the optimizer.",
+        "Use `torch.optim.lr_scheduler.CosineAnnealingLR` or `ReduceLROnPlateau` during fine‑tuning to help convergence.",
+        "AMP requires the GradScaler and autocast context manager. On CPU, it does nothing, so the code can be device‑agnostic.",
+        "For TorchScript, put the model in `eval()` mode and use a dummy input on the correct device.",
+        "The Flowers102 dataset is available in recent torchvision versions. Install with `pip install torchvision`."
+    ],
+    "expectedOutput": "Console output indicating phase completion, test accuracy ≥ 85%, and TorchScript export confirmation."
+}

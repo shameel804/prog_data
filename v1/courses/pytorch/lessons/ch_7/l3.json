@@ -1,0 +1,117 @@
+{
+    "id": "l3",
+    "chapterId": "ch_7",
+    "title": "The DataLoader Engine 🚂",
+    "description": "Master batching, shuffling, parallel loading, and custom collation.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "Data Loading",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Beyond Simple Iteration ⚙️",
+            "content": "# `DataLoader` Parameters\n\nKey arguments:\n* **`batch_size`**: number of samples per batch.\n* **`shuffle`**: randomize order each epoch.\n* **`num_workers`**: subprocesses for loading data (parallelism).\n* **`drop_last`**: drop the last incomplete batch.\n* **`collate_fn`**: custom function to merge a list of samples into a batch."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Basic DataLoader Setup",
+            "content": "Create a loader from a TensorDataset.",
+            "codeSnippet": "from torch.utils.data import DataLoader, TensorDataset\n\ndata = torch.randn(100, 10)\nlabels = torch.randint(0, 2, (100,))\nds = TensorDataset(data, labels)\nloader = DataLoader(ds, batch_size=16, shuffle=True, num_workers=2)\n\nfor batch_idx, (x, y) in enumerate(loader):\n    print(f\"Batch {batch_idx}: x shape {x.shape}\")\n    break",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Loader Parameters 🛠️",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What does `num_workers=4` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Creates 4 copies of the dataset",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Uses 4 subprocesses to load data in parallel",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Splits the data into 4 parts",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Trains 4 models simultaneously",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Workers load and preprocess data concurrently, reducing GPU idle time.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Handling Variable-Sized Inputs 🧩",
+            "content": "## `collate_fn`\n\nBy default, `DataLoader` stacks tensors into a batch. If samples have different shapes (e.g., sentences), you need a custom `collate_fn`.\n\n```python\ndef my_collate(batch):\n    # batch is a list of tuples (data, label)\n    data = [item[0] for item in batch]\n    labels = [item[1] for item in batch]\n    # pad sequences, then stack\n    return pad_sequence(data, batch_first=True), torch.tensor(labels)\n\nloader = DataLoader(ds, batch_size=8, collate_fn=my_collate)\n```"
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Custom Collation Example",
+            "content": "A simple collate that doesn't stack, just returns a list.",
+            "codeSnippet": "def list_collate(batch):\n    return batch  # just a list of samples\n\nds = SquareDataset(10)\nloader = DataLoader(ds, batch_size=3, collate_fn=list_collate)\nfor batch in loader:\n    print(batch)  # list of tuples\n    break",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Collation Concept 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "When do you need a custom collate_fn?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "When batch size > 1",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "When samples have varying shapes that can't be stacked directly",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "When using GPU",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only for image data",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Custom collate is needed if `torch.stack` fails, e.g., for sequences of different lengths.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Performance Tuning\n\nSet `num_workers=4` or more, but be cautious on Windows (needs `if __name__ == '__main__'`). Use `pin_memory=True` when using GPU for faster host-to-device transfer."
+        }
+    ]
+}

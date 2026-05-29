@@ -1,0 +1,117 @@
+{
+    "id": "l2",
+    "chapterId": "ch_11",
+    "title": "Checkpoints & Full Model Saving 📦",
+    "description": "Save entire models, optimizers, and full training checkpoints.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Model Persistence",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Saving More Than Weights 📋",
+            "content": "# Training Checkpoints\n\nTo resume training exactly where you stopped, save not only `model.state_dict()` but also:\n* `optimizer.state_dict()` (momentum, etc.)\n* Current epoch number\n* Loss value\n* Random number generator states\n\nWrap them in a dictionary and save."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Saving a Full Checkpoint",
+            "content": "Save model, optimizer, and epoch info.",
+            "codeSnippet": "model = nn.Linear(10, 2)\noptimizer = torch.optim.Adam(model.parameters())\nepoch = 5\nloss = 0.023\n\ncheckpoint = {\n    'epoch': epoch,\n    'model_state_dict': model.state_dict(),\n    'optimizer_state_dict': optimizer.state_dict(),\n    'loss': loss\n}\ntorch.save(checkpoint, 'checkpoint.pth')\nprint('Checkpoint saved')",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Checkpoint Content 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Why include the optimizer state when saving a checkpoint?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To resume training with the same momentum and learning rate schedule",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To load the model architecture",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To increase file size",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's required by state_dict",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Optimizer state contains per‑parameter buffers like momentum; restoring it continues training seamlessly.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Loading a Checkpoint",
+            "content": "Reconstruct and resume training.",
+            "codeSnippet": "model = nn.Linear(10, 2)\noptimizer = torch.optim.Adam(model.parameters())\n\ncheckpoint = torch.load('checkpoint.pth')\nmodel.load_state_dict(checkpoint['model_state_dict'])\noptimizer.load_state_dict(checkpoint['optimizer_state_dict'])\nstart_epoch = checkpoint['epoch']\nprint(f'Resuming from epoch {start_epoch}')",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Saving Entire Model (Not Recommended) 🧐",
+            "content": "## `torch.save(model, 'model.pth')`\n\nThis saves the whole class using `pickle`. It's fragile: class definitions and imports must match exactly when loading. Prefer `state_dict` for models.\n\n```python\nmodel = ...\ntorch.save(model, 'entire_model.pth')\nloaded_model = torch.load('entire_model.pth')\n```"
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Best Practice 🏆",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Why is saving the entire model with `torch.save(model, ...)` less portable?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It uses more disk space",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It requires the exact same class definition and imports at load time",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It doesn't save optimizer state",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It only works on GPU",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Pickling the model stores the class path; loading needs the same environment.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Save Multiple Checkpoints\n\nKeep several checkpoint files (e.g., 'checkpoint_epoch_10.pth') to roll back to different stages or track experiment history."
+        }
+    ]
+}

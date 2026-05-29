@@ -1,0 +1,132 @@
+{
+    "id": "l2",
+    "chapterId": "ch_12",
+    "title": "Custom Modules & Hooks 🧩",
+    "description": "Master advanced nn.Module patterns, parameter registration, and forward hooks.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "Advanced Modules",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Advanced `nn.Module` Patterns 🛠️",
+            "content": "# Beyond `__init__` and `forward`\n\nYou can:\n* Register non‑trainable buffers (`register_buffer`).\n* Register parameters with custom names (`register_parameter`).\n* Add forward/backward hooks for debugging.\n* Implement custom `__repr__`.\n* Use `apply()` for recursive init."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Registering Buffers",
+            "content": "Buffers are saved with `state_dict` but not trained.",
+            "codeSnippet": "class MyBlock(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.register_buffer('running_mean', torch.zeros(10))\n        self.lin = nn.Linear(10, 10)\n    def forward(self, x):\n        self.running_mean = 0.9 * self.running_mean + 0.1 * x.mean(dim=0)\n        return self.lin(x)\n\nblock = MyBlock()\nprint(block.state_dict().keys())",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Buffer Insight 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the difference between a parameter and a buffer?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Buffers are not saved in state_dict",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Buffers are not included in `parameters()`, not updated by optimizer, but saved in state_dict",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Buffers are only for GPU",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Parameters cannot be tensors",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Buffers store non‑learnable tensors (like running stats) that should be saved/loaded.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Forward Hooks 🪝",
+            "content": "## Intercept Activations\n\n`register_forward_hook(module, hook_fn)` lets you capture intermediate outputs or modify them. Useful for feature extraction, Grad‑CAM, debugging.\n\n```python\nactivations = {}\ndef get_activation(name):\n    def hook(model, input, output):\n        activations[name] = output.detach()\n    return hook\n\nmodel.layer4.register_forward_hook(get_activation('layer4'))\n```"
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Hook Example",
+            "content": "Capture intermediate features.",
+            "codeSnippet": "model = nn.Sequential(nn.Linear(5,10), nn.ReLU(), nn.Linear(10,2))\nfeat = {}\ndef hook(module, inp, out):\n    feat['out'] = out\nmodel[1].register_forward_hook(hook)\nx = torch.randn(1,5)\nout = model(x)\nprint(feat['out'].shape)  # [1,10]",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Hook Hunt 🔍",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What does a forward hook receive?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Only the module",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The module, input tensor, and output tensor",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only the gradient",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The loss",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Forward hooks are called with (module, input, output).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "Custom Autograd Functions 🔬",
+            "content": "## `torch.autograd.Function`\n\nFor operations not expressible with standard PyTorch, define a custom `Function` with `forward` and `backward` static methods.\n\n```python\nclass MyReLU(torch.autograd.Function):\n    @staticmethod\n    def forward(ctx, x):\n        ctx.save_for_backward(x)\n        return x.clamp(min=0)\n    @staticmethod\n    def backward(ctx, grad_output):\n        x, = ctx.saved_tensors\n        grad_input = grad_output.clone()\n        grad_input[x < 0] = 0\n        return grad_input\n```"
+        },
+        {
+            "id": "s_l2_8",
+            "type": "code",
+            "title": "Using Custom Function",
+            "content": "Apply the custom ReLU.",
+            "codeSnippet": "class MyReLU(torch.autograd.Function):\n    @staticmethod\n    def forward(ctx, x):\n        ctx.save_for_backward(x)\n        return x.clamp(min=0)\n    @staticmethod\n    def backward(ctx, grad_output):\n        x, = ctx.saved_tensors\n        grad_input = grad_output.clone()\n        grad_input[x < 0] = 0\n        return grad_input\n\nx = torch.tensor([-2., 0., 3.], requires_grad=True)\nout = MyReLU.apply(x)\nout.sum().backward()\nprint(x.grad)  # [0., 0., 1.]",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Double‑Backward?\n\nFor higher‑order gradients, implement `backward` returning correct shapes and handle `ctx` carefully."
+        }
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_3",
+    "title": "Build Simple Linear Regression from Scratch",
+    "description": "Implement the normal equation to compute slope and intercept for a small dataset without using ML libraries.",
+    "estimatedMinutes": 15,
+    "problemStatement": "# Task: DIY Linear Regression\n\nYou are given two lists, `X` and `y`, representing square footage of houses and their prices (in $1000). Write a Python function `simple_linear_regression(X, y)` that returns the slope `w` and intercept `b` of the best‑fit line using the **Normal Equation** for simple linear regression:\n\n```\nw = Σ((xᵢ - x̄)(yᵢ - ȳ)) / Σ((xᵢ - x̄)²)\nb = ȳ - w * x̄\n```\n\nDo not use any machine learning libraries (no sklearn, scipy). Only basic Python and optionally math.\n\n## Test Data\n```python\nX = [1200, 1500, 1800, 2000, 2200]\ny = [300, 380, 420, 460, 500]\n```\n\nExpected output printed:\n```\nSlope (w): 0.1947\nIntercept (b): 71.58\n```\n(Values rounded to 4 and 2 decimals respectively. Tolerance: ±0.01 for both.)",
+    "hints": [
+        "Compute mean of X and y first.",
+        "Use list comprehensions or loops to calculate numerator and denominator for w.",
+        "Multiply by 1.0 if using Python 2? In Python 3 it’s fine.",
+        "Print with formatted string: `print(f\"Slope (w): {w:.4f}\")`."
+    ],
+    "expectedOutput": "Slope (w): 0.1947\nIntercept (b): 71.58",
+    "solutionCode": "def simple_linear_regression(X, y):\n    n = len(X)\n    mean_x = sum(X) / n\n    mean_y = sum(y) / n\n    \n    numerator = sum((X[i] - mean_x) * (y[i] - mean_y) for i in range(n))\n    denominator = sum((X[i] - mean_x) ** 2 for i in range(n))\n    \n    w = numerator / denominator\n    b = mean_y - w * mean_x\n    return w, b\n\n# Test\nX = [1200, 1500, 1800, 2000, 2200]\ny = [300, 380, 420, 460, 500]\nw, b = simple_linear_regression(X, y)\nprint(f\"Slope (w): {w:.4f}\")\nprint(f\"Intercept (b): {b:.2f}\")\n"
+}

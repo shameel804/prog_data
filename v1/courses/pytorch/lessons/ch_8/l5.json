@@ -1,0 +1,82 @@
+{
+    "id": "l5",
+    "chapterId": "ch_8",
+    "title": "Batch Normalization & Dropout 🧪",
+    "description": "Stabilize and regularize deep CNNs with BatchNorm and Dropout.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "CNNs",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "The Internal Covariate Shift ⚖️",
+            "content": "# Why BatchNorm?\n\nAs weights update, the distribution of each layer's inputs changes. This slows training. **Batch Normalization** normalizes the activations of each mini‑batch:\n\n$$\\hat{x} = \\frac{x - \\mu_{batch}}{\\sqrt{\\sigma^2_{batch} + \\epsilon}}$$\n\nThen scales and shifts with learnable parameters γ, β.\n\nBenefits:\n* Allows higher learning rates.\n* Reduces sensitivity to initialization.\n* Acts as a slight regularizer."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "BatchNorm2d in Action",
+            "content": "Insert BatchNorm after a convolution.",
+            "codeSnippet": "class ConvBlock(nn.Module):\n    def __init__(self, in_c, out_c):\n        super().__init__()\n        self.conv = nn.Conv2d(in_c, out_c, 3, padding=1)\n        self.bn = nn.BatchNorm2d(out_c)\n        self.relu = nn.ReLU()\n    def forward(self, x):\n        return self.relu(self.bn(self.conv(x)))\n\nblock = ConvBlock(3, 16)\nprint(block(torch.randn(2,3,32,32)).shape)",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "BatchNorm Behavior 🧪",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "During inference, BatchNorm uses:",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Mini‑batch statistics",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Running estimates of mean and variance",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A fixed constant",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Always the training stats",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "At eval time, BatchNorm uses running averages accumulated during training.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Dropout for Regularization 🎲",
+            "content": "## Randomly Zero Neurons\n\n`nn.Dropout(p)` randomly zeroes a fraction `p` of the inputs during **training only**.\n\nIt prevents co‑adaptation of neurons, forcing them to learn robust features independently.\n\nTypical values: `p=0.2` to `0.5`. Often used before final classifier layers."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Dropout in a CNN",
+            "content": "Apply dropout after the feature extractor.",
+            "codeSnippet": "features = nn.Sequential(\n    nn.Conv2d(3, 32, 3, padding=1),\n    nn.ReLU(),\n    nn.MaxPool2d(2),\n    nn.Conv2d(32, 64, 3, padding=1),\n    nn.ReLU(),\n    nn.MaxPool2d(2),\n    nn.Dropout2d(p=0.25)   # dropout on feature maps\n)\nclassifier = nn.Linear(64 * 8 * 8, 10)  # after pooling, if input was 32",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Order of Operations: Conv → BN → ReLU\n\nThis order is most common and effective. `nn.Sequential(conv, bn, relu)`."
+        }
+    ]
+}

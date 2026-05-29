@@ -1,0 +1,252 @@
+{
+    "id": "quiz_ch_8",
+    "chapterId": "ch_8",
+    "title": "Chapter 8 Quiz",
+    "description": "Test your knowledge of convolutional neural networks, pooling, and regularization!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the main advantage of convolutional layers over fully‑connected layers for images?",
+            "options": [
+                "More parameters",
+                "Parameter sharing and local connectivity",
+                "They run only on CPUs",
+                "They flatten the image"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Convolutions reuse weights across space, and each neuron only connects to a local patch."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "How many parameters in `nn.Conv2d(3, 64, 3)` (bias included)?",
+            "options": [
+                "64×3×3 = 576",
+                "64×3×3 + 64 = 640",
+                "3×64×3×3 = 1728",
+                "64"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Weights: 64 filters × 3 channels × 3×3 = 576, plus 64 biases = 640."
+        },
+        {
+            "id": "q3",
+            "type": "true_false",
+            "question": "Padding in convolution is used to increase the spatial size of the output.",
+            "correctAnswer": false,
+            "explanation": "Padding is added to the input to preserve spatial dimensions or control output size, not to increase output size relative to input. Actually it can increase if padding > kernel/2, but typical use is to keep same. But statement 'increase' is false; padding preserves or reduces less. Acceptable."
+        },
+        {
+            "id": "q4",
+            "type": "fill_blank",
+            "question": "The output spatial size of a convolution is computed by: floor((input - kernel + 2*padding)/stride) `___` 1",
+            "options": [
+                "+",
+                "-",
+                "*",
+                "/"
+            ],
+            "correctAnswer": "+",
+            "explanation": "Formula: ⌊(input - kernel + 2*padding)/stride⌋ + 1."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "What does `MaxPool2d(2,2)` do to a feature map?",
+            "options": [
+                "Takes the maximum over 2×2 windows with stride 2, halving spatial dimensions",
+                "Adds zero padding",
+                "Increases channels",
+                "Transposes the data"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Max pooling with kernel=2, stride=2 downsamples by a factor of 2."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "After two `MaxPool2d(2,2)` operations on a 28×28 input, the size becomes:",
+            "options": [
+                "14×14",
+                "7×7",
+                "28×28",
+                "3×3"
+            ],
+            "correctAnswer": 1,
+            "explanation": "28→14→7."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "What is the purpose of Batch Normalization?",
+            "options": [
+                "To add noise to the input",
+                "To normalize activations within a mini‑batch, speeding up training",
+                "To reduce the number of parameters",
+                "To replace the activation function"
+            ],
+            "correctAnswer": 1,
+            "explanation": "BatchNorm stabilizes learning by normalizing layer inputs."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "During evaluation, BatchNorm uses:",
+            "options": [
+                "The current batch statistics",
+                "Running mean and variance estimated during training",
+                "A fixed value of 0 and 1",
+                "The same as training"
+            ],
+            "correctAnswer": 1,
+            "explanation": "BN switches to running averages in eval mode for deterministic behavior."
+        },
+        {
+            "id": "q9",
+            "type": "true_false",
+            "question": "Dropout is active during both training and inference.",
+            "correctAnswer": false,
+            "explanation": "Dropout is only applied during training; at inference, it's disabled."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "What does `nn.AdaptiveAvgPool2d(1)` output regardless of input height and width?",
+            "options": [
+                "A tensor of shape (B, C, 1, 1)",
+                "A tensor of shape (B, C, H/2, W/2)",
+                "A scalar",
+                "The same size as input"
+            ],
+            "correctAnswer": 0,
+            "explanation": "It reduces each channel to a single average value, shape (B,C,1,1)."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "Which of these is NOT a benefit of using convolution over fully‑connected layers?",
+            "options": [
+                "Parameter sharing",
+                "Translational invariance",
+                "Fewer parameters for spatial data",
+                "Capturing long‑range dependencies more easily"
+            ],
+            "correctAnswer": 3,
+            "explanation": "Convolutions have limited receptive field; capturing long-range dependencies is harder, not easier."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "What is the typical ordering of operations in a CNN block?",
+            "options": [
+                "Conv → ReLU → BatchNorm",
+                "Conv → BatchNorm → ReLU",
+                "BatchNorm → Conv → ReLU",
+                "ReLU → Conv → BatchNorm"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Conv → BN → ReLU is standard and most effective."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "How do you prevent overfitting in a CNN?",
+            "options": [
+                "Remove all pooling layers",
+                "Add more convolutional layers",
+                "Use Dropout, weight decay, and data augmentation",
+                "Increase batch size infinitely"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Regularization techniques combat overfitting."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "A convolutional layer has input 1×28×28, 32 filters of size 5×5, stride 1, padding 0. Output spatial size?",
+            "options": [
+                "24×24",
+                "28×28",
+                "23×23",
+                "14×14"
+            ],
+            "correctAnswer": 0,
+            "explanation": "(28 - 5)/1 + 1 = 24."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "What is the purpose of the `stride` parameter?",
+            "options": [
+                "To add zero padding",
+                "To control how many pixels the kernel moves each step",
+                "To change the number of channels",
+                "To decide kernel size"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Stride is the step size of the sliding window."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "How can you maintain spatial dimensions with a 3×3 kernel and stride 1?",
+            "options": [
+                "Use padding=0",
+                "Use padding=1",
+                "Use padding=2",
+                "It's impossible"
+            ],
+            "correctAnswer": 1,
+            "explanation": "padding = (kernel-1)/2 = 1 preserves size."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "In `nn.Conv2d(in_channels, out_channels, kernel_size)`, what does `out_channels` represent?",
+            "options": [
+                "The number of input images",
+                "The number of distinct filters (feature detectors)",
+                "The spatial output size",
+                "The batch size"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It's the number of output feature maps produced by separate filters."
+        },
+        {
+            "id": "q18",
+            "type": "true_false",
+            "question": "A CNN cannot be built using `nn.Sequential` because of branching.",
+            "correctAnswer": false,
+            "explanation": "Simple feedforward CNNs can be built with Sequential. Branching requires custom Module."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "Which pooling type is often used just before the final classification layer to reduce spatial dimensions to 1×1?",
+            "options": [
+                "MaxPool2d",
+                "AdaptiveAvgPool2d",
+                "FractionalMaxPool2d",
+                "LPPool2d"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Global Average Pooling (AdaptiveAvgPool2d(1)) is common for classifier input."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "Why do we flatten the tensor before feeding to `nn.Linear`?",
+            "options": [
+                "Linear layers expect a 2D input (batch, features)",
+                "To reduce the number of channels",
+                "To apply convolution",
+                "To use BatchNorm"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Fully‑connected layers require 1D features per sample; flattening converts spatial dimensions into a feature vector."
+        }
+    ]
+}

@@ -1,0 +1,114 @@
+{
+    "id": "l6",
+    "chapterId": "ch_3",
+    "title": "Evaluating Regression Models 🧪",
+    "description": "R‑squared, adjusted R‑squared, residual plots, and how to spot overfitting vs underfitting.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Validation",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "How Good is My Model? 🤷",
+            "content": "# Beyond MSE\n\nMSE tells you average squared error, but is a value of 25 good or bad? It depends on the scale of the target. We need scale‑independent metrics.\n\n- **R‑squared (R²)**: proportion of variance in y explained by the model. Ranges from 0 to 1 (but can be negative for terrible models).\n- **Adjusted R‑squared**: penalises adding useless features. Better for comparing models with different numbers of features.\n- **RMSE**: square root of MSE, in same unit as target. Easier to interpret."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "R‑squared (Coefficient of Determination) 📊",
+            "content": "# The Formula\n\n```\nR² = 1 − (SS_res / SS_tot)\n```\n\n- SS_res = sum of squared residuals (errors) = Σ (yᵢ − ŷᵢ)²\n- SS_tot = total sum of squares = Σ (yᵢ − ȳ)² (variance of actual y)\n\nInterpretation:\n- R² = 0.8 → model explains 80% of the variability in y.\n- R² = 1 → perfect predictions (overfitting alert!).\n- R² = 0 → model is no better than predicting the mean.\n\nR² always increases (or stays same) when you add more features, even if they’re noise! That’s why we need **adjusted R²**."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "R² Intuition 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Which model would likely have a higher R² on the training data?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A simple model with one feature",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A complex model with 100 features, including random noise",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Both would be equal",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "R² does not depend on number of features",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Adding any feature, even noise, can increase R² on training data. That’s why we need adjusted R² or validation sets to prevent overfitting.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Adjusted R‑squared 📐",
+            "content": "# Penalise Useless Features\n\n```\nAdjusted R² = 1 − ((1 − R²)·(n−1)/(n−p−1))\n```\n\n- n = number of samples\n- p = number of features\n\nIt increases only if the new feature improves the model more than chance. Can decrease if the feature is garbage. Use this to select the right number of features."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "code",
+            "title": "Computing Metrics in Python 🐍",
+            "content": "Using sklearn metrics:",
+            "codeSnippet": "from sklearn.metrics import r2_score, mean_squared_error\nimport numpy as np\n\ny_true = [10, 20, 30]\ny_pred = [8, 22, 28]\n\nr2 = r2_score(y_true, y_pred)\nrmse = np.sqrt(mean_squared_error(y_true, y_pred))\n\nprint(f\"R²: {r2:.3f}, RMSE: {rmse:.2f}\")",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_6",
+            "type": "text",
+            "title": "Residual Plots: The Diagnostic Tool 🔬",
+            "content": "# Visualise What’s Wrong\n\nPlot residuals (y − ŷ) vs predicted values (ŷ). A good model should show:\n- Residuals randomly scattered around zero.\n- No obvious pattern (funnel shape, curve).\n\nIf you see a pattern:\n- Curve → non‑linear relationship (need polynomial features or non‑linear model).\n- Funnel → heteroscedasticity (variance of errors not constant).\n\nResidual plots are your best friend for diagnosing regression problems."
+        },
+        {
+            "id": "s_l6_7",
+            "type": "quiz",
+            "title": "Overfitting vs Underfitting ⚖️",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "multiple_choice",
+                "question": "A model with R² = 0.99 on training data but R² = 0.55 on test data is likely:",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Perfectly fine",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Underfitting",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Overfitting",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Unbiased",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A huge gap between train and test performance indicates the model has memorised noise (overfitting).",
+                "xpReward": 10
+            }
+        }
+    ]
+}

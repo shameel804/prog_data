@@ -1,0 +1,111 @@
+{
+    "id": "l4",
+    "chapterId": "ch_8",
+    "title": "Pooling: Downsampling & Translation Invariance 🌊",
+    "description": "Reduce spatial dimensions with MaxPool2d and AveragePooling.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "CNNs",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Why Reduce Spatial Size? 📉",
+            "content": "# Pooling Layers\n\nAfter a few convolutional layers, feature maps are still large. Pooling layers **downsample** the feature maps:\n* Reduce computational load for subsequent layers.\n* Increase the receptive field.\n* Provide local translation invariance (small shifts don't change the output).\n\nTwo main types: **MaxPooling** and **AveragePooling**."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "MaxPool2d Example",
+            "content": "Apply a 2×2 max pooling with stride 2.",
+            "codeSnippet": "pool = nn.MaxPool2d(kernel_size=2, stride=2)\nx = torch.tensor([[[[1,2,3,4],\n                   [5,6,7,8],\n                   [9,10,11,12],\n                   [13,14,15,16]]]], dtype=torch.float32)\nprint(x.shape)  # [1,1,4,4]\nout = pool(x)\nprint(out)      # values: max in each 2x2 window\nprint(out.shape) # [1,1,2,2]",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Pooling Size 🧮",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Input 14×14, MaxPool2d(2,2) → output size?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "7×7",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "14×14",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "28×28",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "6×6",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Pooling with kernel 2, stride 2 halves spatial dimensions: 14/2 = 7.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Average Pooling 🌊",
+            "content": "## Smoothing Down\n\n`nn.AvgPool2d(kernel_size, stride)` takes the average in each window. It's often used before the final classification layer to collapse spatial dimensions (Global Average Pooling).\n\nGlobal average pooling: `nn.AdaptiveAvgPool2d((1,1))` – reduces each feature map to a single value."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Global Average Pooling",
+            "content": "Condense a 7×7 feature map to a vector for classification.",
+            "codeSnippet": "x = torch.randn(4, 128, 7, 7)  # batch 4, 128 channels, 7x7\npool = nn.AdaptiveAvgPool2d((1, 1))\nout = pool(x)\nprint(out.shape)  # [4, 128, 1, 1]\n# Flatten to [4, 128] for linear layer",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Adaptive Pooling 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What does `nn.AdaptiveAvgPool2d(1)` output for any input size?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A feature map of the same spatial size",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A 1×1 feature map per channel",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A 2×2 output",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A scalar",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It reduces each channel to a single value (1×1 spatial), regardless of input size.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

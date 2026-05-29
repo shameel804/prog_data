@@ -1,0 +1,123 @@
+{
+    "id": "l4",
+    "chapterId": "ch_7",
+    "title": "Transforms & Preprocessing 🎨",
+    "description": "Apply image and tensor transformations, normalization, and augmentation.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Data Loading",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Importance of Preprocessing 🧼",
+            "content": "# Normalization & Augmentation\n\nNeural networks expect inputs with similar scales (e.g., zero mean, unit variance). Transformations:\n* **Resize** and **Crop** images to uniform size.\n* **Normalize** pixel values.\n* **Augment** (random flips, rotations) to increase data variety.\n\nPyTorch provides `torchvision.transforms` for images; for tensors, you can use simple functions."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Composing Transforms",
+            "content": "Chain multiple transforms with `transforms.Compose`.",
+            "codeSnippet": "from torchvision import transforms\n\ntransform = transforms.Compose([\n    transforms.Resize((128, 128)),\n    transforms.RandomHorizontalFlip(),\n    transforms.ToTensor(),\n    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])\n])\n# Use in Dataset: img = transform(img)",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Transform Order 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Why should `ToTensor` come before `Normalize`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It doesn't matter",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Normalize expects a tensor input, and ToTensor converts PIL image to tensor",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "ToTensor normalizes automatically",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Normalize only works on PIL images",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "First convert to tensor (values 0-1), then normalize with mean/std.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Data Augmentation 🌀",
+            "content": "## Generate More Training Data\n\nAugmentations apply random transformations to each epoch, making the model robust:\n* `RandomHorizontalFlip(p=0.5)`\n* `RandomRotation(degrees=15)`\n* `ColorJitter(brightness=0.2, contrast=0.2)`\n\n**Important**: Only use augmentations on the training set, not validation/test."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Augmentation in a Custom Dataset",
+            "content": "Apply different transforms for train and eval.",
+            "codeSnippet": "train_transform = transforms.Compose([\n    transforms.RandomCrop(32, padding=4),\n    transforms.RandomHorizontalFlip(),\n    transforms.ToTensor(),\n    transforms.Normalize((0.5,), (0.5,))\n])\ntest_transform = transforms.Compose([\n    transforms.ToTensor(),\n    transforms.Normalize((0.5,), (0.5,))\n])",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Augmentation Awareness 🎯",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Why should you NOT apply random augmentations on validation data?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It slows down validation",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It would make validation results inconsistent and not reflect true performance",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Validation must be on raw images only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Augmentation is not differentiable",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Validation should be deterministic to fairly compare models.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Tabular Data Transforms 📊",
+            "content": "## Scaling Features\n\nFor non-image data, use `sklearn.preprocessing.StandardScaler` or manual normalization on tensors.\n\n```python\n# After loading data as tensor\nmean = X_train.mean(dim=0)\nstd = X_train.std(dim=0)\nX_train = (X_train - mean) / std\nX_val = (X_val - mean) / std  # use training stats!\n```"
+        },
+        {
+            "id": "s_l4_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## GPU Transforms\n\nSome transforms can be applied directly on GPU tensors using `torchvision.transforms` v2 (e.g., `v2.RandomHorizontalFlip`). It can speed up augmentation."
+        }
+    ]
+}

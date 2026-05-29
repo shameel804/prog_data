@@ -1,0 +1,123 @@
+{
+    "id": "l4",
+    "chapterId": "ch_6",
+    "title": "Tracking Metrics & Logging 📈",
+    "description": "Record loss, accuracy, and other metrics during training.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Training Loop",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Beyond Loss: Accuracy & More 🎯",
+            "content": "# Evaluation Metrics\n\nFor classification, we often track **accuracy**: fraction of correct predictions.\n\n```python\ncorrect = (pred.argmax(dim=1) == target).sum().item()\naccuracy = correct / len(target)\n```\nOther metrics: precision, recall, F1-score (use `sklearn.metrics`)."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Computing Accuracy",
+            "content": "During validation, compute accuracy per batch and average.",
+            "codeSnippet": "total_correct = 0\ntotal_samples = 0\nwith torch.no_grad():\n    for x, y in val_loader:\n        pred = model(x)\n        _, predicted = torch.max(pred, 1)\n        total_correct += (predicted == y).sum().item()\n        total_samples += y.size(0)\nacc = total_correct / total_samples\nprint(f'Validation Accuracy: {acc:.2%}')",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Metric Check 📏",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "How do you get predicted class indices from logits?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "pred.max(dim=1)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "pred.argmax(dim=1)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "pred.softmax(dim=1)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "pred.mean(dim=1)",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`argmax` returns the index of the maximum value along the given dimension.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Logging Training Progress 📝",
+            "content": "## Print and Plot\n\n* Print loss/accuracy every N epochs to monitor.\n* Use `matplotlib` to plot training & validation curves.\n* Alternatively, use tensorboard (`torch.utils.tensorboard`) or WandB.\n\nA simple list: `train_losses.append(loss.item())`."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Accumulating Metrics",
+            "content": "Simple logging with lists.",
+            "codeSnippet": "train_losses = []\nval_losses = []\nfor epoch in range(num_epochs):\n    train_loss = train_epoch(...)\n    val_loss = validate(...)\n    train_losses.append(train_loss)\n    val_losses.append(val_loss)\n# Plot later with matplotlib",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Logging Logic 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Why log both training and validation metrics?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To compare and detect overfitting",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To increase training speed",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To reduce memory usage",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To debug the forward pass",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Monitoring both reveals divergence, a sign of overfitting.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Resetting Metrics Each Epoch 🔄",
+            "content": "## Running Averages\n\nTo compute average loss over an epoch, accumulate the loss weighted by batch size, then divide by dataset size:\n\n`avg_loss = total_loss / len(dataset)`\n\nThis accounts for potentially different batch sizes at the end."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `tqdm` for Progress Bars\n\n`from tqdm import tqdm; for x, y in tqdm(train_loader): ...` gives a nice progress bar during training."
+        }
+    ]
+}

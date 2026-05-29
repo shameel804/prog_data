@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_12",
+    "title": "Implement an IterableDataset with Shuffle Buffer",
+    "description": "Create a custom IterableDataset that generates random sequences and shuffles them using a buffer.",
+    "estimatedMinutes": 20,
+    "problemStatement": "Write code that:\n1. Defines `ShuffledStream(IterableDataset)` that:\n   - Takes `num_samples` and `buffer_size`.\n   - In `__iter__`, generates `num_samples` random tensors of shape (5,) as data, and a random float as label.\n   - Uses a shuffle buffer: fill buffer until full, then randomly yield an element to add randomness.\n2. Instantiates the dataset with `num_samples=20`, `buffer_size=5`.\n3. Creates a DataLoader with `batch_size=4`.\n4. Loops over the DataLoader and prints the shape of the first batch's data and labels in format: \"Batch data shape: torch.Size([4, 5]), labels shape: torch.Size([4, 1])\" (assuming label shape (1,)).\n\nHint: Use `torch.tensor` and `random.randrange`.",
+    "hints": [
+        "In `__iter__`, create an internal loop that yields items; maintain a list buffer; if buffer length reaches buffer_size, pop a random index to yield.",
+        "For label: use `torch.tensor([random.random()])` to shape (1,).",
+        "Use `torch.utils.data.DataLoader`."
+    ],
+    "expectedOutput": "Batch data shape: torch.Size([4, 5]), labels shape: torch.Size([4, 1])",
+    "solutionCode": "import torch\nfrom torch.utils.data import IterableDataset, DataLoader\nimport random\n\nclass ShuffledStream(IterableDataset):\n    def __init__(self, num_samples, buffer_size=5):\n        self.num_samples = num_samples\n        self.buffer_size = buffer_size\n    \n    def __iter__(self):\n        buffer = []\n        for _ in range(self.num_samples):\n            data = torch.randn(5)\n            label = torch.tensor([random.random()])\n            buffer.append((data, label))\n            if len(buffer) >= self.buffer_size:\n                idx = random.randrange(len(buffer))\n                yield buffer.pop(idx)\n        # yield remaining\n        while buffer:\n            idx = random.randrange(len(buffer))\n            yield buffer.pop(idx)\n\nds = ShuffledStream(20, buffer_size=5)\nloader = DataLoader(ds, batch_size=4)\nfor data, labels in loader:\n    print(f\"Batch data shape: {data.shape}, labels shape: {labels.shape}\")\n    break"
+}

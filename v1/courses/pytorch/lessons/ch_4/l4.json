@@ -1,0 +1,120 @@
+{
+    "id": "l4",
+    "chapterId": "ch_4",
+    "title": "Your First Neural Network 🤖",
+    "description": "Combine linear layers and activations to build a complete feedforward network.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "Building Networks",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Recipe for a Neural Net 📋",
+            "content": "# Ingredients\n\n1. **Input layer**: size matches data features.\n2. **Hidden layers**: linear + activation, repeated.\n3. **Output layer**: linear (optionally + softmax for classification).\n\nWe'll build a classifier for the Iris dataset (4 features, 3 classes)."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Define the Model Class",
+            "content": "Create a simple 2‑hidden‑layer network.",
+            "codeSnippet": "import torch.nn as nn\nimport torch.nn.functional as F\n\nclass IrisNet(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.fc1 = nn.Linear(4, 10)   # 4 in, 10 hidden\n        self.fc2 = nn.Linear(10, 10)  # hidden\n        self.fc3 = nn.Linear(10, 3)   # 3 output classes\n    \n    def forward(self, x):\n        x = F.relu(self.fc1(x))\n        x = F.relu(self.fc2(x))\n        x = self.fc3(x)  # raw logits\n        return x\n\nmodel = IrisNet()\nprint(model)",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Architecture Check 🏗️",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "How many parameters does fc1 have? (4 inputs, 10 outputs, bias=True)",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "40",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "50",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "10",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "44",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Weight: 10*4=40, Bias: 10 → total 50.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Forward Pass & Prediction",
+            "content": "Generate a dummy batch and get model outputs.",
+            "codeSnippet": "x = torch.randn(5, 4)   # batch of 5 samples\nlogits = model(x)\nprint(logits.shape)      # (5, 3)\n# To get predicted class:\npreds = logits.argmax(dim=1)\nprint(preds)",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Counting Parameters 🔢",
+            "content": "## Check Model Size\n\nUse `model.parameters()` to iterate over all weights. To count total parameters:\n\n```python\ntotal = sum(p.numel() for p in model.parameters())\nprint(total)\n```\n`numel()` returns number of elements in a tensor."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "code",
+            "title": "Parameter Counting",
+            "content": "Count trainable parameters.",
+            "codeSnippet": "total_params = sum(p.numel() for p in model.parameters())\nprint(\"Total parameters:\", total_params)\n# Should be: fc1 50, fc2 110, fc3 33 = 193",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "Parameter Count 🧮",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Why is the output layer `fc3` defined without an activation?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Because the problem is regression",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Because we output raw logits; loss functions like CrossEntropyLoss apply softmax internally",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Because we forgot",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Because activations are only for hidden layers",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "In classification, we often output logits and let the loss function (CrossEntropyLoss) handle softmax for numerical stability.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

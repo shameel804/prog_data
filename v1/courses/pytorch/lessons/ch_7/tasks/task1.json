@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_7",
+    "title": "Custom Dataset from CSV",
+    "description": "Build a custom Dataset that loads data from a CSV file and serves it for training.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Write code that:\n1. Creates a synthetic CSV file 'data.csv' with two columns: x (0-99) and y = 3*x + noise. (But for simplicity, directly generate tensors in code as if from CSV).\n2. Implements a class `CSVDataset` that inherits from `Dataset`. It takes a file path, reads the CSV into a pandas DataFrame, and stores features and labels as tensors.\n3. In `__getitem__`, returns the feature tensor and label tensor.\n4. Instantiates the dataset and a DataLoader with batch_size=10, shuffle=True.\n5. Iterates over one epoch and prints the shape of the first batch's features and labels.\n\nNote: We'll simulate CSV loading by creating a temporary file in the code (using Python's `csv` module). Actually, let's just have the code create a CSV, read it, then use it.\n\nThe output must be exactly 'Features shape: torch.Size([10, 1]), Labels shape: torch.Size([10, 1])' (since each x is 1D, but we squeeze? Actually x is a scalar, so shape (1,) if unsqueezed? Better: we'll have x as a 1D tensor of 1 element, but when batched, shape (10,1).)\n\nLet's produce features of shape (batch_size, 1). So in __getitem__, return x.view(1) or ensure it's a tensor of shape (1,).\n\nExpected output format: exactly as described.",
+    "hints": [
+        "Use `import csv` and `with open(...)` to write then read.",
+        "Store `self.data` as a list of (x, y) tensors.",
+        "Use `torch.tensor` and `.view(1)` if needed.",
+        "Print shapes using `features.shape`, `labels.shape`."
+    ],
+    "expectedOutput": "Features shape: torch.Size([10, 1]), Labels shape: torch.Size([10, 1])",
+    "solutionCode": "import torch\nfrom torch.utils.data import Dataset, DataLoader\nimport csv\n\n# Create synthetic CSV\nwith open('data.csv', 'w', newline='') as f:\n    writer = csv.writer(f)\n    writer.writerow(['x', 'y'])\n    for i in range(100):\n        writer.writerow([i, 3*i + torch.randn(1).item()])\n\nclass CSVDataset(Dataset):\n    def __init__(self, file_path):\n        self.samples = []\n        with open(file_path, 'r') as f:\n            reader = csv.reader(f)\n            next(reader)  # skip header\n            for row in reader:\n                x = torch.tensor([float(row[0])])\n                y = torch.tensor([float(row[1])])\n                self.samples.append((x, y))\n    \n    def __len__(self):\n        return len(self.samples)\n    \n    def __getitem__(self, idx):\n        return self.samples[idx]\n\nds = CSVDataset('data.csv')\nloader = DataLoader(ds, batch_size=10, shuffle=True)\n\nfor features, labels in loader:\n    print(f\"Features shape: {features.shape}, Labels shape: {labels.shape}\")\n    break"
+}

@@ -1,0 +1,73 @@
+{
+    "id": "l1",
+    "chapterId": "ch_7",
+    "title": "Why Data Loading Matters 📥",
+    "description": "Understand the need for efficient data pipelines and the Dataset/DataLoader duo.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Data Loading",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The Conveyor Belt Analogy 🏭",
+            "content": "# Feeding the Model\n\nTraining a neural network requires **data** — often millions of samples. We can't load everything into memory at once, nor feed one sample at a time.\n\nPyTorch provides two core abstractions:\n* **`Dataset`** – the warehouse of samples.\n* **`DataLoader`** – the conveyor belt that delivers batches.\n\nThey work together to make data feeding efficient and shuffle-able."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What is the main purpose of a DataLoader?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To load the entire dataset into GPU memory",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To iterate over batches of data efficiently",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To compute gradients",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To preprocess images only",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "DataLoader handles batching, shuffling, and multi-processing to feed data to the model.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "Why Not Just a Big Tensor? 🤔",
+            "content": "## Memory Constraints\n\nIf your dataset is 100K images of size 256x256, loading them all at once would consume ~25 GB of RAM. With DataLoader:\n* Only a few batches are in memory at any time.\n* Multi-worker loading keeps the GPU busy while data is prepared.\n* Shuffling is easy and reproducible."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "code",
+            "title": "Minimal DataLoader Example",
+            "content": "Wrap a simple tensor dataset in a DataLoader.",
+            "codeSnippet": "from torch.utils.data import DataLoader, TensorDataset\n\ndata = torch.randn(100, 3, 32, 32)   # 100 images\ntargets = torch.randint(0, 10, (100,))\ndataset = TensorDataset(data, targets)\nloader = DataLoader(dataset, batch_size=16, shuffle=True)\n\nfor batch_x, batch_y in loader:\n    print(batch_x.shape, batch_y.shape)\n    break",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Always Shuffle Training Data\n\nSet `shuffle=True` for the training DataLoader to avoid learning order-dependent patterns. For validation, keep `shuffle=False`."
+        }
+    ]
+}

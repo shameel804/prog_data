@@ -1,0 +1,104 @@
+{
+    "id": "l4",
+    "chapterId": "ch_3",
+    "title": "Gradient Descent: The Learning Engine 🚂",
+    "description": "Optimise any model by rolling downhill on the cost surface; learning rate, iterations, and convergence.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Training",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "How to Find the Best Parameters? 🔍",
+            "content": "# We Need an Algorithm\n\nFor simple linear regression, we can solve for the optimal w and b using a closed‑form formula (Normal Equation). But for complex models, that’s impossible.\n\n**Gradient Descent** is an iterative optimisation algorithm that finds the minimum of any differentiable function. It works by repeatedly taking small steps downhill.\n\nImagine you’re blindfolded on a mountain and want to reach the valley. You feel the slope under your feet and take a step in the steepest downward direction."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "The Gradient 📐",
+            "content": "# Direction of Steepest Ascent\n\nThe **gradient** is a vector of partial derivatives — it tells us how much the cost changes when we tweak each parameter. We update parameters by moving **opposite** the gradient:\n\n```\nw := w − α * (∂J/∂w)\nb := b − α * (∂J/∂b)\n```\n\n- **α** (alpha) is the **learning rate**: how big a step we take.\n- (∂J/∂w) is the derivative of the cost J with respect to weight w.\n\nFor MSE, the derivatives are:\n```\n∂J/∂w = (2/n) * Σ (ŷᵢ − yᵢ) * xᵢ\n∂J/∂b = (2/n) * Σ (ŷᵢ − yᵢ)\n```"
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Gradient Descent from Scratch 🐍",
+            "content": "Let’s implement it for y = w*x + b:",
+            "codeSnippet": "import numpy as np\n\n# Data\nX = np.array([1, 2, 3, 4, 5])\ny = np.array([2, 4, 5, 4, 6])\n\n# Initial parameters\nw = 0.0\nb = 0.0\nlr = 0.01\nn = len(X)\n\nfor epoch in range(1000):\n    y_pred = w * X + b\n    error = y_pred - y\n    # gradients\n    dw = (2/n) * np.dot(error, X)\n    db = (2/n) * np.sum(error)\n    # update\n    w -= lr * dw\n    b -= lr * db\n\nprint(f\"Final w: {w:.2f}, b: {b:.2f}\")",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Learning Rate Effect 🏃",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What happens if the learning rate α is too large?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Gradient descent takes forever to converge",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The cost function may oscillate or even increase, missing the minimum",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The model will become perfectly accurate instantly",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Nothing, learning rate doesn't matter",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A too‑large step can overshoot the minimum and cause divergence or oscillation.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Convergence & Number of Iterations 🔁",
+            "content": "# When to Stop?\n\nWe run gradient descent for many iterations (epochs) until the cost stops decreasing significantly. You can monitor the cost and stop when the change is below a threshold (e.g., 0.0001).\n\n- Too few iterations → under‑optimised (high bias).\n- Just right → minimum reached.\n- Many iterations → waste of time, but no harm (except possible overfitting on training data).\n\nTip: Use a **validation set** to stop early if validation error starts rising (early stopping)."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Gradient Descent Checkpoint 🧪",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "Gradient descent can only be used for linear regression.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "False. Gradient descent is a general optimisation algorithm used for neural networks, logistic regression, and many more.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## The Three Variants\n- **Batch GD**: uses all data to compute gradient.\n- **Stochastic GD (SGD)**: uses one random sample — noisy but fast.\n- **Mini‑batch GD**: uses a small batch — the best of both worlds."
+        }
+    ]
+}

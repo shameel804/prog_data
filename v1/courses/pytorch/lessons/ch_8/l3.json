@@ -1,0 +1,117 @@
+{
+    "id": "l3",
+    "chapterId": "ch_8",
+    "title": "Conv2d Layers in PyTorch 🧱",
+    "description": "Master `nn.Conv2d` parameters and output size calculation.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "CNNs",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The `nn.Conv2d` Module 📦",
+            "content": "# Layer Interface\n\n```python\nconv = nn.Conv2d(in_channels, out_channels, kernel_size, stride=1, padding=0)\n```\n\n* `in_channels`: depth of input (e.g., 3 for RGB).\n* `out_channels`: number of filters (depth of output).\n* `kernel_size`: int or tuple.\n\nWeights: tensor of shape `(out_channels, in_channels, kernel_h, kernel_w)`.\nBias: `(out_channels,).`"
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Create a Conv Layer",
+            "content": "Inspect the weight shape of a 2D convolutional layer.",
+            "codeSnippet": "import torch.nn as nn\n\nconv = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3, stride=1, padding=1)\nprint(conv.weight.shape)  # [16, 3, 3, 3]\nprint(conv.bias.shape)    # [16]",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Weight Dimensions 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "If `conv = nn.Conv2d(1, 32, 5)`, how many parameters? (bias=True)",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "32×5×5 + 32 = 832",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "1×32×5×5 = 800",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "32×5×5 = 800",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "32+1 = 33",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Weights: 32 filters × 1 channel × 5×5 = 800, plus 32 biases = 832.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Forward Pass Through Conv2d",
+            "content": "Pass a mini‑batch through the convolutional layer.",
+            "codeSnippet": "x = torch.randn(8, 3, 32, 32)   # batch of 8 RGB images 32x32\nconv = nn.Conv2d(3, 16, 3, padding=1)\nout = conv(x)\nprint(out.shape)   # [8, 16, 32, 32]",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_5",
+            "type": "quiz",
+            "title": "Output Size Check 📏",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Input 28×28, Conv2d with kernel 5, stride 2, padding 0 → output spatial size?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "24×24",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "12×12",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "14×14",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "7×7",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "⌊(28 - 5)/2⌋ + 1 = 11.5 floor → 11? Wait: (28-5+0)/2 = 23/2=11.5 → floor 11, +1 = 12. Correct.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "Multiple Input / Output Channels 🧵",
+            "content": "## Combining Filters\n\nEach output channel is the result of a distinct filter scanning **all** input channels and summing the contributions.\n\nThus, the layer learns `out_channels` different feature detectors (edges, colors, textures)."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `padding='same'` (PyTorch 1.9+)\n\n`nn.Conv2d(3, 16, 3, padding='same')` automatically adds correct padding to keep spatial dimensions."
+        }
+    ]
+}

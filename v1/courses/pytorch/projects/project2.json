@@ -1,0 +1,25 @@
+{
+    "id": "project2",
+    "title": "Movie Review Sentiment Analyzer 🎬",
+    "description": "Train an LSTM model to predict sentiment (positive/negative) from movie reviews.",
+    "difficulty": "Intermediate",
+    "estimatedHours": "3-4",
+    "problemStatement": "## 🎯 Objective\n\nBuild a recurrent neural network using LSTM to classify movie reviews from the IMDb dataset as **positive** or **negative**.\n\nYou will:\n\n- Load and preprocess text data (tokenization, vocabulary building, padding).\n- Create an embedding layer followed by LSTM layers.\n- Train the model with cross‑entropy loss.\n- Evaluate on a held‑out test set, aiming for **≥ 85% accuracy**.\n\n## 📂 Dataset\n\nUse the IMDb dataset from `torchtext.datasets.IMDB` (or download via `torchtext`). It contains 25,000 training and 25,000 test reviews. For simplicity, use the built‑in `torchtext.datasets.IMDB` and the `torchtext.data.utils.get_tokenizer('basic_english')` tokenizer.\n\nBuild a vocabulary from the training set, limiting to the 25,000 most frequent words. Replace out‑of‑vocabulary words with `<unk>`.\n\nPad / truncate all reviews to a fixed length of 500 tokens.\n\n## 🧱 Model Architecture\n\n- Embedding layer: `vocab_size` → 128\n- Two‑layer **bidirectional** LSTM: input size 128, hidden size 128, batch_first=True\n- Dropout(0.5) after LSTM\n- Take the final hidden state (concatenated forward/backward) → Linear(256, 1)\n- Sigmoid activation for binary output\n\nUse `nn.Embedding`, `nn.LSTM`, `nn.Linear`, and `nn.Dropout`.\n\n## ⚙️ Training\n\n- Split the official training set into 80% train / 20% validation.\n- DataLoader with batch size 64, shuffling only training data.\n- Optimizer: Adam, lr=0.001\n- Loss: `BCEWithLogitsLoss` (combine with the output before sigmoid – better stability). Your forward pass should return raw logits.\n- Train for up to 30 epochs with early stopping (patience=5) based on validation loss.\n- Use `torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1)` to prevent gradient explosion.\n\n## 📊 Evaluation\n\nAfter training, load the best checkpoint and evaluate on the **official IMDb test set** (25,000 reviews). Report test accuracy in %.\n\n## 🚀 Deliverables\n\nA Python script that:\n- Loads and preprocesses the IMDb dataset.\n- Builds the vocabulary and creates DataLoaders.\n- Defines the LSTM model, trains it, and prints progress.\n- Outputs the best test accuracy.\n\n```\nBest test accuracy: <XX.XX>%\n```",
+    "requirements": [
+        "Use torchtext or manually download IMDb; tokenize with basic English tokenizer.",
+        "Build vocabulary of size 25,000 from training data.",
+        "Pad/truncate sequences to 500 tokens.",
+        "Implement a bidirectional LSTM with 2 layers and dropout.",
+        "Clip gradients during training to norm 1.",
+        "Early stopping with patience 5 on validation loss.",
+        "Achieve test accuracy ≥ 85%."
+    ],
+    "hints": [
+        "Use `torchtext.vocab.build_vocab_from_iterator` to create the vocab.",
+        "Map words to indices before padding; use `torch.nn.utils.rnn.pad_sequence` with `batch_first=True` and `padding_value=0`.",
+        "For variable length handling with LSTM, setting `batch_first=True` and providing the padded tensor works; you can also pack sequences, but not required for this project.",
+        "The output of the LSTM has shape (batch, seq, hidden*2). Take the mean over the sequence or the last time step’s output to feed into the linear layer. Using the final hidden state `hn` is also valid: concatenate the last layer’s forward and backward hidden states.",
+        "Remember to apply `model.train()` / `model.eval()` appropriately."
+    ],
+    "expectedOutput": "Console output showing training progress and final test accuracy >= 85.00%."
+}

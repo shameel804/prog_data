@@ -1,0 +1,123 @@
+{
+    "id": "l3",
+    "chapterId": "ch_3",
+    "title": "The Dynamic Computation Graph 🌳",
+    "description": "Understand how PyTorch builds and destroys graphs on the fly.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Autograd Fundamentals",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Dynamic vs. Static Graphs 🔄",
+            "content": "# Define‑by‑Run\n\nPyTorch builds computation graphs **dynamically** as operations are executed. This is called **define‑by‑run**.\n\n* Each forward pass creates a new graph (like recording a tape).\n* The graph is freed after `.backward()` (unless `retain_graph=True`).\n* You can use Python control flow (`if`, `for`) seamlessly – the graph adapts.\n\nContrast with static frameworks (e.g., TensorFlow 1.x) where you define the whole graph first, then run."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Dynamic Branching",
+            "content": "Show how the graph changes based on a condition.",
+            "codeSnippet": "x = torch.tensor(2.0, requires_grad=True)\nif x > 0:\n    y = x ** 2\nelse:\n    y = x ** 3\ny.backward()\nprint(x.grad)  # 2*x = 4.0",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Graph Nature 🌿",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What makes a graph 'dynamic' in PyTorch?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It is pre‑built and optimized",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It is rebuilt on every forward pass",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It never changes",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It only runs on GPU",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Define‑by‑run means each forward pass creates a fresh graph, enabling dynamic control flow.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Graph Nodes & Edges 🧩",
+            "content": "## Anatomy of the Graph\n\n* **Nodes**: tensors and the operations that create them.\n* **Edges**: the flow of data (and gradients).\n\nWhen you call `.backward()`, autograd traverses this graph in reverse, applying the chain rule to compute gradients for all leaf nodes."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Inspecting the Graph",
+            "content": "Use `.grad_fn` to see the operation that produced a tensor.",
+            "codeSnippet": "x = torch.tensor([1.0, 2.0], requires_grad=True)\ny = x * 2\nz = y.sum()\nprint(y.grad_fn)  # <MulBackward0>\nprint(z.grad_fn)  # <SumBackward0>",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Function Tracing 🔍",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "What does `z.grad_fn` return if `z = x + 5` and `x` requires grad?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "None",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "<AddBackward0>",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "<SumBackward0>",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "<MulBackward0>",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The operation '+' has a backward function `AddBackward0`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Retaining the Graph 🧷",
+            "content": "## Multiple Backward Passes\n\nAfter the first `.backward()`, the graph is freed to save memory. To backward again, use `y.backward(retain_graph=True)`.\n\nThis is useful for debugging or when computing multiple losses from the same graph."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "warning",
+            "title": "⚠️ Graph Retention Caution",
+            "content": "## Memory Cost\n\nRetaining the graph keeps all intermediate tensors alive, consuming GPU memory. Only use it when necessary, like during debugging."
+        }
+    ]
+}

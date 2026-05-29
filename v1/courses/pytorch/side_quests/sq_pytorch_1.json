@@ -1,0 +1,82 @@
+{
+    "id": "sq_pytorch_1",
+    "title": "Bug Hunt: Tensor Tangles 🐛",
+    "triggerChapterIndex": 1,
+    "metadata": {
+        "type": "debug"
+    },
+    "questions": [
+        {
+            "id": "sq_pytorch_1_q1",
+            "type": "multiple_choice",
+            "question": "Find the bug in this tensor creation code.",
+            "codeSnippet": "import torch\na = torch.tensor([1, 2, 3])\nb = torch.tensor([4, 5, 6])\nc = a + b\nprint(c.shape)",
+            "bugLineIndex": -1,
+            "options": [],
+            "correctAnswer": "There is no bug – the code works fine.",
+            "explanation": "The code correctly adds two 1D tensors element‑wise. The bug is imaginary; this is a trick question to test your knowledge of Chapter 1 & 2 tensor arithmetic.",
+            "xpReward": 20,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_pytorch_1_q2",
+            "type": "multiple_choice",
+            "question": "Spot the error that prevents correct matrix multiplication.",
+            "codeSnippet": "A = torch.rand(3, 4)\nB = torch.rand(5, 4)\nC = A @ B",
+            "bugLineIndex": 2,
+            "options": [],
+            "correctAnswer": "The inner dimensions do not match (4 vs 5).",
+            "explanation": "Matrix multiplication requires A (3×4) and B (4×?) – here B is (5×4), so A@B fails. Use B.T to make it (4×5).",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_pytorch_1_q3",
+            "type": "multiple_choice",
+            "question": "What is wrong with this indexing attempt?",
+            "codeSnippet": "t = torch.arange(1, 13).reshape(3, 4)\nprint(t[1, 4])",
+            "bugLineIndex": 1,
+            "options": [],
+            "correctAnswer": "Column index 4 is out of bounds; the tensor has columns 0–3.",
+            "explanation": "The tensor is 3×4, so valid column indices are 0,1,2,3. Index 4 raises an error.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_pytorch_1_q4",
+            "type": "multiple_choice",
+            "question": "Why does this broadcasting fail?",
+            "codeSnippet": "a = torch.ones(3, 4)\nb = torch.ones(3)\nc = a + b",
+            "bugLineIndex": 2,
+            "options": [],
+            "correctAnswer": "The broadcasting rules fail: a (3,4) and b (3,) – aligning right: the second dimension 4 vs no dimension; you need b to be (4,) to broadcast correctly.",
+            "explanation": "To add a vector to each row, the vector must match the last dimension (4). Use b of shape (4,) or reshape to (1,4).",
+            "xpReward": 20,
+            "difficulty": 3
+        },
+        {
+            "id": "sq_pytorch_1_q5",
+            "type": "multiple_choice",
+            "question": "Identify the bug in this reshape attempt.",
+            "codeSnippet": "x = torch.rand(2, 3)\ny = x.view(3, 2)",
+            "bugLineIndex": 1,
+            "options": [],
+            "correctAnswer": "No bug – it works because total elements match (6). But if you think it's wrong, the bug is imaginary; view only fails for non‑contiguous tensors. This is a trick. However, here it actually works. So the answer is 'No bug'.",
+            "explanation": "The tensor has 6 elements, so reshaping to (3,2) is valid and will succeed. The trick: many expect an error but it's fine.",
+            "xpReward": 20,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_pytorch_1_q6",
+            "type": "multiple_choice",
+            "question": "What is wrong with this gradient setup?",
+            "codeSnippet": "x = torch.tensor([2.0, 3.0])\ny = x**2\ny.sum().backward()\nprint(x.grad)",
+            "bugLineIndex": 0,
+            "options": [],
+            "correctAnswer": "x does not have requires_grad=True, so the backward pass will not compute gradients.",
+            "explanation": "By default, tensors have requires_grad=False. You need `x = torch.tensor([2.0, 3.0], requires_grad=True)` to enable gradient tracking.",
+            "xpReward": 20,
+            "difficulty": 2
+        }
+    ]
+}

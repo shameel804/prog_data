@@ -1,0 +1,126 @@
+{
+    "id": "l2",
+    "chapterId": "ch_6",
+    "title": "Data Splitting & Overfitting 🧪",
+    "description": "Learn about train/validation/test splits and recognize overfitting.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Training Loop",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Golden Rule of ML 🏅",
+            "content": "# Never Test on Training Data!\n\nWe split data into:\n* **Training set**: used to update weights.\n* **Validation set**: used to tune hyperparameters and monitor overfitting.\n* **Test set**: used only once at the end to report final performance.\n\nTypical split: 70% train, 15% val, 15% test."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Manual Data Split",
+            "content": "Using simple slicing on a tensor dataset.",
+            "codeSnippet": "import torch\n\nX = torch.randn(100, 4)\ny = torch.randint(0, 3, (100,))\n\nn = len(X)\ntrain_n = int(0.7 * n)\nval_n = int(0.15 * n)\n\nX_train, y_train = X[:train_n], y[:train_n]\nX_val, y_val = X[train_n:train_n+val_n], y[train_n:train_n+val_n]\nX_test, y_test = X[train_n+val_n:], y[train_n+val_n:]\nprint(len(X_train), len(X_val), len(X_test))",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Split Sense 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Why do we need a validation set?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To increase training data",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To tune hyperparameters and detect overfitting",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To compute gradients",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To replace test set",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Validation set provides unbiased evaluation during hyperparameter tuning.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "What is Overfitting? 🎯🎪",
+            "content": "## When Memorization Hurts\n\nOverfitting: the model performs great on training data but poorly on unseen data. Signs:\n* Training loss continues to decrease.\n* Validation loss starts to increase.\n\nOpposite: Underfitting – model fails to learn patterns even on training data."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Simulating Overfitting (Conceptual)",
+            "content": "Training loss vs validation loss divergence.",
+            "codeSnippet": "# Example of tracking losses (conceptual)\ntrain_losses = [0.8, 0.5, 0.3, 0.2, 0.15, 0.1]\nval_losses = [0.9, 0.7, 0.6, 0.7, 0.85, 1.0]\n# Early: both improve; later: val loss rises = overfitting",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Overfitting ID 🔍",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Which scenario indicates overfitting?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Both training and validation loss decreasing",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Training loss decreasing, validation loss increasing",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Training loss high and flat",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Validation loss lower than training loss",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Overfitting: model fits training noise; generalization worsens.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "Regularization Tools 🛡️",
+            "content": "## Fight Overfitting\n\n* **Dropout**: randomly zeroes neurons during training.\n* **Weight decay** (L2 regularization): penalizes large weights.\n* **Early stopping**: halt when val loss stops improving.\n* **More data** / **data augmentation**: best cure!\n\nWe'll see these in action."
+        },
+        {
+            "id": "s_l2_8",
+            "type": "code",
+            "title": "Dropout Example",
+            "content": "Add Dropout to a network.",
+            "codeSnippet": "model = nn.Sequential(\n    nn.Linear(10, 20),\n    nn.ReLU(),\n    nn.Dropout(0.5),  # 50% dropout during training\n    nn.Linear(20, 1)\n)\nprint(model)",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        }
+    ]
+}

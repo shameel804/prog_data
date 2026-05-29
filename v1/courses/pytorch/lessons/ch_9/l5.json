@@ -1,0 +1,147 @@
+{
+    "id": "l5",
+    "chapterId": "ch_9",
+    "title": "LSTMs in PyTorch & Beyond 🚀",
+    "description": "Master nn.LSTM, multi‑layer stacking, and bidirectional processing.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "LSTM",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "The `nn.LSTM` Module 📦",
+            "content": "# Replacing RNN with LSTM\n\nIdentical API to `nn.RNN`, but returns a tuple `(output, (hn, cn))`.\n\n```python\nlstm = nn.LSTM(input_size=10, hidden_size=20, num_layers=1)\n```\n\nInput: `(L, N, H_in)`. Output: `(L, N, H_out)`. Hidden/cell states: `(num_layers, N, H_out)`."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Basic LSTM Forward Pass",
+            "content": "Run a single‑layer LSTM on a sequence.",
+            "codeSnippet": "lstm = nn.LSTM(10, 20)\nx = torch.randn(5, 2, 10)\nout, (hn, cn) = lstm(x)\nprint(out.shape)   # [5, 2, 20]\nprint(hn.shape)    # [1, 2, 20]\nprint(cn.shape)    # [1, 2, 20]",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "LSTM Output 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What does the `output` tensor from an LSTM contain?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The hidden state of the last time step only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The hidden state for every time step",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The cell state for every time step",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The final cell state",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`output` contains the hidden states h_t for each time step in the sequence.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Multi‑Layer LSTM 🏗️",
+            "content": "## Stacking Deep LSTMs\n\nSet `num_layers=3` to stack 3 LSTMs. The output of the first (all time steps) feeds into the second, etc.\n\n* `hn` shape: `(3, N, 20)`\n* `cn` shape: `(3, N, 20)`\n\nDeeper LSTMs can learn more abstract temporal features."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Stacked LSTM",
+            "content": "Three‑layer LSTM example.",
+            "codeSnippet": "lstm3 = nn.LSTM(10, 20, num_layers=3)\nx = torch.randn(7, 4, 10)\nout, (hn, cn) = lstm3(x)\nprint(out.shape)   # [7, 4, 20]\nprint(hn.shape)    # [3, 4, 20]",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Bidirectional LSTMs ↔️",
+            "content": "## Seeing Both Past and Future\n\nSetting `bidirectional=True` runs two independent LSTMs: one forward, one backward through the sequence.\n\n* Output feature size doubles (concatenated): `output` shape `(L, N, 2*H_out)`.\n* `hn` shape: `(num_layers*2, N, H_out)`. \n\nGreat for tasks like translation, POS tagging, where context from both sides helps."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "code",
+            "title": "Bidirectional LSTM",
+            "content": "Create a BiLSTM.",
+            "codeSnippet": "bilstm = nn.LSTM(10, 20, num_layers=1, bidirectional=True)\nx = torch.randn(5, 2, 10)\nout, (hn, cn) = bilstm(x)\nprint(out.shape)  # [5, 2, 40]  (20*2)\nprint(hn.shape)   # [2, 2, 20]  (layers * directions)",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_8",
+            "type": "quiz",
+            "title": "Bidirectional Check ➿",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "For a 2‑layer bidirectional LSTM with hidden=128, what is the output feature size?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "128",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "256",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "64",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "512",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Bidirectional concatenates forward and backward outputs → 128*2=256.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_9",
+            "type": "text",
+            "title": "Using LSTM for Classification 🏷️",
+            "content": "## Typical Pipeline\n\n1. Embedding layer: words → vectors.\n2. LSTM: sequence → hidden states.\n3. Take the last hidden state (or mean, or max) and pass to a linear classifier.\n\n```python\nlast_hidden = out[-1]  # shape (batch, hidden_size)\nlogits = linear(last_hidden)\n```"
+        },
+        {
+            "id": "s_l5_10",
+            "type": "code",
+            "title": "Sentiment Classifier Skeleton",
+            "content": "A complete simple RNN classifier (conceptual).",
+            "codeSnippet": "class SentimentRNN(nn.Module):\n    def __init__(self, vocab_size, embed_dim, hidden_dim, num_classes):\n        super().__init__()\n        self.embedding = nn.Embedding(vocab_size, embed_dim)\n        self.lstm = nn.LSTM(embed_dim, hidden_dim, batch_first=True)\n        self.fc = nn.Linear(hidden_dim, num_classes)\n    \n    def forward(self, x):\n        x = self.embedding(x)\n        _, (hn, cn) = self.lstm(x)\n        out = self.fc(hn[-1])  # last layer's hidden\n        return out\n\n# input shape: (batch, seq_len)",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_11",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## `batch_first=True` for convenience\n\nIf you prefer `(batch, seq, feature)` shape, pass `batch_first=True` to LSTM/RNN. The output will also be `(batch, seq, feature)`."
+        }
+    ]
+}

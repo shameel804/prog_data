@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_12",
+    "title": "Train with Mixed Precision",
+    "description": "Adapt a training loop to use automatic mixed precision and observe memory/speed (simulated).",
+    "estimatedMinutes": 15,
+    "problemStatement": "Write code that:\n1. Checks if CUDA is available (assume yes). Moves a simple model `nn.Linear(10, 2)` to GPU, creates synthetic data.\n2. Implements a training loop of 5 iterations using `autocast` and `GradScaler`.\n3. Prints \"AMP training completed\" after the loop.\n(The focus is on the structure, not actual speed measurement.)\n\nThe output must be exactly \"AMP training completed\".\n\nNote: Use `torch.cuda.amp.autocast()` and `torch.cuda.amp.GradScaler()` even if on CPU for the purpose of structure; but we'll assume CUDA. In non-CUDA, autocast does nothing, but it's fine.",
+    "hints": [
+        "Create model, data, criterion, optimizer.",
+        "Loop: zero_grad, with autocast(), compute output and loss, scaler.scale(loss).backward(), scaler.step(optimizer), scaler.update().",
+        "Print the required message."
+    ],
+    "expectedOutput": "AMP training completed",
+    "solutionCode": "import torch\nimport torch.nn as nn\nfrom torch.cuda.amp import autocast, GradScaler\n\nmodel = nn.Linear(10, 2).cuda()\ncriterion = nn.CrossEntropyLoss()\noptimizer = torch.optim.SGD(model.parameters(), lr=0.01)\nscaler = GradScaler()\n\nx = torch.randn(8, 10).cuda()\ny = torch.randint(0, 2, (8,)).cuda()\n\nfor _ in range(5):\n    optimizer.zero_grad()\n    with autocast():\n        out = model(x)\n        loss = criterion(out, y)\n    scaler.scale(loss).backward()\n    scaler.step(optimizer)\n    scaler.update()\n\nprint(\"AMP training completed\")"
+}

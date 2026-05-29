@@ -1,0 +1,123 @@
+{
+    "id": "l1",
+    "chapterId": "ch_12",
+    "title": "Advanced Custom Datasets 🗄️",
+    "description": "Build IterableDatasets, handle large data, and leverage memory-mapped files.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "Advanced Data",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Beyond map‑style Datasets 🗺️",
+            "content": "# `IterableDataset`\n\nWhen data is too large to index (streaming, online logs), use `IterableDataset` instead of `Dataset`. You implement `__iter__` (not `__len__` / `__getitem__`).\n\nThe DataLoader calls `iter(dataset)` to get samples; shuffling must be done manually (e.g., via a buffer)."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "code",
+            "title": "Minimal IterableDataset",
+            "content": "Stream random numbers indefinitely.",
+            "codeSnippet": "from torch.utils.data import IterableDataset, DataLoader\n\nclass RandomStream(IterableDataset):\n    def __init__(self, num_samples):\n        self.num_samples = num_samples\n    def __iter__(self):\n        for _ in range(self.num_samples):\n            yield torch.randn(10), torch.randn(1)\n\nds = RandomStream(100)\nloader = DataLoader(ds, batch_size=8)\nfor x, y in loader:\n    print(x.shape, y.shape)\n    break",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Which method must you implement for an IterableDataset?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "__len__",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "__getitem__",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "__iter__",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "__next__",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "IterableDataset requires an `__iter__` method that returns an iterator.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "Handling Large Datasets 🐘",
+            "content": "## Memory‑Mapped Tensors\n\nIf your data is a huge array on disk, use `torch.from_numpy(np.memmap(...))` or `torch.load` with `map_location` to memory‑map. The OS loads pages on demand.\n\nThis way you can work with terabytes of data without RAM overload."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "Memory‑Mapped Example",
+            "content": "Create a large file and map it.",
+            "codeSnippet": "import numpy as np, torch\n# Write a big array to disk\nbig = np.memmap('data.npy', dtype='float32', mode='w+', shape=(10000, 1000))\nbig[:] = np.random.randn(10000, 1000)\ndel big\n\n# Load as memory-mapped\ndata = np.memmap('data.npy', dtype='float32', mode='r', shape=(10000, 1000))\nt = torch.from_numpy(data)  # no copy\nprint(t[0, :5])",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "Memory Awareness 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "What is the benefit of memory‑mapped tensors?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They are always on GPU",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They allow random access to huge arrays on disk without loading everything into RAM",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They compress data",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They speed up CPU operations",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Memory‑mapped files use virtual memory to access data directly from disk.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_7",
+            "type": "text",
+            "title": "Shuffling Iterable Datasets 🔀",
+            "content": "## Shuffle Buffer\n\nMulti‑worker loading makes shuffling tricky. Use `torch.utils.data.BufferedShuffleDataset` or implement a local buffer:\n```python\nbuffer_size = 1000\nbuffer = []\nfor sample in source:\n    buffer.append(sample)\n    if len(buffer) >= buffer_size:\n        idx = random.randrange(len(buffer))\n        yield buffer.pop(idx)\n```"
+        },
+        {
+            "id": "s_l1_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `WebDataset` for Web-Scale Data\n\nFor datasets stored as tar files on cloud, the `webdataset` library integrates smoothly with PyTorch's IterableDataset."
+        }
+    ]
+}

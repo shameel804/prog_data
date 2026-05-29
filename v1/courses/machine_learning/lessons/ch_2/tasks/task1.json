@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_2",
+    "title": "Clean a Messy Dataset",
+    "description": "Load a CSV, handle missing values, detect and cap outliers using IQR.",
+    "estimatedMinutes": 15,
+    "problemStatement": "# Task: House Price Data Cleaning\n\nYou are given a CSV file `houses.csv` with columns: `size_sqft`, `bedrooms`, `age`, `price`.\n\n## Your mission:\n1. Load the dataset using pandas.\n2. Print the number of missing values per column.\n3. Fill missing `bedrooms` with the median value of that column.\n4. Drop any rows where `price` is missing (price is the target, we can't impute easily).\n5. For the `size_sqft` column, detect outliers using the IQR method (Q1 – 1.5×IQR, Q3 + 1.5×IQR). Cap (winsorize) any outliers to the respective fence value.\n6. Print the shape of the cleaned dataset and descriptive statistics of the `size_sqft` column.\n\n## Starter Code:\n```python\nimport pandas as pd\n\ndf = pd.read_csv('houses.csv')\n# Your code here\n```\n\n**Assume the CSV file is in the working directory.**",
+    "hints": [
+        "Use `df.isnull().sum()` to count missing values.",
+        "Median of a column: `df['bedrooms'].median()`; fill with `fillna()`.",
+        "IQR fence calculation: Q1, Q3, IQR; use `df['size_sqft'].clip(lower=lower_fence, upper=upper_fence, inplace=True)`.",
+        "Don't forget to import pandas."
+    ],
+    "expectedOutput": "Shape of cleaned data: (some number, 4)\nDescriptive statistics for size_sqft (count, mean, etc.)",
+    "solutionCode": "import pandas as pd\n\ndf = pd.read_csv('houses.csv')\n\n# 1. Missing values\nprint(\"Missing values per column:\")\nprint(df.isnull().sum())\n\n# 2. Fill missing bedrooms with median\nmedian_bedrooms = df['bedrooms'].median()\ndf['bedrooms'].fillna(median_bedrooms, inplace=True)\n\n# 3. Drop rows with missing price\ndf.dropna(subset=['price'], inplace=True)\n\n# 4. Outlier capping for size_sqft\nQ1 = df['size_sqft'].quantile(0.25)\nQ3 = df['size_sqft'].quantile(0.75)\nIQR = Q3 - Q1\nlower_fence = Q1 - 1.5 * IQR\nupper_fence = Q3 + 1.5 * IQR\ndf['size_sqft'] = df['size_sqft'].clip(lower=lower_fence, upper=upper_fence)\n\n# 5. Final shape and stats\nprint(f\"\\nShape of cleaned data: {df.shape}\")\nprint(\"\\nDescriptive statistics for size_sqft:\")\nprint(df['size_sqft'].describe())\n"
+}

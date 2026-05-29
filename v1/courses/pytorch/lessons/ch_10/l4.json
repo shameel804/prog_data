@@ -1,0 +1,100 @@
+{
+    "id": "l4",
+    "chapterId": "ch_10",
+    "title": "End-to-End Transfer Learning on Custom Data 🌼",
+    "description": "Apply transfer learning to a new image dataset with training and evaluation.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "Transfer Learning",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Putting It All Together 🧩",
+            "content": "# Full Pipeline\n\nWe'll use a small flower dataset (like Oxford 102 Flowers, but we'll simulate with torchvision's Flowers or use a tiny subset).\n\nSteps:\n1. Load pretrained model, replace head.\n2. Freeze backbone, train only head for a few epochs.\n3. (Optional) Unfreeze some layers, fine‑tune with low LR.\n4. Evaluate."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Dataset & Transforms",
+            "content": "Using torchvision.datasets.Flowers102 or a generic ImageFolder. We'll use ImageFolder for custom data.",
+            "codeSnippet": "from torchvision import transforms, datasets\n\n# Transforms as recommended by pretrained weights\nweights = models.ResNet18_Weights.DEFAULT\ntransform = weights.transforms()\n\n# If you have your own data:\ntrain_ds = datasets.ImageFolder('path/to/train', transform=transform)\nval_ds = datasets.ImageFolder('path/to/val', transform=transform)\n\ntrain_loader = DataLoader(train_ds, batch_size=32, shuffle=True)\nval_loader = DataLoader(val_ds, batch_size=32)",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Model & Optimizer Setup",
+            "content": "Prepare the model with feature extraction first.",
+            "codeSnippet": "model = models.resnet18(weights=weights)\nfor param in model.parameters():\n    param.requires_grad = False\nmodel.fc = nn.Linear(model.fc.in_features, len(train_ds.classes))\n\n# Only fc parameters will update\noptimizer = torch.optim.Adam(model.fc.parameters(), lr=0.001)\ncriterion = nn.CrossEntropyLoss()",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Training Loop (Feature Extraction)",
+            "content": "Train only the head for 10 epochs.",
+            "codeSnippet": "for epoch in range(10):\n    model.train()\n    for imgs, lbls in train_loader:\n        optimizer.zero_grad()\n        out = model(imgs)\n        loss = criterion(out, lbls)\n        loss.backward()\n        optimizer.step()\n    # validation...",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Pipeline Check 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "During feature extraction, which parameters get updated?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "All parameters",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Only the parameters of the new fc layer",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only the convolutional layers",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "None",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "We froze all layers except the new classifier head.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Fine‑Tuning Phase (Optional) ⚙️",
+            "content": "## After Head Training\n\nOnce the new head converges, we can unfreeze the backbone (or part of it) and train the entire network with a much lower learning rate (e.g., 1e-5).\n\n```python\nfor param in model.parameters():\n    param.requires_grad = True\noptimizer = torch.optim.Adam(model.parameters(), lr=1e-5)\n# Continue training for a few more epochs\n```"
+        },
+        {
+            "id": "s_l4_7",
+            "type": "code",
+            "title": "Fine‑Tuning Entire Network",
+            "content": "Unfreeze all and lower learning rate.",
+            "codeSnippet": "for param in model.parameters():\n    param.requires_grad = True\n\noptimizer_ft = torch.optim.Adam(model.parameters(), lr=1e-5)\n# Train for another 5 epochs...",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Learning Rate Schedulers for Fine‑Tuning\n\nUse `ReduceLROnPlateau` or cosine annealing to slowly reduce learning rate during fine‑tuning, helping convergence."
+        }
+    ]
+}

@@ -1,0 +1,117 @@
+{
+    "id": "l3",
+    "chapterId": "ch_6",
+    "title": "Validation & Early Stopping 🛑",
+    "description": "Monitor validation performance and stop training at the right time.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Training Loop",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Validate After Every Epoch ✅",
+            "content": "# Validation Loop\n\nAfter each training epoch, evaluate on the validation set (no gradients).\n\n```python\nmodel.eval()\nwith torch.no_grad():\n    for x_batch, y_batch in val_loader:\n        pred = model(x_batch)\n        loss = criterion(pred, y_batch)\n        # accumulate\n```\nThis gives a clean signal of generalization."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Validation Loop Snippet",
+            "content": "Compute average validation loss.",
+            "codeSnippet": "model.eval()\ntotal_val_loss = 0.0\nwith torch.no_grad():\n    for x_batch, y_batch in val_loader:\n        pred = model(x_batch)\n        loss = criterion(pred, y_batch)\n        total_val_loss += loss.item() * x_batch.size(0)\navg_val_loss = total_val_loss / len(val_dataset)\nprint(avg_val_loss)",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Validation Practices 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Why do we use `torch.no_grad()` during validation?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To speed up and reduce memory by not tracking gradients",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To compute gradients faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To enable dropout",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To shuffle data",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Gradients are not needed during evaluation; disabling them saves resources.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Early Stopping Strategy 🛑⏰",
+            "content": "## Stop Before Overfitting\n\nMonitor validation loss. If it doesn't improve for **patience** epochs, stop training and restore the best model.\n\nAlgorithm:\n1. Track best val loss and best model state.\n2. If val loss improves, save state.\n3. Else increment counter. If counter > patience, break."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Early Stopping Implementation",
+            "content": "Simple early stopping logic.",
+            "codeSnippet": "best_val_loss = float('inf')\npatience = 5\ncounter = 0\n\nfor epoch in range(num_epochs):\n    train(...)\n    val_loss = validate(...)\n    if val_loss < best_val_loss:\n        best_val_loss = val_loss\n        torch.save(model.state_dict(), 'best_model.pt')\n        counter = 0\n    else:\n        counter += 1\n        if counter >= patience:\n            print(\"Early stopping!\")\n            break",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Patience Power ⏳",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "If patience = 3 and validation loss does not improve for 3 consecutive epochs, what happens?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Learning rate increases",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Training stops and best model is restored",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Nothing, training continues",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Model resets weights",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Early stopping halts training when no improvement is seen, and we reload the best checkpoint.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Save Checkpoints Regularly\n\nUse `torch.save({'epoch': epoch, 'model_state_dict': model.state_dict(), 'optimizer_state_dict': optimizer.state_dict(), 'loss': loss}, 'checkpoint.pt')` to resume training later."
+        }
+    ]
+}

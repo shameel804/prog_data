@@ -1,0 +1,123 @@
+{
+    "id": "l5",
+    "chapterId": "ch_5",
+    "title": "Learning Rate Schedules & Fine-Tuning 🧪",
+    "description": "Adjust learning rate during training and explore weight decay.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Advanced Optimization",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Why Change LR Mid‑Training? ⏱️",
+            "content": "# Learning Rate Schedules\n\nA constant learning rate may be too high at the end (causing oscillation) or too low at the start. **Schedulers** adjust the LR over time:\n\n* **StepLR**: drops LR by gamma every N epochs.\n* **ReduceLROnPlateau**: reduces LR when a metric stops improving.\n* **CosineAnnealingLR**: smoothly decays LR following a cosine curve.\n\nThey help converge to a better minimum."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Using StepLR Scheduler",
+            "content": "Create a scheduler that halves the LR every 3 epochs.",
+            "codeSnippet": "model = nn.Linear(1, 1)\noptimizer = torch.optim.SGD(model.parameters(), lr=0.1)\nscheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.5)\n\nfor epoch in range(1, 7):\n    # training step...\n    scheduler.step()\n    print(f\"Epoch {epoch}: LR={optimizer.param_groups[0]['lr']:.4f}\")",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Scheduler Insight 🔍",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What does `StepLR(optimizer, step_size=5, gamma=0.1)` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Multiplies LR by 0.1 every 5 steps",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Divides LR by 5 every 10 steps",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Stops training after 5 epochs",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Adds 0.1 to LR every epoch",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "StepLR decays the learning rate by factor gamma every step_size epochs.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "ReduceLROnPlateau 📉",
+            "content": "## Adaptive Reduction\n\nThis scheduler monitors a metric (e.g., validation loss). If the metric doesn't improve for a 'patience' number of epochs, it reduces LR.\n\n```python\nscheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=2, factor=0.5)\nscheduler.step(val_loss)  # after validation\n```"
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "ReduceLROnPlateau Simulation",
+            "content": "Simulate plateau behaviour (pseudo code).",
+            "codeSnippet": "# (conceptual)\noptimizer = torch.optim.SGD(model.parameters(), lr=0.1)\nscheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=2, factor=0.5)\n# Inside loop: scheduler.step(val_loss)",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Weight Decay (L2 Regularization) 🏋️",
+            "content": "## Preventing Overfitting\n\nWeight decay adds a penalty for large weights to the loss, encouraging simpler models.\n\nIn PyTorch, it's built into the optimizer:\n```python\noptimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-4)\n```\nThis is equivalent to adding `0.5 * weight_decay * ||w||^2` to the loss (for SGD; for Adam it's slightly different)."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Regularization Recap 📚",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What is the effect of weight_decay > 0?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Increases model capacity",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Penalizes large weights, reducing overfitting",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Speeds up training",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Increases learning rate",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Weight decay adds an L2 penalty that discourages large weight values.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Combine Schedulers with Validation\n\nAlways monitor validation loss when tuning learning rate schedules. ReduceLROnPlateau is excellent for that because it reacts to performance."
+        }
+    ]
+}

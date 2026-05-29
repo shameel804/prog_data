@@ -1,0 +1,114 @@
+{
+    "id": "l5",
+    "chapterId": "ch_2",
+    "title": "Feature Engineering Basics 🔧",
+    "description": "Scale numbers, encode categories, and create better features for learning.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Data Preparation",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Turning Raw Data into ML-Ready Features ⚙️",
+            "content": "# Feature Engineering\n\nFeature engineering is the art of transforming raw data into a format that algorithms can digest and learn from.\n\nIt includes:\n- **Scaling** numerical features.\n- **Encoding** categorical features.\n- **Creating** new features from existing ones (e.g., extracting 'day of week' from a date).\n- **Binning** continuous values into categories.\n\nBetter features often beat fancier models."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Scaling Numerical Features 📐",
+            "content": "# Why Scale?\n\nMany algorithms (linear regression, SVM, neural networks) assume features are on similar scales. If one feature is 'age' (0–100) and another is 'salary' (20k–200k), distance‑based models may give salary more importance.\n\nCommon scaling methods:\n- **Standardization (Z‑score)**: subtract mean, divide by std. Result has mean=0, std=1.\n- **Min‑Max Scaling**: squeeze values to a range, e.g., [0,1].\n- **Robust Scaler**: uses median and IQR, robust to outliers.\n\nScaling is fit on training data only, then applied to test data (never learn from test data!)."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Scaling Sense ⚖️",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which of these models is most sensitive to feature scale?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Decision Tree",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Random Forest",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "k‑Nearest Neighbors (k‑NN)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Naive Bayes",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "k‑NN uses Euclidean distance, which is heavily influenced by the magnitude of features. Tree‑based models are scale‑invariant.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Encoding Categorical Variables 🏷️",
+            "content": "# Numbers from Categories\n\nAlgorithms need numbers, so we convert categories:\n\n- **Label Encoding**: assign each category an integer (e.g., red=0, blue=1, green=2). **Caution**: introduces artificial order, problematic for nominal data.\n- **One‑Hot Encoding**: create a binary column for each category. 'Colour' becomes three columns: is_red, is_blue, is_green (1/0). Works well for nominal data but expands dimensionality.\n- **Ordinal Encoding**: map ordered categories to ordered integers (S=0, M=1, L=2).\n\nPandas’ `get_dummies()` does one‑hot encoding easily."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "One‑Hot Encoding in Action 🐍",
+            "content": "Transform a categorical column into dummy variables:",
+            "codeSnippet": "import pandas as pd\n\ndf = pd.DataFrame({'city': ['NY', 'LA', 'NY', 'Chicago']})\ndf_encoded = pd.get_dummies(df, columns=['city'])\nprint(df_encoded)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Beware the Dummy Variable Trap\nWhen using one‑hot encoding, drop one column to avoid multicollinearity (e.g., drop 'is_red' if you have three colour categories). `pd.get_dummies(drop_first=True)` handles this automatically."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Encoding Quiz 🧪",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "For a nominal variable like 'country' (100 different values), which encoding is most appropriate?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Label encoding",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "One‑hot encoding",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Ordinal encoding",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Mean encoding",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "One‑hot avoids implying any order. However, with high cardinality, you may need feature hashing or target encoding to avoid too many columns.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

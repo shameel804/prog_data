@@ -1,0 +1,14 @@
+{
+    "id": "task3",
+    "chapterId": "ch_3",
+    "title": "Detach and Branch",
+    "description": "Use detach() to create a branch that doesn’t backpropagate to the main path.",
+    "estimatedMinutes": 12,
+    "problemStatement": "Write code that:\n1. Creates `x = torch.tensor([2.0, 3.0], requires_grad=True)`.\n2. Computes `y = x**2` (element‑wise).\n3. Creates `z = y.detach() * 2` (note: `z` should not require grad).\n4. Sums the original `y` and calls `backward()`.\n5. Prints `x.grad` (which comes only from y, not z).\n\nThe expected output shows the gradient of `y.sum()` w.r.t x, which is `2*x`.",
+    "hints": [
+        "Detaching breaks the graph. The gradient from `y` will flow normally, but `z` will not contribute.",
+        "`y.sum().backward()` computes the gradient of sum(y) = x1^2 + x2^2, so dy/dx = 2*x."
+    ],
+    "expectedOutput": "tensor([4., 6.])",
+    "solutionCode": "import torch\n\nx = torch.tensor([2.0, 3.0], requires_grad=True)\ny = x ** 2\nz = y.detach() * 2   # not part of the graph\ny.sum().backward()\nprint(x.grad)"
+}

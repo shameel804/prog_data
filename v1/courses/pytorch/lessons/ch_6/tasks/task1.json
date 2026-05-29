@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_6",
+    "title": "Training Loop with Manual Data",
+    "description": "Implement a full training loop for synthetic linear regression data with train/val split and early stopping.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Write code that:\n1. Generates synthetic dataset: x from 0 to 10 (100 points) as column vector, y = 3*x + 2 + noise (0.5 std).\n2. Splits data: first 70 points train, next 15 val, last 15 test.\n3. Defines a linear model `nn.Linear(1,1)`, MSE loss, SGD optimizer (lr=0.01).\n4. Trains for up to 200 epochs with early stopping (patience=10) based on validation loss. Use full batch (no DataLoader, just tensors).\n5. Prints the best validation loss (4 decimal places) and the final test loss after loading the best model.\n\nThe output must match the expected format.",
+    "hints": [
+        "Add noise with `torch.randn(100,1)*0.5`.",
+        "Use slicing for split.",
+        "Early stopping: track best_val_loss and counter. Save state with `torch.save(model.state_dict(), 'best_model.pt')`.",
+        "After loop, load best model and evaluate on test set."
+    ],
+    "expectedOutput": "Best val loss: <some number, e.g., 0.1234>\nTest loss: <some number>",
+    "solutionCode": "import torch\nimport torch.nn as nn\n\n# Generate data\ntorch.manual_seed(0)\nx = torch.linspace(0, 10, 100).unsqueeze(1)\ny = 3*x + 2 + torch.randn(100, 1)*0.5\n\n# Split\nx_train, y_train = x[:70], y[:70]\nx_val, y_val = x[70:85], y[70:85]\nx_test, y_test = x[85:], y[85:]\n\nmodel = nn.Linear(1, 1)\ncriterion = nn.MSELoss()\noptimizer = torch.optim.SGD(model.parameters(), lr=0.01)\n\nbest_val_loss = float('inf')\npatience = 10\ncounter = 0\n\nfor epoch in range(200):\n    # Train\n    model.train()\n    optimizer.zero_grad()\n    pred = model(x_train)\n    loss = criterion(pred, y_train)\n    loss.backward()\n    optimizer.step()\n    \n    # Validate\n    model.eval()\n    with torch.no_grad():\n        val_pred = model(x_val)\n        val_loss = criterion(val_pred, y_val).item()\n    \n    if val_loss < best_val_loss:\n        best_val_loss = val_loss\n        torch.save(model.state_dict(), 'best_model.pt')\n        counter = 0\n    else:\n        counter += 1\n        if counter >= patience:\n            break\n\nprint(f\"Best val loss: {best_val_loss:.4f}\")\n\n# Load best and test\nmodel.load_state_dict(torch.load('best_model.pt'))\nmodel.eval()\nwith torch.no_grad():\n    test_pred = model(x_test)\n    test_loss = criterion(test_pred, y_test).item()\nprint(f\"Test loss: {test_loss:.4f}\")"
+}

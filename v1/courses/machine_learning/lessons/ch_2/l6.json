@@ -1,0 +1,104 @@
+{
+    "id": "l6",
+    "chapterId": "ch_2",
+    "title": "Splitting Data for Training & Testing ✂️",
+    "description": "Why and how to separate data so you can trust your model's performance.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Model Validation",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Don’t Test on What You Learned 🚫",
+            "content": "# The Danger of Memorisation\n\nIf you train and evaluate a model on the same data, it might just **memorise** the answers. You'll see near‑perfect performance, but it will fail on new data. This is called **overfitting**.\n\nTo avoid this, we split data:\n- **Training set** – used to teach the model.\n- **Test set** – held back, used only once to estimate real‑world performance.\n\nThink of it like studying for an exam: you practice with textbook questions (train), but the final exam (test) has unseen problems."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "The Classic Split 📊",
+            "content": "# Train/Test Split Ratios\n\nCommon splits:\n- 80% train, 20% test (for smaller datasets).\n- 70% train, 30% test.\n\nFor large datasets (millions of rows), a 90/10 or even 95/5 split can work because the test set is still large enough.\n\n**Stratification**: for classification, ensure the split maintains the same proportion of classes in train and test. Use `stratify=y` in scikit‑learn’s `train_test_split`."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Splitting with Scikit‑Learn 🐍",
+            "content": "Simple and reliable way to split data:",
+            "codeSnippet": "from sklearn.model_selection import train_test_split\nimport pandas as pd\n\n# df is your DataFrame, 'price' is the target\nX = df.drop('price', axis=1)\ny = df['price']\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42\n)\nprint(f\"Train size: {len(X_train)}, Test size: {len(X_test)}\")",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_4",
+            "type": "quiz",
+            "title": "Split Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Why do we set `random_state` in train_test_split?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To make the split reproducible",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To speed up the split",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To guarantee the best accuracy",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To randomise the data order permanently",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`random_state` ensures you get the same random split each time you run the code, making results reproducible.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_5",
+            "type": "text",
+            "title": "The Validation Set 🛡️",
+            "content": "# Tuning Without Cheating\n\nWhen you tweak hyperparameters (e.g., tree depth), you might accidentally overfit the test set if you use it repeatedly. That’s why we often create a **validation set**:\n\n- **Train**: learning parameters.\n- **Validation**: tuning hyperparameters and selecting the best model.\n- **Test**: final, unbiased performance report.\n\nSplitting can be done once, or via **cross‑validation** (next chapters).\n\nA typical split: 60% train, 20% validation, 20% test."
+        },
+        {
+            "id": "s_l6_6",
+            "type": "quiz",
+            "title": "Validation Wisdom 🧙",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "true_false",
+                "question": "You should use the test set many times to iteratively improve your model.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "False. The test set should be used only at the very end for final evaluation, or you risk overfitting to it. Use a validation set for tuning.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_7",
+            "type": "tip",
+            "title": "Golden Rule 🌟",
+            "content": "## Never Let the Model See the Test Data!\nTreat the test set as if it's locked in a vault until the final day. Any leakage will inflate your performance numbers and lead to disappointment in production."
+        }
+    ]
+}

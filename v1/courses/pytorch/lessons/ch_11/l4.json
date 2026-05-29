@@ -1,0 +1,123 @@
+{
+    "id": "l4",
+    "chapterId": "ch_11",
+    "title": "Introduction to Model Deployment 🚀",
+    "description": "Convert models to TorchScript and ONNX for production serving.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Deployment",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "From Research to Production 🏭",
+            "content": "# Why Deploy?\n\nA trained model needs to run in a production environment (web server, mobile app, edge device). Deployment often requires:\n* **No Python overhead**.\n* **Optimized inference** (faster, smaller).\n* **Portability** across platforms.\n\nPyTorch offers **TorchScript** (JIT) and export to **ONNX** (Open Neural Network Exchange)."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "TorchScript: Tracing",
+            "content": "Convert a model to a TorchScript module via tracing.",
+            "codeSnippet": "model = nn.Linear(10, 2).eval()\nexample = torch.randn(1, 10)\ntraced = torch.jit.trace(model, example)\ntorch.jit.save(traced, 'model.pt')\nprint('TorchScript model saved')\n# Later, load with: model = torch.jit.load('model.pt')",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "TorchScript Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does `torch.jit.trace` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It trains the model",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It records operations as a graph by running an example input",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It quantizes the model",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It moves the model to GPU",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Tracing runs the model once and records the operations, creating a static graph.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "TorchScript: Scripting 📜",
+            "content": "## For Dynamic Control Flow\n\nIf your model uses Python `if`/`for` that changes based on input, tracing won't capture all branches. Use `torch.jit.script`:\n\n```python\n@torch.jit.script\ndef my_fn(x):\n    if x.sum() > 0:\n        return x * 2\n    else:\n        return x * -1\n```"
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Exporting to ONNX",
+            "content": "Convert to ONNX format for use in other frameworks (TensorRT, Caffe2, etc.).",
+            "codeSnippet": "model = nn.Linear(10, 2).eval()\nexample = torch.randn(1, 10)\ntorch.onnx.export(model, example, 'model.onnx', input_names=['input'], output_names=['output'])\nprint('ONNX model exported')",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Deployment Format 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Why might you export to ONNX instead of using TorchScript directly?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "ONNX is smaller",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "ONNX allows interoperability with other frameworks and inference engines",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "ONNX is faster to train",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "ONNX only runs on CPU",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "ONNX is an open format supported by many runtimes (TensorRT, OpenVINO, etc.).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Optimizing for Inference ⚡",
+            "content": "## Quantization & Pruning\n\nBeyond TorchScript, you can:\n* **Quantize** (reduce weight precision to int8).\n* **Prune** (remove unimportant connections).\n* Use **torch.jit.optimize_for_inference**.\n\nTools: `torch.quantization`, `torch.nn.utils.prune`."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## TorchServe\n\nPyTorch's native serving tool for deploying models at scale with REST endpoints. Built on TorchScript."
+        }
+    ]
+}

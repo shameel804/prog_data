@@ -1,0 +1,252 @@
+{
+    "id": "quiz_ch_4",
+    "chapterId": "ch_4",
+    "title": "Chapter 4 Quiz",
+    "description": "Test your knowledge of building neural networks with torch.nn!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the base class for all neural network modules in PyTorch?",
+            "options": [
+                "torch.Tensor",
+                "nn.Linear",
+                "nn.Module",
+                "torch.autograd"
+            ],
+            "correctAnswer": 2,
+            "explanation": "`nn.Module` is the foundation for all network components."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "Which method must you implement when subclassing nn.Module?",
+            "options": [
+                "__init__",
+                "forward",
+                "backward",
+                "parameters"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`forward()` defines the computation."
+        },
+        {
+            "id": "q3",
+            "type": "true_false",
+            "question": "Calling `model.forward(x)` directly is the recommended way to use a model.",
+            "correctAnswer": false,
+            "explanation": "Use `model(x)` to properly invoke hooks and pre/post processing."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "What does `nn.Linear(5, 2)` compute?",
+            "options": [
+                "y = xW + b with W shape (5,2)",
+                "y = xW^T + b with W shape (2,5)",
+                "y = x * 2 + 5",
+                "y = xW^T where W is (5,2)"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Weight matrix is (out_features, in_features) = (2,5), so y = xW^T + b."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "If `linear = nn.Linear(10, 5)`, what is the shape of `linear.bias`?",
+            "options": [
+                "(10,)",
+                "(5,)",
+                "(10, 5)",
+                "(5, 10)"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Bias has one value per output feature, shape (5,)."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "How many trainable parameters in `nn.Linear(3, 4, bias=True)`?",
+            "options": [
+                "12",
+                "16",
+                "7",
+                "4"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Weight: 4*3=12, bias: 4 → total 16."
+        },
+        {
+            "id": "q7",
+            "type": "true_false",
+            "question": "Adding another linear layer on top of a linear layer (without activation) is equivalent to a single linear layer.",
+            "correctAnswer": true,
+            "explanation": "Composition of linear functions is linear; without non‑linearity, deep linear layers collapse to one."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "What is the output of `F.relu(torch.tensor([-3, 0, 2]))`?",
+            "options": [
+                "[-3, 0, 2]",
+                "[0, 0, 2]",
+                "[3, 0, 2]",
+                "[0, 0, 0]"
+            ],
+            "correctAnswer": 1,
+            "explanation": "ReLU sets negatives to 0, so [-3→0, 0→0, 2→2]."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "Which activation function outputs probabilities that sum to 1 along a dimension?",
+            "options": [
+                "ReLU",
+                "Sigmoid",
+                "Tanh",
+                "Softmax"
+            ],
+            "correctAnswer": 3,
+            "explanation": "Softmax normalizes logits into a probability distribution."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "What is the typical output range of the sigmoid function?",
+            "options": [
+                "(-1, 1)",
+                "(0, 1)",
+                "(0, ∞)",
+                "(-∞, ∞)"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Sigmoid squashes values to (0,1), useful for binary probability."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "In a classification model, why often is there no softmax in the forward method?",
+            "options": [
+                "It's impossible to backprop through softmax",
+                "The loss function (CrossEntropyLoss) includes softmax for stability",
+                "Softmax is not differentiable",
+                "Softmax is only for training"
+            ],
+            "correctAnswer": 1,
+            "explanation": "CrossEntropyLoss expects raw logits and applies softmax internally for numerical stability."
+        },
+        {
+            "id": "q12",
+            "type": "fill_blank",
+            "question": "To create a sequential model, use `nn._______`.",
+            "options": [
+                "Sequential",
+                "Sequence",
+                "Sequencer",
+                "SeqModel"
+            ],
+            "correctAnswer": "Sequential",
+            "explanation": "The container is `nn.Sequential`."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "What advantage does `nn.Sequential` with OrderedDict provide?",
+            "options": [
+                "Faster training",
+                "Named layers for easy access",
+                "Automatic initialization",
+                "It compiles the model"
+            ],
+            "correctAnswer": 1,
+            "explanation": "OrderedDict gives each layer a key, enabling access like `model.fc1`."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "Which container stores a list of modules that is properly registered?",
+            "options": [
+                "Python list",
+                "nn.ModuleList",
+                "nn.Sequential",
+                "nn.ParameterList"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`nn.ModuleList` registers all its elements as sub‑modules; a plain Python list does not."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "How do you count total parameters in a model?",
+            "options": [
+                "sum(p.numel() for p in model.parameters())",
+                "model.parameters().size()",
+                "len(model.parameters())",
+                "model.numel()"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Iterate over `model.parameters()` and use `numel()` to count elements."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "What does `model.apply(fn)` do?",
+            "options": [
+                "Applies the model to a batch",
+                "Applies a function recursively to all sub‑modules",
+                "Applies an activation function",
+                "Applies gradient clipping"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`apply` walks through all modules and applies `fn` to each, commonly used for initialization."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "Which initializer is recommended for ReLU activations?",
+            "options": [
+                "Xavier uniform",
+                "Kaiming (He) uniform",
+                "Constant 0.01",
+                "Uniform [-1,1]"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Kaiming initialization is designed to account for ReLU's non‑linearity."
+        },
+        {
+            "id": "q18",
+            "type": "true_false",
+            "question": "`nn.init.xavier_uniform_` modifies a tensor in‑place.",
+            "correctAnswer": true,
+            "explanation": "The trailing underscore indicates in‑place operation."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "Why might you use `nn.LazyLinear(out)` instead of `nn.Linear(in, out)`?",
+            "options": [
+                "It's faster",
+                "You don't know the input size upfront",
+                "It adds dropout automatically",
+                "It uses less memory"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`LazyLinear` infers input features on first forward pass."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "How can you move an entire model to GPU?",
+            "options": [
+                "model.to('cuda')",
+                "model.cuda()",
+                "model.gpu()",
+                "model.device('cuda')"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`model.to('cuda')` moves all parameters and buffers to the GPU."
+        }
+    ]
+}

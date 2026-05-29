@@ -1,0 +1,16 @@
+{
+    "id": "task2",
+    "chapterId": "ch_7",
+    "title": "DataLoader with Augmentation",
+    "description": "Create a DataLoader for image classification with training transforms and validation transforms.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Write code that:\n1. Uses the CIFAR-10 dataset from `torchvision.datasets.CIFAR10` (download if needed).\n2. Defines a train transform: RandomHorizontalFlip, ToTensor, Normalize with mean (0.5, 0.5, 0.5) and std (0.5, 0.5, 0.5).\n3. Defines a test transform: ToTensor, same Normalize.\n4. Creates train and test datasets using these transforms.\n5. Creates DataLoaders with batch_size=32, shuffle=True for train, False for test.\n6. Prints the shape of one batch of images and labels from the training loader (formatted exactly as 'Train batch shape: torch.Size([32, 3, 32, 32]), labels shape: torch.Size([32])').\n7. Prints the shape of one batch from the test loader similarly.\n\nThe output must match the expected strings exactly.",
+    "hints": [
+        "Import `torchvision` and `torchvision.transforms`.",
+        "Use `transforms.Compose`.",
+        "`CIFAR10(root='./data', train=True, transform=train_transform, download=True)`.",
+        "Loop over loaders and break after first batch."
+    ],
+    "expectedOutput": "Train batch shape: torch.Size([32, 3, 32, 32]), labels shape: torch.Size([32])\nTest batch shape: torch.Size([32, 3, 32, 32]), labels shape: torch.Size([32])",
+    "solutionCode": "import torch\nfrom torch.utils.data import DataLoader\nimport torchvision\nimport torchvision.transforms as transforms\n\ntrain_transform = transforms.Compose([\n    transforms.RandomHorizontalFlip(),\n    transforms.ToTensor(),\n    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))\n])\ntest_transform = transforms.Compose([\n    transforms.ToTensor(),\n    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))\n])\n\ntrain_dataset = torchvision.datasets.CIFAR10(root='./data', train=True, transform=train_transform, download=True)\ntest_dataset = torchvision.datasets.CIFAR10(root='./data', train=False, transform=test_transform, download=True)\n\ntrain_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)\ntest_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)\n\nfor images, labels in train_loader:\n    print(f\"Train batch shape: {images.shape}, labels shape: {labels.shape}\")\n    break\nfor images, labels in test_loader:\n    print(f\"Test batch shape: {images.shape}, labels shape: {labels.shape}\")\n    break"
+}

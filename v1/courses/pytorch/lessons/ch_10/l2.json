@@ -1,0 +1,117 @@
+{
+    "id": "l2",
+    "chapterId": "ch_10",
+    "title": "Pretrained Models in torchvision 🏋️",
+    "description": "Load powerful models like ResNet and EfficientNet with pretrained weights.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Transfer Learning",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Model Zoo 🦁",
+            "content": "# torchvision.models\n\nPyTorch provides many pretrained architectures ready to use:\n* **ResNet** (18, 34, 50, 101, 152)\n* **EfficientNet** (B0–B7)\n* **VGG**, **DenseNet**, **MobileNet**, **ConvNeXt**, etc.\n\nAll come with `weights` parameter to load pretrained weights."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Loading a Pretrained ResNet",
+            "content": "Load ResNet18 with ImageNet weights.",
+            "codeSnippet": "import torchvision.models as models\n\n# New API (recommended)\nmodel = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)\nprint(model)\n# Look at the final fully‑connected layer (fc)",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Model Loading 🏋️",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which argument loads ImageNet pretrained weights into ResNet18?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "pretrained=True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "weights='imagenet'",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "weights=models.ResNet18_Weights.DEFAULT",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "load_weights=True",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The new API uses the `weights` parameter with an enum. `pretrained=True` is deprecated.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Inspecting the Architecture 🔍",
+            "content": "## Finding the Classifier Head\n\nPretrained models on ImageNet have a final layer with **1000** output classes. To adapt to a new task, we need to replace this layer. \n\nCommon names for the classifier:\n* ResNet: `model.fc`\n* VGG: `model.classifier[6]`\n* EfficientNet: `model.classifier[1]`\n\nWe'll replace it with a new `nn.Linear` matching our number of classes."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Replacing the Final Layer",
+            "content": "Modify ResNet18 for 10 flower classes.",
+            "codeSnippet": "num_classes = 10\nmodel = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)\n# Replace fc layer\nin_features = model.fc.in_features\nmodel.fc = nn.Linear(in_features, num_classes)\nprint(model.fc)",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Layer Replacement 🔧",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Why do we replace the final layer of a pretrained model?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To reduce model size",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To match the output classes of the new task",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To increase accuracy on ImageNet",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To remove batch normalization",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The original output layer predicts 1000 ImageNet classes; we need a layer with our number of classes.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Weights Transform\n\nWhen loading pretrained weights, you can also access the associated preprocessing transforms: `weights.transforms()` provides the required mean, std, and image size."
+        }
+    ]
+}

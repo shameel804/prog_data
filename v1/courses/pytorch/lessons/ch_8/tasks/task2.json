@@ -1,0 +1,16 @@
+{
+    "id": "task2",
+    "chapterId": "ch_8",
+    "title": "Experiment with Kernel Size and Stride",
+    "description": "Create a model with different kernel sizes and strides, and compute output shapes.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Write code that:\n1. Creates a `conv1 = nn.Conv2d(1, 16, kernel_size=5, stride=2, padding=2)`.\n2. Creates a `conv2 = nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1)`.\n3. Creates a `pool = nn.MaxPool2d(2, 2)`.\n4. For an input of shape `(1, 1, 28, 28)`, applies conv1 → conv2 → pool, and prints the output shape after each step in the format:\n   \"After conv1: torch.Size([1, 16, X, X])\"\n   \"After conv2: torch.Size([1, 32, Y, Y])\"\n   \"After pool: torch.Size([1, 32, Z, Z])\"\n(The exact dimensions will depend on formulas.)\nCalculate and print exactly.",
+    "hints": [
+        "Use the formula: out = floor((in - kernel + 2*padding)/stride) + 1.",
+        "For conv1: in=28, k=5, s=2, p=2 → (28-5+4)/2 +1 = (27)/2 floor=13, +1 =14. So 14.",
+        "conv2: in=14, k=3, s=1, p=1 → (14-3+2)/1+1 =14.",
+        "pool: in=14, k=2, s=2 → (14-2+0)/2+1=7."
+    ],
+    "expectedOutput": "After conv1: torch.Size([1, 16, 14, 14])\nAfter conv2: torch.Size([1, 32, 14, 14])\nAfter pool: torch.Size([1, 32, 7, 7])",
+    "solutionCode": "import torch\nimport torch.nn as nn\n\nx = torch.randn(1, 1, 28, 28)\nconv1 = nn.Conv2d(1, 16, kernel_size=5, stride=2, padding=2)\nconv2 = nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1)\npool = nn.MaxPool2d(2, 2)\n\nout = conv1(x)\nprint(\"After conv1:\", out.shape)\nout = conv2(out)\nprint(\"After conv2:\", out.shape)\nout = pool(out)\nprint(\"After pool:\", out.shape)"
+}

@@ -1,0 +1,126 @@
+{
+    "id": "l3",
+    "chapterId": "ch_9",
+    "title": "RNN in PyTorch ⚙️",
+    "description": "Use nn.RNN with proper input shapes, hidden state, and batching.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "RNN Fundamentals",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The `nn.RNN` Module 📦",
+            "content": "# Built‑in Recurrence\n\nPyTorch provides `nn.RNN(input_size, hidden_size, num_layers=1)`. It processes the whole sequence in one call!\n\nInput: `(L, N, H_in)` where:\n* `L` = sequence length\n* `N` = batch size\n* `H_in` = input feature size\n\nOutput: `(L, N, H_out)` and the final hidden state `(num_layers, N, H_out)`."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Using nn.RNN",
+            "content": "Create and run a simple RNN.",
+            "codeSnippet": "rnn = nn.RNN(input_size=10, hidden_size=20, num_layers=1)\nx = torch.randn(5, 2, 10)  # seq_len=5, batch=2, features=10\nout, hn = rnn(x)\nprint(out.shape)   # [5, 2, 20]\nprint(hn.shape)    # [1, 2, 20]",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Shape Check 📏",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "For `nn.RNN(10, 20)` with input (7, 4, 10), what is the shape of the output?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "(7, 4, 20)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "(4, 7, 20)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "(7, 20)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "(4, 20)",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Output preserves time and batch dimensions, changes feature size to hidden_size.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Multi‑Layer RNNs 🏗️",
+            "content": "## Stacking RNNs\n\n`num_layers=2` stacks two RNNs: the output of the first becomes the input to the second.\n\n* Input shape same, but `hidden_size` of first becomes `input_size` of second (usually same `hidden_size`).\n* `hn` shape becomes `(num_layers, batch, hidden_size)`. The last layer's hidden state is often used for classification."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Stacked RNN Example",
+            "content": "Two‑layer RNN.",
+            "codeSnippet": "rnn2 = nn.RNN(10, 20, num_layers=2)\nx = torch.randn(3, 1, 10)\nout, hn = rnn2(x)\nprint(out.shape)  # [3, 1, 20]\nprint(hn.shape)   # [2, 1, 20]",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Layer Count 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "For a 3-layer RNN, what does `hn` represent?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Hidden states of all layers",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Only the last layer's hidden state",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The output of the first layer",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The input sequence",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "hn stacks the final hidden states of all layers, shape (num_layers, batch, hidden_size).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Customizing Initial Hidden State 🧹",
+            "content": "## Starting from Scratch\n\nBy default, hidden state is initialized to zeros. You can pass `h0` as an argument: `out, hn = rnn(x, h0)`. This is useful for continuing a sequence."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "code",
+            "title": "Providing Initial h0",
+            "content": "Pass a specific initial hidden state.",
+            "codeSnippet": "h0 = torch.randn(1, 2, 20)  # num_layers, batch, hidden\nout, hn = rnn(x, h0)\nprint(hn.shape)  # [1, 2, 20]",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        }
+    ]
+}

@@ -1,0 +1,132 @@
+{
+    "id": "l1",
+    "chapterId": "ch_6",
+    "title": "The Training Loop Anatomy 🔄",
+    "description": "Understand the step-by-step process of training a neural network.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Training Loop",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The Heart of Learning ❤️",
+            "content": "# What is a Training Loop?\n\nTraining a neural network means repeatedly:\n1. Feeding data through the model (forward).\n2. Computing the error (loss).\n3. Finding how to improve (backward).\n4. Updating weights (optimizer step).\n\nOne pass through the whole dataset = 1 **epoch**."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "code",
+            "title": "Minimal Training Loop",
+            "content": "A skeleton of what we'll build in this chapter.",
+            "codeSnippet": "model = ...\ncriterion = ...\noptimizer = ...\n\nfor epoch in range(num_epochs):\n    model.train()\n    for x_batch, y_batch in train_loader:\n        optimizer.zero_grad()\n        pred = model(x_batch)\n        loss = criterion(pred, y_batch)\n        loss.backward()\n        optimizer.step()\n    # validation after each epoch...",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Loop Logic 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What does one epoch mean?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "One forward pass",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "One backward pass",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "One full pass through the training dataset",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "One batch of data",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "An epoch is when the model has seen every training sample once.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "Batch vs. Epoch vs. Iteration 🧱",
+            "content": "## Terminology\n\n* **Batch**: a subset of training data (e.g., 32 images).\n* **Iteration**: one update step using a single batch.\n* **Epoch**: number of iterations × batch size = dataset size.\n\nExample: 1000 samples, batch size 50 → 20 iterations per epoch."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "Counting Batches",
+            "content": "Quick math: dataset size 1000, batch size 50.",
+            "codeSnippet": "dataset_size = 1000\nbatch_size = 50\niterations_per_epoch = dataset_size // batch_size\nprint(iterations_per_epoch)  # 20",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "Batch Count 📏",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "If dataset size is 640 and batch size 64, how many iterations per epoch?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "64",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "10",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "640",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "32",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "640 / 64 = 10 iterations.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_7",
+            "type": "text",
+            "title": "Training vs. Evaluation Mode ⚙️",
+            "content": "## `model.train()` and `model.eval()`\n\nSome layers behave differently during training and inference (e.g., Dropout, BatchNorm). Call:\n* `model.train()` before training.\n* `model.eval()` before validation/testing.\n\nForgetting can lead to incorrect results!"
+        },
+        {
+            "id": "s_l1_8",
+            "type": "code",
+            "title": "Mode Switch Example",
+            "content": "Toggle between train and eval mode.",
+            "codeSnippet": "model = nn.Sequential(nn.Linear(2, 2), nn.Dropout(0.5))\nmodel.train()\nprint(\"Train mode, Dropout active\")\nmodel.eval()\nprint(\"Eval mode, Dropout disabled\")",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Always switch to eval for validation\n\nWrap validation code with `with torch.no_grad():` and call `model.eval()` to ensure consistent results and faster execution."
+        }
+    ]
+}

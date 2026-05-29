@@ -1,0 +1,111 @@
+{
+    "id": "l2",
+    "chapterId": "ch_7",
+    "title": "Custom Datasets with torch.utils.data 🛠️",
+    "description": "Build your own Dataset class by implementing __len__ and __getitem__.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Data Loading",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Dataset Blueprint 📐",
+            "content": "# `torch.utils.data.Dataset`\n\nAn abstract class you inherit from. You **must** override:\n* `__len__(self)` → number of samples.\n* `__getitem__(self, idx)` → returns the idx-th sample as a tensor (or tuple of tensors).\n\nPyTorch's DataLoader uses `__len__` to know how many samples exist, and `__getitem__` to fetch each one."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Toy Custom Dataset",
+            "content": "Create a dataset that returns numbers and their squares.",
+            "codeSnippet": "from torch.utils.data import Dataset\n\nclass SquareDataset(Dataset):\n    def __init__(self, n):\n        self.n = n\n    def __len__(self):\n        return self.n\n    def __getitem__(self, idx):\n        x = torch.tensor(idx, dtype=torch.float32)\n        y = x ** 2\n        return x, y\n\nds = SquareDataset(5)\nprint(len(ds))   # 5\nprint(ds[3])     # (3.0, 9.0)",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Dataset Methods 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which method must be implemented for a custom Dataset?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "__init__ and forward",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "__len__ and __getitem__",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "__getitem__ and __setitem__",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only __getitem__",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Both `__len__` and `__getitem__` are required.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Real-World: Loading Files 🗂️",
+            "content": "## Images from Disk\n\nTypically, your `__getitem__` reads an image, applies transforms, and returns a tensor.\n\n```python\nclass ImageDataset(Dataset):\n    def __init__(self, image_paths, labels, transform=None):\n        self.image_paths = image_paths\n        self.labels = labels\n        self.transform = transform\n    def __len__(self):\n        return len(self.image_paths)\n    def __getitem__(self, idx):\n        img = Image.open(self.image_paths[idx])\n        if self.transform:\n            img = self.transform(img)\n        return img, self.labels[idx]\n```"
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Using torchvision's ImageFolder",
+            "content": "For classification folders, `ImageFolder` is a ready-made Dataset.",
+            "codeSnippet": "from torchvision.datasets import ImageFolder\n# Assume 'data/train' has subfolders per class\ndataset = ImageFolder(root='data/train', transform=None)\nprint(dataset.classes)  # ['cat', 'dog']",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Dataset Creation 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What does `ImageFolder` automatically infer?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Image shapes",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Class labels from subfolder names",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Transformations",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Mean and std",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Each subfolder becomes a class, and its name is the class label.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

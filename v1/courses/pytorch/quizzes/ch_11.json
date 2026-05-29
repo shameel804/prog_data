@@ -1,0 +1,239 @@
+{
+    "id": "quiz_ch_11",
+    "chapterId": "ch_11",
+    "title": "Chapter 11 Quiz",
+    "description": "Test your knowledge of saving, loading, device handling, and model deployment!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the recommended way to save a model's parameters for later inference?",
+            "options": [
+                "torch.save(model, 'model.pth')",
+                "torch.save(model.state_dict(), 'weights.pth')",
+                "torch.save(model.parameters(), 'weights.pth')",
+                "model.save('weights.pth')"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Saving the state_dict is the standard and most portable method."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "What must you do before loading a state_dict into a model?",
+            "options": [
+                "Move the model to CPU",
+                "Instantiate the model with the same architecture",
+                "Load the optimizer first",
+                "Clear all gradients"
+            ],
+            "correctAnswer": 1,
+            "explanation": "You need an instance of the exact same model class to receive the weights."
+        },
+        {
+            "id": "q3",
+            "type": "true_false",
+            "question": "`model.load_state_dict(torch.load('weights.pth'))` will automatically move the model to GPU if the weights were saved from a GPU model.",
+            "correctAnswer": false,
+            "explanation": "You must handle device placement; use `map_location` to load onto a different device."
+        },
+        {
+            "id": "q4",
+            "type": "fill_blank",
+            "question": "To save a training checkpoint containing model, optimizer, and epoch, you typically create a ________ containing all these items and call `torch.save`.",
+            "options": [
+                "dictionary",
+                "list",
+                "tuple",
+                "set"
+            ],
+            "correctAnswer": "dictionary",
+            "explanation": "A Python dict is the standard way to bundle checkpoint components."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "What information does `optimizer.state_dict()` contain?",
+            "options": [
+                "Model parameters",
+                "Gradients",
+                "Momentum buffers and other optimizer-specific state",
+                "The loss function"
+            ],
+            "correctAnswer": 2,
+            "explanation": "It holds per‑parameter optimizer state like momentum, variance, etc."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "How do you move a model from GPU to CPU?",
+            "options": [
+                "model.cpu()",
+                "model.to('cpu')",
+                "model.device = 'cpu'",
+                "Both A and B"
+            ],
+            "correctAnswer": 3,
+            "explanation": "Both `model.to('cpu')` and `model.cpu()` work."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "What does `nn.DataParallel` do?",
+            "options": [
+                "Trains different models in parallel",
+                "Splits input batch across multiple GPUs, runs the same model on each",
+                "Moves the model to multiple CPUs",
+                "Parallelizes data loading"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It replicates the model on each GPU and divides the batch."
+        },
+        {
+            "id": "q8",
+            "type": "true_false",
+            "question": "A model wrapped with `nn.DataParallel` will have 'module.' prefix in its state_dict keys when saved.",
+            "correctAnswer": true,
+            "explanation": "Yes, DataParallel adds a 'module' wrapper, so parameter names get that prefix."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "How can you load a GPU-trained state_dict on a CPU-only machine?",
+            "options": [
+                "It's impossible",
+                "torch.load('model.pth', map_location='cpu')",
+                "First move the file to CPU using scp",
+                "torch.load('model.pth', device='cpu')"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`map_location='cpu'` remaps all tensors to CPU during load."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "What is the purpose of TorchScript?",
+            "options": [
+                "To train models faster",
+                "To serialize and optimize models for production without Python dependency",
+                "To convert models to NumPy",
+                "To visualize the network"
+            ],
+            "correctAnswer": 1,
+            "explanation": "TorchScript creates a graph representation that can be run in C++."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "Which method records operations by running an example input?",
+            "options": [
+                "torch.jit.script",
+                "torch.jit.trace",
+                "torch.onnx.export",
+                "torch.save"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`trace` executes the model once and records the graph."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "When should you use `torch.jit.script` instead of `torch.jit.trace`?",
+            "options": [
+                "When you need to save space",
+                "When the model contains data‑dependent control flow (if/for)",
+                "Always, it's better",
+                "When exporting to ONNX"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Scripting can handle dynamic Python control flow that tracing cannot."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "What is ONNX?",
+            "options": [
+                "A PyTorch optimizer",
+                "An open format for representing machine learning models",
+                "A dataset",
+                "A training technique"
+            ],
+            "correctAnswer": 1,
+            "explanation": "ONNX (Open Neural Network Exchange) allows models to be shared across frameworks."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "How do you export a PyTorch model to ONNX?",
+            "options": [
+                "torch.onnx.save(model, 'model.onnx')",
+                "torch.onnx.export(model, example_input, 'model.onnx')",
+                "model.to_onnx('model.onnx')",
+                "torch.save(model, 'model.onnx')"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`torch.onnx.export` traces and exports the model to ONNX format."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "Which tool is PyTorch's native serving solution for deploying models as REST APIs?",
+            "options": [
+                "Flask",
+                "TensorFlow Serving",
+                "TorchServe",
+                "Django"
+            ],
+            "correctAnswer": 2,
+            "explanation": "TorchServe is the official serving framework for PyTorch models."
+        },
+        {
+            "id": "q16",
+            "type": "true_false",
+            "question": "Quantization reduces model size and speeds up inference by using lower-precision arithmetic.",
+            "correctAnswer": true,
+            "explanation": "Quantization (e.g., float32 -> int8) reduces memory and compute."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "What is the main advantage of `model.cpu()` over `model.to('cpu')`?",
+            "options": [
+                "It's faster",
+                "It's a no‑op",
+                "There is no advantage; they are equivalent",
+                "It works on any device"
+            ],
+            "correctAnswer": 2,
+            "explanation": "`model.cpu()` is just a convenience wrapper for `model.to('cpu')`."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "If you have 4 GPUs and use `nn.DataParallel(model)`, how many copies of the model exist during forward pass?",
+            "options": [
+                "1",
+                "4",
+                "5",
+                "Depends on batch size"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The model is replicated on each available GPU."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "What is a common use of `torch.jit.save`?",
+            "options": [
+                "Save the model in TorchScript format for production",
+                "Save the optimizer state",
+                "Save the dataset",
+                "Save training logs"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`torch.jit.save` serializes a ScriptModule for deployment."
+        }
+    ]
+}

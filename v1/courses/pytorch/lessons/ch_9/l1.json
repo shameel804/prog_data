@@ -1,0 +1,79 @@
+{
+    "id": "l1",
+    "chapterId": "ch_9",
+    "title": "Why Sequences Need Special Networks 🔁",
+    "description": "Discover why feedforward networks fail on sequential data and how recurrence solves it.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "RNN Fundamentals",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The Limitations of FFNs 🚫",
+            "content": "# Sequential Data is Different\n\nFeedforward networks (CNNs, MLPs) treat inputs as independent vectors. But many data types are **sequences**:\n* **Text**: a sentence is a sequence of words.\n* **Audio**: a waveform evolving over time.\n* **Stock prices**: daily values with dependencies.\n\nOrder matters! A network must remember what it saw earlier to understand now."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What is the main problem when using a standard feedforward network on a sentence?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's too slow",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It loses word order information",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It requires images",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It can't process words",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Feedforward nets treat each word independently and cannot capture the sequence order.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "Recurrence: The Memory Loop 🔁",
+            "content": "## How RNNs Solve It\n\nAn RNN adds a loop that feeds information from one time step to the next. The network's output at time `t` depends on both the current input **and** the previous hidden state.\n\nThis gives the network a form of **memory**.\n\n```\nh_t = activation(W * x_t + U * h_{t-1} + bias)\n```"
+        },
+        {
+            "id": "s_l1_4",
+            "type": "code",
+            "title": "Conceptual RNN Step",
+            "content": "A minimal Python-like loop to illustrate.",
+            "codeSnippet": "# Not real PyTorch, just the idea\nhidden = zeros(1, hidden_size)\nfor timestep in range(seq_len):\n    input_t = input[timestep]\n    hidden = activation( W @ input_t + U @ hidden + bias )",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_5",
+            "type": "text",
+            "title": "Variable-Length Sequences 🧵",
+            "content": "## Handling Different Sizes\n\nUnlike fixed‑size images, sentences vary in length. RNNs naturally handle this: you iterate over tokens until the sequence ends.\n\nPyTorch supports padding and packing to deal with variable lengths efficiently."
+        },
+        {
+            "id": "s_l1_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Start Thinking Temporally\n\nWhenever you see a problem with 'time' or 'order', consider RNNs, LSTMs, or Transformers."
+        }
+    ]
+}

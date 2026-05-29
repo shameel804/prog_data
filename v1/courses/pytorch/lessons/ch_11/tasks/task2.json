@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_11",
+    "title": "Export to TorchScript and Run Inference",
+    "description": "Trace a model and run it through TorchScript, comparing outputs with original.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Write code that:\n1. Creates a simple `nn.Sequential` model: Linear(2,3) -> ReLU -> Linear(3,1).\n2. Traces the model using `torch.jit.trace` with an example input `torch.randn(1, 2)`.\n3. Saves the traced model to 'traced_model.pt' using `torch.jit.save`.\n4. Loads it back with `torch.jit.load`.\n5. Runs both the original and loaded model on the same random input (seed 42) and prints the difference of the outputs summed (absolute difference of all elements) as \"Diff: XXXX\" with 4 decimal places.\n6. The output must be exactly \"Diff: 0.0000\" (since tracing should produce identical results for this simple forward).\n\nThe output must match exactly.",
+    "hints": [
+        "Use `original_model.eval()` before tracing.",
+        "Set seed for reproducibility.",
+        "Compute `(out1 - out2).abs().sum().item()`."
+    ],
+    "expectedOutput": "Diff: 0.0000",
+    "solutionCode": "import torch\nimport torch.nn as nn\n\ntorch.manual_seed(42)\nmodel = nn.Sequential(\n    nn.Linear(2, 3),\n    nn.ReLU(),\n    nn.Linear(3, 1)\n).eval()\n\nexample = torch.randn(1, 2)\ntraced = torch.jit.trace(model, example)\ntorch.jit.save(traced, 'traced_model.pt')\n\nloaded = torch.jit.load('traced_model.pt')\n\ninput_tensor = torch.randn(1, 2)\nout_orig = model(input_tensor)\nout_loaded = loaded(input_tensor)\ndiff = (out_orig - out_loaded).abs().sum().item()\nprint(f\"Diff: {diff:.4f}\")"
+}

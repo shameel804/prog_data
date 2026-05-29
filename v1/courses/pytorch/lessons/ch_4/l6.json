@@ -1,0 +1,123 @@
+{
+    "id": "l6",
+    "chapterId": "ch_4",
+    "title": "Custom Modules & Weight Init 🛠️",
+    "description": "Create your own nn.Module subclasses and control weight initialization.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "Building Networks",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Beyond Sequential: Complex Architectures 🏛️",
+            "content": "# When Sequential Isn't Enough\n\nSequential chains layers one after another. For skip connections, multiple inputs, or branching, you need a custom `forward()`.\n\nInherit from `nn.Module`, define layers in `__init__`, and wire them in `forward` with Python logic (if, loops, etc.)."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Custom Residual Block",
+            "content": "A simple residual block: output = relu(x + linear(x)).",
+            "codeSnippet": "class ResBlock(nn.Module):\n    def __init__(self, dim):\n        super().__init__()\n        self.linear = nn.Linear(dim, dim)\n    \n    def forward(self, x):\n        return F.relu(x + self.linear(x))\n\nblock = ResBlock(64)\nprint(block(torch.randn(2, 64)).shape)",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "Custom Design 🎨",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Why inherit from nn.Module even if using only built‑in layers?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To make the code look cool",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To register parameters and enable GPU movement, saving, etc.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's optional",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only to use Sequential",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "nn.Module provides automatic parameter registration, device management, and serialization.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Weight Initialization 🎲",
+            "content": "## Good Starting Points Matter\n\nProper weight initialization helps training converge faster. PyTorch defaults to Kaiming/He initialization for linear layers, but you can customize:\n\n```python\ndef init_weights(m):\n    if isinstance(m, nn.Linear):\n        nn.init.xavier_uniform_(m.weight)\n        nn.init.zeros_(m.bias)\n\nmodel.apply(init_weights)\n```"
+        },
+        {
+            "id": "s_l6_5",
+            "type": "code",
+            "title": "Custom Initialization",
+            "content": "Apply Xavier initialization to all linear layers.",
+            "codeSnippet": "model = nn.Sequential(nn.Linear(4,10), nn.ReLU(), nn.Linear(10,3))\n\ndef init_weights(m):\n    if isinstance(m, nn.Linear):\n        nn.init.xavier_uniform_(m.weight)\n        nn.init.constant_(m.bias, 0.01)\n\nmodel.apply(init_weights)\nprint(model[0].weight.mean(), model[0].weight.std())",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l6_6",
+            "type": "quiz",
+            "title": "Init Awareness 📌",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "multiple_choice",
+                "question": "How do you apply a function to all sub‑modules in a model?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "model.init_weights()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "model.apply(func)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "model.forward()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "model.init()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`model.apply(fn)` recursively applies `fn` to every sub‑module.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_7",
+            "type": "text",
+            "title": "Common Init Schemes 📚",
+            "content": "## torch.nn.init functions\n\n* `xavier_uniform_`, `xavier_normal_` – good for tanh/sigmoid.\n* `kaiming_uniform_`, `kaiming_normal_` – designed for ReLU.\n* `uniform_`, `normal_` – generic.\n* `constant_`, `zeros_`, `ones_` – for biases.\n\nAlways use **in‑place** versions (with `_`) to modify existing tensors."
+        },
+        {
+            "id": "s_l6_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Lazy Initialization with `nn.LazyLinear`\n\nIf you don't know the input size upfront, use `nn.LazyLinear(out_features)`. It infers `in_features` on the first forward pass."
+        }
+    ]
+}

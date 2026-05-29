@@ -1,0 +1,14 @@
+{
+    "id": "task1",
+    "chapterId": "ch_10",
+    "title": "Load and Modify Pretrained ResNet",
+    "description": "Load a pretrained ResNet18, replace its classifier for 5 classes, and verify architecture.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Write code that:\n1. Loads a pretrained ResNet18 using `models.resnet18(weights=models.ResNet18_Weights.DEFAULT)`.\n2. Replaces the final fully connected layer (`fc`) with a new `nn.Linear` that outputs 5 classes.\n3. Freezes all parameters except those of the new `fc` layer.\n4. Prints the number of trainable parameters (sum of `p.numel()` for parameters with `requires_grad=True`) in the format: \"Trainable parameters: X\".\n\nThe output must match exactly (X being the integer count).",
+    "hints": [
+        "After replacing fc, loop through `model.parameters()` and set `requires_grad=False`. Then set `model.fc.weight.requires_grad = True` and bias similarly, but they are True by default anyway. So just freeze all first, then they become False, then set fc to True.",
+        "Count using `sum(p.numel() for p in model.parameters() if p.requires_grad)`."
+    ],
+    "expectedOutput": "Trainable parameters: 2565 (or 5*512 + 5 = 2565? Actually ResNet18 fc.in_features=512, so 512*5 + 5 = 2565)",
+    "solutionCode": "import torch\nimport torch.nn as nn\nimport torchvision.models as models\n\nmodel = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)\nfor param in model.parameters():\n    param.requires_grad = False\nmodel.fc = nn.Linear(model.fc.in_features, 5)\ntrainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)\nprint(f\"Trainable parameters: {trainable_params}\")"
+}

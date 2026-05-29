@@ -1,0 +1,117 @@
+{
+    "id": "l5",
+    "chapterId": "ch_4",
+    "title": "Sequential & Containers 📦",
+    "description": "Use nn.Sequential to stack layers elegantly and explore other module containers.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Building Networks",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "nn.Sequential: The Conveyor Belt 🏭",
+            "content": "# Streamlining Model Definition\n\n`nn.Sequential` is a container that passes input through each module in order. No need to write an explicit `forward`!\n\n```python\nmodel = nn.Sequential(\n    nn.Linear(4, 10),\n    nn.ReLU(),\n    nn.Linear(10, 3)\n)\n```\nEquivalent to `IrisNet` but simpler."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Sequential in Action",
+            "content": "Build the same Iris classifier with Sequential.",
+            "codeSnippet": "model = nn.Sequential(\n    nn.Linear(4, 10),\n    nn.ReLU(),\n    nn.Linear(10, 10),\n    nn.ReLU(),\n    nn.Linear(10, 3)\n)\nx = torch.randn(5, 4)\nout = model(x)\nprint(out.shape)  # (5, 3)",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Sequential Sense 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What does nn.Sequential automatically handle?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Calling each module in order",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Loss computation",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Weight initialization",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Gradient zeroing",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Sequential passes data through modules in the order they are listed.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Accessing Layers by Name 🔑",
+            "content": "## OrderedDict for Readability\n\nPass an `OrderedDict` to `nn.Sequential` to give each layer a meaningful name:\n\n```python\nfrom collections import OrderedDict\nmodel = nn.Sequential(OrderedDict([\n    ('fc1', nn.Linear(4,10)),\n    ('relu1', nn.ReLU()),\n    ('fc2', nn.Linear(10,3))\n]))\nprint(model.fc1)\n```"
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Named Layers Example",
+            "content": "Create named Sequential and access a specific layer.",
+            "codeSnippet": "from collections import OrderedDict\nmodel = nn.Sequential(OrderedDict([\n    ('input', nn.Linear(4, 10)),\n    ('act', nn.ReLU()),\n    ('output', nn.Linear(10, 3))\n]))\nprint(model.input.weight.shape)  # (10, 4)",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Other Containers 🗂️",
+            "content": "## ModuleList & ModuleDict\n\n* `nn.ModuleList`: list of modules (can be indexed). Useful for variable‑length sub‑networks.\n* `nn.ModuleDict`: dictionary of modules. Useful for named sub‑modules.\n\nBoth register sub‑modules automatically, just like Sequential."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Container Knowledge 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "Which container allows you to access a module by a string key?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "nn.Sequential (with list)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "nn.ModuleDict",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "nn.ModuleList",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "nn.ParameterList",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`nn.ModuleDict` stores modules with string keys, similar to a Python dict.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

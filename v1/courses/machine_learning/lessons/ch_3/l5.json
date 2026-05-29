@@ -1,0 +1,79 @@
+{
+    "id": "l5",
+    "chapterId": "ch_3",
+    "title": "Multiple Linear Regression 🧑‍🤝‍🧑",
+    "description": "Bring more features to the party, understand matrix notation, and interpret coefficients correctly.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Advanced Concepts",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Beyond One Feature 🚪",
+            "content": "# The Real World is Multidimensional\n\nRarely does a single feature explain the target. House prices depend on size, location, age, bedrooms, etc. **Multiple linear regression** extends the simple model to many features:\n\n```\nŷ = w₁x₁ + w₂x₂ + ... + wₚxₚ + b\n```\n\nEach feature xⱼ has its own weight wⱼ. The bias b is still a single scalar.\n\nThink of it as a committee where each feature gets a vote, weighted by importance."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Matrix Representation 🧮",
+            "content": "# Elegant Math with Vectors\n\nWe can write the whole dataset and model compactly:\n\n```\nŷ = X·w + b\n```\n\n- **X** is an n×p matrix (n samples, p features).\n- **w** is a p×1 weight vector.\n- **b** is a scalar (often absorbed by adding a column of 1s to X).\n\nThe cost function (MSE) becomes:\n\n```\nJ(w,b) = (1/n) * (X·w + b − y)ᵀ·(X·w + b − y)\n```\n\nThe optimal weights can be found analytically via the **Normal Equation**:\n```\nw = (Xᵀ X)⁻¹ Xᵀ y\n```\n(Provided Xᵀ X is invertible.)"
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Multiple Regression with Scikit‑Learn 🐍",
+            "content": "Just two lines of code:",
+            "codeSnippet": "from sklearn.linear_model import LinearRegression\nimport pandas as pd\n\n# Assume df has columns: 'area', 'bedrooms', 'age', 'price'\nX = df[['area', 'bedrooms', 'age']]\ny = df['price']\n\nmodel = LinearRegression()\nmodel.fit(X, y)\n\nprint(\"Weights:\", model.coef_)\nprint(\"Bias:\", model.intercept_)",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Coefficient Interpretation 📊",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "If the weight for 'bedrooms' is 25,000 in a house price model, what does that mean?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Every house has exactly 25,000 bedrooms",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Adding one bedroom, holding other features constant, increases predicted price by 25,000",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The house price is 25,000",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Bedrooms are the only important feature",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The coefficient gives the change in predicted value for a one‑unit increase in that feature, assuming all other features stay the same.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Feature Scaling Matters ⚖️",
+            "content": "# Apples and Oranges\n\nWhen features have different scales (e.g., area in sqft vs number of bedrooms), the raw weights don’t directly reflect importance. A feature with larger values might get a smaller coefficient but still contribute heavily.\n\n**Solution**: Standardise features (zero mean, unit variance) before training. Then, the magnitudes of coefficients become more comparable (though still not perfect measures of importance).\n\nAlso, gradient descent converges much faster with scaled features — the cost surface becomes more spherical."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "warning",
+            "title": "Watch Out for Multicollinearity 🚨",
+            "content": "## Correlated Features\n\nIf two features are highly correlated (e.g., 'total_area' and 'living_area'), the model struggles to separate their effects. Coefficients may become unstable or have huge variances.\n\nDetect with Variance Inflation Factor (VIF). Fix by removing one feature or using regularisation (next chapters)."
+        }
+    ]
+}

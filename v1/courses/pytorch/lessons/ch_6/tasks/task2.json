@@ -1,0 +1,16 @@
+{
+    "id": "task2",
+    "chapterId": "ch_6",
+    "title": "Iris Classifier Pipeline",
+    "description": "Build a complete pipeline for Iris classification with logging and test evaluation.",
+    "estimatedMinutes": 20,
+    "problemStatement": "Write code that:\n1. Loads the Iris dataset (using sklearn.datasets.load_iris).\n2. Converts to float tensors (X) and long tensor (y).\n3. Splits: train 70%, val 15%, test 15% (use random_state=42).\n4. Defines a Sequential model: Linear(4,16) -> ReLU -> Linear(16,3).\n5. Uses CrossEntropyLoss, Adam (lr=0.01).\n6. Trains for 300 epochs with early stopping (patience=15) monitoring validation loss. Saves best model as 'best_iris.pt'.\n7. Prints training accuracy and validation accuracy at the epoch where validation loss improved (not every epoch). Instead, after loop, load best model and print its validation accuracy and test accuracy (both formatted to 2 decimal places as percentages, e.g., '97.50%').\n\nThe output must match the expected format.",
+    "hints": [
+        "Use `train_test_split` twice with test_size and random_state.",
+        "Compute accuracy: `(pred.argmax(1) == target).float().mean().item()`.",
+        "Track best_val_loss and best model state.",
+        "After loop, load best model and compute accuracies on val and test."
+    ],
+    "expectedOutput": "Best model validation accuracy: <XX.XX%>\nTest accuracy: <XX.XX%>",
+    "solutionCode": "import torch\nimport torch.nn as nn\nfrom sklearn.datasets import load_iris\nfrom sklearn.model_selection import train_test_split\n\ntorch.manual_seed(42)\niris = load_iris()\nX = torch.tensor(iris.data, dtype=torch.float32)\ny = torch.tensor(iris.target, dtype=torch.long)\n\n# Split\nX_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)\nX_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)\n\nmodel = nn.Sequential(\n    nn.Linear(4, 16),\n    nn.ReLU(),\n    nn.Linear(16, 3)\n)\ncriterion = nn.CrossEntropyLoss()\noptimizer = torch.optim.Adam(model.parameters(), lr=0.01)\n\nbest_val_loss = float('inf')\npatience = 15\ncounter = 0\nbest_state = None\n\nfor epoch in range(300):\n    # Train\n    model.train()\n    optimizer.zero_grad()\n    pred = model(X_train)\n    loss = criterion(pred, y_train)\n    loss.backward()\n    optimizer.step()\n    \n    # Validate\n    model.eval()\n    with torch.no_grad():\n        val_pred = model(X_val)\n        val_loss = criterion(val_pred, y_val).item()\n    \n    if val_loss < best_val_loss:\n        best_val_loss = val_loss\n        best_state = model.state_dict().copy()\n        counter = 0\n    else:\n        counter += 1\n        if counter >= patience:\n            break\n\n# Load best state\nmodel.load_state_dict(best_state)\nmodel.eval()\n\n# Compute accuracies\nwith torch.no_grad():\n    val_pred = model(X_val)\n    val_acc = (val_pred.argmax(1) == y_val).float().mean().item() * 100\n    test_pred = model(X_test)\n    test_acc = (test_pred.argmax(1) == y_test).float().mean().item() * 100\n\nprint(f\"Best model validation accuracy: {val_acc:.2f}%\")\nprint(f\"Test accuracy: {test_acc:.2f}%\")"
+}

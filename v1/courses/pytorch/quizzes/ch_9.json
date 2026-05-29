@@ -1,0 +1,252 @@
+{
+    "id": "quiz_ch_9",
+    "chapterId": "ch_9",
+    "title": "Chapter 9 Quiz",
+    "description": "Test your knowledge of RNNs, LSTMs, and sequential modeling!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the key advantage of RNNs over feedforward networks?",
+            "options": [
+                "They can process fixed‑size inputs",
+                "They have internal memory to process sequences",
+                "They are always faster",
+                "They require no training"
+            ],
+            "correctAnswer": 1,
+            "explanation": "RNNs maintain a hidden state that carries information across time steps."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "In a simple RNN, what is the input to the hidden state update at time t?",
+            "options": [
+                "Only x_t",
+                "x_t and h_{t-1}",
+                "Only h_{t-1}",
+                "All future inputs"
+            ],
+            "correctAnswer": 1,
+            "explanation": "h_t = f(x_t, h_{t-1})."
+        },
+        {
+            "id": "q3",
+            "type": "true_false",
+            "question": "By default, nn.RNN expects input shape (batch, seq_len, input_size).",
+            "correctAnswer": false,
+            "explanation": "Default is (seq_len, batch, input_size) unless batch_first=True."
+        },
+        {
+            "id": "q4",
+            "type": "fill_blank",
+            "question": "The activation function typically used inside a basic RNN cell is `____`.",
+            "options": [
+                "tanh",
+                "relu",
+                "sigmoid",
+                "softmax"
+            ],
+            "correctAnswer": "tanh",
+            "explanation": "Simple RNN uses tanh activation."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "What is the shape of the output from `nn.RNN(10, 20)` given input of shape (5, 2, 10)?",
+            "options": [
+                "(5, 2, 20)",
+                "(2, 5, 20)",
+                "(5, 20)",
+                "(1, 2, 20)"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Output retains (seq, batch, hidden)."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "What does `hn` (the second return of nn.RNN) represent?",
+            "options": [
+                "The hidden states for all time steps",
+                "The final hidden state for each layer",
+                "The input sequence",
+                "The gradient"
+            ],
+            "correctAnswer": 1,
+            "explanation": "hn contains the hidden state at the last time step for each layer."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "Why do simple RNNs suffer from the vanishing gradient problem?",
+            "options": [
+                "Because of ReLU activation",
+                "Because backpropagation through time involves multiplying gradients, which can shrink exponentially",
+                "Because they don't use weights",
+                "Because of the optimizer"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Repeated multiplication of small gradients during BPTT causes them to vanish."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "What is the main innovation of LSTM over vanilla RNN?",
+            "options": [
+                "Using ReLU instead of tanh",
+                "Adding a cell state and gates to control information flow",
+                "Removing the recurrent connection",
+                "Using larger hidden size"
+            ],
+            "correctAnswer": 1,
+            "explanation": "LSTM uses gates to selectively remember or forget, mitigating vanishing gradients."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "Which of the following is NOT a gate in LSTM?",
+            "options": [
+                "Forget gate",
+                "Input gate",
+                "Output gate",
+                "Reset gate"
+            ],
+            "correctAnswer": 3,
+            "explanation": "Reset gate is part of GRU, not LSTM."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "What does the forget gate in LSTM output?",
+            "options": [
+                "A scalar between 0 and 1 for each element of the cell state",
+                "The new cell state",
+                "The hidden state",
+                "The final prediction"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Forget gate outputs values in (0,1) that are multiplied with the previous cell state."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "In `nn.LSTM`, what does the second return argument `(hn, cn)` contain?",
+            "options": [
+                "Both final hidden and final cell state for each layer",
+                "Only the hidden state",
+                "The entire sequence of hidden states",
+                "The gradients"
+            ],
+            "correctAnswer": 0,
+            "explanation": "LSTM returns a tuple of final hidden state and final cell state."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "How does a bidirectional LSTM change the output size?",
+            "options": [
+                "It halves the hidden size",
+                "It doubles the hidden size (concatenation of forward and backward)",
+                "It keeps the same size",
+                "It depends on batch size"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Output feature size becomes hidden_size * 2."
+        },
+        {
+            "id": "q13",
+            "type": "true_false",
+            "question": "Setting `batch_first=True` in nn.LSTM changes input shape to (batch, seq_len, feature).",
+            "correctAnswer": true,
+            "explanation": "Yes, it makes the batch dimension first."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "In a multi‑layer LSTM (num_layers=3), how many hidden state tuples are stored in hn?",
+            "options": [
+                "1",
+                "3",
+                "6",
+                "Depends on sequence length"
+            ],
+            "correctAnswer": 1,
+            "explanation": "hn has shape (num_layers, batch, hidden_size), i.e., one per layer."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "What is the typical way to use the LSTM output for classification?",
+            "options": [
+                "Take the output of all time steps and average them",
+                "Take the last hidden state (or use the final hn) and pass it to a linear layer",
+                "Use the cell state directly",
+                "Sum all outputs"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The last hidden state summarizes the whole sequence; often used for classification."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "What is the effect of `num_layers` > 1 in an RNN or LSTM?",
+            "options": [
+                "It increases the sequence length",
+                "It stacks multiple RNN/LSTM layers where the output of one becomes input to the next",
+                "It changes the batch size",
+                "It adds dropout automatically"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Multi‑layer RNNs process sequences hierarchically."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "Which of these is a variant of RNN that uses fewer gates than LSTM?",
+            "options": [
+                "BiLSTM",
+                "GRU",
+                "Deep RNN",
+                "CNN"
+            ],
+            "correctAnswer": 1,
+            "explanation": "GRU (Gated Recurrent Unit) simplifies the gate structure."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "Why might you use `pack_padded_sequence` with RNNs?",
+            "options": [
+                "To increase speed by ignoring padding tokens in variable‑length sequences",
+                "To convert data to float",
+                "To apply dropout",
+                "To sort sequences"
+            ],
+            "correctAnswer": 0,
+            "explanation": "It packs sequences to skip padding computations."
+        },
+        {
+            "id": "q19",
+            "type": "true_false",
+            "question": "BPTT (Backpropagation Through Time) is the algorithm used to compute gradients in RNNs.",
+            "correctAnswer": true,
+            "explanation": "Yes, BPTT unrolls the RNN and backpropagates through the time steps."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "In PyTorch, how do you get the output of the last time step from an LSTM that returns (output, (hn, cn))?",
+            "options": [
+                "output[-1] (if batch_first=False) or output[:,-1,:] (if batch_first=True)",
+                "hn[-1]",
+                "cn[-1]",
+                "Both A and B give the last hidden state but output[-1] is the hidden state at last time step, which is the same as hn[-1] for single layer"
+            ],
+            "correctAnswer": 3,
+            "explanation": "Both output[-1] and hn[-1] refer to the last time step's hidden state (identical for last layer)."
+        }
+    ]
+}

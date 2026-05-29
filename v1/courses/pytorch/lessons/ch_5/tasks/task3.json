@@ -1,0 +1,14 @@
+{
+    "id": "task3",
+    "chapterId": "ch_5",
+    "title": "Learning Rate Scheduler in Action",
+    "description": "Use StepLR to halve the learning rate every 2 epochs and print the LR at each epoch.",
+    "estimatedMinutes": 12,
+    "problemStatement": "Write code that:\n1. Creates a dummy model `nn.Linear(1,1)` and an SGD optimizer with lr=0.1.\n2. Creates a `StepLR` scheduler with step_size=2 and gamma=0.5.\n3. Loops 6 epochs: inside each epoch, call `scheduler.step()` and print the current learning rate (from `optimizer.param_groups[0]['lr']`) with 4 decimal places.\n\nThe output must be exactly the list of LRs for epochs 1 to 6.",
+    "hints": [
+        "Scheduler steps typically after optimizer step, but here we just observe LR change; call `scheduler.step()` each epoch.",
+        "Print using `f\"Epoch {epoch}: lr={optimizer.param_groups[0]['lr']:.4f}\"`."
+    ],
+    "expectedOutput": "Epoch 1: lr=0.1000\nEpoch 2: lr=0.1000\nEpoch 3: lr=0.0500\nEpoch 4: lr=0.0500\nEpoch 5: lr=0.0250\nEpoch 6: lr=0.0250",
+    "solutionCode": "import torch\nimport torch.nn as nn\nimport torch.optim as optim\n\nmodel = nn.Linear(1, 1)\noptimizer = optim.SGD(model.parameters(), lr=0.1)\nscheduler = optim.lr_scheduler.StepLR(optimizer, step_size=2, gamma=0.5)\n\nfor epoch in range(1, 7):\n    # in real training: optimizer.step() then scheduler.step()\n    scheduler.step()\n    print(f\"Epoch {epoch}: lr={optimizer.param_groups[0]['lr']:.4f}\")"
+}

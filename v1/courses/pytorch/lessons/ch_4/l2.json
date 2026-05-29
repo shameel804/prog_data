@@ -1,0 +1,117 @@
+{
+    "id": "l2",
+    "chapterId": "ch_4",
+    "title": "Linear Layers: The Neuron Block 🧮",
+    "description": "Understand nn.Linear, weights, biases, and how they form the foundation of every network.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Building Networks",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Linear Transformation ⚙️",
+            "content": "# `nn.Linear(in_features, out_features)`\n\nA linear layer computes: **y = xW^T + b**\n* `x`: input of shape `(batch, in_features)`\n* `W`: weight matrix `(out_features, in_features)`\n* `b`: bias vector `(out_features)`\n\nIt's a fully‑connected (dense) layer where every input connects to every output."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Create and Inspect a Linear Layer",
+            "content": "Let's create a linear layer and look at its parameters.",
+            "codeSnippet": "import torch\nimport torch.nn as nn\n\nlinear = nn.Linear(in_features=4, out_features=3)\nprint(\"Weight shape:\", linear.weight.shape)  # (3,4)\nprint(\"Bias shape:\", linear.bias.shape)      # (3,)\nprint(\"Bias:\\n\", linear.bias)",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Shape Insight 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "For `nn.Linear(10, 5)`, what is the shape of the weight matrix?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "(10, 5)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "(5, 10)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "(10,)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "(5,)",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Weight is `(out_features, in_features)`, so (5,10).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Forward Pass Through Linear",
+            "content": "Pass a batch of inputs through the layer.",
+            "codeSnippet": "x = torch.randn(2, 4)   # batch of 2, 4 features\nlinear = nn.Linear(4, 3)\ny = linear(x)\nprint(\"Output shape:\", y.shape)   # (2, 3)",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Why Bias? ⚖️",
+            "content": "## Bias Shifts the Output\n\nThe bias term allows the linear function to shift, even when inputs are zero. Without bias, `x=0` forces `y=0`. Bias gives flexibility.\n\nSet `bias=False` if you want no bias (e.g., before BatchNorm)."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Bias Check 📏",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "If `nn.Linear(3, 2, bias=False)`, what attribute is None?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "weight",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "bias",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "both",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "neither",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "When `bias=False`, the `bias` attribute is None.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "Linear in a Network 🔗",
+            "content": "## Stacking Linear Layers\n\nA neural network is simply a sequence of linear layers separated by non‑linear activations. Without activations, stacking linear layers is still linear.\n\nWe'll add activations next!"
+        }
+    ]
+}

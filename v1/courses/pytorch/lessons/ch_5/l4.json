@@ -1,0 +1,117 @@
+{
+    "id": "l4",
+    "chapterId": "ch_5",
+    "title": "Using torch.optim ⚙️",
+    "description": "Set up SGD and Adam, zero gradients, and step through parameter updates.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Optimizers",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Training Step Loop 🔁",
+            "content": "# Putting It All Together\n\n```python\noptimizer.zero_grad()\npred = model(input)\nloss = criterion(pred, target)\nloss.backward()\noptimizer.step()\n```\n\nThis is the core of every training loop. We'll practice with a tiny dataset."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Full Training Step Example",
+            "content": "Train a linear regression model (1 feature → 1 output) with SGD.",
+            "codeSnippet": "x = torch.tensor([[1.0], [2.0], [3.0]])\ny = torch.tensor([[2.0], [4.0], [6.0]])  # y = 2x\n\nmodel = nn.Linear(1, 1)\noptimizer = torch.optim.SGD(model.parameters(), lr=0.01)\ncriterion = nn.MSELoss()\n\nfor epoch in range(5):\n    optimizer.zero_grad()\n    pred = model(x)\n    loss = criterion(pred, y)\n    loss.backward()\n    optimizer.step()\n    print(f\"Epoch {epoch+1}: loss={loss.item():.4f}\")",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Step Order 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which order is correct for a training iteration?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "zero_grad → backward → step → loss",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "zero_grad → forward → loss → backward → step",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "forward → loss → step → zero_grad",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "step → zero_grad → forward → loss",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Always zero gradients, compute forward & loss, backward, then update.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Adam Optimizer 🧠",
+            "content": "## Adaptive Learning Rates\n\nAdam combines momentum and adaptive per‑parameter learning rates. It's often the default choice:\n\n`optimizer = torch.optim.Adam(model.parameters(), lr=0.001)`\n\nIt typically converges faster and is less sensitive to learning rate choice."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Adam vs SGD Speed",
+            "content": "Compare Adam and SGD on the same linear problem (spoiler: Adam usually converges faster).",
+            "codeSnippet": "# Using Adam\nmodel_adam = nn.Linear(1, 1)\noptimizer_adam = torch.optim.Adam(model_adam.parameters(), lr=0.1)\nfor epoch in range(5):\n    optimizer_adam.zero_grad()\n    loss = criterion(model_adam(x), y)\n    loss.backward()\n    optimizer_adam.step()\n    print(f\"Adam Epoch {epoch+1}: {loss.item():.4f}\")",
+            "codeLanguage": "pytorch",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Optimizer Choice 🤔",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Why might Adam be preferred over vanilla SGD?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It always achieves lower loss",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It adapts learning rates per parameter and often converges faster",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It doesn't require gradients",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It uses no memory",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Adam uses momentum and adaptive rates, making it robust and fast for many tasks.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "warning",
+            "title": "⚠️ Zero Grad Every Iteration",
+            "content": "## Don't Forget zero_grad()!\n\nIf you forget, gradients accumulate from multiple batches, leading to erratic updates. Always call `optimizer.zero_grad()` before `loss.backward()`."
+        }
+    ]
+}

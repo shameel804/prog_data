@@ -1,0 +1,123 @@
+{
+    "id": "l4",
+    "chapterId": "ch_12",
+    "title": "Distributed Data Parallel (DDP) 🌐",
+    "description": "Scale training across multiple GPUs and machines with DistributedDataParallel.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "Scaling",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Beyond DataParallel 🚀",
+            "content": "# Why DistributedDataParallel?\n\n`nn.DataParallel` is single‑process, multi‑thread, and suffers from GIL and unbalanced load. **DistributedDataParallel** (DDP) spawns one process per GPU, each with its own model replica.\n\nDDP uses ring‑allreduce to sync gradients efficiently. It's the standard for training large models."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "DDP Setup Skeleton",
+            "content": "Initialize process group and wrap model.",
+            "codeSnippet": "import torch.distributed as dist\nfrom torch.nn.parallel import DistributedDataParallel as DDP\n\ndef setup(rank, world_size):\n    dist.init_process_group('nccl', rank=rank, world_size=world_size)\n    torch.cuda.set_device(rank)\n\ndef cleanup():\n    dist.destroy_process_group()\n\nmodel = MyModel().to(rank)\nmodel = DDP(model, device_ids=[rank])\n# training loop with DistributedSampler...",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "DDP Concepts 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "How does DDP synchronize gradients?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "By copying all models to a central server",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Via a ring‑allreduce algorithm during the backward pass",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It doesn't synchronize",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Using the CPU only",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "DDP overlaps gradient communication with computation using NCCL's ring‑allreduce.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Distributed Sampler 🧪",
+            "content": "## Ensuring Each GPU Sees Unique Data\n\nUse `DistributedSampler` to partition the dataset:\n\n```python\nsampler = DistributedSampler(dataset, num_replicas=world_size, rank=rank, shuffle=True)\nloader = DataLoader(dataset, batch_size=batch_size, sampler=sampler)\n```\nSet `sampler.set_epoch(epoch)` at each epoch for proper shuffling."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Training Loop with DDP",
+            "content": "Typical DDP training step.",
+            "codeSnippet": "for epoch in range(num_epochs):\n    sampler.set_epoch(epoch)\n    for data, target in loader:\n        data, target = data.to(rank), target.to(rank)\n        optimizer.zero_grad()\n        output = model(data)\n        loss = criterion(output, target)\n        loss.backward()\n        optimizer.step()\n    if rank == 0:\n        print(f'Epoch {epoch} done')",
+            "codeLanguage": "pytorch",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Sampler Check 🎯",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Why call `sampler.set_epoch(epoch)`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To reset the DataLoader",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To ensure different shuffling across epochs in a distributed setting",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To increase batch size",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To log the epoch number",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "DistributedSampler's shuffling depends on the epoch number; set it for correct behavior.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Launching DDP Jobs 🚀",
+            "content": "## `torchrun`\n\nUse `torchrun` (built‑in) to launch multiple processes:\n```\ntorchrun --nproc_per_node=4 train.py\n```\nIt sets environment variables (`LOCAL_RANK`, `WORLD_SIZE`) that your script reads. No need for `mp.spawn`."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Gradient Accumulation with DDP\n\nUse `model.no_sync()` context to skip gradient sync for accumulation steps, only syncing after the last micro‑batch."
+        }
+    ]
+}
