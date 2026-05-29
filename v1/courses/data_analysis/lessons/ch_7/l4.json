@@ -1,0 +1,194 @@
+{
+    "id": "l4",
+    "chapterId": "ch_7",
+    "title": "Advanced Grouping: agg, transform, filter 🧠",
+    "description": "Apply multiple aggregations, custom functions, and filter groups with advanced techniques.",
+    "xpReward": 35,
+    "estimatedMinutes": 9,
+    "section": "Grouping",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The `agg()` Method 🧰",
+            "content": "# Custom Aggregations Per Column\n\nYou can specify different functions for different columns using a dictionary:\n\n```python\nsales.groupby('Region').agg({\n    'Revenue': 'sum',\n    'Units': ['mean', 'max']\n})\n```\n\nOr even pass custom functions (including lambdas):\n```python\ndef range_func(x):\n    return x.max() - x.min()\nsales.groupby('Region').agg({'Revenue': range_func})\n```"
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Dict Agg Example",
+            "content": "Different stats per column:",
+            "codeSnippet": "result = sales.groupby('Region').agg({\n    'Revenue': ['sum', 'mean'],\n    'Units': 'max'\n})\nprint(result)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Agg Dict 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "If you pass a dict to `agg()`, what do the keys represent?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "New column names",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Column names in the DataFrame",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Aggregation function names",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Group names",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Keys are the column names to aggregate.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Custom Functions with `apply()` vs `agg()` 🛠️",
+            "content": "## When You Need Flexibility\n\n- `agg()` applies per column (or dict of functions).\n- `apply()` can operate on the whole sub‑DataFrame of each group, giving more flexibility.\n\n```python\n# Using apply to compute a custom ratio per group\nsales.groupby('Region').apply(lambda x: x['Revenue'].sum() / x['Units'].sum())\n```\n\nBoth can be useful."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "apply() Example",
+            "content": "Compute average revenue per unit by region:",
+            "codeSnippet": "avg_rev_per_unit = sales.groupby('Region').apply(\n    lambda df: df['Revenue'].sum() / df['Units'].sum()\n)\nprint(avg_rev_per_unit)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "The `transform()` Method 🔄",
+            "content": "## Broadcast Group Statistics Back to Original Shape\n\n`transform()` returns a result with the **same shape** as the original DataFrame, aligning by index.\n\n```python\nsales['Region_Avg_Revenue'] = sales.groupby('Region')['Revenue'].transform('mean')\n```\n\nNow each row has the average of its region alongside it. Great for creating derived features or standardizing."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "code",
+            "title": "transform() Demo",
+            "content": "Add mean revenue per region as a new column:",
+            "codeSnippet": "sales['Region_Avg'] = sales.groupby('Region')['Revenue'].transform('mean')\nprint(sales[['Region','Revenue','Region_Avg']])",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_8",
+            "type": "quiz",
+            "title": "transform vs agg 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "How does `transform()` differ from `agg()`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "transform returns a reduced shape, agg returns original shape",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "transform returns original shape, agg returns reduced shape",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They are identical",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "transform only works with sum",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`transform` broadcasts group values back to each row; `agg` returns one row per group.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_9",
+            "type": "text",
+            "title": "Filtering Groups with `filter()` 🗑️",
+            "content": "## Keep or Drop Entire Groups\n\n`filter()` applies a function that returns True/False for each group, then drops groups where False.\n\n```python\n# Keep only regions with total revenue > 300\nsales.groupby('Region').filter(lambda x: x['Revenue'].sum() > 300)\n```"
+        },
+        {
+            "id": "s_l4_10",
+            "type": "code",
+            "title": "filter() Example",
+            "content": "Keep regions where average revenue > 170:",
+            "codeSnippet": "filtered = sales.groupby('Region').filter(lambda g: g['Revenue'].mean() > 170)\nprint(filtered)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_11",
+            "type": "quiz",
+            "title": "filter() Logic 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_3",
+                "type": "multiple_choice",
+                "question": "What does `df.groupby('key').filter(lambda x: len(x) >= 3)` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Keeps groups with at least 3 rows",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Keeps rows where the value is >= 3",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Counts rows in each group",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Drops groups with exactly 3 rows",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`filter` evaluates the function on each sub‑DataFrame; groups where the function returns True are kept.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_12",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Named Aggregations (Pandas 0.25+)\n\n```python\nsales.groupby('Region').agg(\n    total_revenue=('Revenue','sum'),\n    avg_units=('Units','mean')\n)\n```\nClean and readable!"
+        },
+        {
+            "id": "s_l4_13",
+            "type": "exercise",
+            "title": "Advanced GroupBy Challenge 🏋️",
+            "content": "Using `sales`:\n1. Use `agg()` to compute sum and std of Revenue per Region.\n2. With `transform()`, add a column 'Units_vs_region_avg' that shows each row's Units minus the region's average Units.\n3. Use `filter()` to keep only regions with at least 2 transactions.\n4. Use `apply()` to compute the ratio of total Revenue to total Units per Region."
+        },
+        {
+            "id": "s_l4_14",
+            "type": "text",
+            "title": "Grouping Mastery Achieved! 🎉",
+            "content": "You can now slice, dice, and transform groups like a pro. Next, pivot tables for summary views."
+        }
+    ]
+}

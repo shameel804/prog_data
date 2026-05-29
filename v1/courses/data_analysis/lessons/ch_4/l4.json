@@ -1,0 +1,235 @@
+{
+    "id": "l4",
+    "chapterId": "ch_4",
+    "title": "Dictionaries: Key-Value Power 🗝️",
+    "description": "Store and retrieve data with keys – the heart of structured data.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Dictionaries",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Why Dictionaries? 🤔",
+            "content": "# From Lists to Look‑Ups\n\nLists are great for ordered sequences, but what if you need to map a **name to a value**? Like:\n- Name → Age\n- Product → Price\n- City → Population\n\n**Dictionaries** (dicts) are unordered collections of **key‑value pairs**. Keys are unique identifiers, values can be anything.\n\n```python\nperson = {\"name\": \"Alice\", \"age\": 25, \"city\": \"NYC\"}\n```\n\nThink of a dict as a phonebook: name (key) → number (value)."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Dict Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What characters enclose a dictionary literal?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "[]",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "{}",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "<>",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Dictionaries are created with curly braces {}.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Creating Dictionaries 🏗️",
+            "content": "## Multiple Ways\n\n```python\n# Literal\nconfig = {\"host\": \"localhost\", \"port\": 5432}\n\n# Empty dict\nempty = {}\n\n# dict() constructor\npairs = dict(name=\"Bob\", age=30)\n\n# From list of tuples\nitems = dict([(\"x\", 10), (\"y\", 20)])\n```\n\nKeys are usually strings, numbers, or tuples – any **immutable** type."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Dictionary Creation",
+            "content": "Run and inspect types:",
+            "codeSnippet": "player = {'name': 'LeBron', 'points': 27.5, 'active': True}\nprint(player)\nprint(type(player))",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Key Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Which of the following can be a dictionary key?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A list",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A string",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Another dict",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A set",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Keys must be hashable (immutable). Strings are fine, lists are not.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Accessing Values 🔍",
+            "content": "## Bracket Notation and `get()`\n\nRetrieve a value using its key:\n\n```python\nperson = {\"name\": \"Alice\", \"age\": 25}\nprint(person[\"name\"])   # Alice\n\n# If key missing, KeyError!\n# Safer: use get()\nprint(person.get(\"city\", \"Unknown\"))   # Unknown\n```\n\n`get(key, default)` returns `default` if the key doesn’t exist."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "code",
+            "title": "Access Examples",
+            "content": "Try accessing existing and missing keys:",
+            "codeSnippet": "config = {'theme': 'dark', 'notifications': True}\nprint(config['theme'])\n# print(config['language'])  # would raise KeyError\nprint(config.get('language', 'en'))  # safe default",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_8",
+            "type": "quiz",
+            "title": "Get Method 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_3",
+                "type": "multiple_choice",
+                "question": "If `d = {'a':1}`, what does `d.get('b')` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "KeyError",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "None",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "0",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`get()` with one argument returns `None` if the key is missing.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_9",
+            "type": "text",
+            "title": "Modifying Dictionaries ✏️",
+            "content": "## Adding/Updating and Removing\n\n- **Add/Update**: `dict[key] = value` (creates or overwrites)\n- **Remove**: `del dict[key]` or `dict.pop(key)` (returns value)\n\n```python\nuser = {\"id\": 1, \"name\": \"John\"}\nuser[\"email\"] = \"john@example.com\"   # add\nuser[\"name\"] = \"Johnny\"              # update\ndel user[\"id\"]                        # remove\n```"
+        },
+        {
+            "id": "s_l4_10",
+            "type": "code",
+            "title": "Modifying a Dict",
+            "content": "Watch the dictionary change:",
+            "codeSnippet": "stock = {'AAPL': 150, 'GOOG': 2800}\nstock['MSFT'] = 300   # add\nstock['AAPL'] = 155   # update\nprint(stock)\nprint(stock.pop('GOOG'))  # returns 2800\nprint(stock)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_11",
+            "type": "text",
+            "title": "Dictionary Methods 🧰",
+            "content": "## Useful Operations\n\n- `keys()` – returns a view of all keys\n- `values()` – returns a view of all values\n- `items()` – returns key‑value pairs as tuples\n- `update(other_dict)` – merges another dict\n- `clear()` – empties the dictionary\n\n```python\nd = {'a':1, 'b':2}\nprint(d.keys())   # dict_keys(['a','b'])\nprint(list(d.items()))  # [('a',1),('b',2)]\n```"
+        },
+        {
+            "id": "s_l4_12",
+            "type": "code",
+            "title": "Iterating Over a Dict",
+            "content": "Loop through keys, values, or both:",
+            "codeSnippet": "scores = {'Alice': 85, 'Bob': 92, 'Charlie': 78}\nfor name in scores:\n    print(name)           # prints keys\nfor score in scores.values():\n    print(score)          # prints values\nfor name, score in scores.items():\n    print(f'{name}: {score}')",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_13",
+            "type": "quiz",
+            "title": "Items Loop 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_4",
+                "type": "multiple_choice",
+                "question": "What does `for k, v in d.items():` iterate over?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Only keys",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Key‑value pairs simultaneously",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only values",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Indices",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`.items()` yields (key, value) tuples, which you can unpack in the loop.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_14",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Dict Comprehensions\n\nJust like lists, you can create dicts with a comprehension:\n```python\nsquares = {x: x**2 for x in range(5)}\n# {0:0, 1:1, 2:4, 3:9, 4:16}\n```\nVery handy for building lookup tables."
+        },
+        {
+            "id": "s_l4_15",
+            "type": "exercise",
+            "title": "Dictionary Practice 🏋️",
+            "content": "1. Create a dictionary `book` with keys: 'title', 'author', 'year'.\n2. Print the author using both bracket notation and `.get()`.\n3. Add a new key 'rating' with a value.\n4. Loop over all items and print them in the format \"key -> value\".\n5. Use a dict comprehension to create a dictionary mapping numbers 1‑5 to their cubes."
+        },
+        {
+            "id": "s_l4_16",
+            "type": "text",
+            "title": "Dictionaries Mastered 🎉",
+            "content": "Now you can store and retrieve data by key. Next, we combine lists and dictionaries for real‑world data structures."
+        }
+    ]
+}

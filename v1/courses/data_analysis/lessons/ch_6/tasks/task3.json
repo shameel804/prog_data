@@ -1,0 +1,16 @@
+{
+    "id": "task3",
+    "chapterId": "ch_6",
+    "title": "Text Cleaning & Outlier Handling 📧",
+    "description": "Clean messy email addresses and cap outlier transaction amounts.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Task: Transaction Record Sanitization\n\nYou are given a transaction log:\n\n```python\ntransactions = pd.DataFrame({\n    'Email': [' ALICE@EXAMPLE.COM ', 'Bob@test.net ', None, 'cHARLIE@DOMAIN.ORG', 'dave@test.net'],\n    'Amount': [150, 200, 300, 99999, 250]\n})\n```\n\n1. Clean the `Email` column:\n   - Strip whitespace\n   - Convert to lowercase\n   - Fill missing values with `'unknown@unknown.com'`\n2. Detect outliers in `Amount` using the IQR method (1.5×IQR).\n3. Instead of removing outliers, **clip** the amounts so that they fall within the lower and upper fences.\n4. Print the final DataFrame.\n\n**Expected output (approx):**\n```\n                Email  Amount\n0  alice@example.com     150\n1       bob@test.net     200\n2  unknown@unknown.com     300\n3  charlie@domain.org     975\n4       dave@test.net     250\n```\n\nExplanation: The outlier 99999 is clipped to the upper fence (which is around 975). Lower fence is negative, but amounts are already positive so no clipping on the low side.",
+    "hints": [
+        "Email cleaning chain: `str.strip().str.lower()`.",
+        "Fill missing: `.fillna('unknown@unknown.com')`.",
+        "IQR: Q1, Q3 = `quantile(0.25)`, `quantile(0.75)`; IQR = Q3 - Q1; lower = Q1 - 1.5*IQR; upper = Q3 + 1.5*IQR.",
+        "Clip: `transactions['Amount'].clip(lower, upper)`."
+    ],
+    "expectedOutput": "                Email  Amount\n0  alice@example.com     150\n1       bob@test.net     200\n2  unknown@unknown.com     300\n3  charlie@domain.org     975\n4       dave@test.net     250",
+    "solutionCode": "import pandas as pd\ntransactions = pd.DataFrame({\n    'Email': [' ALICE@EXAMPLE.COM ', 'Bob@test.net ', None, 'cHARLIE@DOMAIN.ORG', 'dave@test.net'],\n    'Amount': [150, 200, 300, 99999, 250]\n})\n\n# Clean Email\ntransactions['Email'] = transactions['Email'].str.strip().str.lower()\ntransactions['Email'] = transactions['Email'].fillna('unknown@unknown.com')\n\n# Outlier detection and clipping\nQ1 = transactions['Amount'].quantile(0.25)\nQ3 = transactions['Amount'].quantile(0.75)\nIQR = Q3 - Q1\nlower = Q1 - 1.5 * IQR\nupper = Q3 + 1.5 * IQR\ntransactions['Amount'] = transactions['Amount'].clip(lower, upper)\n\nprint(transactions)"
+}

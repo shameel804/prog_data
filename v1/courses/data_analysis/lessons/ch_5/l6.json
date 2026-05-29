@@ -1,0 +1,250 @@
+{
+    "id": "l6",
+    "chapterId": "ch_5",
+    "title": "Selecting & Slicing Data ✂️",
+    "description": "Pick columns, rows, and subsets using brackets, loc, iloc, and Boolean masks.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "DataFrames",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Why Selection Matters 🎯",
+            "content": "# Getting Exactly What You Need\n\nIn data analysis, you rarely need the entire DataFrame. You’ll frequently:\n- Extract a single column\n- Select a subset of rows\n- Combine both\n\nPandas offers multiple ways; we’ll focus on the most explicit and safe methods: **bracket notation**, `.loc`, and `.iloc`."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "Selecting Columns 📛",
+            "content": "## Single Column as a Series\n\n```python\ndf['column_name']   # returns a Series\n```\n\nFor multiple columns, use a list:\n```python\ndf[['col1', 'col2']]   # returns a DataFrame\n```\n\nExample:\n```python\ntotal_bill = tips['total_bill']\ntip_and_day = tips[['tip', 'day']]\n```"
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Column Selection",
+            "content": "Extract columns from tips:",
+            "codeSnippet": "import pandas as pd\n# using tips from previous lesson\nprint('Total bill column:')\nprint(tips['total_bill'].head())\nprint('\\nTip and day:')\nprint(tips[['tip', 'day']].head())",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l6_4",
+            "type": "quiz",
+            "title": "Column Selection Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What type is returned by `df[['A', 'B']]`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Series",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "DataFrame",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "List",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "NumPy array",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A list of columns returns a DataFrame (even if only one column in the list).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_5",
+            "type": "text",
+            "title": "Selecting Rows by Position with `iloc` 🔢",
+            "content": "## Integer‑Location Based\n\n`df.iloc[row_index, column_index]` selects by integer position (0‑based).\n\n```python\n# Single row\ntips.iloc[0]         # first row as Series\n\n# Multiple rows\ntips.iloc[0:3]       # rows 0,1,2\n\n# Row and column\ntips.iloc[0, 1]      # single value (row 0, column 1)\n\n# Slicing both\ntips.iloc[0:2, 0:2]  # first 2 rows, first 2 columns\n```\n\nThink of it like Python list slicing."
+        },
+        {
+            "id": "s_l6_6",
+            "type": "code",
+            "title": "iloc Examples",
+            "content": "Try integer‑based slicing:",
+            "codeSnippet": "print('First row:')\nprint(tips.iloc[0])\nprint('\\nFirst 2 rows, first 3 columns:')\nprint(tips.iloc[0:2, 0:3])",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l6_7",
+            "type": "quiz",
+            "title": "iloc Quiz 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "multiple_choice",
+                "question": "What does `df.iloc[1, 2]` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A Series",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A single value",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A DataFrame",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A list",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "When both row and column are single integers, a scalar value is returned.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_8",
+            "type": "text",
+            "title": "Selecting Rows by Label with `loc` 🏷️",
+            "content": "## Label‑Based Access\n\n`df.loc[row_label, column_label]` uses the actual index labels.\n\n```python\n# If index is default integer, loc works like iloc for rows\ntips.loc[0]          # first row\n\n# But when you have custom labels, it shines:\ndf = pd.DataFrame({'val':[10,20]}, index=['a','b'])\ndf.loc['a']          # row with label 'a'\n\n# You can also slice with labels (inclusive!)\ntips.loc[0:2]        # rows 0,1,2 (inclusive stop unlike iloc!)\n```\n\n`loc` is inclusive on the stop index for slicing, which is different from `iloc`."
+        },
+        {
+            "id": "s_l6_9",
+            "type": "code",
+            "title": "loc Examples",
+            "content": "Label‑based access on our tips DataFrame (default integer index):",
+            "codeSnippet": "print('Row 0 via loc:')\nprint(tips.loc[0])\nprint('\\nRows 0 to 2 inclusive:')\nprint(tips.loc[0:2])   # includes row 2!",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l6_10",
+            "type": "text",
+            "title": "Combining Row & Column Selection 🎛️",
+            "content": "## `loc` and `iloc` with Both Dimensions\n\n```python\n# loc: rows by label, columns by label\nsubset = tips.loc[0:2, ['total_bill', 'tip']]\n\n# iloc: rows by position, columns by position\nsubset2 = tips.iloc[0:2, 0:2]\n```\n\nYou can also use a colon `:` to select all rows or all columns:\n```python\ntips.loc[:, 'total_bill']   # all rows, one column -> Series\n```"
+        },
+        {
+            "id": "s_l6_11",
+            "type": "code",
+            "title": "Select with loc & iloc",
+            "content": "Mix rows and columns:",
+            "codeSnippet": "# All rows, column 'tip'\nprint('Tip column:')\nprint(tips.loc[:, 'tip'])\n\n# First 3 rows, columns 'total_bill' and 'day'\nprint('\\nSubset with loc:')\nprint(tips.loc[:2, ['total_bill', 'day']])",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l6_12",
+            "type": "quiz",
+            "title": "loc vs iloc Slice 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_3",
+                "type": "multiple_choice",
+                "question": "Which statement is TRUE about slicing?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "`iloc` slice stop is inclusive",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "`loc` slice stop is inclusive",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Both are inclusive",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Both are exclusive",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`loc` includes the stop label when slicing; `iloc` does not (like Python lists).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_13",
+            "type": "text",
+            "title": "Boolean Indexing (Filtering Rows) 🎭",
+            "content": "## Select Based on Condition\n\nYou can filter rows by a condition on a column:\n\n```python\nmask = tips['tip'] > 3\nhigh_tips = tips[mask]   # returns only rows where mask True\n```\n\nOr in one line:\n```python\nhigh_tips = tips[tips['tip'] > 3]\n```\n\nMultiple conditions:\n```python\nweekend_dinner = tips[(tips['day'].isin(['Sat','Sun'])) & (tips['time'] == 'Dinner')]\n```"
+        },
+        {
+            "id": "s_l6_14",
+            "type": "code",
+            "title": "Boolean Filtering",
+            "content": "Filter tips dataset:",
+            "codeSnippet": "# High tips (>3) on weekends\nweekend = tips['day'].isin(['Sat', 'Sun'])\nhigh_tip = tips['tip'] > 3\nresult = tips[weekend & high_tip]\nprint(result)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l6_15",
+            "type": "quiz",
+            "title": "Boolean Filter 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_4",
+                "type": "multiple_choice",
+                "question": "Which operator is used for OR in pandas boolean filtering?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "|",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "or",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "||",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "&",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Use `|` for element‑wise OR. Must wrap each condition in parentheses.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_16",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Query Method for Readable Filters\n\n`df.query('tip > 3 and day == \"Sun\"')` is an alternative that uses Python‑like expressions. Try it out!"
+        },
+        {
+            "id": "s_l6_17",
+            "type": "exercise",
+            "title": "Selection Challenge 🏋️",
+            "content": "Using the `tips` DataFrame:\n1. Select only the columns `total_bill` and `tip`.\n2. Select rows where `size` is greater than 2.\n3. Select the first 4 rows (by position) of the `day` column.\n4. Use `loc` to get rows 1 to 2 inclusive, with columns `sex` and `smoker`.\n5. Filter for dinners on Sunday with bill > 20."
+        },
+        {
+            "id": "s_l6_18",
+            "type": "text",
+            "title": "Selection Mastery Achieved 🎉",
+            "content": "You now have full control over slicing and dicing DataFrames. In the next chapter, we’ll clean messy data with pandas!"
+        }
+    ]
+}

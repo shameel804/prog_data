@@ -1,0 +1,19 @@
+{
+    "id": "task3",
+    "chapterId": "ch_8",
+    "title": "Custom Dashboard Report 🗂️",
+    "description": "Build a multi‑panel figure with customized plots showing different aspects of a dataset.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Task: Dashboard Layout\n\nYou are given a DataFrame `stock` with daily prices for two symbols over 30 days:\n\n```python\nimport pandas as pd\nimport numpy as np\nnp.random.seed(1)\ndates = pd.date_range('2024-06-01', periods=30, freq='B')\nstock = pd.DataFrame({\n    'AAPL': np.cumsum(np.random.randn(30)) + 150,\n    'MSFT': np.cumsum(np.random.randn(30)) + 300\n}, index=dates)\n```\n\nCreate a 2x2 grid of subplots (using `plt.subplots` or pandas `subplots=True` with `layout`) showing:\n\n1. **Line chart** (top left): Both stocks over time, with title 'Price Trends', grid on, figsize (12,8).\n2. **Bar chart** (top right): Total trading volume per day (simulate as random integers between 1000 and 5000) – for simplicity, we'll create a separate DataFrame with `stock['Volume'] = np.random.randint(1000,5000,30)` and plot a bar of Volume.\n3. **Histogram** (bottom left): Distribution of AAPL prices, bins=15, color 'green', alpha 0.7.\n4. **Scatter plot** (bottom right): AAPL vs MSFT prices, with title 'Correlation'.\n\nCombine these into a single figure using `plt.subplots(2,2)` and assign each pandas plot to the appropriate axes using the `ax` parameter.\n\n**Expected output:** A single figure with four nicely labeled subplots.",
+    "hints": [
+        "Import matplotlib.pyplot as plt.",
+        "Create figure and axes: `fig, axes = plt.subplots(2,2,figsize=(12,8))`.",
+        "Line plot: `stock.plot(ax=axes[0,0], title='Price Trends', grid=True)`.",
+        "Bar chart: `stock['Volume'].plot(kind='bar', ax=axes[0,1], title='Volume')` but Volume needs to be added to stock first.",
+        "Histogram: `stock['AAPL'].plot(kind='hist', bins=15, ax=axes[1,0], color='green', alpha=0.7)`.",
+        "Scatter: `stock.plot(kind='scatter', x='AAPL', y='MSFT', ax=axes[1,1], title='Correlation')`.",
+        "Call `plt.tight_layout()` before showing."
+    ],
+    "expectedOutput": "A 2x2 subplot figure.",
+    "solutionCode": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\nnp.random.seed(1)\ndates = pd.date_range('2024-06-01', periods=30, freq='B')\nstock = pd.DataFrame({\n    'AAPL': np.cumsum(np.random.randn(30)) + 150,\n    'MSFT': np.cumsum(np.random.randn(30)) + 300\n}, index=dates)\nstock['Volume'] = np.random.randint(1000, 5000, 30)\n\nfig, axes = plt.subplots(2, 2, figsize=(12,8))\n\n# Line chart\nstock[['AAPL','MSFT']].plot(ax=axes[0,0], title='Price Trends', grid=True)\n# Bar chart\nstock['Volume'].plot(kind='bar', ax=axes[0,1], title='Daily Volume', color='orange')\n# Histogram\nstock['AAPL'].plot(kind='hist', bins=15, ax=axes[1,0], color='green', alpha=0.7, title='AAPL Distribution')\n# Scatter\nstock.plot(kind='scatter', x='AAPL', y='MSFT', ax=axes[1,1], title='AAPL vs MSFT')\n\nplt.tight_layout()\nplt.show()\nprint('Dashboard created.')"
+}

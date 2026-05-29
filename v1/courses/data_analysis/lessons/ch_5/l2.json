@@ -1,0 +1,185 @@
+{
+    "id": "l2",
+    "chapterId": "ch_5",
+    "title": "Your First Pandas Series 📏",
+    "description": "Create, index, and explore one‑dimensional labeled data with Series.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Series",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "What is a Series? 📊",
+            "content": "# Series: A Labeled Array\n\nA **Series** is a one‑dimensional array of data with an associated index (labels).\n\n```python\nimport pandas as pd\ns = pd.Series([10, 20, 30, 40])\nprint(s)\n```\n\nOutput:\n```\n0    10\n1    20\n2    30\n3    40\ndtype: int64\n```\n\nLeft column: **index** (labels). Right column: **values**. Default index is 0,1,2,…"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Series Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "How many dimensions does a Series have?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "0",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "1",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "2",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "3",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A Series is one‑dimensional.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Creating a Series 🛠️",
+            "content": "## From a List\n\n```python\n# Without custom index\ntemps = pd.Series([22.5, 23.0, 21.8])\n\n# With custom index\ncities = pd.Series([22.5, 23.0, 21.8], index=['NYC', 'LA', 'Chicago'])\n```\n\nYou can also create a Series from a **dictionary** – keys become the index:"
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Series from Dict",
+            "content": "Keys are automatically used as index labels:",
+            "codeSnippet": "import pandas as pd\npop = pd.Series({'NYC': 8.4, 'LA': 3.9, 'Chicago': 2.7})\nprint(pop)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_5",
+            "type": "quiz",
+            "title": "Index Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "If you create a Series from a list without an index, what will the index be?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "None",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "0, 1, 2, ... (integers)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The list values",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Empty strings",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The default index is a range of integers starting from 0.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Accessing Values 🔍",
+            "content": "## Using Index Labels\n\n```python\ns = pd.Series([10, 20, 30], index=['a', 'b', 'c'])\nprint(s['b'])        # 20\nprint(s[0])          # 10 (positional access)\n```\n\nYou can use both label‑based (`s['b']`) and integer‑position‑based (`s[0]`) indexing. However, for clarity pandas recommends `.loc` for labels and `.iloc` for positions (we’ll cover those later)."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "code",
+            "title": "Indexing Demo",
+            "content": "Run and see both access methods:",
+            "codeSnippet": "import pandas as pd\ns = pd.Series([100, 200, 300], index=['x', 'y', 'z'])\nprint('Label y:', s['y'])\nprint('Position 1:', s[1])",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_8",
+            "type": "quiz",
+            "title": "Access Quiz 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_3",
+                "type": "multiple_choice",
+                "question": "What will `s['c']` return if `s` has index `['a','b','d']`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "KeyError",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "None",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The value at position 2",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "0",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The label 'c' does not exist, so a KeyError is raised.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_9",
+            "type": "text",
+            "title": "Important Attributes 📋",
+            "content": "## `.values`, `.index`, `.dtype`\n\n```python\ns = pd.Series([10, 20, 30], index=['a','b','c'])\nprint(s.values)   # [10 20 30]   (NumPy array)\nprint(s.index)    # Index(['a','b','c'])\nprint(s.dtype)    # int64\n```\n\n- `values` returns the underlying data as a NumPy array.\n- `index` returns the labels.\n- `dtype` shows the common data type of the values."
+        },
+        {
+            "id": "s_l2_10",
+            "type": "code",
+            "title": "Exploring Attributes",
+            "content": "Peek inside a Series:",
+            "codeSnippet": "import pandas as pd\ngrades = pd.Series([85, 92, 78], index=['Alice','Bob','Charlie'])\nprint('Values:', grades.values)\nprint('Index:', grades.index)\nprint('Dtype:', grades.dtype)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_11",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Series Can Hold Any Type\n\nSeries can contain strings, mixed types (if you set `dtype=object`), or even Python objects. But for numeric operations, keep homogeneous types."
+        },
+        {
+            "id": "s_l2_12",
+            "type": "exercise",
+            "title": "Try It: Temperature Series 🌡️",
+            "content": "1. Create a Series with temperatures for 5 days: Monday to Friday.\n2. Use a list of values and a custom index (day names).\n3. Print the temperature on Wednesday.\n4. Print the whole index.\n5. Print the data type."
+        },
+        {
+            "id": "s_l2_13",
+            "type": "text",
+            "title": "Series Created! 🎉",
+            "content": "You’ve got the basics. Next, we’ll perform operations on Series – like vectorised math."
+        }
+    ]
+}

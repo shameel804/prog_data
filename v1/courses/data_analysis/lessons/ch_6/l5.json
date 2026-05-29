@@ -1,0 +1,159 @@
+{
+    "id": "l5",
+    "chapterId": "ch_6",
+    "title": "Renaming Columns & Indexes 🏷️",
+    "description": "Give your columns meaningful names and manage row labels with ease.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Metadata",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Why Names Matter 🏷️",
+            "content": "# Clear Metadata = Understandable Data\n\nColumns with spaces, special characters, or cryptic abbreviations make analysis painful. Renaming and setting a proper index improve readability and efficiency."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Example DataFrame",
+            "content": "We'll work with:",
+            "codeSnippet": "import pandas as pd\ndf = pd.DataFrame({\n    'First Name': ['Alice', 'Bob', 'Charlie'],\n    'Last Name': ['Smith', 'Jones', 'Brown'],\n    'Age (Years)': [25, 30, 35]\n})\nprint(df)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Renaming Columns ✏️",
+            "content": "## `rename()`\n\nUse `rename()` with a dictionary mapping old names to new ones:\n\n```python\ndf.rename(columns={'First Name': 'first_name', 'Last Name': 'last_name'})\n```\n\n- `inplace=True` modifies the DataFrame directly.\n- You can also rename indexes with `rename(index={'old':'new'})`.\n\nTo rename all columns at once, assign a list to `df.columns`:\n```python\ndf.columns = ['first_name', 'last_name', 'age']\n```"
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Rename Columns",
+            "content": "Clean those column names:",
+            "codeSnippet": "df = df.rename(columns={\n    'First Name': 'first_name',\n    'Last Name': 'last_name',\n    'Age (Years)': 'age'\n})\nprint(df.columns.tolist())\nprint(df.head())",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Rename Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What does `df.rename(columns={'A':'B'}, inplace=True)` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Returns a new DataFrame with column 'A' renamed to 'B'",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Modifies the original DataFrame in place",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Renames index 'A' to 'B'",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Does nothing",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "With `inplace=True`, the operation is performed on the same DataFrame.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Setting a Column as Index 🎯",
+            "content": "## `set_index()`\n\nMoves a column to become the row index:\n\n```python\ndf.set_index('first_name', inplace=True)\n```\n\n- The old index is discarded.\n- To keep the column as well, use `drop=False`.\n\nThis is common for ID columns or unique identifiers."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "code",
+            "title": "Set Index",
+            "content": "Make 'first_name' the row labels:",
+            "codeSnippet": "df.set_index('first_name', inplace=True)\nprint(df)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_8",
+            "type": "quiz",
+            "title": "Index Quiz 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "After `df.set_index('col')`, what happens to the previous index?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It becomes a regular column",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It is dropped",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It merges with the new index",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It stays as the index alongside",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "By default, `set_index()` replaces the index entirely.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_9",
+            "type": "text",
+            "title": "Resetting the Index ↩️",
+            "content": "## `reset_index()`\n\nMoves the current index back to a column and creates a default integer index:\n\n```python\ndf.reset_index(inplace=True)\n```\n\n- `drop=True` avoids keeping the old index as a column.\n- Useful after filtering/dropping rows to clean up indices."
+        },
+        {
+            "id": "s_l5_10",
+            "type": "code",
+            "title": "Reset Index",
+            "content": "Return to integer index:",
+            "codeSnippet": "df.reset_index(inplace=True)\nprint(df)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_11",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Rename with a Function\n\nYou can use a function to transform all column names: `df.rename(columns=str.lower, inplace=True)` makes everything lowercase."
+        },
+        {
+            "id": "s_l5_12",
+            "type": "exercise",
+            "title": "Index & Rename Practice 🏋️",
+            "content": "1. Create a DataFrame with columns: 'Product ID', 'Product Name', 'Price ($)'.\n2. Rename columns to lower_snake_case (e.g., 'product_id', 'product_name', 'price').\n3. Set 'product_id' as the index.\n4. Reset the index but keep the old index as a column.\n5. Print the final DataFrame."
+        },
+        {
+            "id": "s_l5_13",
+            "type": "text",
+            "title": "Metadata Polished 🎉",
+            "content": "Column names and indexes are now tidy. Finally, we’ll handle extreme values."
+        }
+    ]
+}

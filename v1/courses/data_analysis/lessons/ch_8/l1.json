@@ -1,0 +1,174 @@
+{
+    "id": "l1",
+    "chapterId": "ch_8",
+    "title": "Introduction to Plotting with Pandas 📊",
+    "description": "Learn to use the plot() method, create line and bar plots, and understand the basics of pandas visualization.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Basics",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Why Visualize Data? 👀",
+            "content": "# A Picture is Worth a Thousand Rows\n\nVisualizations reveal patterns, outliers, and trends that are hidden in raw numbers. Pandas integrates **Matplotlib** to let you create plots directly from DataFrames and Series with a simple `.plot()` method.\n\nWe'll cover:\n- Line plots\n- Bar charts\n- Scatter plots\n- Histograms\n- Box plots\n- Customization and saving"
+        },
+        {
+            "id": "s_l1_2",
+            "type": "code",
+            "title": "Sample Data",
+            "content": "We'll use a small time series dataset:",
+            "codeSnippet": "import pandas as pd\nimport numpy as np\n\n# Monthly sales data for two products\ndf = pd.DataFrame({\n    'Month': pd.date_range('2024-01', periods=6, freq='ME'),\n    'Product_A': [100, 150, 130, 170, 160, 190],\n    'Product_B': [90, 120, 110, 140, 150, 180]\n})\ndf.set_index('Month', inplace=True)\nprint(df)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "Your First Plot: `plot()` 🎨",
+            "content": "## Calling `.plot()` on a DataFrame\n\nBy default, `plot()` creates a line chart for each numeric column. The index is used as the x‑axis.\n\n```python\ndf.plot()\n```\n\nBehind the scenes, pandas uses **matplotlib.pyplot**. To display the plot in a Jupyter environment, you often need `plt.show()`, but in our playground it will appear automatically."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "code",
+            "title": "Simple Line Plot",
+            "content": "Run this to see a line chart:",
+            "codeSnippet": "df.plot()\n# The plot will be shown in the output area",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "By default, what kind of plot does `df.plot()` produce?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Bar chart",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Line chart",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Scatter plot",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Pie chart",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The default kind is 'line'.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_6",
+            "type": "text",
+            "title": "Plotting a Single Series 📈",
+            "content": "## From a Series Object\n\nYou can plot a single column directly:\n\n```python\ndf['Product_A'].plot()\n```\n\nThis also defaults to a line plot."
+        },
+        {
+            "id": "s_l1_7",
+            "type": "code",
+            "title": "Single Series Plot",
+            "content": "Plot just Product_A:",
+            "codeSnippet": "df['Product_A'].plot(title='Product A Sales')",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_8",
+            "type": "text",
+            "title": "Changing the Plot Kind 🔀",
+            "content": "## The `kind` Parameter\n\nUse the `kind` argument to switch chart types:\n\n- `'line'` (default)\n- `'bar'` – vertical bar chart\n- `'barh'` – horizontal bar chart\n- `'hist'` – histogram\n- `'box'` – box plot\n- `'scatter'` – scatter plot (requires x and y)\n- `'pie'` – pie chart\n\nExample:\n```python\ndf.plot(kind='bar')\n```"
+        },
+        {
+            "id": "s_l1_9",
+            "type": "code",
+            "title": "Bar Chart Example",
+            "content": "Create a simple bar chart:",
+            "codeSnippet": "df.plot(kind='bar', title='Monthly Sales by Product')",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_10",
+            "type": "quiz",
+            "title": "Kind Quiz 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "How do you create a horizontal bar chart?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "kind='bar'",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "kind='barh'",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "kind='hbar'",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "kind='hist'",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`kind='barh'` produces a horizontal bar chart.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_11",
+            "type": "text",
+            "title": "The `pyplot` Backend 🔧",
+            "content": "## Low‑level Control\n\nPandas plotting is built on `matplotlib.pyplot`. To fine‑tune, you can import and use `plt`:\n\n```python\nimport matplotlib.pyplot as plt\ndf.plot()\nplt.title('My Chart')\nplt.xlabel('Month')\nplt.ylabel('Sales')\nplt.show()   # often needed to display the plot\n```\n\nIn our interactive environment, plots appear automatically, but it's good to know for scripts."
+        },
+        {
+            "id": "s_l1_12",
+            "type": "code",
+            "title": "Adding Labels (if needed)",
+            "content": "We'll learn more in the customization lesson. For now, we'll use the `title` parameter inside `plot()`.",
+            "codeSnippet": "df.plot(title='Sales', xlabel='Month', ylabel='Units')",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_13",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Pandas vs Matplotlib\n\nFor quick exploration, pandas plotting is fantastic. For publication‑ready graphics, you may want to use Matplotlib or Seaborn directly."
+        },
+        {
+            "id": "s_l1_14",
+            "type": "exercise",
+            "title": "Try It: Plot Your Data 🏋️",
+            "content": "1. Using the `df` DataFrame (or create your own with 3 months of two products), make a line plot.\n2. Make a bar plot with the same data.\n3. Plot only `Product_B` as a line chart.\n4. Experiment with adding a title inside the `.plot()` call."
+        },
+        {
+            "id": "s_l1_15",
+            "type": "text",
+            "title": "Plotting Basics Done! 🎉",
+            "content": "Now you can create quick charts. Next, we dive into line and area plots."
+        }
+    ]
+}

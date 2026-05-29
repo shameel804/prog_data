@@ -1,0 +1,16 @@
+{
+    "id": "task2",
+    "chapterId": "ch_8",
+    "title": "Distribution & Relationship Plots 📊",
+    "description": "Plot histograms, scatter plots, and box plots on a dataset of student scores.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Task: Student Scores Analysis\n\nCreate a DataFrame with 100 students:\n\n```python\nimport pandas as pd\nimport numpy as np\nnp.random.seed(42)\ndf = pd.DataFrame({\n    'math_score': np.random.normal(70, 10, 100),\n    'reading_score': np.random.normal(65, 15, 100),\n    'gender': np.random.choice(['Male','Female'], 100)\n})\n# Ensure scores are integers\ndf['math_score'] = df['math_score'].astype(int)\ndf['reading_score'] = df['reading_score'].astype(int)\n```\n\n1. Plot a histogram of `math_score` with 20 bins, color `'skyblue'`, title 'Math Score Distribution'.\n2. Plot a scatter plot with `math_score` on x‑axis and `reading_score` on y‑axis, color points by gender (use `c` parameter with a list of colors or a mapping). Title: 'Math vs Reading'.\n3. Create a box plot of `math_score` grouped by `gender`. Use `df.boxplot(column='math_score', by='gender', grid=False)`.\n4. Overlay a density plot of `reading_score` with `alpha=0.7`.\n\n**Expected output:** Four plots, each properly labeled.",
+    "hints": [
+        "Histogram: `df['math_score'].plot(kind='hist', bins=20, color='skyblue', title='...')`.",
+        "Scatter: create a color column (e.g., `df['color'] = df['gender'].map({'Male':'blue','Female':'red'})`) then `df.plot(kind='scatter', x='math_score', y='reading_score', c=df['color'], title='...')`.",
+        "Boxplot: `df.boxplot(column='math_score', by='gender', grid=False)`.",
+        "Density: `df['reading_score'].plot(kind='density', alpha=0.7)`."
+    ],
+    "expectedOutput": "Four separate plots.",
+    "solutionCode": "import pandas as pd\nimport numpy as np\nnp.random.seed(42)\ndf = pd.DataFrame({\n    'math_score': np.random.normal(70, 10, 100),\n    'reading_score': np.random.normal(65, 15, 100),\n    'gender': np.random.choice(['Male','Female'], 100)\n})\ndf['math_score'] = df['math_score'].astype(int)\ndf['reading_score'] = df['reading_score'].astype(int)\n\n# Histogram\ndf['math_score'].plot(kind='hist', bins=20, color='skyblue', alpha=0.7, title='Math Score Distribution')\n\n# Scatter plot with gender color mapping\ndf['color'] = df['gender'].map({'Male':'blue', 'Female':'red'})\ndf.plot(kind='scatter', x='math_score', y='reading_score', c=df['color'], title='Math vs Reading')\n\n# Boxplot\ndf.boxplot(column='math_score', by='gender', grid=False)\n\n# Density plot\ndf['reading_score'].plot(kind='density', alpha=0.7, title='Reading Score Density')\n\nprint('All plots generated.')"
+}

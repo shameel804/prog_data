@@ -1,0 +1,17 @@
+{
+    "id": "task2",
+    "chapterId": "ch_6",
+    "title": "Duplicate and Type Cleanup 🧹",
+    "description": "Remove duplicate records and fix column types in a product catalog.",
+    "estimatedMinutes": 12,
+    "problemStatement": "## Task: Product Catalog Cleanup\n\nConsider the product dataset:\n\n```python\nproducts = pd.DataFrame({\n    'ProductCode': ['P001', 'P002', 'P001', 'P003', 'P002'],\n    'Price': ['12.50', '9.99', '12.50', '20.00', 'invalid'],\n    'Stock': ['100', '50', '100', '0', '75']\n})\n```\n\n1. Print duplicate rows based on all columns.\n2. Drop duplicate rows, keeping the first occurrence, and reset the index (drop old index).\n3. Convert the `Price` column to numeric, coercing errors to NaN. Then fill those NaN with the column’s mean.\n4. Convert the `Stock` column to integer type.\n5. Print the final cleaned DataFrame.\n\n**Expected output:**\n```\nDuplicate rows:\n  ProductCode  Price Stock\n2        P001  12.50   100\n4        P002  9.99    50\n\nCleaned DataFrame:\n  ProductCode  Price  Stock\n0        P001  12.50    100\n1        P002   9.99     50\n2        P003  20.00      0\n3        P002  14.16     75\n```\n(Mean price of valid numeric prices (12.50+9.99+20.00)/3 = 14.1633... ≈ 14.16)\n\nNote: The invalid price becomes NaN, then filled with mean.",
+    "hints": [
+        "Duplicates: `products[products.duplicated(keep=False)]`.",
+        "Drop duplicates: `drop_duplicates()` then `reset_index(drop=True)`.",
+        "Numeric conversion: `pd.to_numeric(products['Price'], errors='coerce')`.",
+        "Fill NaN with mean: `products['Price'].fillna(products['Price'].mean())`.",
+        "Stock to int: `products['Stock'].astype(int)`."
+    ],
+    "expectedOutput": "Duplicate rows:\n  ProductCode  Price Stock\n2        P001  12.50   100\n4        P002  9.99    50\n\nCleaned DataFrame:\n  ProductCode  Price  Stock\n0        P001  12.50    100\n1        P002   9.99     50\n2        P003  20.00      0\n3        P002  14.16     75",
+    "solutionCode": "import pandas as pd\nproducts = pd.DataFrame({\n    'ProductCode': ['P001', 'P002', 'P001', 'P003', 'P002'],\n    'Price': ['12.50', '9.99', '12.50', '20.00', 'invalid'],\n    'Stock': ['100', '50', '100', '0', '75']\n})\n\nprint('Duplicate rows:')\ndups = products[products.duplicated(keep=False)]\nprint(dups)\n\n# Drop duplicates\nproducts = products.drop_duplicates().reset_index(drop=True)\n\n# Fix Price\nproducts['Price'] = pd.to_numeric(products['Price'], errors='coerce')\nmean_price = products['Price'].mean()\nproducts['Price'] = products['Price'].fillna(mean_price)\n\n# Fix Stock\nproducts['Stock'] = products['Stock'].astype(int)\n\nprint('\\nCleaned DataFrame:')\nprint(products)"
+}

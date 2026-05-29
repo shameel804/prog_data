@@ -1,0 +1,159 @@
+{
+    "id": "l3",
+    "chapterId": "ch_6",
+    "title": "Data Type Conversions 🔄",
+    "description": "Convert columns to the right types: numbers, strings, dates.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Cleaning",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Why Data Types Matter ⚙️",
+            "content": "# Correct Types = Correct Operations\n\nIf a numeric column is stored as strings, you can’t compute the mean. If a date is stored as a string, you can’t extract the year. Pandas provides methods to convert types safely.\n\nCommon conversions:\n- `to_numeric()` – string → int/float\n- `to_datetime()` – string → datetime\n- `astype()` – general type conversion"
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "The Problem: Wrong Types",
+            "content": "Data often arrives as object (string) type:",
+            "codeSnippet": "import pandas as pd\ndf = pd.DataFrame({\n    'Price': ['10.5', '20.3', 'invalid', '15.0'],\n    'Date': ['2023-01-01', '2023-02-15', '2023-03-10', '2023-04-20']\n})\nprint('Data types:')\nprint(df.dtypes)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Convert to Numeric 🔢",
+            "content": "## `pd.to_numeric()`\n\nConverts a column to numeric type. If any value can’t be converted, you can handle it with the `errors` parameter:\n\n- `errors='raise'` (default) – stops on error.\n- `errors='coerce'` – invalid values become `NaN`.\n- `errors='ignore'` – returns the original column unchanged.\n\n```python\ndf['Price'] = pd.to_numeric(df['Price'], errors='coerce')\n```"
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Numeric Conversion",
+            "content": "Convert the Price column, coercing errors:",
+            "codeSnippet": "df['Price'] = pd.to_numeric(df['Price'], errors='coerce')\nprint('After conversion:')\nprint(df)\nprint('\\nDtypes:')\nprint(df.dtypes)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_5",
+            "type": "quiz",
+            "title": "Coerce Quiz 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What happens to 'invalid' when using `pd.to_numeric(..., errors='coerce')`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Raises an error",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Becomes 0",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Becomes NaN",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Stays as 'invalid'",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`coerce` converts invalid parsing to NaN.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "Convert to DateTime 📅",
+            "content": "## `pd.to_datetime()`\n\nConverts a column to datetime64. Similar `errors` parameter.\n\n- `pd.to_datetime(df['Date'])`\n- `pd.to_datetime(df['Date'], format='%Y-%m-%d')` (specify format for speed)\n\nAfter conversion, you get access to the `.dt` accessor:\n```python\ndf['Date'].dt.year\ndf['Date'].dt.month\n```"
+        },
+        {
+            "id": "s_l3_7",
+            "type": "code",
+            "title": "Date Conversion",
+            "content": "Convert and extract year:",
+            "codeSnippet": "df['Date'] = pd.to_datetime(df['Date'])\nprint('Date dtype:', df['Date'].dtype)\ndf['Year'] = df['Date'].dt.year\nprint(df)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_8",
+            "type": "quiz",
+            "title": "DateTime Attributes 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Which accessor gives the month number from a datetime column 'dt_col'?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "dt_col.dt.month",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "dt_col.month",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "dt_col.dt.year",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "dt_col.dt.day",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `.dt` accessor provides datetime properties like month, year, day.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_9",
+            "type": "text",
+            "title": "General Type Conversion with `astype()` 🏭",
+            "content": "## `astype(dtype)`\n\nFor simpler conversions when the data is already compatible:\n\n```python\ndf['ID'] = df['ID'].astype(int)\ndf['Category'] = df['Category'].astype('category')\n```\n\nUsing `category` type for columns with few unique values saves memory and speeds up operations.\n\n```python\ndf['Category'].astype('category')\n```"
+        },
+        {
+            "id": "s_l3_10",
+            "type": "code",
+            "title": "Astype Examples",
+            "content": "Convert a column to category:",
+            "codeSnippet": "df2 = pd.DataFrame({'Grade': ['A','B','A','C','B']})\ndf2['Grade'] = df2['Grade'].astype('category')\nprint(df2['Grade'].dtype)\nprint(df2['Grade'].cat.categories)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_11",
+            "type": "warning",
+            "title": "Watch Out ⚠️",
+            "content": "## `astype(int)` on NaN\n\nYou cannot convert NaN to integer using `astype(int)`. Use the nullable integer type `Int64` (capital I): `df['col'].astype('Int64')`."
+        },
+        {
+            "id": "s_l3_12",
+            "type": "exercise",
+            "title": "Type Conversion Practice 🏋️",
+            "content": "1. Create a DataFrame with a string column `'Score'` containing some numbers and an invalid entry.\n2. Convert to numeric with coercion.\n3. Fill the resulting NaN with the median.\n4. Convert a date string column to datetime and create a new column for the day of week."
+        },
+        {
+            "id": "s_l3_13",
+            "type": "text",
+            "title": "Types Under Control 🎉",
+            "content": "Now your columns have the right types. Next: cleaning messy text."
+        }
+    ]
+}

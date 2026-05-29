@@ -1,0 +1,194 @@
+{
+    "id": "l5",
+    "chapterId": "ch_7",
+    "title": "Pivot Tables & Cross‑Tabs 🧮",
+    "description": "Create spreadsheet‑style summaries with pivot_table and crosstab for multi‑dimensional analysis.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Pivoting",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "From GroupBy to Pivot Tables 📈",
+            "content": "# Pivot Tables: GroupBy on Steroids\n\nA pivot table is a data summarization tool that can re‑shape data and compute aggregations across two dimensions (rows and columns). Pandas `pivot_table()` is similar to Excel’s pivot tables.\n\nBasic syntax:\n```python\npd.pivot_table(data, values='Revenue', index='Region', columns='Product', aggfunc='sum')\n```"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Simple Pivot Table",
+            "content": "Using the sales data:",
+            "codeSnippet": "pivot = pd.pivot_table(sales, values='Revenue', index='Region', columns='Product', aggfunc='sum', fill_value=0)\nprint(pivot)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Pivot Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What does the `columns` parameter in `pivot_table` specify?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The column to use as row labels",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The column whose unique values become new column headers",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The aggregation function",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The values to display",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`columns` parameter creates columns from the unique values of that column.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Pivot Table Options 🛠️",
+            "content": "- `values` – the column to aggregate.\n- `index` – grouping for rows.\n- `columns` – grouping for columns.\n- `aggfunc` – aggregation function(s) (default `mean`). Can be a list or dict.\n- `fill_value` – replace NaN with a value.\n- `margins` – add subtotals (`margins=True`, `margins_name='Total'`).\n\nMultiple aggfuncs:\n```python\npd.pivot_table(df, values='Revenue', index='Region', columns='Product', aggfunc=['sum','mean'])\n```"
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Pivot with Margins",
+            "content": "Add row/column totals:",
+            "codeSnippet": "pivot2 = pd.pivot_table(sales, values='Revenue', index='Region', columns='Product', aggfunc='sum', margins=True, margins_name='Total', fill_value=0)\nprint(pivot2)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Margins Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What does `margins=True` add to a pivot table?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Extra padding around cells",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Row and column totals (All)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Error bars",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Color formatting",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Margins add an 'All' row and column with the aggregated totals.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Cross‑Tabulation with `pd.crosstab()` 🧮",
+            "content": "## Frequency / Contingency Tables\n\n`crosstab()` computes frequency counts of two or more factors. It's like a pivot table but specialized for counting.\n\n```python\npd.crosstab(sales['Region'], sales['Product'])\n```\n\nYou can also pass `values` and `aggfunc` to compute aggregations other than count:\n```python\npd.crosstab(sales['Region'], sales['Product'], values=sales['Revenue'], aggfunc='sum')\n```"
+        },
+        {
+            "id": "s_l5_8",
+            "type": "code",
+            "title": "Crosstab Examples",
+            "content": "Count occurrences and sum revenues:",
+            "codeSnippet": "print('Count table:')\nprint(pd.crosstab(sales['Region'], sales['Product']))\nprint('\\nSum of Revenue:')\nprint(pd.crosstab(sales['Region'], sales['Product'], values=sales['Revenue'], aggfunc='sum'))",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_9",
+            "type": "quiz",
+            "title": "Crosstab vs Pivot 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_3",
+                "type": "multiple_choice",
+                "question": "Which function is specifically designed for frequency tables?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "pivot_table",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "crosstab",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "groupby",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "merge",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`crosstab` is tailored for cross‑tabulation (frequency/contingency tables).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_10",
+            "type": "text",
+            "title": "Normalizing Cross‑Tabs 📊",
+            "content": "Use the `normalize` parameter to get proportions:\n\n- `'index'` – normalize over rows\n- `'columns'` – normalize over columns\n- `'all'` – normalize over all values\n\n```python\npd.crosstab(sales['Region'], sales['Product'], normalize='index')\n```"
+        },
+        {
+            "id": "s_l5_11",
+            "type": "code",
+            "title": "Normalized Crosstab",
+            "content": "Proportion of each product within region:",
+            "codeSnippet": "ct = pd.crosstab(sales['Region'], sales['Product'], normalize='index')\nprint(ct)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_12",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Multi‑Index Pivot Tables\n\nYou can pass a list to `index` or `columns` for hierarchical pivots: `index=['Region','Product']`."
+        },
+        {
+            "id": "s_l5_13",
+            "type": "exercise",
+            "title": "Pivot & Crosstab Challenge 🏋️",
+            "content": "1. Create a pivot table showing total Units by Region and Product.\n2. Add margins to that pivot table.\n3. Use `crosstab` to count how many transactions each Region has per Product.\n4. Normalize that crosstab by rows to see product distribution within each region."
+        },
+        {
+            "id": "s_l5_14",
+            "type": "text",
+            "title": "Data Transformation Complete! 🎉",
+            "content": "You can filter, sort, group, and pivot data like an analyst. In the next chapter, we'll visualize!"
+        }
+    ]
+}

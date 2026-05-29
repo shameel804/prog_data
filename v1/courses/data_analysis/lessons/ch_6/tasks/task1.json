@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_6",
+    "title": "Missing Value Imputation 🩹",
+    "description": "Fill missing data in a customer dataset with appropriate strategies.",
+    "estimatedMinutes": 12,
+    "problemStatement": "## Task: Clean Customer Data\n\nYou are given a messy customers DataFrame:\n\n```python\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({\n    'ID': [1, 2, 3, 4, 5],\n    'Name': ['Alice', 'Bob', 'Charlie', None, 'Eve'],\n    'Age': [25, np.nan, 35, 45, np.nan],\n    'Email': ['alice@example.com', None, 'charlie@example.com', 'dave@example.com', None]\n})\n```\n\nPerform the following cleaning steps:\n1. Print the number of missing values per column.\n2. Fill the `Name` column with the string `'Unknown'` where missing.\n3. Fill the `Age` column with the **median** age (ignoring NaN).\n4. For the `Email` column, forward‑fill the missing values (use `ffill`).\n5. Print the cleaned DataFrame.\n\n**Expected output (values may differ slightly):**\n```\nMissing values per column:\nID       0\nName     1\nAge      2\nEmail    2\ndtype: int64\n\nCleaned DataFrame:\n   ID     Name   Age                Email\n0   1    Alice  25.0  alice@example.com\n1   2      Bob  35.0  alice@example.com\n2   3  Charlie  35.0  charlie@example.com\n3   4  Unknown  45.0   dave@example.com\n4   5      Eve  35.0   dave@example.com\n```\n\nNote: The median of [25,35,45] is 35. Forward‑fill copies the previous email.",
+    "hints": [
+        "`df.isna().sum()` gives missing counts.",
+        "`df['Name'].fillna('Unknown', inplace=True)`.",
+        "Median: `df['Age'].median()` and then `df['Age'].fillna(..., inplace=True)`.",
+        "`df['Email'].fillna(method='ffill', inplace=True)`."
+    ],
+    "expectedOutput": "Missing values per column:\nID       0\nName     1\nAge      2\nEmail    2\ndtype: int64\n\nCleaned DataFrame:\n   ID     Name   Age                Email\n0   1    Alice  25.0  alice@example.com\n1   2      Bob  35.0  alice@example.com\n2   3  Charlie  35.0  charlie@example.com\n3   4  Unknown  45.0   dave@example.com\n4   5      Eve  35.0   dave@example.com",
+    "solutionCode": "import pandas as pd\nimport numpy as np\ndf = pd.DataFrame({\n    'ID': [1, 2, 3, 4, 5],\n    'Name': ['Alice', 'Bob', 'Charlie', None, 'Eve'],\n    'Age': [25, np.nan, 35, 45, np.nan],\n    'Email': ['alice@example.com', None, 'charlie@example.com', 'dave@example.com', None]\n})\n\nprint('Missing values per column:')\nprint(df.isna().sum())\n\ndf['Name'].fillna('Unknown', inplace=True)\nmedian_age = df['Age'].median()\ndf['Age'].fillna(median_age, inplace=True)\ndf['Email'].fillna(method='ffill', inplace=True)\n\nprint('\\nCleaned DataFrame:')\nprint(df)"
+}

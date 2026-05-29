@@ -1,0 +1,194 @@
+{
+    "id": "l3",
+    "chapterId": "ch_7",
+    "title": "Grouping & Aggregation Basics 📊",
+    "description": "Split data into groups and compute summaries with groupby and aggregate functions.",
+    "xpReward": 35,
+    "estimatedMinutes": 9,
+    "section": "Grouping",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The Split-Apply-Combine Pattern ✂️➕🧩",
+            "content": "# GroupBy: One of Pandas' Superpowers\n\nGrouping lets you:\n1. **Split** the data into groups based on a key.\n2. **Apply** a function (sum, mean, count, etc.) to each group.\n3. **Combine** the results into a new DataFrame.\n\n```python\ndf.groupby('column').mean()\n```\n\nAnalogous to \"GROUP BY\" in SQL."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Sample Data",
+            "content": "We'll use a sales dataset:",
+            "codeSnippet": "sales = pd.DataFrame({\n    'Region': ['East','West','East','North','West','East','North','West'],\n    'Product': ['A','B','A','B','A','B','A','B'],\n    'Revenue': [100, 200, 150, 300, 250, 120, 180, 220],\n    'Units': [10, 20, 15, 30, 25, 12, 18, 22]\n})\nprint(sales)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Basic `groupby()` 🧩",
+            "content": "## Group by a Single Column\n\n```python\nsales.groupby('Region')['Revenue'].sum()\n```\n\nThis returns a Series with regions as index and total revenue.\n\nIf you omit column selection, you get a DataFrameGroupBy object; then you can call aggregation methods on multiple columns:\n```python\nsales.groupby('Region')[['Revenue','Units']].mean()\n```"
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Single Aggregation",
+            "content": "Total revenue by region:",
+            "codeSnippet": "print(sales.groupby('Region')['Revenue'].sum())",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_5",
+            "type": "quiz",
+            "title": "GroupBy Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What does `df.groupby('Category').count()` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Counts total rows",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Counts non‑null entries per column for each category",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Sums values per category",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Returns number of categories",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`count()` returns the count of non‑missing values in each column per group.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "Common Aggregation Methods 📋",
+            "content": "- `.sum()` – total\n- `.mean()`, `.median()` – central tendency\n- `.std()`, `.var()` – dispersion\n- `.min()`, `.max()` – extremes\n- `.count()` – number of non‑null entries\n- `.size()` – group size (includes NaN if present)\n- `.first()`, `.last()` – first/last row in group\n\nAll can be applied to a GroupBy object."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "code",
+            "title": "Multiple Aggregations",
+            "content": "Get mean and sum for multiple columns:",
+            "codeSnippet": "print(sales.groupby('Region')[['Revenue','Units']].agg(['mean','sum']))",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_8",
+            "type": "quiz",
+            "title": "agg with list 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "What does `.agg(['sum','count'])` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A DataFrame with MultiIndex columns for each function",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A Series",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A single number",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The original DataFrame",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Multiple agg functions produce hierarchical column index.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_9",
+            "type": "text",
+            "title": "Grouping by Multiple Keys 🔑",
+            "content": "## Pass a List of Columns\n\n```python\nsales.groupby(['Region', 'Product'])['Revenue'].sum()\n```\n\nThis creates a hierarchical index (MultiIndex). You can unstack the result to get a pivot‑like table:\n```python\nresult.unstack()\n```"
+        },
+        {
+            "id": "s_l3_10",
+            "type": "code",
+            "title": "Multi-Key GroupBy",
+            "content": "Revenue by region and product:",
+            "codeSnippet": "grouped = sales.groupby(['Region','Product'])['Revenue'].sum()\nprint(grouped)\nprint('\\nUnstacked:')\nprint(grouped.unstack())",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_11",
+            "type": "quiz",
+            "title": "MultiIndex Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_3",
+                "type": "multiple_choice",
+                "question": "If you group by two columns, what type of index does the result have?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "RangeIndex",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "MultiIndex",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "String Index",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "No index",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Grouping by multiple keys creates a MultiIndex.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_12",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## `as_index=False` for a Flat DataFrame\n\nAdd `as_index=False` to `groupby()` to keep the group keys as regular columns instead of an index."
+        },
+        {
+            "id": "s_l3_13",
+            "type": "exercise",
+            "title": "Grouping Practice 🏋️",
+            "content": "Using the `sales` DataFrame:\n1. Find total Revenue by Region.\n2. Find average Units by Product.\n3. Compute both sum and mean for Revenue, grouped by Region.\n4. Group by Region and Product, show total Revenue, then unstack."
+        },
+        {
+            "id": "s_l3_14",
+            "type": "text",
+            "title": "Grouping Understood! 🎉",
+            "content": "Now you know the basics. Next, we’ll unleash advanced aggregations."
+        }
+    ]
+}

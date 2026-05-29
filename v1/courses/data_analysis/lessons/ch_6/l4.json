@@ -1,0 +1,203 @@
+{
+    "id": "l4",
+    "chapterId": "ch_6",
+    "title": "Cleaning Strings & Text 🧹",
+    "description": "Strip whitespace, replace substrings, split, and use regex to tame messy text.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Cleaning",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Messy Text is Everywhere 📝",
+            "content": "# From Garbage to Gold\n\nText columns often contain:\n- Leading/trailing whitespace\n- Inconsistent capitalization\n- Unwanted characters or punctuation\n- Combined data (e.g., \"John Smith (ID: 123)\")\n\nPandas provides vectorised string methods via the `.str` accessor."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Create a Messy Text DataFrame",
+            "content": "Let's work with this:",
+            "codeSnippet": "import pandas as pd\ndf = pd.DataFrame({\n    'Name': [' Alice ', 'BOB', '  charlie  ', 'DAVE'],\n    'Info': ['Age: 25', 'Age: 30', 'Age: 35', 'Age: 40'],\n    'Tags': ['data,science', '  Python, pandas', 'R,stats ', '']\n})\nprint(df)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Stripping Whitespace ✂️",
+            "content": "## `.str.strip()`, `.str.lstrip()`, `.str.rstrip()`\n\nRemove leading/trailing spaces:\n\n```python\ndf['Name'] = df['Name'].str.strip()\n```\n\nSimilarly, `lstrip()` removes leading, `rstrip()` removes trailing."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Strip & Capitalize",
+            "content": "Clean the Name column:",
+            "codeSnippet": "df['Name'] = df['Name'].str.strip().str.capitalize()\nprint(df['Name'])",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Strip Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does `.str.capitalize()` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Uppercases the whole string",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Lowercases the whole string",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "First character uppercase, rest lowercase",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Capitalizes every word",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`capitalize()` makes the first character upper and the rest lower.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Replacing Substrings 🔄",
+            "content": "## `.str.replace()`\n\nReplace a substring or pattern with another:\n\n```python\ndf['Info'] = df['Info'].str.replace('Age: ', '')\n```\n\nSupports regular expressions (regex) with the `regex=True` parameter (default).\n\n- Replace multiple spaces: `df['col'].str.replace(r'\\s+', ' ', regex=True)`"
+        },
+        {
+            "id": "s_l4_7",
+            "type": "code",
+            "title": "Replace Example",
+            "content": "Remove 'Age: ' prefix and convert to int:",
+            "codeSnippet": "df['Age'] = df['Info'].str.replace('Age: ', '', regex=False).astype(int)\nprint(df[['Name', 'Age']])",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_8",
+            "type": "quiz",
+            "title": "Replace Quiz 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "How do you remove all digits from a string column?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "`.str.replace('\\d+', '', regex=True)`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "`.str.replace(digits, '')`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "`.str.remove('\\d')`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "`.str.delete('\\d+')`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Regular expression `\\d+` matches one or more digits; replace with empty string.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_9",
+            "type": "text",
+            "title": "Splitting Strings 🪓",
+            "content": "## `.str.split()`\n\nSplit a string into a list based on a delimiter. The result can be expanded into new columns with `expand=True`.\n\n```python\ndf[['Tag1','Tag2']] = df['Tags'].str.split(',', expand=True)\n```\n\nAfter splitting, you may need to strip the new columns."
+        },
+        {
+            "id": "s_l4_10",
+            "type": "code",
+            "title": "Split and Expand",
+            "content": "Split Tags into multiple columns:",
+            "codeSnippet": "tags_df = df['Tags'].str.split(',', expand=True)\ntags_df.columns = ['Tag1', 'Tag2']\n# Clean whitespace\nfor col in tags_df.columns:\n    tags_df[col] = tags_df[col].str.strip()\nprint(tags_df)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_11",
+            "type": "quiz",
+            "title": "Split Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_3",
+                "type": "multiple_choice",
+                "question": "What does `expand=True` do in `.str.split()`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Returns a DataFrame with each split part as a column",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Returns a Series of lists",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Splits into rows instead of columns",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Increases the number of splits",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`expand=True` expands the list results into separate columns.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_12",
+            "type": "text",
+            "title": "Other Handy String Methods 🧰",
+            "content": "- `.str.lower()` / `.str.upper()` – change case\n- `.str.contains(pattern)` – returns Boolean Series (great for filtering)\n- `.str.extract(pattern)` – extract groups using regex\n- `.str.len()` – string length\n- `.str.startswith()`, `.str.endswith()`"
+        },
+        {
+            "id": "s_l4_13",
+            "type": "code",
+            "title": "Filter with String Contains",
+            "content": "Find rows where Name contains 'a':",
+            "codeSnippet": "print(df[df['Name'].str.contains('a', case=False)])",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_14",
+            "type": "exercise",
+            "title": "Text Cleanup Challenge 🏋️",
+            "content": "1. Create a DataFrame with a column `'Address'` containing messy entries like ' 123 Main St. , NY '.\n2. Strip whitespace.\n3. Replace 'St.' with 'Street'.\n4. Extract the state code (last two characters) into a new column.\n5. Convert all addresses to uppercase."
+        },
+        {
+            "id": "s_l4_15",
+            "type": "text",
+            "title": "Text Tamed 🎉",
+            "content": "Your strings are now polished. Next, we’ll tidy up column names and indexes."
+        }
+    ]
+}

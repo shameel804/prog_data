@@ -1,0 +1,224 @@
+{
+    "id": "l5",
+    "chapterId": "ch_5",
+    "title": "Exploring DataFrames 🔍",
+    "description": "Use head, tail, info, describe, and attributes to understand any dataset.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "DataFrames",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "First Look at a Dataset 👀",
+            "content": "# Exploratory Data Analysis (EDA)\n\nWhen you receive a new dataset, your first task is to **understand** it. Pandas gives you several methods to quickly inspect the data.\n\nWe’ll use a sample dataset: tips from a restaurant. (Built‑in via `seaborn` if available, or we’ll create a small one.)"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Load Sample Data",
+            "content": "We'll create a small tip dataset manually:",
+            "codeSnippet": "import pandas as pd\ntips = pd.DataFrame({\n    'total_bill': [16.99, 10.34, 21.01, 23.68, 24.59],\n    'tip': [1.01, 1.66, 3.50, 3.31, 3.61],\n    'sex': ['Female','Male','Male','Male','Female'],\n    'smoker': ['No','No','No','No','Yes'],\n    'day': ['Sun','Sun','Sun','Sun','Sat'],\n    'time': ['Dinner','Dinner','Dinner','Dinner','Dinner'],\n    'size': [2,3,3,2,4]\n})\nprint(tips)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Head & Tail 🧐",
+            "content": "## Peek at the Beginning or End\n\n- `df.head(n)` – first n rows (default 5)\n- `df.tail(n)` – last n rows\n\n```python\ndf.head(3)    # show first 3 rows\ndf.tail(2)    # show last 2 rows\n```\n\nThis is the first thing you run. It gives a visual taste of the data."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Head & Tail",
+            "content": "View the top and bottom of the tips dataset:",
+            "codeSnippet": "print('First 3 rows:')\nprint(tips.head(3))\nprint('\\nLast 2 rows:')\nprint(tips.tail(2))",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Head Count 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What does `df.head()` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "First 5 rows",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Last 5 rows",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "All columns",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Summary stats",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`head()` defaults to returning the first 5 rows.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Shape & Size 📏",
+            "content": "## How Big is the Data?\n\n- `df.shape` – tuple (rows, columns)\n- `len(df)` – number of rows\n- `df.size` – total number of cells (rows × columns)\n\n```python\nprint(df.shape)   # (5, 7) for our tips\nprint(len(df))    # 5\nprint(df.size)    # 35\n```"
+        },
+        {
+            "id": "s_l5_7",
+            "type": "code",
+            "title": "Dimensions",
+            "content": "Check size:",
+            "codeSnippet": "print('Shape:', tips.shape)\nprint('Rows:', len(tips))\nprint('Total cells:', tips.size)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_8",
+            "type": "text",
+            "title": "Data Types & Missing Values 🔬",
+            "content": "## `df.info()`\n\nThis method prints a concise summary:\n- Number of entries\n- Column names and their data types\n- Non‑null count (shows missing values)\n\n```python\ntips.info()\n```\n\nGreat for spotting columns that need type conversion or have missing data."
+        },
+        {
+            "id": "s_l5_9",
+            "type": "code",
+            "title": "Info Method",
+            "content": "Let’s see info of tips:",
+            "codeSnippet": "tips.info()",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_10",
+            "type": "quiz",
+            "title": "Info Insight 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What does `df.info()` NOT show?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Column names",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Data types",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Count of non‑null values",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Mean of each numeric column",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "`info()` shows structure, not statistics. Use `describe()` for mean.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_11",
+            "type": "text",
+            "title": "Summary Statistics with `describe()` 📊",
+            "content": "## Numeric Summary\n\n`df.describe()` computes statistics for **numeric columns** automatically:\n\n- count, mean, std, min, 25%, 50% (median), 75%, max\n\n```python\ntips.describe()\n```\n\nTo include all columns (including categorical), use `df.describe(include='all')`."
+        },
+        {
+            "id": "s_l5_12",
+            "type": "code",
+            "title": "Describe in Action",
+            "content": "Generate summary statistics:",
+            "codeSnippet": "print(tips.describe())",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_13",
+            "type": "quiz",
+            "title": "Describe Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_3",
+                "type": "multiple_choice",
+                "question": "Which statistic is NOT included in the default `describe()` output?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "count",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "mean",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "variance",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "min",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It includes standard deviation (std), not variance.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_14",
+            "type": "text",
+            "title": "Columns & Index ⚙️",
+            "content": "## Examining Labels\n\n- `df.columns` – list of column names\n- `df.index` – row labels\n- `df.columns.tolist()` – as Python list\n\nYou can rename columns easily: `df.rename(columns={'old':'new'}, inplace=True)`."
+        },
+        {
+            "id": "s_l5_15",
+            "type": "code",
+            "title": "Column & Index Inspection",
+            "content": "Look at labels:",
+            "codeSnippet": "print('Columns:', tips.columns.tolist())\nprint('Index:', tips.index.tolist())",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_16",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Value Counts for Categorical Data\n\n`df['column'].value_counts()` gives frequency of unique values. Super useful for categorical columns like day or sex."
+        },
+        {
+            "id": "s_l5_17",
+            "type": "exercise",
+            "title": "Exploration Practice 🏋️",
+            "content": "Using the `tips` DataFrame:\n1. Print the first 3 rows.\n2. Print shape and total number of cells.\n3. Run `info()`.\n4. Run `describe()` on only the `total_bill` column (hint: `tips['total_bill'].describe()`).\n5. Show the count of each unique value in the `day` column."
+        },
+        {
+            "id": "s_l5_18",
+            "type": "text",
+            "title": "You’re an Explorer Now 🎉",
+            "content": "With these inspection tools, you can understand any DataFrame. Next, we’ll slice and dice it."
+        }
+    ]
+}

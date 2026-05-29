@@ -1,0 +1,150 @@
+{
+    "id": "l2",
+    "chapterId": "ch_6",
+    "title": "Dealing with Duplicates 👯",
+    "description": "Identify and remove duplicate rows to keep your analysis accurate.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Cleaning",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Why Duplicates Matter 👥",
+            "content": "# Duplicate Data = Distorted Insights\n\nDuplicates can arise from:\n- Repeated data entry\n- Merging datasets that share records\n- System errors\n\nCounting sums, averages, etc. on duplicated rows inflates results. Pandas gives you tools to detect and remove them."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Create a DataFrame with Duplicates",
+            "content": "Let's build a sample:",
+            "codeSnippet": "import pandas as pd\ndf = pd.DataFrame({\n    'Name': ['Alice', 'Bob', 'Alice', 'Bob', 'Charlie'],\n    'Score': [85, 92, 85, 92, 78],\n    'Age': [25, 30, 25, 30, 35]\n})\nprint(df)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Identifying Duplicates 🔍",
+            "content": "## `duplicated()`\n\nReturns a Boolean Series indicating whether a row is a duplicate of a previous row.\n\n- `df.duplicated()` – marks all duplicates (first occurrence is `False`).\n- `df.duplicated(keep='last')` – marks duplicates except the last.\n- `df.duplicated(keep=False)` – marks all duplicate rows as `True`.\n\n```python\nprint(df.duplicated())\n```"
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Detect Duplicates",
+            "content": "Run to see which rows are duplicated:",
+            "codeSnippet": "print('Duplicate mask:')\nprint(df.duplicated())\nprint('\\nRows that are duplicates:')\nprint(df[df.duplicated(keep=False)])",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_5",
+            "type": "quiz",
+            "title": "Duplicate Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What does `df.duplicated(keep='last')` mark as True?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "All rows except the last duplicate",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "All rows except the first duplicate",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only the last row",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "No rows",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "With `keep='last'`, the last occurrence is considered unique, earlier duplicates are marked True.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Removing Duplicates 🗑️",
+            "content": "## `drop_duplicates()`\n\nRemoves duplicate rows. Same `keep` options as `duplicated()`.\n\n- `df.drop_duplicates()` – keeps first occurrence.\n- `df.drop_duplicates(keep='last')` – keeps last.\n- `df.drop_duplicates(keep=False)` – drops all duplicates entirely.\n\n```python\ndf_unique = df.drop_duplicates()\n```\n\nYou can also specify a subset of columns to consider: `df.drop_duplicates(subset=['Name'])`."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "code",
+            "title": "Drop Duplicates",
+            "content": "Remove duplicates from our DataFrame:",
+            "codeSnippet": "print('Original:')\nprint(df)\nprint('\\nAfter drop_duplicates():')\nprint(df.drop_duplicates())",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_8",
+            "type": "quiz",
+            "title": "Drop Duplicates Logic 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "If you run `df.drop_duplicates(subset=['Name'])`, which rows remain?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "First occurrence of each unique name",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "All rows, unchanged",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only rows with unique names across all columns",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Rows where Name is not duplicated",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "When subset is specified, only that column is considered for duplicate detection. The first row for each name is kept.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_9",
+            "type": "warning",
+            "title": "Caution ⚠️",
+            "content": "## Resetting Index After Removal\n\nAfter dropping duplicates, the index may be non‑contiguous. Use `df.reset_index(drop=True)` to get a clean integer index.\n\n```python\ndf_clean = df.drop_duplicates().reset_index(drop=True)\n```"
+        },
+        {
+            "id": "s_l2_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Check for Exact Duplicate Rows\n\n`df[df.duplicated()]` shows the rows that are duplicates. Always inspect them before dropping!"
+        },
+        {
+            "id": "s_l2_11",
+            "type": "exercise",
+            "title": "Duplicate Cleanup 🏋️",
+            "content": "1. Create a DataFrame with columns `['ID','Name','Score']` and include some duplicate rows (same ID and Name, maybe different Score).\n2. Print rows that are duplicated based on all columns.\n3. Drop duplicates based only on `ID` and `Name` (keeping the first occurrence).\n4. Reset the index and print the final DataFrame."
+        },
+        {
+            "id": "s_l2_12",
+            "type": "text",
+            "title": "Duplicates Done! 🎉",
+            "content": "Your data is now unique. Next, we'll fix mismatched types."
+        }
+    ]
+}

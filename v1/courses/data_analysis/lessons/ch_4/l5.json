@@ -1,0 +1,165 @@
+{
+    "id": "l5",
+    "chapterId": "ch_4",
+    "title": "Nesting Structures: Lists of Dictionaries 📊",
+    "description": "Combine lists and dicts to model real‑world data like rows in a table.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Nesting",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Data in the Real World 🌍",
+            "content": "# Tabular Data = Lists of Dicts\n\nMost datasets can be thought of as a **table**: rows and columns. In Python, we can represent each row as a **dictionary** (columns as keys), and the table as a **list** of those dicts.\n\n```python\ndata = [\n    {\"name\": \"Alice\", \"score\": 85},\n    {\"name\": \"Bob\", \"score\": 92},\n    {\"name\": \"Charlie\", \"score\": 78}\n]\n```\n\nThis is exactly how data is structured before loading into a Pandas DataFrame!"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Create a Mini Dataset",
+            "content": "A list of dictionaries, one per employee:",
+            "codeSnippet": "employees = [\n    {'id': 1, 'name': 'Alice', 'department': 'Sales'},\n    {'id': 2, 'name': 'Bob', 'department': 'Engineering'},\n    {'id': 3, 'name': 'Charlie', 'department': 'Sales'}\n]\nprint(len(employees), 'employees')",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Data Shape 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "How would you access the second employee's name?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "employees[2]['name']",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "employees[1]['name']",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "employees['Bob']",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "employees[1].name",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Second element is index 1, then access dictionary key 'name'.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Iterating Over Nested Data 🔁",
+            "content": "## Looping Through Rows\n\n```python\nfor employee in employees:\n    print(f\"{employee['name']} works in {employee['department']}\")\n```\n\nEach `employee` is a dictionary, so you can access its keys inside the loop."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Loop Over Table",
+            "content": "Print a summary of each row:",
+            "codeSnippet": "for emp in employees:\n    print(f\"ID: {emp['id']}, Name: {emp['name']}, Dept: {emp['department']}\")",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Filtering Nested Data 🔍",
+            "content": "## Finding Matching Rows\n\nUse a loop or list comprehension to select rows based on a condition:\n\n```python\nsales_emps = [emp for emp in employees if emp['department'] == 'Sales']\n```\n\nThis returns a new list of dicts that meet the condition."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "code",
+            "title": "Filtering Example",
+            "content": "Extract all employees from 'Sales':",
+            "codeSnippet": "sales = [e for e in employees if e['department'] == 'Sales']\nfor e in sales:\n    print(e['name'])",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_8",
+            "type": "quiz",
+            "title": "Filtering Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What does `[row for row in data if row['score'] > 90]` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Returns all rows",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Returns rows with score > 90",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Returns scores only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Raises error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "This is a list comprehension that filters the list of dicts, keeping only those where the 'score' key is greater than 90.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_9",
+            "type": "text",
+            "title": "Aggregating Values ➕",
+            "content": "## Compute Total or Average\n\nYou can loop and accumulate values from a specific key:\n\n```python\ntotal_score = 0\nfor emp in employees:\n    # assume there's a 'score' key\n    total_score += emp['score']\navg = total_score / len(employees)\n```\n\nOr with a comprehension:\n```python\nscores = [emp['score'] for emp in employees]\naverage = sum(scores) / len(scores)\n```"
+        },
+        {
+            "id": "s_l5_10",
+            "type": "code",
+            "title": "Aggregation Demo",
+            "content": "Using the employees list (add a score key): we'll simulate:",
+            "codeSnippet": "employees = [\n    {'name':'Alice','score':85},\n    {'name':'Bob','score':92},\n    {'name':'Charlie','score':78}\n]\ntotal = sum(e['score'] for e in employees)\nprint(f'Average score: {total/len(employees):.1f}')",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_11",
+            "type": "text",
+            "title": "Nesting Goes Deeper 🧩",
+            "content": "## Dicts Inside Dicts, Lists Inside Dicts\n\nYou can have any combination:\n\n```python\ncompany = {\n    \"name\": \"TechCorp\",\n    \"departments\": [\"Sales\", \"Engineering\"],\n    \"employees\": [\n        {\"id\":1, \"name\":\"Alice\"},\n        {\"id\":2, \"name\":\"Bob\"}\n    ]\n}\nprint(company[\"employees\"][0][\"name\"])  # Alice\n```\n\nReal JSON data looks exactly like this."
+        },
+        {
+            "id": "s_l5_12",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## JSON is Python Dict & List\n\nJSON (JavaScript Object Notation) is the universal data exchange format. Python’s `json` module reads JSON directly into nested dicts and lists. Mastering these structures prepares you for API data and file handling."
+        },
+        {
+            "id": "s_l5_13",
+            "type": "exercise",
+            "title": "Data Modeling Challenge 🏋️",
+            "content": "Create a list `students` where each student is a dict with keys: `name`, `grades` (a list of numbers).\n1. Create at least 3 students.\n2. For each student, compute the average grade and add it as a new key `average`.\n3. Print the name and average of each student.\n\nExample structure:\n```python\nstudents = [\n    {'name':'A', 'grades':[80,90,70]},\n    {'name':'B', 'grades':[85,88]},\n    ...\n]\n```"
+        },
+        {
+            "id": "s_l5_14",
+            "type": "text",
+            "title": "Data Structures Complete 🎉",
+            "content": "You now understand lists, dictionaries, and their nesting – the foundational data structures for data analysis. Next chapter, we finally dive into Pandas, where these concepts become even more powerful!"
+        }
+    ]
+}

@@ -1,0 +1,194 @@
+{
+    "id": "l3",
+    "chapterId": "ch_5",
+    "title": "Series Operations & Methods 🔢",
+    "description": "Perform arithmetic, apply functions, and filter values in a Series.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Series",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Vectorised Arithmetic ⚡",
+            "content": "# Element‑wise Operations\n\nYou can apply arithmetic operators directly to a Series – they work on every element:\n\n```python\ns = pd.Series([10, 20, 30])\nprint(s + 5)    # [15, 25, 35]\nprint(s * 2)    # [20, 40, 60]\n```\n\nEven operations between two Series align by index:\n```python\na = pd.Series([1,2,3], index=['x','y','z'])\nb = pd.Series([10,20,30], index=['x','y','z'])\nprint(a + b)   # x:11, y:22, z:33\n```\nIf indices don’t match, the result gets **NaN** (missing value) for mismatched labels."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Arithmetic Demo",
+            "content": "See vectorised math in action:",
+            "codeSnippet": "import pandas as pd\nsales = pd.Series([150, 200, 175], index=['Q1','Q2','Q3'])\nprint('Sales + 10:', sales + 10)\nprint('Sales * 1.1:', sales * 1.1)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Vectorisation Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the result of `pd.Series([1,2]) + pd.Series([10,20])`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "11,22",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "10,20,1,2",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "[1,2,10,20]",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Element‑wise addition: 1+10=11, 2+20=22.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Common Series Methods 🧰",
+            "content": "## Aggregation & Statistics\n\n- `s.sum()` – sum of values\n- `s.mean()` – average\n- `s.median()`, `s.std()` – statistics\n- `s.min()`, `s.max()` – extremes\n- `s.count()` – number of non‑NaN entries\n- `s.describe()` – summary statistics (count, mean, std, min, quartiles, max)\n\nExample:\n```python\ns = pd.Series([22, 25, 19, 30])\nprint(s.describe())\n```"
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Methods in Action",
+            "content": "Compute statistics on a temperature series:",
+            "codeSnippet": "import pandas as pd\ntemps = pd.Series([22.5, 23.0, 21.8, 25.1, 18.7])\nprint('Mean:', temps.mean())\nprint('Max:', temps.max())\nprint('Sum:', temps.sum())\nprint('Describe:')\nprint(temps.describe())",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Describe Output 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Which of the following is NOT included in `describe()`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "count",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "mean",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "variance",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "max",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`describe()` shows standard deviation (std), not variance.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Filtering (Boolean Indexing) 🔍",
+            "content": "## Select Subsets Based on Condition\n\nYou can create a Boolean mask and use it to filter:\n\n```python\ns = pd.Series([45, 78, 32, 90, 65])\nmask = s > 60        # Series of True/False\nhigh = s[mask]       # only values where True\nprint(high)          # 78, 90, 65\n```\n\nYou can combine conditions with `&` (and), `|` (or), and `~` (not). Use parentheses for each condition."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "code",
+            "title": "Filtering Example",
+            "content": "Find scores between 50 and 85:",
+            "codeSnippet": "import pandas as pd\nscores = pd.Series([45, 78, 32, 90, 65, 82])\nmid = scores[(scores >= 50) & (scores <= 85)]\nprint(mid)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_9",
+            "type": "quiz",
+            "title": "Boolean Quiz 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_3",
+                "type": "multiple_choice",
+                "question": "What operator is used for AND in pandas boolean filtering?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "and",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "&",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "&&",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "|",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Use `&` (with parentheses around each condition). The `and` keyword does not work element‑wise on Series.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_10",
+            "type": "text",
+            "title": "Handling Missing Data 🩹",
+            "content": "## NaN – Not a Number\n\nIf your Series contains missing values, they appear as `NaN`. Pandas provides methods:\n\n- `s.isna()` – returns Boolean Series where True indicates NaN\n- `s.dropna()` – returns a Series with NaN removed\n- `s.fillna(value)` – replaces NaN with a given value\n\n```python\ns = pd.Series([1, None, 3, None])\nprint(s.fillna(0))\n```"
+        },
+        {
+            "id": "s_l3_11",
+            "type": "code",
+            "title": "Handling NaN",
+            "content": "Clean a Series with missing values:",
+            "codeSnippet": "import pandas as pd\nraw = pd.Series([10, None, 30, None, 50])\nprint('Original:')\nprint(raw)\nprint('Filled with 0:')\nprint(raw.fillna(0))\nprint('Drop NaN:')\nprint(raw.dropna())",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_12",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Applying Custom Functions with `.apply()`\n\nUse `.apply(func)` to run any Python function on each element:\n```python\ns = pd.Series([1,2,3])\ndef square(x): return x**2\nprint(s.apply(square))   # 1,4,9\n```\nOr with a lambda: `s.apply(lambda x: x**2)`."
+        },
+        {
+            "id": "s_l3_13",
+            "type": "exercise",
+            "title": "Series Challenge 🏋️",
+            "content": "1. Create a Series of exam scores: 55, 73, 62, 91, 48, 80.\n2. Print the mean, min, and max.\n3. Filter to get only scores >= 70.\n4. Replace any score below 60 with 60 (use `.apply()` with a function or boolean assignment).\n5. Print the final Series."
+        },
+        {
+            "id": "s_l3_14",
+            "type": "text",
+            "title": "Series Under Control 🎉",
+            "content": "You can now create, manipulate, and filter Series. Next, the mighty DataFrame awaits!"
+        }
+    ]
+}

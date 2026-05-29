@@ -1,0 +1,220 @@
+{
+    "id": "l1",
+    "chapterId": "ch_6",
+    "title": "Handling Missing Data 🕳️",
+    "description": "Detect, drop, and fill missing values – the first step in any data cleaning pipeline.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Missing Data",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The Missing Data Problem 🕵️",
+            "content": "# Why Data Goes Missing\n\nReal‑world datasets are rarely perfect. Values can be missing because:\n- Someone didn’t fill a form field\n- Sensor malfunctioned\n- Data wasn’t applicable\n\nIn Pandas, missing values are represented as **`NaN`** (Not a Number) for numeric data, or **`None`** / **`NaT`** for other types. Ignoring them can skew your analysis."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What does NaN stand for?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Not a Number",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Null and None",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Negative and Null",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "No answer needed",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "NaN is the standard abbreviation for Not a Number.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "Detecting Missing Values 🔍",
+            "content": "## `isna()` and `notna()`\n\n- `df.isna()` returns a Boolean DataFrame where `True` means missing.\n- `df.notna()` is the opposite.\n- `df.isna().sum()` gives the count of missing values per column.\n\n```python\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'A': [1, np.nan, 3], 'B': [4, 5, np.nan]})\nprint(df.isna())\nprint(df.isna().sum())\n```"
+        },
+        {
+            "id": "s_l1_4",
+            "type": "code",
+            "title": "Detect Missing Values",
+            "content": "Run this to see where NaN lurks:",
+            "codeSnippet": "import pandas as pd\nimport numpy as np\ndf = pd.DataFrame({\n    'Name': ['Alice', 'Bob', None],\n    'Age': [25, np.nan, 35],\n    'Score': [85, 90, np.nan]\n})\nprint('DataFrame:')\nprint(df)\nprint('\\nMissing (True):')\nprint(df.isna())\nprint('\\nMissing per column:')\nprint(df.isna().sum())",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_5",
+            "type": "quiz",
+            "title": "Missing Count 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "What does `df.isna().sum().sum()` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Total number of rows",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Total number of missing values in the entire DataFrame",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Number of columns with missing data",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A Series of counts",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The first `.sum()` gives a Series of counts per column; the second `.sum()` adds those to get the grand total.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_6",
+            "type": "text",
+            "title": "Dropping Missing Values 🗑️",
+            "content": "## `dropna()`\n\nRemove rows (or columns) that contain missing data:\n\n- `df.dropna()` – drops any row with at least one NaN.\n- `df.dropna(how='all')` – drops row only if all values are NaN.\n- `df.dropna(subset=['col'])` – drops rows where `col` is NaN.\n- `df.dropna(axis=1)` – drops columns with any NaN.\n\n```python\ndf_clean = df.dropna()  # only rows with no missing values\n```\nBe careful: dropping rows reduces your data size."
+        },
+        {
+            "id": "s_l1_7",
+            "type": "code",
+            "title": "Drop Missing Rows",
+            "content": "Remove rows with any NaN:",
+            "codeSnippet": "df = pd.DataFrame({\n    'A': [1, np.nan, 3],\n    'B': [4, 5, np.nan]\n})\nprint('Original:')\nprint(df)\nprint('\\nAfter dropna():')\nprint(df.dropna())",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_8",
+            "type": "quiz",
+            "title": "Drop Logic 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_3",
+                "type": "multiple_choice",
+                "question": "If you use `df.dropna(subset=['B'])`, which rows are kept?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Rows where column B is not NaN",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Rows where any column is not NaN",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Rows where column A is not NaN",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "All rows",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `subset` parameter specifies which columns to check for NaN; rows with NaN in those columns are dropped.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_9",
+            "type": "text",
+            "title": "Filling Missing Values 🩹",
+            "content": "## `fillna()`\n\nInstead of dropping, you can replace NaN with a sensible value:\n\n- `df.fillna(0)` – fill with a constant.\n- `df.fillna(method='ffill')` – forward‑fill (carry previous value forward).\n- `df.fillna(method='bfill')` – backward‑fill.\n- `df.fillna(df.mean())` – fill with column mean (numeric columns).\n\n```python\ndf['Age'].fillna(df['Age'].median(), inplace=True)\n```"
+        },
+        {
+            "id": "s_l1_10",
+            "type": "code",
+            "title": "Fill Missing Values",
+            "content": "Replace NaN with column means:",
+            "codeSnippet": "df = pd.DataFrame({\n    'Math': [80, np.nan, 70, np.nan],\n    'English': [np.nan, 60, 75, 80]\n})\nprint('Original:')\nprint(df)\ndf_filled = df.fillna(df.mean())\nprint('\\nFilled with column means:')\nprint(df_filled)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_11",
+            "type": "quiz",
+            "title": "Fillna Methods 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_4",
+                "type": "multiple_choice",
+                "question": "What does `df.fillna(method='ffill')` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Fills NaN with the next value",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Fills NaN with the previous non‑NaN value in the column",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Fills NaN with the column mean",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Drops rows with NaN",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Forward‑fill propagates the last valid observation forward.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_12",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Interpolate Missing Values\n\n`df.interpolate()` estimates missing values using linear interpolation. Great for time series!"
+        },
+        {
+            "id": "s_l1_13",
+            "type": "exercise",
+            "title": "Practice: Clean Missing Data 🏋️",
+            "content": "1. Create a DataFrame with 3 columns and at least 2 NaN values.\n2. Print the count of missing values per column.\n3. Drop rows that have fewer than 2 non‑NaN values (hint: use `thresh` parameter).\n4. Fill the remaining NaN in numeric columns with the column median.\n5. Verify there are no NaN left."
+        },
+        {
+            "id": "s_l1_14",
+            "type": "text",
+            "title": "Missing Data Handled 🎉",
+            "content": "Now you know how to find and fix gaps. Next: duplicate rows."
+        }
+    ]
+}

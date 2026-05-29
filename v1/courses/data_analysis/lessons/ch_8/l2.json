@@ -1,0 +1,209 @@
+{
+    "id": "l2",
+    "chapterId": "ch_8",
+    "title": "Line and Area Plots 📈",
+    "description": "Dive deep into line plots – multiple series, styling, markers, and area plots.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Lines",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Line Plots: The Classic Trend View 📉",
+            "content": "# Show Change Over Time\n\nLine plots are ideal for **time series** data: stock prices, temperatures, sales over months. You can plot multiple columns on the same axes to compare trends.\n\nLet's work with a DataFrame of quarterly revenue."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Quarterly Revenue Data",
+            "content": "Create a DataFrame with a DateTime index:",
+            "codeSnippet": "import pandas as pd\nquarters = pd.DataFrame({\n    'Revenue': [200, 250, 220, 280, 300, 330],\n    'Expenses': [150, 160, 170, 180, 190, 200]\n}, index=pd.date_range('2022Q1', periods=6, freq='Q'))\nprint(quarters)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Multiple Lines 🎨",
+            "content": "## Plot All Numeric Columns\n\n```python\nquarters.plot()\n```\nEach numeric column gets its own line with a distinct color. The index (dates) is used for the x‑axis."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Multiple Lines Example",
+            "content": "Plot both Revenue and Expenses:",
+            "codeSnippet": "quarters.plot(title='Quarterly Financials')",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_5",
+            "type": "quiz",
+            "title": "Multiple Lines Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "If a DataFrame has 4 numeric columns, how many lines will `df.plot()` create?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "1",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "4",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Depends on the index",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "0",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Each numeric column becomes a separate line.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Styling Lines 🖌️",
+            "content": "## `style` Parameter\n\nYou can apply a style string to a column when selecting it:\n\n```python\nquarters['Revenue'].plot(style='r--')  # red dashed line\n```\n\nCommon styles:\n- `'b'` – blue solid\n- `'g--'` – green dashed\n- `'ro-'` – red circle markers with solid line\n- `'k.'` – black dots\n\nYou can also pass a list of styles to a DataFrame plot: `df.plot(style=['-','--'])`"
+        },
+        {
+            "id": "s_l2_7",
+            "type": "code",
+            "title": "Style Examples",
+            "content": "Apply different styles to two columns:",
+            "codeSnippet": "quarters.plot(style=['b-', 'r--'], title='Styled Lines')",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_8",
+            "type": "quiz",
+            "title": "Style String Quiz 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What does the style string 'go--' produce?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Green solid line",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Green dashed line with circle markers",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Red solid line",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Green dotted line",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "'g' = green, 'o' = circle marker, '--' = dashed line.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_9",
+            "type": "text",
+            "title": "Adding Markers 📌",
+            "content": "## Emphasize Data Points\n\nUse the `marker` parameter to add markers on each data point (e.g., `marker='o'`, `marker='s'`, `marker='^'`).\n\n```python\ndf.plot(marker='o')\n```\n\nAlternatively, you can include the marker in the style string (e.g., `'o-'`)."
+        },
+        {
+            "id": "s_l2_10",
+            "type": "code",
+            "title": "Marker Example",
+            "content": "Plot with square markers:",
+            "codeSnippet": "quarters['Revenue'].plot(marker='s', title='Revenue with Markers')",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_11",
+            "type": "text",
+            "title": "Area Plots 📶",
+            "content": "## Fill the Area Under the Line\n\n`kind='area'` creates a stacked area chart (by default). Useful for showing cumulative totals or proportions.\n\n```python\nquarters.plot(kind='area')\n```\n\nUse `stacked=False` for unstacked (overlapping) areas."
+        },
+        {
+            "id": "s_l2_12",
+            "type": "code",
+            "title": "Area Plot",
+            "content": "Stacked area chart of Revenue and Expenses:",
+            "codeSnippet": "quarters.plot(kind='area', alpha=0.6, title='Stacked Area')",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_13",
+            "type": "quiz",
+            "title": "Area Plot Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_3",
+                "type": "multiple_choice",
+                "question": "What does `stacked=False` do in an area plot?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Areas are drawn on top of each other (non‑stacked)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Areas are stacked",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Removes the plot",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Changes to bar chart",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`stacked=False` makes the areas overlap (starting from the baseline).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_14",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Subplots for Multiple Series\n\nUse `subplots=True` to put each column in its own subplot: `df.plot(subplots=True, layout=(2,1), figsize=(8,6))`."
+        },
+        {
+            "id": "s_l2_15",
+            "type": "exercise",
+            "title": "Line & Area Challenge 🏋️",
+            "content": "1. Create a DataFrame with 3 columns of random data (np.random.randn) over 10 periods.\n2. Plot all three as lines with different styles.\n3. Plot the same data as a stacked area plot.\n4. Add circle markers to the line plot.\n5. Experiment with `subplots=True`."
+        },
+        {
+            "id": "s_l2_16",
+            "type": "text",
+            "title": "Lines and Areas Mastered! 🎉",
+            "content": "Next, we'll build bar charts and histograms."
+        }
+    ]
+}

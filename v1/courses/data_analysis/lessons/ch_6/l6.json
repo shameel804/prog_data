@@ -1,0 +1,159 @@
+{
+    "id": "l6",
+    "chapterId": "ch_6",
+    "title": "Detecting & Handling Outliers 📊",
+    "description": "Spot extreme values using IQR and Z‑score, then cap or remove them.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Outliers",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "What is an Outlier? 🔍",
+            "content": "# Extreme Values That Distort Analysis\n\nAn **outlier** is a data point significantly different from others. It can be a genuine extreme or an error. Outliers can skew mean and standard deviation, affect models.\n\nCommon detection methods:\n- **IQR (Interquartile Range)**\n- **Z‑score**"
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Sample Data with Outlier",
+            "content": "We'll generate some heights:",
+            "codeSnippet": "import pandas as pd\nimport numpy as np\nnp.random.seed(42)\nheights = np.random.normal(170, 10, 100).tolist()\nheights.append(250)  # extreme outlier\ndf = pd.DataFrame({'height': heights})\nprint('Descriptive stats:')\nprint(df['height'].describe())",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l6_3",
+            "type": "text",
+            "title": "IQR Method 📦",
+            "content": "## The 1.5×IQR Rule\n\nIQR = Q3 (75th percentile) – Q1 (25th percentile).\n\n- Lower fence = Q1 – 1.5 × IQR\n- Upper fence = Q3 + 1.5 × IQR\n\nAny value outside these fences is considered an outlier.\n\n```python\nQ1 = df['height'].quantile(0.25)\nQ3 = df['height'].quantile(0.75)\nIQR = Q3 - Q1\nlower = Q1 - 1.5 * IQR\nupper = Q3 + 1.5 * IQR\n```"
+        },
+        {
+            "id": "s_l6_4",
+            "type": "code",
+            "title": "IQR Outlier Detection",
+            "content": "Find and filter outliers:",
+            "codeSnippet": "Q1 = df['height'].quantile(0.25)\nQ3 = df['height'].quantile(0.75)\nIQR = Q3 - Q1\nlower = Q1 - 1.5 * IQR\nupper = Q3 + 1.5 * IQR\nprint(f'Lower: {lower:.1f}, Upper: {upper:.1f}')\noutliers = df[(df['height'] < lower) | (df['height'] > upper)]\nprint('Outliers:')\nprint(outliers)\n# Remove outliers\ndf_no_out = df[(df['height'] >= lower) & (df['height'] <= upper)]\nprint(f'Rows before: {len(df)}, after: {len(df_no_out)}')",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l6_5",
+            "type": "quiz",
+            "title": "IQR Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What is the Interquartile Range (IQR)?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Max - Min",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Q3 - Q1",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Mean - Median",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Q2 - Q1",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "IQR = 75th percentile minus 25th percentile.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_6",
+            "type": "text",
+            "title": "Z‑score Method 📈",
+            "content": "## How Many Standard Deviations Away?\n\nThe Z‑score measures how many standard deviations a value is from the mean:\n\n`z = (x - mean) / std`\n\nA common threshold is |z| > 3 (or sometimes 2.5) for outliers.\n\n```python\nfrom scipy import stats\nz_scores = stats.zscore(df['height'])\ndf['z_score'] = z_scores\noutliers = df[np.abs(df['z_score']) > 3]\n```\n\nIf you don’t have scipy, you can compute manually."
+        },
+        {
+            "id": "s_l6_7",
+            "type": "code",
+            "title": "Z‑score Detection (Manual)",
+            "content": "Compute Z‑scores without external libraries:",
+            "codeSnippet": "mean = df['height'].mean()\nstd = df['height'].std()\ndf['z_score'] = (df['height'] - mean) / std\noutliers_z = df[np.abs(df['z_score']) > 3]\nprint('Outliers by Z-score:')\nprint(outliers_z)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l6_8",
+            "type": "quiz",
+            "title": "Z‑score Logic 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "multiple_choice",
+                "question": "If a value has Z‑score = 4, what does that imply?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It is exactly at the mean",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It is 4 standard deviations above the mean",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It is 4 times the mean",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It is an error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Z‑score measures distance in standard deviations from the mean.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_9",
+            "type": "text",
+            "title": "Handling Outliers: Options 🛠️",
+            "content": "## Don’t Just Delete Blindly\n\n1. **Remove** – if outliers are errors (e.g., negative age).\n2. **Cap/Clip** – replace extreme values with the fence values.\n3. **Transform** – apply log or square root to reduce skew.\n4. **Separate** – analyze them as a special group.\n\nClipping with pandas:\n```python\ndf['height'] = df['height'].clip(lower=lower, upper=upper)\n```"
+        },
+        {
+            "id": "s_l6_10",
+            "type": "code",
+            "title": "Clipping Values",
+            "content": "Cap the outliers at the IQR fences:",
+            "codeSnippet": "df_clipped = df.copy()\ndf_clipped['height'] = df_clipped['height'].clip(lower=lower, upper=upper)\nprint('After clipping:')\nprint(df_clipped['height'].describe())",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l6_11",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Visualize Outliers with Boxplot\n\n`df.boxplot(column='height')` draws a boxplot where points beyond whiskers are outliers. Great for initial exploration."
+        },
+        {
+            "id": "s_l6_12",
+            "type": "exercise",
+            "title": "Outlier Handling Challenge 🏋️",
+            "content": "1. Generate a dataset of 200 random incomes with a mean of 50000 and std of 15000, add a few extreme values (e.g., 500000).\n2. Use the IQR method to identify outliers.\n3. Create a new DataFrame without those outliers.\n4. Compare the mean income before and after removal."
+        },
+        {
+            "id": "s_l6_13",
+            "type": "text",
+            "title": "Outliers Tamed! 🎉",
+            "content": "You can now detect and handle extreme values. Data cleaning is complete – your data is ready for analysis!"
+        }
+    ]
+}

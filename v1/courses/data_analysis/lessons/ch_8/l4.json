@@ -1,0 +1,183 @@
+{
+    "id": "l4",
+    "chapterId": "ch_8",
+    "title": "Scatter and Box Plots 🎯",
+    "description": "Visualize relationships with scatter plots, box plots, and other statistical charts.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Distributions",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Scatter Plots: Relationship Revealed 📍",
+            "content": "# Plot Two Numeric Variables\n\nA scatter plot shows the relationship between two numeric columns. Use `kind='scatter'` with `x` and `y` arguments.\n\n```python\ndf.plot(kind='scatter', x='height', y='weight')\n```\n\nEach row is a point. Look for correlations, clusters, outliers."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Scatter Data",
+            "content": "Create a DataFrame with height and weight:",
+            "codeSnippet": "import pandas as pd\nimport numpy as np\nnp.random.seed(123)\ndf = pd.DataFrame({\n    'height': np.random.normal(170, 10, 50),\n    'weight': np.random.normal(70, 15, 50)\n})\nprint(df.head())",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Basic Scatter Plot 🔵",
+            "content": "```python\ndf.plot(kind='scatter', x='height', y='weight')\n```"
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Scatter Example",
+            "content": "Plot height vs weight:",
+            "codeSnippet": "df.plot(kind='scatter', x='height', y='weight', title='Height vs Weight', color='teal', alpha=0.7)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Scatter Requirements 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which parameters are mandatory for `df.plot(kind='scatter')`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "x and y",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "color",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "title",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "bins",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "You must specify which columns to use for x and y axes.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Adding Color and Size 🎨",
+            "content": "## `c` and `s` Parameters\n\n- `c` – column name to map colors (useful for grouping).\n- `s` – column name to map marker sizes (bubble chart).\n\n```python\ndf.plot(kind='scatter', x='height', y='weight', c='age', colormap='viridis', s='population')\n```"
+        },
+        {
+            "id": "s_l4_7",
+            "type": "code",
+            "title": "Bubble Chart Example",
+            "content": "Add a size column:",
+            "codeSnippet": "df['size'] = np.random.randint(20, 200, 50)\ndf.plot(kind='scatter', x='height', y='weight', s=df['size'], title='Bubble Chart', alpha=0.6)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_8",
+            "type": "text",
+            "title": "Box Plots: Show Spread & Outliers 📦",
+            "content": "## `kind='box'`\n\nA box plot displays the distribution of data through quartiles:\n- Box from Q1 to Q3\n- Median line inside\n- Whiskers extending to 1.5×IQR\n- Outliers as individual points\n\n```python\ndf.plot(kind='box')\n```"
+        },
+        {
+            "id": "s_l4_9",
+            "type": "code",
+            "title": "Box Plot of Multiple Columns",
+            "content": "Plot weight and height distribution:",
+            "codeSnippet": "df[['height','weight']].plot(kind='box', title='Distribution of Height and Weight')",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_10",
+            "type": "quiz",
+            "title": "Box Plot Elements 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "The middle line inside a box plot represents:",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Mean",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Median",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Mode",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Range",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The central line is the median (Q2).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_11",
+            "type": "text",
+            "title": "Grouped Box Plots 🗂️",
+            "content": "## Box Plot by Category\n\nUse the `by` parameter or `boxplot(column='col', by='category')`\n\n```python\ndf.boxplot(column='weight', by='gender')\n```"
+        },
+        {
+            "id": "s_l4_12",
+            "type": "code",
+            "title": "Grouped Boxplot",
+            "content": "We'll create a small dataset with a 'group' column:",
+            "codeSnippet": "data = pd.DataFrame({\n    'score': [85,90,78,92,88,70,75,80,95,65],\n    'group': ['A','A','A','A','A','B','B','B','B','B']\n})\ndata.boxplot(column='score', by='group', grid=False, figsize=(6,4))",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_13",
+            "type": "text",
+            "title": "Other Statistical Plots 📉",
+            "content": "## Hexbin and Pie\n\n- **Hexbin**: `df.plot(kind='hexbin', x='col1', y='col2', gridsize=25)` – good for dense scatter.\n- **Pie**: `df.plot(kind='pie', y='column')` – but avoid pie charts in serious analysis; bar is usually better.\n\nExample pie (just for fun):\n```python\nsales_by_product.plot(kind='pie', y='Sales', autopct='%1.1f%%')\n```"
+        },
+        {
+            "id": "s_l4_14",
+            "type": "code",
+            "title": "Pie Chart (if needed)",
+            "content": "Using earlier sales_by_product:",
+            "codeSnippet": "sales_by_product.plot(kind='pie', y='Sales', autopct='%1.1f%%', title='Sales Share', legend=False, ylabel='')",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_15",
+            "type": "exercise",
+            "title": "Scatter & Box Challenge 🏋️",
+            "content": "1. Create a DataFrame with 100 rows of 'study_hours' and 'exam_score' (with some noise). Plot a scatter plot.\n2. Add a 'gender' column (random 'Male'/'Female') and use `c` to color points by gender.\n3. Draw a box plot of exam scores by gender.\n4. Create a hexbin plot if you'd like."
+        },
+        {
+            "id": "s_l4_16",
+            "type": "text",
+            "title": "Scatter & Box Mastery! 🎉",
+            "content": "Now let's polish those plots with customization."
+        }
+    ]
+}
