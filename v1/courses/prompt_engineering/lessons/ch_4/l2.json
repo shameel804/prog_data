@@ -1,0 +1,114 @@
+{
+    "id": "l2",
+    "chapterId": "ch_4",
+    "title": "Crafting Your First Examples ✍️",
+    "description": "Learn the structure of an effective input‑output pair and how to present examples cleanly.",
+    "xpReward": 30,
+    "estimatedMinutes": 6,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Anatomy of an Example 🧬",
+            "content": "# Input → Output Pairs\n\nEvery few‑shot example consists of two parts:\n- **Input:** The text, data, or problem you give the model.\n- **Output:** The ideal response you want the model to produce.\n\nYour goal is to make these pairs so clear that the final, unlabeled input becomes obvious.\n\nExample for a grammar correction task:\n```\nInput:  She go to school.\nOutput: She goes to school.\n\nInput:  He don't like apples.\nOutput: He doesn't like apples.\n```\nThe model learns the transformation."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Using Labels and Delimiters 🏷️",
+            "content": "## Make the Structure Obvious\n\nUse consistent labels like `Input:`, `Output:`, `Q:`, `A:`, or special separators. The model follows formatting cues as much as the content itself.\n\nExample:\n```\nQ: What is the capital of France?\nA: Paris\n\nQ: What is the capital of Japan?\nA:\n```\nThe model sees the Q/A pattern and will complete `Tokyo`.\n\n**Pro tip:** Separate examples with blank lines or a special token like `---` to prevent the model from mixing them up."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Example Structure 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "In a few‑shot example, what should the 'output' represent?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A random sentence",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The exact kind of answer you want the model to generate for the final input",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The prompt's instruction",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The user's name",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The output in each example demonstrates the desired behavior, so the model can replicate it for the new input.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Consistency is Key 🔑",
+            "content": "## Keep Format, Tone, and Style Identical\n\nIf your first example outputs a full sentence, the second should too. If you switch to a one‑word answer, the model will get confused.\n\n**Inconsistent (bad):**\n```\nReview: \"Great!\" → Positive\nReview: \"Terrible.\" → I feel this is a negative review.\n```\nThe model doesn't know if it should output a label or a sentence.\n\n**Consistent (good):**\n```\nReview: \"Great!\" → Positive\nReview: \"Terrible.\" → Negative\n```\nUniformity signals the exact pattern."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Consistency Example 📝",
+            "content": "Let's build a few‑shot prompt for extracting names and dates from sentences.\n\n**Template:**\n```\nSentence: \"Alice was born on March 5th.\"\nName: Alice | Date: March 5th\n\nSentence: \"Bob's birthday is July 12.\"\nName: Bob | Date: July 12\n\nSentence: \"On April 1st, Charlie arrived.\"\nName:\n```\nThe model will output `Charlie | Date: April 1st` because it follows the pattern exactly.",
+            "codeSnippet": "Consistent output format: Name: [name] | Date: [date]\nThis is predictable.",
+            "codeLanguage": "text",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Consistency Check ✅",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Why is inconsistent example formatting harmful?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It makes the prompt longer",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It causes the model to learn a contradictory pattern, leading to unpredictable outputs",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It always crashes the AI",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It has no effect",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Inconsistent examples confuse the model about the task specification, resulting in erratic or wrong completions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "tip",
+            "title": "Example Placement 🚀",
+            "content": "## Put Examples Before the Final Query\n\nAlways place your few‑shot examples *before* the actual input you want the model to process. The sequence should be: Instruction (optional) → Examples → Final input with empty output slot. This primes the model's autoregressive generation."
+        }
+    ]
+}

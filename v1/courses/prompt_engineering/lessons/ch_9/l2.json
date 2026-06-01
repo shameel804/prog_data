@@ -1,0 +1,114 @@
+{
+    "id": "l2",
+    "chapterId": "ch_9",
+    "title": "Building Sequential Pipelines 🏗️",
+    "description": "Master the practical skills of designing chains, passing data, and handling errors at each stage.",
+    "xpReward": 30,
+    "estimatedMinutes": 6,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Designing Your First Pipeline 🎨",
+            "content": "# The Chain Blueprint\n\nEvery pipeline needs:\n1. **A clear start**: what data goes in.\n2. **Defined steps**: each with a specific instruction and expected output format.\n3. **Data handoffs**: how the output of step N becomes the input of step N+1.\n4. **A termination condition**: when is the chain complete?\n\nDesign tip: make each step produce a clean, easily parseable output (like JSON or a plain text block) so the next step can consume it without confusion.\n\nExample blueprint for an article‑to‑tweet chain:\n- Step 1: `Summarize the article into 3 key points in JSON.`\n- Step 2: `For each key point, write a tweet.`"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Passing Data Effectively 📦",
+            "content": "## How to Feed Output into the Next Prompt\n\nThere are two main methods:\n\n**1. Manual concatenation (for simple chains):** You take the raw text output and insert it into the next prompt template. E.g., `\"Using this summary: {previous_output}, write a tweet.\"`\n\n**2. Code‑based pipelines (for production):** In Python/JS, you call the API, capture the response, format it, and send it as part of the next request. You can include conditional logic, retries, and transformations.\n\nAlways instruct the previous step to output in a format that’s easy to embed. For instance, ask for `Output only a JSON object with key 'summary'` so you can programmatically extract the summary cleanly."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Data Handoff 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Why is it important for each chain step to output a clean, structured format?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Because the model likes JSON.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "So the next step can reliably extract the needed information without ambiguity.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To increase token usage.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Structured format is not important.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Clean, parseable output minimizes errors when feeding data forward, making the chain robust.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Error Handling in Chains ⚠️",
+            "content": "## Prepare for Step Failures\n\nIf one step produces a bad output (e.g., invalid JSON, off‑topic answer), the whole chain can break. Build resilience:\n- **Validation step**: after a crucial step, check if the output meets the requirements (format, length). If not, re‑prompt.\n- **Fallback prompts**: have a recovery prompt like `The previous output was invalid. Please regenerate according to the original instructions.`\n- **Circuit breakers**: set a maximum number of retries to avoid infinite loops.\n\nExample:\n```\nStep: Extract names. If output doesn't match a list pattern, retry up to 2 times.\n```\nIn code, you can check the response and take action."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Pipeline with Validation Example 🛡️",
+            "content": "**Goal:** Extract a due date from an email, then create a calendar event.\n\n**Prompt 1:** `Extract the due date from this email: \"Please submit by March 15th.\" Output only the date in YYYY‑MM‑DD format. If not found, output \"NOT_FOUND\".`\n→ Output: `2025‑03‑15`\n\n**Validation:** Check if output matches `YYYY‑MM‑DD` regex. If yes, proceed. If `NOT_FOUND`, ask user.\n\n**Prompt 2 (only if valid):** `Create a calendar event titled \"Submission\" on 2025‑03‑15.`\n\nValidation prevents feeding a bad date into the calendar step.",
+            "codeSnippet": "Step 1: Extract date → Validate → If valid, Step 2: Create event.",
+            "codeLanguage": "text",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Error Strategy ✅",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What is a 'circuit breaker' in prompt chaining?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A prompt that cuts off long outputs.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A limit on the number of retries if a step fails, preventing infinite loops.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A tool to stop the AI from answering.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A type of persona.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Circuit breakers cap retries, ensuring the system doesn’t hang on a repeatedly failing step.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Log Every Step\n\nWhen building a chain, log each input and output. This helps you debug which step introduced an error. It’s like unit testing for prompts."
+        }
+    ]
+}

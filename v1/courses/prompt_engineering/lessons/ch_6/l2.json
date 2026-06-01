@@ -1,0 +1,104 @@
+{
+    "id": "l2",
+    "chapterId": "ch_6",
+    "title": "Zero‑Shot CoT: The Magic Phrase ✨",
+    "description": "Learn how adding a simple instruction like 'Let's think step by step' transforms accuracy.",
+    "xpReward": 30,
+    "estimatedMinutes": 6,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Zero‑Shot CoT: The Simplest Technique 🪄",
+            "content": "# Two Words That Change Everything\n\nZero‑shot CoT requires **no examples**. You just append a trigger phrase to the question:\n\n- `Let's think step by step.`\n- `Let's work this out in a step by step way to be sure we have the right answer.`\n- `First, let's break down the problem.`\n\nResearch (Kojima et al., 2022) showed that simply adding `Let's think step by step` boosts accuracy dramatically on reasoning benchmarks. It's the easiest, most universal CoT technique."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "How to Apply Zero‑Shot CoT 🔧",
+            "content": "## The Two‑Stage Process\n\n1. **Extract reasoning:** Give the prompt with the trigger phrase to get the model's chain of thought.\n2. **Extract answer:** Either take the final line of the reasoning, or send a follow‑up like `Therefore, the answer is:` to extract a concise response.\n\nIn practice, you can do both in a single prompt:\n> `Q: ... Let's think step by step. Then give the final answer after 'Answer:'`\n\nThis structures the output neatly."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Trigger Phrase Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which of the following is a valid zero‑shot CoT trigger?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "\"Answer quickly.\"",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "\"Let's think step by step.\"",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "\"Provide the final answer only.\"",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "\"Use bullet points.\"",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The phrase 'Let's think step by step' is the classic zero‑shot CoT trigger that prompts reasoning.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Zero‑Shot CoT in Action 🔬",
+            "content": "**Prompt:**\n```\nQ: A store sells apples in bags of 4. If John buys 3 bags, and his friend gives him 2 more individual apples, how many apples does John have? Let's think step by step.\n```\n**Model output:**\n```\nStep 1: John buys 3 bags of 4 apples = 3*4 = 12 apples.\nStep 2: His friend gives him 2 more apples, so total = 12 + 2 = 14 apples.\nAnswer: 14\n```\nWithout CoT, the model might have said 14 anyway, but for harder problems the reasoning prevents mistakes.",
+            "codeSnippet": "Prompt: Q: ... Let's think step by step.\nOutput: Step 1: ... Step 2: ... Answer: 14",
+            "codeLanguage": "text",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Why It Works on Unseen Tasks 🧪",
+            "content": "## Emergent Reasoning\n\nModels aren't specifically trained on `Let's think step by step`, but they've seen many explanations in training data. The phrase **primes the model** to enter an explanatory mode, activating patterns of step‑wise problem solving.\n\nIt's a form of **in‑context learning**: the model infers from the instruction that it should generate a reasoning trace, which in turn improves the probability of the correct conclusion."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Effectiveness ✅",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "true_false",
+                "question": "True or False: Zero‑shot CoT works equally well on every possible type of question.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "It's most effective on tasks requiring sequential logic. On simple factual recall ('What is the capital of France?'), it adds unnecessary overhead and may even introduce confusion.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Customize the Trigger\n\nExperiment with different phrasing to suit your task:\n- `Let's solve this problem logically.`\n- `Break this down into subtasks.`\n- `Consider all factors before answering.`\n\nSometimes a more domain‑specific trigger works better."
+        }
+    ]
+}

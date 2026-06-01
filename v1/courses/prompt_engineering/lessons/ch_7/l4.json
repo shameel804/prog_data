@@ -1,0 +1,119 @@
+{
+    "id": "l4",
+    "chapterId": "ch_7",
+    "title": "Advanced Debugging & Edge Cases ⚙️",
+    "description": "Handle stubborn prompts that resist simple fixes using meta‑prompting, self‑critique, and edge‑case testing.",
+    "xpReward": 30,
+    "estimatedMinutes": 6,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "When Simple Fixes Fail 🛑",
+            "content": "# Stubborn Prompts and Wicked Problems\n\nSometimes you tweak every lever and the model still gives weird, inconsistent, or subtly wrong answers. This happens with:\n- Highly nuanced tasks (legal analysis, medical advice)\n- Long outputs requiring internal consistency\n- Edge cases that your examples didn’t cover\n\nFor these, we need advanced techniques: **self‑critique**, **meta‑prompting**, and **edge‑case stress testing**."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Self‑Critique: Let the AI Debug Itself 🪞",
+            "content": "## Ask the Model to Find Its Own Mistakes\n\nAfter getting an output, you can follow up with:\n> `Review your previous answer. Identify any errors, inconsistencies, or missing points. Then provide a corrected version.`\n\nThe model will often catch mistakes it made because the act of reviewing taps into its evaluation capabilities.\n\nYou can even embed this into the original prompt:\n> `First, answer the question. Then, critique your own answer, pointing out any weaknesses or assumptions. Finally, provide an improved answer based on your critique.`\n\nThis built‑in reflection loop can dramatically boost quality."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Self‑Critique Logic 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Why does self‑critique often improve the model's answer?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Because the model has a separate 'critic' module.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Because generating a critique forces the model to re‑evaluate its own output against internal consistency and general knowledge, often spotting errors it missed in the first pass.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Because it makes the answer longer.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Because it uses a different AI.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The autoregressive nature means the critique conditions a more careful second answer. It’s like proofreading.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Meta‑Prompting: Prompts That Write Prompts 🧙",
+            "content": "## Use the AI to Debug Its Own Prompt\n\nIf you’re stuck, ask the model to help you write a better prompt:\n\n> `I gave you this prompt: [original prompt]. The output was not satisfactory because [describe issue]. Please rewrite the prompt to get a more accurate and formatted answer. Explain your changes.`\n\nThe model can suggest improved phrasing, missing constraints, or better examples, drawing on its knowledge of what makes prompts effective.\n\nThis is **meta‑prompting** – using the AI as a prompt engineering assistant. It often uncovers blind spots in your own thinking."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Meta‑Prompting Example 🛠️",
+            "content": "**User:**\n```\nHere is my prompt: 'Explain the stock market.' The result was too technical. Please rewrite my prompt so the explanation is suitable for a 15‑year‑old, using an analogy. Show the improved prompt.\n```\n**AI response might be:**\n```\nImproved prompt: 'Explain how the stock market works to a 15‑year‑old. Use a simple analogy, like a school fair or a lemonade stand. Avoid jargon.'\n```",
+            "codeSnippet": "Original: 'Explain the stock market.'\nAI-generated improved: 'Explain the stock market to a 15-year-old using a lemonade stand analogy.'",
+            "codeLanguage": "text",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Advanced Techniques ✅",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "True or False: Meta‑prompting means asking the AI to generate a better version of your original prompt.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Exactly. You leverage the model's own language understanding to refine the instructions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Edge‑Case Stress Testing 🧪",
+            "content": "## Break Your Prompt on Purpose\n\nBefore deploying a prompt for production, test it with extreme inputs:\n- Very long text\n- Text with special characters or emojis\n- Malicious or nonsensical input\n- Input in a different language\n- Missing input data\n\nIf the prompt breaks (e.g., the model crashes, hallucinates wildly, or outputs garbage), add guardrails:\n> `If the input is not in English, reply 'Please provide English text.'`\n> `If the input is empty, ask for it.`\n\nRobust prompts handle the unexpected gracefully."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "code",
+            "title": "Edge‑Case Handling Template 🛡️",
+            "content": "```\nYour task is to summarize the provided text.\n- If no text is provided, reply 'Please provide the text to summarize.'\n- If the text is less than 10 words, reply 'Text too short to summarize meaningfully.'\n- If the text is in a language other than English, reply 'I can only summarize English text currently.'\n- Otherwise, provide a 3‑sentence summary in bullet points.\n```",
+            "codeSnippet": "Guardrails handle empty, short, and non-English inputs gracefully.",
+            "codeLanguage": "text",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_9",
+            "type": "tip",
+            "title": "Debugging as a Superpower 🦸",
+            "content": "## The Best Prompt Engineers Are Relentless Debuggers\n\nThey don't accept bad output. They read it carefully, form a hypothesis, test it, and iterate. The tools in this chapter – systematic refinement, self‑critique, meta‑prompting, edge‑case testing – turn a frustrating black box into a transparent, controllable system.\n\nMaster these, and you’ll never be stuck with a bad AI response again."
+        }
+    ]
+}

@@ -1,0 +1,104 @@
+{
+    "id": "l4",
+    "chapterId": "ch_4",
+    "title": "Few‑Shot Pitfalls & Best Practices ⚠️",
+    "description": "Avoid the most common traps that turn a promising few‑shot prompt into a disaster.",
+    "xpReward": 30,
+    "estimatedMinutes": 6,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Mistake #1: Too Many Examples 📚",
+            "content": "# The Context Window is Finite\n\nEvery example consumes tokens. With a 4k token limit, 10 long examples might leave no room for the actual input or the output. The model might also become \"overfit\" to the examples, failing to generalize.\n\n**Symptoms:**\n- The model repeats the examples verbatim.\n- The output is cut off mid‑sentence.\n- The model ignores the final input.\n\n**Fix:** Start with 2‑3 examples. Add more only if performance is poor. Quality > quantity."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Mistake #2: Contradictory Examples 🔀",
+            "content": "## Mixed Signals Break the AI\n\nIf you give examples where the same input leads to different outputs, the model can't infer a consistent rule.\n\n**Example of contradiction:**\n```\nInput: \"I'm fine.\" → Positive\nInput: \"I'm fine.\" → Negative\n```\nThis teaches nothing useful. It's like giving a student two different answers for the same question.\n\n**Fix:** Ensure each example pair is internally consistent and the set as a whole doesn't conflict."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Contradiction Detection 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is the likely outcome of providing contradictory examples?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The model picks one at random each time",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The model always chooses the first example",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The model learns a deeper truth",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The model stops responding",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Contradiction increases uncertainty; the model may sample randomly from the conflicting patterns, leading to unreliable outputs.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Mistake #3: Overly Complex Examples 🤯",
+            "content": "## If the Example Is Harder Than the Task\n\nLong, convoluted examples distract the model. The AI may focus on irrelevant details and miss the core transformation.\n\n**Bad:**\n```\nInput: \"Despite the inclement weather and his trepidation, the young protagonist embarked on a journey that would alter the course of his existential trajectory.\"\nOutput: \"He went despite fear and weather, changing his life.\"\n```\nThe model might think the task is about simplifying philosophical novels, not general summarization.\n\n**Fix:** Use simple, clear examples that isolate the exact skill you want the model to learn."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Simple vs Complex Example 🧹",
+            "content": "**Complex (distracting):**\n```\nInput: \"The multifaceted nature of quantum entanglement...\"\nOutput: \"Quantum entanglement is complex.\"\n```\n\n**Simple (focused):**\n```\nInput: \"The quick brown fox jumps over the lazy dog.\"\nOutput: \"A fox jumps over a dog.\"\n```\nThe simple example teaches summarization without introducing domain‑specific confusion.",
+            "codeSnippet": "Simple examples isolate the task; complex ones add noise.",
+            "codeLanguage": "text",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Simplicity Payoff ✅",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "True or False: Using the most complex example you can think of best demonstrates the model's capabilities.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Complex examples can confuse the model about what you're actually testing. Start simple, then gradually increase difficulty if needed.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "tip",
+            "title": "Best Practices Summary 📋",
+            "content": "## Your Few‑Shot Checklist\n\n1. **Label inputs and outputs** with clear markers.\n2. **Keep formatting absolutely consistent.**\n3. **Select 2‑5 diverse, representative examples.**\n4. **Avoid contradictions** and overly complex examples.\n5. **Place examples before the target input.**\n6. **Test and iterate:** remove or replace examples that produce poor results.\n\nFollow these, and you'll wield few‑shot like a pro."
+        }
+    ]
+}

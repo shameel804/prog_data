@@ -1,0 +1,110 @@
+{
+    "id": "l2",
+    "chapterId": "ch_7",
+    "title": "Diagnosing Output Problems 🔍",
+    "description": "Learn to recognize the common illnesses of AI outputs and prescribe the right fix.",
+    "xpReward": 30,
+    "estimatedMinutes": 6,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The AI’s Most Common Failures 🤒",
+            "content": "# Categories of Bad Output\n\nBefore you can fix a prompt, you must identify the problem. Most poor outputs fall into these buckets:\n\n1. **Vagueness / Genericness**: The answer is too broad, like a textbook definition.\n2. **Hallucination / Factual Error**: The model invents plausible‑sounding nonsense.\n3. **Off‑Topic Drift**: The model wanders into unrelated areas.\n4. **Format Violation**: Ignores the requested structure (JSON, bullets, etc.).\n5. **Tone Mismatch**: The style is too formal, too casual, or just weird.\n\nEach has a different root cause and a different fix."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Vagueness: Too Much Freedom 🌫️",
+            "content": "## Symptom: “It could have been written by anyone.”\n\nIf the output lacks specific details, examples, or a unique angle, your prompt was probably too open‑ended.\n\n**Diagnosis:** Ask yourself – did I specify the audience, scope, and depth?\n\n**Fix:** Add constraints. Who is the reader? What specific aspects should be covered? Use numbers, names, dates.\n\n> Before: `Explain meditation.`\n> After: `Explain the benefits of mindfulness meditation for reducing workplace stress, with two recent studies and a beginner’s 2‑minute exercise.`"
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Vagueness Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "You prompt: 'Tell me about history.' The model returns a long, rambling overview of world history. What’s the primary problem?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Hallucination",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Vagueness in the prompt",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Format violation",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Tone mismatch",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The prompt gives no specific era, region, or angle, so the model defaults to a broad, generic overview.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Hallucination: When the AI Makes Stuff Up 🦄",
+            "content": "## Symptom: Facts that don’t exist, quotes never said, code that uses fake libraries.\n\nLLMs are trained to be plausible, not truthful. They will invent data to fill gaps.\n\n**Diagnosis:** Did you rely on the model’s internal knowledge without providing source material? Did you ask for something very recent or obscure?\n\n**Fix:** Ground the model with input data. Use instructions like `If you don’t know, say so.` or `Base your answer strictly on the provided text.`\n\nExample:\n> `Summarize the attached report. If a requested statistic is not in the report, state 'Not provided'.`"
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Hallucination Prevention 🛡️",
+            "content": "**Risky:** `What were the quarterly earnings of X company?` (if data not in training)\n**Safer:** `Here is the earnings report of X company: [text]. Extract the quarterly earnings. If the data is missing, reply 'Data not found.'`\n\nThe second approach chains the model to reality.",
+            "codeSnippet": "Without grounding: model may guess.\nWith grounding and fallback: model stays honest.",
+            "codeLanguage": "text",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Hallucination Check ✅",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "true_false",
+                "question": "True or False: Adding 'If the answer is not known, say I don’t know' can help reduce hallucination.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Explicitly allowing the model to decline to answer reduces the pressure to invent a plausible‑looking response.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "Off‑Topic Drift & Format/Tone Issues 🚧",
+            "content": "## Other Common Breakdowns\n\n**Off‑Topic Drift:** The model starts well but veers into a tangent. Fix by adding guardrails: `Focus strictly on X. Do not discuss Y.` Use delimiters to keep it on task.\n\n**Format Violation:** The output is a paragraph instead of JSON. Fix by giving an example of the exact format, not just describing it. Few‑shot format examples are powerful here.\n\n**Tone Mismatch:** Too formal when you wanted casual. Fix by adding a persona or explicit tone instruction, plus a sample sentence in the desired voice."
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "Diagnostic Mindset 🩺",
+            "content": "## Don’t Guess – Measure\n\nWhen something fails, change **one thing** and re‑test. That’s how you isolate the cause. We’ll systematize this in the next lesson."
+        }
+    ]
+}

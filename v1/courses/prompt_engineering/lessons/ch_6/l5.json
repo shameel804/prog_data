@@ -1,0 +1,114 @@
+{
+    "id": "l5",
+    "chapterId": "ch_6",
+    "title": "CoT Pitfalls & Best Practices ⚠️",
+    "description": "Avoid the traps that make chain‑of‑thought backfire, and learn to use it wisely.",
+    "xpReward": 30,
+    "estimatedMinutes": 6,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "When CoT Goes Wrong 💥",
+            "content": "# The Overthinking Trap\n\nChain‑of‑thought is not a silver bullet. On simple factual questions like `What is the capital of Australia?`, adding reasoning can cause the model to over‑explain or even talk itself into a wrong answer.\n\nExample:\n```\nQ: What is the capital of Australia? Let's think step by step.\nA: Australia is a country. Major cities include Sydney, Melbourne, Canberra. Sydney is the most famous, but I recall Canberra is the capital... Actually, I'm not sure. The answer might be Sydney.\n```\nThe model second‑guesses itself. CoT should be used only when reasoning is actually needed."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Garbage In, Garbage Out: Biased Examples 🗑️",
+            "content": "## Few‑Shot CoT Magnifies Bias\n\nIf your reasoning examples contain logical fallacies or incorrect steps, the model will faithfully replicate those mistakes. A biased example:\n```\nQ: Is climate change real? Let's think step by step.\nA: It snowed last winter, so the Earth isn't warming.\n```\nThis teaches flawed reasoning. Always sanity‑check your examples for logical soundness."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Pitfall Detection 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Why might chain‑of‑thought fail on a simple trivia question?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Because the model can't answer trivia.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Because the forced reasoning can introduce doubt or convoluted paths, overriding a correct direct answer.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Because trivia questions are too short.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Because the model ignores 'Let's think step by step'.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "For tasks the model already knows directly, CoT can add noise and unnecessary complexity, potentially lowering accuracy.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Token & Cost Inefficiency 💸",
+            "content": "## CoT Increases Output Length\n\nReasoning chains consume significant tokens, which can be expensive or slow. For high‑volume, simple tasks, it's overkill. \n\n**Best practice:** Use CoT selectively. You can even dynamically decide: if the model's direct answer seems uncertain (low confidence), only then re‑prompt with CoT. This two‑stage approach balances cost and accuracy."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Two‑Stage Reasoning Example 📞",
+            "content": "**Stage 1:** Ask directly. If answer seems wrong or the task is complex, proceed.\n```\nQ: If a baker uses 2 eggs per cake and has 15 eggs, how many cakes? Answer directly.\nA: 7.5? (bad, can't have half a cake)\n```\n**Stage 2:** Re‑prompt with CoT.\n```\nQ: If a baker uses 2 eggs per cake and has 15 eggs, how many whole cakes can be made? Let's think step by step.\nA: 15 / 2 = 7.5, but we need whole cakes, so 7 cakes.\n```",
+            "codeSnippet": "Stage 1 (direct) fails, Stage 2 (CoT) clarifies.",
+            "codeLanguage": "text",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Efficiency Check ✅",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "When is it most appropriate to avoid chain‑of‑thought?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "On a complex logic puzzle.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "On a simple, well‑known fact where the model consistently answers correctly.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "On a multi‑step math word problem.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "When debugging code.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "For straightforward facts, CoT adds unnecessary cost and may even reduce accuracy through over‑analysis.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_7",
+            "type": "tip",
+            "title": "Best Practices Summary 📋",
+            "content": "## The CoT Decision Tree\n\n- **Is the task multi‑step or reasoning‑heavy?** If yes → use CoT.\n- **Is accuracy critical?** Use self‑consistency.\n- **Is the task a known fact?** Skip CoT.\n- **Are you providing examples?** Ensure they're flawless and consistent.\n- **Monitor token usage** – CoT can be 3‑5x longer.\n\nMaster these rules, and CoT becomes your precision instrument."
+        }
+    ]
+}
