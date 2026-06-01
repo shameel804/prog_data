@@ -1,0 +1,148 @@
+{
+    "id": "l2",
+    "chapterId": "ch_2",
+    "title": "Managing Images: Pull, List, Remove 🖼️",
+    "description": "Pull images from Docker Hub, inspect them, and clean up your local image cache.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Pulling Images from a Registry 📥",
+            "content": "# `docker pull` – Getting the Goods\n\nImages live on **registries** (like Docker Hub). To download an image locally, use `docker pull`:\n\n```bash\ndocker pull <image>:<tag>\n```\n\n- `<image>` – the repository name (e.g., `nginx`, `python`, `ubuntu`)\n- `<tag>` – a version label; defaults to `latest` if omitted.\n\n**Examples:**\n```bash\ndocker pull nginx          # pulls nginx:latest\ndocker pull python:3.11    # pulls Python version 3.11\n```\n\n> `latest` doesn’t mean “newest” – it’s just the default tag. Always pin exact versions in production!"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Pull in Action 👇",
+            "content": "Pull a small Alpine Linux image to see what happens:",
+            "codeSnippet": "docker pull alpine:3.18",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Tag Choices 🏷️",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What happens if you run `docker pull node` without specifying a tag?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It fails because a tag is required.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It pulls the image tagged `latest`.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It pulls the most recently uploaded version.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It pulls all available tags.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "If no tag is specified, Docker uses `latest` by default. It's important to know that `latest` is just a tag, not the actual latest version.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Listing Local Images 📋",
+            "content": "# `docker images` / `docker image ls`\n\nTo see what images you already have on your machine:\n\n```bash\ndocker images\n# or\n docker image ls\n```\n\nOutput columns:\n- **REPOSITORY** – image name\n- **TAG** – version label\n- **IMAGE ID** – unique SHA256 hash\n- **CREATED** – when the image was built\n- **SIZE** – total size on disk"
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Sample Image List 📊",
+            "content": "After pulling a few images, your output might look like:",
+            "codeSnippet": "REPOSITORY   TAG       IMAGE ID       CREATED        SIZE\nalpine       3.18      5e2b554c1c45   2 weeks ago    7.33MB\nnginx        latest    ac232364af82   3 weeks ago    142MB\nhello-world  latest    feb5d9fea6a5   5 months ago   13.3kB",
+            "codeLanguage": "plaintext",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Image Identification 🆔",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What does the IMAGE ID represent?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The version number of Docker.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A unique identifier (SHA256 hash) for the image.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The name of the registry it came from.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The size of the image in bytes.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Each image has a unique ID (a cryptographic hash). You can reference an image by its ID or by name:tag.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "Removing Images 🗑️",
+            "content": "# `docker rmi` / `docker image rm`\n\nFree up disk space by deleting images you no longer need.\n\n```bash\ndocker rmi <image>\n```\n\n- You can use the **image name:tag** or the **IMAGE ID**.\n- You cannot remove an image if any container (even stopped) is using it. Stop and remove those containers first, or use `-f` to force.\n\n**Examples:**\n```bash\ndocker rmi alpine:3.18\ndocker rmi 5e2b554c1c45   # using IMAGE ID\n```"
+        },
+        {
+            "id": "s_l2_8",
+            "type": "quiz",
+            "title": "Cleanup Check 🧹",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_3",
+                "type": "true_false",
+                "question": "You can delete an image even if a container created from it is still running.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Docker prevents deletion of images that are in use by any container (running or stopped) unless you force it with `-f`. Best practice is to stop and remove containers first.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_9",
+            "type": "tip",
+            "title": "Dangling Images 👻",
+            "content": "## What Are Dangling Images?\nAfter you build or pull newer versions, old untagged images may become “dangling” (their repository and tag show `<none>`). Use:\n```bash\ndocker image prune\n```\nto remove them all in one go."
+        }
+    ]
+}

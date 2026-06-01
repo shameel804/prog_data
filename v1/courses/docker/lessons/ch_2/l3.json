@@ -1,0 +1,195 @@
+{
+    "id": "l3",
+    "chapterId": "ch_2",
+    "title": "Running Containers with Options ⚙️",
+    "description": "Go beyond the basics: run containers in the background, name them, and map ports.",
+    "xpReward": 35,
+    "estimatedMinutes": 8,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Recap: `docker run` 🔁",
+            "content": "# The Most Important Command\n\n```bash\ndocker run [OPTIONS] IMAGE [COMMAND] [ARG...]\n```\n\nSo far we used it without options:\n```bash\ndocker run hello-world\n```\n\nNow we'll supercharge it with flags that make containers useful in real projects."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Run in the Background: `-d` 🤫",
+            "content": "# Detached Mode\n\nBy default, `docker run` attaches your terminal to the container. If the container runs a long‑lived process (like a web server), your terminal stays occupied.\n\nWith `-d` (detached), the container runs in the background and prints the container ID.\n\n```bash\ndocker run -d nginx\n```\n\nThis starts an Nginx web server and returns immediately.\n\nCheck it with `docker ps` – you’ll see the container running."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Detached or Not? 🤔",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What does the `-d` flag do in `docker run -d nginx`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It deletes the container after it stops.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It runs the container in detached (background) mode.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It disables all logging.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It downloads the image if not present.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`-d` stands for 'detach'. It tells Docker to run the container in the background and print the container ID.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Name Your Containers: `--name` 🏷️",
+            "content": "# Friendly Names\n\nDocker auto‑generates random names like `brave_curie` or `jovial_kowalevski`. For real work, you want predictable names.\n\n```bash\ndocker run -d --name my-web nginx\n```\n\nNow you can refer to the container by `my-web` instead of its long container ID.\n\n**Note:** Container names must be unique. You cannot have two containers with the same name."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Name and Detach Together 🤝",
+            "content": "Combine flags to start a named, detached Nginx server:",
+            "codeSnippet": "docker run -d --name web-server nginx",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Naming Rules 📛",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "true_false",
+                "question": "You can reuse the same container name after deleting the old container.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Names must be unique among all containers (running or stopped). Once you delete a container, the name becomes available again.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Port Mapping: `-p` 🌉",
+            "content": "# Exposing Container Services\n\nContainers have their own network. By default, their services are not reachable from your host.\n\nUse `-p host_port:container_port` to create a bridge.\n\n```bash\ndocker run -d -p 8080:80 nginx\n```\n\n- `80` is the port **inside** the container (Nginx default).\n- `8080` is the port on your **host**. Open `http://localhost:8080` in your browser.\n\nYou can also map to random host port using `-P` (with EXPOSE in image)."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "code",
+            "title": "Port Mapping in Action 🌍",
+            "content": "Start a named web server with a custom host port:",
+            "codeSnippet": "docker run -d --name my-nginx -p 9090:80 nginx",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_9",
+            "type": "quiz",
+            "title": "Port Logic 🧮",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_3",
+                "type": "multiple_choice",
+                "question": "If you run `docker run -d -p 3000:80 nginx`, which port should you access in your browser?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Port 80",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Port 3000",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Port 8080",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Port 443",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The syntax is `host:container`. So `3000` is the host port, and `80` is the container port. Access `http://localhost:3000`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_10",
+            "type": "text",
+            "title": "Other Handy `run` Options 🔧",
+            "content": "# More Useful Flags\n\n- `--rm` – automatically remove the container when it exits. Great for one‑off tasks.\n- `-e` – set environment variables inside the container (`-e MY_VAR=value`).\n- `--restart` – set restart policy (`no`, `on-failure`, `always`, `unless-stopped`).\n- `-v` – mount a volume (we’ll cover volumes later).\n\n**Example – a self‑cleaning temporary container:**\n```bash\ndocker run --rm ubuntu echo \"I will be deleted after I finish\"\n```"
+        },
+        {
+            "id": "s_l3_11",
+            "type": "quiz",
+            "title": "Transient Containers ✨",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_4",
+                "type": "multiple_choice",
+                "question": "Which flag makes Docker automatically delete the container when it stops?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "-d",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "--rm",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "--clean",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "--delete",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`--rm` is perfect for temporary containers. After the main process exits, the container is automatically removed, keeping your system tidy.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_12",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Keep it clean with `--rm`\nWhen experimenting, always add `--rm` so you don’t end up with dozens of stopped containers. Combine with `docker ps -a` to verify."
+        }
+    ]
+}

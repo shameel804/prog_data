@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_2",
+    "title": "Full Container Lifecycle Experiment",
+    "description": "Run, stop, start, inspect logs, and remove a container using the commands you’ve learned.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Objective\nGet hands‑on with the entire container lifecycle: create, run, stop, start, view logs, and remove.\n\n### Steps\n1. Run a detached Nginx container named `lifecycle-test` on host port 8080:\n   ```bash\n   docker run -d --name lifecycle-test -p 8080:80 nginx:alpine\n   ```\n2. Verify it’s running with `docker ps`.\n3. Open `http://localhost:8080` in your browser to confirm Nginx is serving.\n4. View the container’s logs:\n   ```bash\n   docker logs lifecycle-test\n   ```\n5. Stop the container:\n   ```bash\n   docker stop lifecycle-test\n   ```\n6. Check the status with `docker ps -a`. It should show `Exited`.\n7. Start it again:\n   ```bash\n   docker start lifecycle-test\n   ```\n8. Verify it’s running again and the web page works.\n9. Restart it:\n   ```bash\n   docker restart lifecycle-test\n   ```\n10. Force kill it (just to see what happens):\n    ```bash\n    docker kill lifecycle-test\n    ```\n11. Remove the container:\n    ```bash\n    docker rm lifecycle-test\n    ```\n12. (Optional) Run a temporary container that deletes itself:\n    ```bash\n    docker run --rm alpine echo \"I will self-destruct\"\n    ```\n    Then check `docker ps -a` – it should not appear.\n\n### Deliverable\nProvide the terminal output of `docker ps -a` after step 6 and again after step 12.",
+    "hints": [
+        "If the port 8080 is already in use, choose a different host port (e.g., 9090).",
+        "Remember that `docker start` reuses the same container, preserving any changes you made inside it."
+    ],
+    "expectedOutput": "After step 6, `docker ps -a` shows `lifecycle-test` with status 'Exited'. After step 12, there should be no `lifecycle-test` container in the list.",
+    "solutionCode": "docker run -d --name lifecycle-test -p 8080:80 nginx:alpine\ndocker ps\ndocker logs lifecycle-test\ncurl localhost:8080   # or open in browser\ndocker stop lifecycle-test\ndocker ps -a\ndocker start lifecycle-test\ndocker ps\ndocker restart lifecycle-test\ndocker kill lifecycle-test\ndocker rm lifecycle-test\ndocker run --rm alpine echo \"I will self-destruct\"\ndocker ps -a"
+}

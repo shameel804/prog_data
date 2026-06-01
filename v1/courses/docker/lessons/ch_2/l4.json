@@ -1,0 +1,177 @@
+{
+    "id": "l4",
+    "chapterId": "ch_2",
+    "title": "Container Lifecycle: Stop, Start, Restart 🔄",
+    "description": "Take full control of your containers – stop, start, restart, remove, and inspect logs.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Stopping a Container Gracefully ✋",
+            "content": "# `docker stop`\n\nSends a **SIGTERM** signal to the main process inside the container. If the process doesn’t stop within a timeout (10s by default), Docker sends a **SIGKILL**.\n\n```bash\ndocker stop <container-name-or-id>\n```\n\n**Example:**\n```bash\ndocker stop my-nginx\n```\n\nThe container enters the “exited” state (status code 0 if successful)."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Killing a Container (Force) 💀",
+            "content": "# `docker kill`\n\nSends a **SIGKILL** immediately. No grace period. Use when a container is unresponsive.\n\n```bash\ndocker kill <container>\n```\n\nYou can also specify a different signal with `-s`:\n```bash\ndocker kill -s SIGINT my-app\n```"
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Stop vs Kill ⚔️",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is the main difference between `docker stop` and `docker kill`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "`stop` deletes the container; `kill` only pauses it.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "`stop` sends a SIGTERM (graceful), `kill` sends a SIGKILL (forced).",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "There is no difference; they are aliases.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "`kill` requires root privileges.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`stop` tries to gracefully shut down the container, allowing cleanup. `kill` forces an immediate termination.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Starting and Restarting Containers 🔁",
+            "content": "# `docker start` & `docker restart`\n\n- `docker start <container>` – starts a previously stopped container. It resumes with the same settings and state (unless ephemeral).\n- `docker restart <container>` – stops and then starts the container in one command (like a reboot).\n\n**Example:**\n```bash\ndocker start my-nginx\ndocker restart my-nginx\n```\n\nNote: `docker start` does **not** create a new container; it reuses the existing one."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Lifecycle Logic 🔄",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "If you have a stopped container named `db`, which command brings it back to life?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "docker run db",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "docker start db",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "docker resume db",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "docker attach db",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`docker start` is used to restart an existing stopped container. `docker run` would create a brand new container.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Removing Containers Permanently 🗑️",
+            "content": "# `docker rm` / `docker container rm`\n\nTo delete a container from disk (its writable layer is gone).\n\n```bash\ndocker rm <container>\n```\n\n- You can only remove **stopped** containers (use `-f` to force remove a running one).\n- Remove multiple at once: `docker rm con1 con2`\n- Remove all stopped containers:\n  ```bash\n  docker container prune\n  ```\n\n> Pro tip: Use `--rm` when you `docker run` to avoid manual cleanup later."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "Cleanup Rules 🧹",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_3",
+                "type": "true_false",
+                "question": "You can remove a running container with `docker rm` without any extra flags.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Docker refuses to remove a running container unless you add the `-f` (force) flag. Safest practice: stop first, then remove.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_8",
+            "type": "text",
+            "title": "Checking Container Logs 📜",
+            "content": "# `docker logs`\n\nSee what your container printed to stdout/stderr.\n\n```bash\ndocker logs <container>\n```\n\nUseful options:\n- `-f` – follow the log in real time (like `tail -f`)\n- `--tail N` – show only the last N lines\n- `-t` – show timestamps\n\n**Example:**\n```bash\ndocker logs --tail 20 -f my-nginx\n```"
+        },
+        {
+            "id": "s_l4_9",
+            "type": "quiz",
+            "title": "Log Inspection 🔎",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_4",
+                "type": "multiple_choice",
+                "question": "How can you watch a container’s logs live as they are written?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "docker logs --live mycontainer",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "docker logs -f mycontainer",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "docker attach mycontainer",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "docker monitor mycontainer",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `-f` (or `--follow`) flag keeps the log stream open, printing new lines as they come.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_10",
+            "type": "tip",
+            "title": "Lifecycle Recap 📋",
+            "content": "## Quick Summary\n\n| Action        | Command                     |\n|---------------|-----------------------------|\n| Create & run  | `docker run`                |\n| Stop gracefully| `docker stop`              |\n| Force stop    | `docker kill`               |\n| Restart       | `docker restart`            |\n| Start stopped | `docker start`              |\n| Remove        | `docker rm`                 |\n| View logs     | `docker logs`               |\n\nMaster these and you control any container."
+        }
+    ]
+}
