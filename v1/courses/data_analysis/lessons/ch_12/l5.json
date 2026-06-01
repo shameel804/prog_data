@@ -1,0 +1,106 @@
+{
+    "id": "l5",
+    "chapterId": "ch_12",
+    "title": "Advanced Pandas‑SQL Patterns 🔗",
+    "description": "Combine SQL and pandas for large datasets, incremental loads, and complex transformations.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Best of Both Worlds 🧩",
+            "content": "# SQL for Heavy Lifting, Pandas for Data Wrangling\n\nA common workflow:\n1. Use SQL to **filter, join, and aggregate** on the database server (fast, efficient).\n2. Load the result into pandas for **advanced transformations, visualization, or machine learning**.\n3. Write results back to the database for reporting.\n\nThis leverages the strengths of each tool."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Pattern 1: Chunked Reading for Large Data 📦",
+            "content": "If a table is too big for memory, use `chunksize`:\n\n```python\nfor chunk in pd.read_sql('SELECT * FROM huge_table', conn, chunksize=5000):\n    # process each chunk (DataFrame of 5000 rows)\n    result = chunk.groupby('region').agg({'sales':'sum'})\n    print(result)\n```\n\nThis avoids loading everything at once."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Chunked Reading Demo",
+            "content": "Simulate chunked processing:",
+            "codeSnippet": "import pandas as pd, sqlite3\nconn = sqlite3.connect(':memory:')\npd.DataFrame({'id':range(100), 'val':range(100)}).to_sql('big', conn, index=False)\n\nfor chunk in pd.read_sql('SELECT * FROM big WHERE val % 2 = 0', conn, chunksize=20):\n    print(f'Chunk size: {len(chunk)}, max val: {chunk[\"val\"].max()}')",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Chunksize Concept 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the main benefit of using `chunksize` in `read_sql`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It runs the query faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It limits memory usage by processing data in batches",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It writes data in chunks",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It parallelizes the query",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Chunking allows handling datasets larger than available RAM.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Pattern 2: Incremental Data Loads 🔄",
+            "content": "## Append New Data Only\n\nIf you have an existing table, you can append only new rows by filtering on a timestamp or ID.\n\n```python\n# Get the last id from the DB\nlast_id = pd.read_sql('SELECT MAX(id) FROM orders', conn).iloc[0,0]\n\n# Load new data from CSV (assuming new_data has id > last_id)\nnew_data = pd.read_csv('new_orders.csv')\nnew_data = new_data[new_data['id'] > last_id]\n\n# Append to DB\nnew_data.to_sql('orders', conn, if_exists='append', index=False)\n```"
+        },
+        {
+            "id": "s_l5_6",
+            "type": "code",
+            "title": "Incremental Load Example",
+            "content": "Simulate adding new records only:",
+            "codeSnippet": "# Existing data\npd.DataFrame({'id':[1,2], 'val':['A','B']}).to_sql('log', conn, if_exists='replace', index=False)\n# New batch\nbatch = pd.DataFrame({'id':[3,4], 'val':['C','D']})\n# Append\nbatch.to_sql('log', conn, if_exists='append', index=False)\nprint(pd.read_sql('SELECT * FROM log', conn))",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Pattern 3: SQL for Filtering, Pandas for Transformation 🤖",
+            "content": "```python\n# Step 1: SQL does complex joins and filtering\nquery = '''\n    SELECT c.name, SUM(o.amount) as total\n    FROM customers c\n    JOIN orders o ON c.id = o.cust_id\n    WHERE o.date >= '2024-01-01'\n    GROUP BY c.name\n'''\ndf = pd.read_sql(query, conn)\n\n# Step 2: Pandas does statistical analysis\ndf['rank'] = df['total'].rank(ascending=False)\ndf['pct'] = df['total'] / df['total'].sum() * 100\n\n# Step 3: Write back to DB as a summary table\ndf.to_sql('customer_summary', conn, if_exists='replace', index=False)\n```"
+        },
+        {
+            "id": "s_l5_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use SQL Views for Recurring Queries\n\nCreate a view in the database:\n```sql\nCREATE VIEW high_value_customers AS\nSELECT ...\n```\nThen in pandas: `pd.read_sql('SELECT * FROM high_value_customers', conn)`."
+        },
+        {
+            "id": "s_l5_9",
+            "type": "exercise",
+            "title": "End‑to‑End Practice 🏋️",
+            "content": "1. Create a table `sales` with 1000 rows (random data).\n2. Use a SQL query to compute monthly totals and load into a DataFrame.\n3. Use pandas to add a column `growth_pct` comparing each month to the previous.\n4. Write the result into a new table `monthly_summary`.\n5. Verify by reading the new table."
+        },
+        {
+            "id": "s_l5_10",
+            "type": "text",
+            "title": "Integration Mastery Achieved 🎉",
+            "content": "You now have the complete pandas‑SQL toolkit. Let's consolidate with a quiz!"
+        }
+    ]
+}

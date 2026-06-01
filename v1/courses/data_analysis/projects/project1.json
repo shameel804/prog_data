@@ -1,0 +1,29 @@
+{
+    "id": "project1",
+    "title": "Sales Data Analysis & Reporting",
+    "description": "Clean a raw sales dataset, perform exploratory analysis, create visualizations, and compile a business report.",
+    "difficulty": "Intermediate",
+    "estimatedHours": "3-4",
+    "problemStatement": "## Project: Sales Data Deep Dive\n\nYou are given a CSV file `raw_sales.csv` containing transactional data from a retail store. The file has columns: `OrderID`, `Product`, `Category`, `Quantity`, `Price`, `Date`, `Region`. The data is messy: missing values, duplicate rows, inconsistent product names, and incorrect data types.\n\nYour task is to:\n\n1. **Data Cleaning**\n   - Load the data into a pandas DataFrame.\n   - Handle missing values: fill missing `Quantity` with 1, missing `Price` with the median price of that product, and missing `Region` with `'Unknown'`.\n   - Remove duplicate rows (based on all columns).\n   - Fix data types: `Date` to datetime, `Quantity` to integer, `Price` to float.\n   - Standardize text: strip whitespace and convert `Product` names to title case.\n\n2. **Exploratory Analysis**\n   - Add a `Revenue` column (`Quantity * Price`).\n   - Compute total revenue by `Region` and by `Category`.\n   - Find the top 5 best‑selling products by total revenue.\n   - Analyze monthly revenue trend (extract month from date, group, and sum).\n\n3. **Visualization**\n   - Create a line chart of monthly revenue.\n   - Build a bar chart of revenue by region.\n   - Draw a pie chart showing the share of revenue by category.\n   - Use a box plot to show the distribution of order amounts (Revenue) by region.\n\n4. **Report**\n   - Write your observations: which region performs best? which category is most profitable? any seasonal trends?\n   - Export the cleaned data to a new CSV `cleaned_sales.csv`.\n\nUse pandas, matplotlib, and any other libraries you need. Follow best practices: comment your code, handle edge cases, and make plots clear with titles and labels.",
+    "requirements": [
+        "Handle missing values using appropriate strategies (fill with defaults, median, etc.)",
+        "Remove exact duplicate rows",
+        "Correct data types and standardize text columns",
+        "Create derived column 'Revenue' = Quantity * Price",
+        "Group by Region and Category to compute total revenue",
+        "Identify top 5 products by revenue",
+        "Extract month from date and compute monthly revenue trend",
+        "Create at least four different plot types (line, bar, pie, box)",
+        "Export cleaned DataFrame to CSV with index=False",
+        "Write a short markdown summary of insights"
+    ],
+    "hints": [
+        "Use `df.drop_duplicates()`, `fillna()`, `pd.to_datetime()`, `astype()`",
+        "For median by product: `df.groupby('Product')['Price'].transform('median')` to fill missing prices.",
+        "Extract month: `df['Month'] = df['Date'].dt.month` or `df['Date'].dt.to_period('M')`.",
+        "For top 5 products: `df.groupby('Product')['Revenue'].sum().nlargest(5)`.",
+        "Visualization: use `df.plot()` with appropriate kind, set `figsize`, add `title`, `xlabel`, `ylabel`.",
+        "Boxplot by region: `df.boxplot(column='Revenue', by='Region')`."
+    ],
+    "expectedOutput": "Cleaned CSV file, multiple plots, and a short written summary. No fixed numeric output."
+}

@@ -1,0 +1,140 @@
+{
+    "id": "l3",
+    "chapterId": "ch_10",
+    "title": "Filtering Groups with HAVING 🎯",
+    "description": "Filter aggregated data using the HAVING clause – the WHERE for groups.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Grouping",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Why Not WHERE? 🚫",
+            "content": "# WHERE vs HAVING\n\n- `WHERE` filters **individual rows** before aggregation.\n- `HAVING` filters **groups** after aggregation.\n\nYou cannot use aggregate functions in the WHERE clause; you must use HAVING.\n\nExample: \"Show only regions with total revenue > 500\"."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "HAVING Example",
+            "content": "Regions where total spending exceeds 500:\n```sql\nSELECT region, SUM(amount) AS total\nFROM orders\nGROUP BY region\nHAVING SUM(amount) > 500;\n```",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Expected Output 📋",
+            "content": "Based on our data:\n- East total = 720 (>500) → shown\n- West total = 380 (not) → hidden\n- North total = 450 (not) → hidden\n\nResult:\n```\nregion | total\n-------|------\nEast   | 720\n```"
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "HAVING Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which statement correctly filters groups with average amount > 200?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "WHERE AVG(amount) > 200",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "HAVING AVG(amount) > 200",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "GROUP BY HAVING AVG(amount) > 200",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "SELECT ... HAVING amount > 200",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "HAVING is for aggregated conditions; WHERE cannot contain aggregate functions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Using Both WHERE and HAVING 🤝",
+            "content": "## Pre‑filter Rows, Then Filter Groups\n\nYou can use WHERE to reduce the rows before grouping, then HAVING to keep only groups that meet a condition.\n\n```sql\nSELECT region, SUM(amount) AS total\nFROM orders\nWHERE amount > 200          -- consider only large orders\nGROUP BY region\nHAVING SUM(amount) > 500;   -- then keep only high‑total regions\n```\n\nThe WHERE applies first."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "code",
+            "title": "WHERE + HAVING",
+            "content": "Show regions where total of orders >200 exceeds 500:",
+            "codeSnippet": "SELECT region, SUM(amount) FROM orders WHERE amount > 200 GROUP BY region HAVING SUM(amount) > 500;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_7",
+            "type": "quiz",
+            "title": "Order of Filtering 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "If you use both WHERE and HAVING, which is applied first?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "WHERE",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "HAVING",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They are applied simultaneously",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Depends on the database",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The WHERE clause filters individual rows before aggregation; HAVING filters after grouping.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_8",
+            "type": "text",
+            "title": "HAVING Without GROUP BY 🤔",
+            "content": "You can use HAVING without GROUP BY only if you have an aggregate in the SELECT. It then filters the single result row.\n\n```sql\nSELECT SUM(amount) AS total\nFROM orders\nHAVING SUM(amount) > 1000;\n```\nBut this is uncommon."
+        },
+        {
+            "id": "s_l3_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## HAVING with COUNT\n\nFilter groups by count: `HAVING COUNT(*) >= 3` to keep only groups with at least 3 rows."
+        },
+        {
+            "id": "s_l3_10",
+            "type": "exercise",
+            "title": "HAVING Practice 🏋️",
+            "content": "Using the `orders` table:\n1. Show customers who have placed more than 1 order.\n2. Show regions where the maximum order amount is less than 400.\n3. Show customers whose average order amount is above 200.\n\nWrite SQL queries."
+        },
+        {
+            "id": "s_l3_11",
+            "type": "text",
+            "title": "HAVING Mastered 🎉",
+            "content": "Now you can filter grouped data. Next, we'll understand the full query execution flow."
+        }
+    ]
+}

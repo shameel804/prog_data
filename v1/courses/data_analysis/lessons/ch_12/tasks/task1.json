@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_12",
+    "title": "Load and Explore from Database 🔍",
+    "description": "Connect to a sample SQLite database, run a query, and analyze with pandas.",
+    "estimatedMinutes": 12,
+    "problemStatement": "## Task: Database Exploration\n\n1. Create an in‑memory SQLite database with a table `sales` having columns: `id` (INTEGER), `product` (TEXT), `amount` (REAL), `sale_date` (TEXT in 'YYYY-MM-DD' format). Insert at least 5 rows.\n2. Use `pd.read_sql` to load the whole table into a DataFrame.\n3. Print the DataFrame and its info.\n4. Write a query that groups sales by product and computes total amount. Load this grouped result into another DataFrame.\n5. Print the grouped DataFrame.\n\n**Expected output** (based on example data):\n```\n   id product  amount   sale_date\n0   1  Widget   150.0  2024-01-10\n1   2  Gadget   200.0  2024-01-10\n2   3  Widget   120.0  2024-01-12\n3   4  Gadget   180.0  2024-01-15\n4   5  Widget    90.0  2024-01-20\n\nGrouped:\n  product  total\n0  Gadget  380.0\n1  Widget  360.0\n```\n\nWrite the Python code.",
+    "hints": [
+        "Use `conn = sqlite3.connect(':memory:')`.",
+        "Create table and insert with `conn.execute()`.",
+        "Load with `pd.read_sql('SELECT * FROM sales', conn)`.",
+        "Group query: `SELECT product, SUM(amount) AS total FROM sales GROUP BY product`."
+    ],
+    "expectedOutput": "   id product  amount   sale_date\n0   1  Widget   150.0  2024-01-10\n1   2  Gadget   200.0  2024-01-10\n2   3  Widget   120.0  2024-01-12\n3   4  Gadget   180.0  2024-01-15\n4   5  Widget    90.0  2024-01-20\n\nGrouped:\n  product  total\n0  Gadget  380.0\n1  Widget  360.0",
+    "solutionCode": "import sqlite3, pandas as pd\nconn = sqlite3.connect(':memory:')\nconn.execute('CREATE TABLE sales (id INTEGER, product TEXT, amount REAL, sale_date TEXT)')\ndata = [\n    (1, 'Widget', 150.0, '2024-01-10'),\n    (2, 'Gadget', 200.0, '2024-01-10'),\n    (3, 'Widget', 120.0, '2024-01-12'),\n    (4, 'Gadget', 180.0, '2024-01-15'),\n    (5, 'Widget', 90.0, '2024-01-20')\n]\nconn.executemany('INSERT INTO sales VALUES (?,?,?,?)', data)\nconn.commit()\n\ndf_all = pd.read_sql('SELECT * FROM sales', conn)\nprint(df_all)\n\ndf_grouped = pd.read_sql('SELECT product, SUM(amount) AS total FROM sales GROUP BY product', conn)\nprint('\\nGrouped:')\nprint(df_grouped)"
+}

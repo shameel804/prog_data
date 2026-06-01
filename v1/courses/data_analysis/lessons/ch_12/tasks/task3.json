@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_12",
+    "title": "Parameterized Reporting 📊",
+    "description": "Create a function that accepts parameters and returns a summary report from the database.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Task: Parameterized Sales Report\n\n1. Create a table `transactions` with columns: `id`, `region`, `sales_rep`, `amount`.\n2. Insert diverse sample rows (at least 8) with various regions and reps.\n3. Write a function `get_rep_summary(conn, rep_name)` that:\n   - Uses a **parameterized query** to fetch all transactions for a given `sales_rep`.\n   - Returns a DataFrame with total amount and average amount for that rep.\n4. Call the function for rep 'Alice' and print the resulting DataFrame.\n\n**Example data and expected output:**\n```\n(Assume Alice has transactions of 200, 150, 250 → total=600, avg=200.0)\n\nResult:\n   rep  total  average\n0  Alice  600.0    200.0\n```\n\nWrite the code.",
+    "hints": [
+        "Use `pd.read_sql('SELECT * FROM transactions WHERE sales_rep = ?', conn, params=[rep_name])`.",
+        "Then compute: `total = df['amount'].sum()`, `avg = df['amount'].mean()`.",
+        "Return a new DataFrame with columns rep, total, average."
+    ],
+    "expectedOutput": "   rep  total  average\n0  Alice  600.0    200.0",
+    "solutionCode": "import sqlite3, pandas as pd\n\nconn = sqlite3.connect(':memory:')\nconn.execute('CREATE TABLE transactions (id INTEGER, region TEXT, sales_rep TEXT, amount REAL)')\ndata = [\n    (1,'East','Alice',200),\n    (2,'West','Bob',180),\n    (3,'East','Alice',150),\n    (4,'North','Charlie',450),\n    (5,'West','Alice',250),\n    (6,'East','Bob',300),\n    (7,'North','Charlie',220),\n    (8,'West','Bob',190)\n]\nconn.executemany('INSERT INTO transactions VALUES (?,?,?,?)', data)\nconn.commit()\n\ndef get_rep_summary(conn, rep_name):\n    df = pd.read_sql('SELECT * FROM transactions WHERE sales_rep = ?', conn, params=[rep_name])\n    total = df['amount'].sum()\n    avg = df['amount'].mean()\n    return pd.DataFrame({'rep': [rep_name], 'total': [total], 'average': [avg]})\n\nresult = get_rep_summary(conn, 'Alice')\nprint(result)"
+}

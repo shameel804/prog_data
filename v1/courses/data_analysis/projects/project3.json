@@ -1,0 +1,30 @@
+{
+    "id": "project3",
+    "title": "End-to-End E-Commerce Insights",
+    "description": "Combine CSV data with a SQL database, perform advanced merging and grouping, build pivot tables, and visualize key metrics.",
+    "difficulty": "Advanced",
+    "estimatedHours": "4-5",
+    "problemStatement": "## Project: E‑Commerce Data Analysis Pipeline\n\nYou are a data analyst at an e‑commerce company. You have two data sources:\n- `user_sessions.csv`: contains web traffic data with columns `session_id`, `user_id`, `page`, `timestamp`, `duration_sec`.\n- `purchases.csv`: contains purchase records with columns `purchase_id`, `user_id`, `product_id`, `amount`, `purchase_date`.\n- A SQLite database `products.db` with a table `products` containing `product_id`, `product_name`, `category`, `cost_price`.\n\n**Your Mission:**\n\n1. **Data Ingestion & Cleaning**\n   - Load both CSV files into pandas DataFrames.\n   - Clean: handle missing values, drop duplicates, convert timestamps to datetime.\n   - Merge the two DataFrames on `user_id` to create a combined DataFrame that includes session information and purchase records (note: a user may have multiple sessions and purchases).\n\n2. **SQL Integration**\n   - Connect to `products.db` and load the products table.\n   - Merge the combined DataFrame with the products data on `product_id` to bring in `product_name`, `category`, `cost_price`.\n   - Compute profit per transaction: `profit = amount - cost_price`.\n\n3. **Advanced Analysis**\n   - What is the total profit by product category?\n   - Which product category has the highest conversion rate? (Conversion rate = number of unique users who purchased from that category / number of unique users who visited a page related to that category. You may need to map categories to pages visited – assume the `page` column contains category keywords, e.g., ‘/electronics/’, ‘/books/’. Extract category from the URL.)\n   - For each user, calculate the total time spent on site (sum of `duration_sec`) and the total amount purchased. Is there a correlation? (Create a scatter plot)\n   - Create a pivot table showing average profit per order for each category and month.\n   - Determine the top 10% of users by total profit (use `pd.qcut` or ranking) and analyze their average session duration vs the rest.\n\n4. **Visualization & Reporting**\n   - Bar chart of total profit by category.\n   - Scatter plot of total session duration vs total spending per user (with correlation coefficient).\n   - Heatmap of the pivot table (using `seaborn.heatmap` or `plotly`).\n   - Write a summary report with key findings and recommendations.\n\n5. **Export**\n   - Save the enriched, cleaned dataset as `ecommerce_analysis.csv`.\n\nThis project synthesizes everything: data cleaning, merging, SQL, pandas aggregations, pivot tables, visualizations, and statistical thinking.",
+    "requirements": [
+        "Load and clean two CSV files (handle missing data, duplicates, date parsing)",
+        "Read from a SQLite database and merge with pandas DataFrames",
+        "Compute profit column",
+        "Use groupby and aggregations to compute category profit",
+        "Calculate conversion rate using unique user counts",
+        "Extract category from page URLs using string operations (e.g., contains or split)",
+        "Create a user-level summary with total duration and total spending",
+        "Build a pivot table of average profit per category per month",
+        "Identify top 10% of users by profit and compare their behavior",
+        "Generate at least three visualizations: bar, scatter, heatmap",
+        "Export final DataFrame to CSV"
+    ],
+    "hints": [
+        "To extract category from page: if URLs are like '/electronics/item1', split by '/' and take the second part.",
+        "Conversion rate: group by category, count unique user_id in purchases (inner join with products), and divide by unique user_id in sessions where page contains category (use `str.contains`).",
+        "For pivot table: extract month from `purchase_date`, then `pd.pivot_table(df, values='profit', index='month', columns='category', aggfunc='mean')`.",
+        "Top 10% users: `df_user['profit_rank'] = pd.qcut(df_user['total_profit'], 10, labels=False)` then select rank 9 (top decile).",
+        "Correlation: `df_user[['total_duration','total_spent']].corr()`.",
+        "Heatmap: `import seaborn as sns; sns.heatmap(pivot_table, annot=True, cmap='YlGnBu')`."
+    ],
+    "expectedOutput": "Cleaned CSV, multiple plots, a pivot table, and a written summary. No fixed numeric answer."
+}

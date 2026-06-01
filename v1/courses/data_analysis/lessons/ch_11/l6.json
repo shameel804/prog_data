@@ -1,0 +1,162 @@
+{
+    "id": "l6",
+    "chapterId": "ch_11",
+    "title": "Aggregations Across Joined Tables 📊",
+    "description": "Combine JOINs with GROUP BY, HAVING, and conditional aggregates to answer complex questions.",
+    "xpReward": 35,
+    "estimatedMinutes": 9,
+    "section": "Aggregations",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Real‑World Analysis 📈",
+            "content": "# Answer Business Questions with JOINs and Aggregates\n\nMany questions require data from multiple tables, then summarizing. Patterns:\n- Total sales by product category (needs products, orders, order_items)\n- Average order value per customer\n- Customers who bought a specific product along with another\n\nLet’s practice with sample tables."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "Sample Tables Recap 📋",
+            "content": "We’ll use these simplified tables:\n\n**customers**: customer_id, name, city\n**orders**: order_id, customer_id, amount\n\n(No order_items/products in this example to keep it simple; we’ll add a third table later if needed.)"
+        },
+        {
+            "id": "s_l6_3",
+            "type": "text",
+            "title": "Question 1: Average Order Amount per City 🏙️",
+            "content": "**For each city, what is the average order amount?**\n\n```sql\nSELECT c.city, AVG(o.amount) AS avg_amount\nFROM customers c\nJOIN orders o ON c.customer_id = o.customer_id\nGROUP BY c.city;\n```\n\nOnly customers with orders are included (because of INNER JOIN). Use LEFT JOIN if you want to show cities with no orders (avg will be NULL)."
+        },
+        {
+            "id": "s_l6_4",
+            "type": "code",
+            "title": "City Avg Example",
+            "content": "Run query:",
+            "codeSnippet": "SELECT c.city, AVG(o.amount) AS avg_amount\nFROM customers c\nINNER JOIN orders o ON c.customer_id = o.customer_id\nGROUP BY c.city;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_5",
+            "type": "quiz",
+            "title": "Group After Join 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "If you GROUP BY a column from table A after JOINing with table B, what rows are grouped?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Rows from A only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The combined result set after the join",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Rows from B only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Depends on WHERE",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "GROUP BY operates on the result of the FROM/WHERE/JOINs.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_6",
+            "type": "text",
+            "title": "Question 2: Customers with Total Spending > 400 💰",
+            "content": "**List customers whose total spending exceeds 400.**\n\n```sql\nSELECT c.name, SUM(o.amount) AS total_spent\nFROM customers c\nJOIN orders o ON c.customer_id = o.customer_id\nGROUP BY c.customer_id, c.name\nHAVING SUM(o.amount) > 400;\n```\n\nWe group by both customer_id and name (if names are unique, just customer_id is enough)."
+        },
+        {
+            "id": "s_l6_7",
+            "type": "code",
+            "title": "High‑Spending Customers",
+            "content": "Query:",
+            "codeSnippet": "SELECT c.name, SUM(o.amount) AS total\nFROM customers c\nJOIN orders o ON c.customer_id = o.customer_id\nGROUP BY c.customer_id, c.name\nHAVING SUM(o.amount) > 400;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_8",
+            "type": "text",
+            "title": "Question 3: Customers Who Never Ordered (with Aggregation) 🚫",
+            "content": "**Find customers with no orders.** (already seen, but now add count of orders = 0):\n\n```sql\nSELECT c.name, COUNT(o.order_id) AS order_count\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nGROUP BY c.customer_id, c.name\nHAVING COUNT(o.order_id) = 0;\n```\n\n`COUNT(o.order_id)` counts only non‑NULL order IDs, so zero means no orders."
+        },
+        {
+            "id": "s_l6_9",
+            "type": "quiz",
+            "title": "Zero‑Order Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "multiple_choice",
+                "question": "Why use COUNT(orders.order_id) instead of COUNT(*) to find customers with no orders?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "COUNT(*) would count the NULL row as 1, giving wrong results",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "COUNT(*) is faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "COUNT(orders.order_id) is invalid",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "There's no difference",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "After LEFT JOIN, customers with no orders have a single row with NULLs. COUNT(*) counts that row as 1; COUNT(o.order_id) ignores NULL, giving 0.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_10",
+            "type": "text",
+            "title": "Conditional Aggregates with Joins 🎯",
+            "content": "**Count how many orders each customer has in each amount category ('Low' <200, 'High' >=200)**\n\n```sql\nSELECT c.name,\n       COUNT(CASE WHEN o.amount < 200 THEN 1 END) AS low_orders,\n       COUNT(CASE WHEN o.amount >= 200 THEN 1 END) AS high_orders\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nGROUP BY c.customer_id, c.name;\n```\n\nThis gives a summary per customer."
+        },
+        {
+            "id": "s_l6_11",
+            "type": "code",
+            "title": "Conditional Aggregation with Join",
+            "content": "Run query:",
+            "codeSnippet": "SELECT c.name,\n       COUNT(CASE WHEN o.amount < 200 THEN 1 END) AS low,\n       COUNT(CASE WHEN o.amount >= 200 THEN 1 END) AS high\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nGROUP BY c.customer_id, c.name;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_12",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use GROUP BY with Column Aliases\n\nYou can group by column numbers (`GROUP BY 1, 2`) but it's clearer to use names. In some databases, you can group by alias if the alias is defined in the SELECT, but standard SQL doesn't allow that."
+        },
+        {
+            "id": "s_l6_13",
+            "type": "exercise",
+            "title": "Final Challenge 🏋️",
+            "content": "Given the tables:\n- `customers(customer_id, name, city)`\n- `orders(order_id, customer_id, amount, order_date)`\n\nWrite queries:\n1. For each city, show total revenue and number of orders.\n2. List customers who have placed at least 2 orders.\n3. Show a customer list with a column indicating 'active' (>=1 order) or 'inactive' (0 orders) based on a LEFT JOIN.\n\nWrite SQL."
+        },
+        {
+            "id": "s_l6_14",
+            "type": "text",
+            "title": "JOINs & Aggregations Complete! 🎉",
+            "content": "You now wield the full power of SQL to query multiple tables and summarize data. Next, we’ll connect pandas with SQL databases."
+        }
+    ]
+}

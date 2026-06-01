@@ -1,0 +1,18 @@
+{
+    "id": "task2",
+    "chapterId": "ch_13",
+    "title": "Business Analysis & Visualizations 📊",
+    "description": "Answer key business questions using grouping, aggregation, and plots.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Task: Extract Insights\n\nUsing the `master_df` from Task 1, perform the following analyses:\n\n1. **Revenue by Category**: Group by `category` and sum `revenue`. Print the result sorted descending.\n2. **Top 5 Products**: Find the top 5 products by total revenue and print their names and revenue.\n3. **Monthly Revenue**: Extract month from `transaction_date` (using `.dt.month`), group by month, sum revenue. Print and also create a line plot titled 'Monthly Revenue Trend'.\n4. **Top Customers**: Compute total spending per customer (`name`), display the top 3 customers and their total spending.\n5. **Correlation**: Compute the correlation between `age` and `revenue` (transaction‑level, not per customer). Print the coefficient.\n6. **Outliers**: Using IQR method on `revenue`, count how many transactions are outliers. Print the count.\n\n**Expected output:**\n- Printed tables/numbers as described.\n- Two plots: a line chart and a bar chart (at minimum).\n\nWrite the code and ensure plots are displayed.",
+    "hints": [
+        "Group by category: `master_df.groupby('category')['revenue'].sum().sort_values(ascending=False)`",
+        "Top products: `master_df.groupby('product_name')['revenue'].sum().nlargest(5)`",
+        "Month: `master_df['month'] = master_df['transaction_date'].dt.month` then group by month.",
+        "Top customers: `master_df.groupby('name')['revenue'].sum().nlargest(3)`",
+        "Correlation: `master_df['revenue'].corr(master_df['age'])`",
+        "Outliers: Q1, Q3, IQR, lower, upper, then `master_df[(master_df['revenue'] < lower) | (master_df['revenue'] > upper)]`."
+    ],
+    "expectedOutput": "Category revenue series, top 5 products, monthly revenue series, top 3 customers, correlation coefficient, outlier count, and two plots.",
+    "solutionCode": "import matplotlib.pyplot as plt\n\n# 1. Revenue by Category\ncat_rev = master_df.groupby('category')['revenue'].sum().sort_values(ascending=False)\nprint('Revenue by Category:')\nprint(cat_rev)\n\n# 2. Top 5 Products\nprod_rev = master_df.groupby('product_name')['revenue'].sum().nlargest(5)\nprint('\\nTop 5 Products:')\nprint(prod_rev)\n\n# 3. Monthly Revenue\nmaster_df['month'] = master_df['transaction_date'].dt.month\nmonthly_rev = master_df.groupby('month')['revenue'].sum()\nprint('\\nMonthly Revenue:')\nprint(monthly_rev)\nmonthly_rev.plot(kind='line', marker='o', title='Monthly Revenue Trend')\nplt.ylabel('Revenue ($)')\nplt.show()\n\n# 4. Top Customers\ncust_rev = master_df.groupby('name')['revenue'].sum().nlargest(3)\nprint('\\nTop 3 Customers:')\nprint(cust_rev)\n\n# 5. Correlation\ncorr = master_df['revenue'].corr(master_df['age'])\nprint(f'\\nCorrelation between age and revenue: {corr:.3f}')\n\n# 6. Outliers\nQ1 = master_df['revenue'].quantile(0.25)\nQ3 = master_df['revenue'].quantile(0.75)\nIQR = Q3 - Q1\nlower = Q1 - 1.5 * IQR\nupper = Q3 + 1.5 * IQR\noutliers = master_df[(master_df['revenue'] < lower) | (master_df['revenue'] > upper)]\nprint(f'\\nNumber of outliers: {len(outliers)}')"
+}

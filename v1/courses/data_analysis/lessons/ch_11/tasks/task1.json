@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_11",
+    "title": "Customer Orders Join 📋",
+    "description": "Write INNER and LEFT JOIN queries to combine customers and orders.",
+    "estimatedMinutes": 12,
+    "problemStatement": "## Task: Customer and Order Joins\n\nUsing these tables:\n\n**customers**\n|customer_id|name|city|\n|---|---|---|\n|1|Alice|London|\n|2|Bob|Paris|\n|3|Charlie|London|\n|4|Diana|Berlin|\n\n**orders**\n|order_id|customer_id|amount|order_date|\n|---|---|---|---|\n|101|1|250|2024-01-10|\n|102|2|180|2024-01-12|\n|103|1|320|2024-02-05|\n|104|5|450|2024-02-10|\n\n1. Write an INNER JOIN query to list all orders with customer name and city. (Result should have 3 rows: Alice’s two orders and Bob’s order.)\n2. Write a LEFT JOIN query to show all customers and their orders, including those with no orders. Show customer name, order ID, and amount. (Result should have 5 rows: Alice 2, Bob 1, Charlie NULL, Diana NULL, plus order 104? No, because LEFT JOIN is customers LEFT JOIN orders, order 104 is for customer 5, so it won’t appear.)\n3. Write a query to find customers who haven’t placed any order. Use LEFT JOIN and IS NULL.\n\n**Expected output:**\n\nQuery 1:\n```\nAlice|London|101|250\nAlice|London|103|320\nBob|Paris|102|180\n```\n\nQuery 2:\n```\nAlice|101|250\nAlice|103|320\nBob|102|180\nCharlie|NULL|NULL\nDiana|NULL|NULL\n```\n\nQuery 3:\n```\nCharlie\nDiana\n```",
+    "hints": [
+        "INNER JOIN: `FROM customers c INNER JOIN orders o ON c.customer_id = o.customer_id`",
+        "LEFT JOIN: `FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id`",
+        "Unmatched: `WHERE o.order_id IS NULL`"
+    ],
+    "expectedOutput": "Query 1:\nAlice|London|101|250\nAlice|London|103|320\nBob|Paris|102|180\n\nQuery 2:\nAlice|101|250\nAlice|103|320\nBob|102|180\nCharlie|NULL|NULL\nDiana|NULL|NULL\n\nQuery 3:\nCharlie\nDiana",
+    "solutionCode": "SELECT c.name, c.city, o.order_id, o.amount\nFROM customers c\nINNER JOIN orders o ON c.customer_id = o.customer_id;\n--\nSELECT c.name, o.order_id, o.amount\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id;\n--\nSELECT c.name\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nWHERE o.order_id IS NULL;"
+}

@@ -1,0 +1,135 @@
+{
+    "id": "l2",
+    "chapterId": "ch_11",
+    "title": "INNER JOIN: Matching Rows Across Tables 🤝",
+    "description": "Combine rows from two tables when they share a common key using INNER JOIN.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Joins",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "INNER JOIN Syntax 📝",
+            "content": "# The Most Common Join\n\n`INNER JOIN` (or simply `JOIN`) returns only rows where the condition is true in both tables.\n\n```sql\nSELECT column_list\nFROM table1\nINNER JOIN table2 ON table1.common_column = table2.common_column;\n```\n\nIf a row in either table has no match, it is excluded."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "INNER JOIN Example",
+            "content": "Using customers and orders:",
+            "codeSnippet": "SELECT c.name, c.city, o.order_id, o.amount\nFROM customers c\nINNER JOIN orders o ON c.customer_id = o.customer_id;\nORDER BY c.name;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Result Explanation 📋",
+            "content": "From our sample data, the result would be:\n```\nname    | city   | order_id | amount\n--------|--------|----------|-------\nAlice   | London | 101      | 250\nAlice   | London | 103      | 320\nBob     | Paris  | 102      | 180\n```\n- Charlie (customer 3) is missing because he has no orders.\n- Order 104 is missing because its customer_id=4 doesn’t exist in customers.\n\nINNER JOIN returns only the intersection."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "INNER JOIN Logic 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "If you INNER JOIN a table with 3 rows and a table with 4 rows where only 2 rows match the join condition, how many rows will the result have?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "3",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "4",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "2",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "7",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Only matching pairs are returned.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Selecting Columns from Both Tables 🎯",
+            "content": "You can pick columns from either table. If column names are unique, you can use them directly; otherwise, prefix with table name or alias.\n\n```sql\nSELECT c.name, o.amount\nFROM customers c\nINNER JOIN orders o ON c.customer_id = o.customer_id;\n```\n\nUsing aliases (`c`, `o`) makes queries shorter and more readable."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "code",
+            "title": "Alias Example",
+            "content": "Same query with aliases:",
+            "codeSnippet": "SELECT c.name AS customer_name, o.order_id, o.amount\nFROM customers c\nINNER JOIN orders o ON c.customer_id = o.customer_id;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "Column Ambiguity 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "If both tables have a column 'id', how do you refer to orders.id?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Just 'id'",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "orders.id",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "table.id",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "id.orders",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Prefix with table name (or alias) to resolve ambiguity.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_8",
+            "type": "text",
+            "title": "INNER JOIN with Conditions ⚙️",
+            "content": "You can add WHERE clauses to filter further. The join condition and filter condition are separate:\n\n```sql\nSELECT c.name, o.amount\nFROM customers c\nINNER JOIN orders o ON c.customer_id = o.customer_id\nWHERE o.amount > 200;\n```\nThis returns only matching orders with amount > 200."
+        },
+        {
+            "id": "s_l2_9",
+            "type": "exercise",
+            "title": "Try It Yourself 🏋️",
+            "content": "Write an INNER JOIN query to show customer name, order ID, and amount for orders where amount is less than 300. Use the sample tables."
+        },
+        {
+            "id": "s_l2_10",
+            "type": "text",
+            "title": "INNER JOIN Mastered 🎉",
+            "content": "Next, we’ll keep unmatched rows with LEFT JOIN."
+        }
+    ]
+}

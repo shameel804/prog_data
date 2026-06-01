@@ -1,0 +1,150 @@
+{
+    "id": "l2",
+    "chapterId": "ch_12",
+    "title": "Reading Data into DataFrames 📥",
+    "description": "Execute SQL queries directly from pandas and load the results into a DataFrame.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Data Loading",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "`pd.read_sql()` 📖",
+            "content": "# From Query to DataFrame\n\n`pd.read_sql()` takes a SQL query and a connection/engine, returns a DataFrame.\n\n```python\nimport pandas as pd\ndf = pd.read_sql('SELECT * FROM students', conn)\n```\n\nThere’s also `pd.read_sql_query()` (for queries) and `pd.read_sql_table()` (for whole tables). `read_sql` can do both."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Read Entire Table",
+            "content": "Using the in‑memory connection from the previous lesson:",
+            "codeSnippet": "import sqlite3, pandas as pd\nconn = sqlite3.connect(':memory:')\n# create table and insert again for this runtime\npd.read_sql('CREATE TABLE students (id INTEGER, name TEXT, score INTEGER)', conn)\n# can't execute with read_sql, we'll use sqlite3 directly\ncur = conn.cursor()\ncur.execute('CREATE TABLE students (id INTEGER, name TEXT, score INTEGER)')\ncur.execute(\"INSERT INTO students VALUES (1,'Alice',85),(2,'Bob',92),(3,'Charlie',78)\")\nconn.commit()\ndf = pd.read_sql('SELECT * FROM students', conn)\nprint(df)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "read_sql Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which parameter must you pass to `pd.read_sql()`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A table name and connection",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A SQL query string and a connection",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A file path",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only a connection",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "You need at least a SQL string and a connection/engine.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Reading a Whole Table with `read_sql_table` 📋",
+            "content": "If you just want an entire table without writing SQL:\n\n```python\ndf = pd.read_sql_table('students', conn)\n```\n\nThis is equivalent to `SELECT * FROM students`. The table must exist.\n\nYou can also use `read_sql('SELECT * FROM students', conn)`."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "read_sql_table Example",
+            "content": "Load the students table:",
+            "codeSnippet": "df2 = pd.read_sql_table('students', conn)\nprint(df2)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "read_sql vs read_sql_table 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What is the advantage of `read_sql_table`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It can read any SQL query",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It reads an entire table without writing SQL",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It only works with SQLAlchemy",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`read_sql_table` just needs a table name, no SQL required.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "Specifying Index Column 📌",
+            "content": "Set a column as the DataFrame index directly:\n\n```python\ndf = pd.read_sql('SELECT * FROM students', conn, index_col='id')\n```\n\nThis makes `id` the row labels instead of a regular column."
+        },
+        {
+            "id": "s_l2_8",
+            "type": "code",
+            "title": "Index Column Demo",
+            "content": "Use id as index:",
+            "codeSnippet": "df_idx = pd.read_sql('SELECT * FROM students', conn, index_col='id')\nprint(df_idx)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_9",
+            "type": "text",
+            "title": "Parsing Dates 📅",
+            "content": "Convert date columns automatically with `parse_dates`:\n\n```python\ndf = pd.read_sql('SELECT * FROM orders', conn, parse_dates=['order_date'])\n```\n\nThis ensures that columns are datetime64, not object strings."
+        },
+        {
+            "id": "s_l2_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `chunksize` for Large Tables\n\nIf the table is huge, process in chunks:\n```python\nfor chunk in pd.read_sql('SELECT * FROM big_table', conn, chunksize=10000):\n    process(chunk)\n```\nThis avoids memory overload."
+        },
+        {
+            "id": "s_l2_11",
+            "type": "exercise",
+            "title": "Read SQL Practice 🏋️",
+            "content": "1. Write a query that selects only students with score > 80, and load into a DataFrame.\n2. Load the entire table with `read_sql_table` and set `id` as index.\n3. Verify the DataFrame shape."
+        },
+        {
+            "id": "s_l2_12",
+            "type": "text",
+            "title": "Data Loaded! 🎉",
+            "content": "Now you can pull SQL data into pandas. Next, we'll push pandas DataFrames back to SQL."
+        }
+    ]
+}

@@ -1,0 +1,156 @@
+{
+    "id": "l6",
+    "chapterId": "ch_10",
+    "title": "Building Analytical Reports 📈",
+    "description": "Combine everything to answer real business questions with SQL.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Practice",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Putting It All Together 🧩",
+            "content": "# Real‑World SQL Questions\n\nData analysts use SQL to answer questions like:\n- Who are our top 5 customers by revenue?\n- What is the monthly sales trend?\n- Which products have the highest return rate?\n\nLet's practice with our `orders` table."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "Question 1: Top Customers 🏆",
+            "content": "**Find the top 3 customers by total spending.**\n\n```sql\nSELECT customer, SUM(amount) AS total_spent\nFROM orders\nGROUP BY customer\nORDER BY total_spent DESC\nLIMIT 3;\n```\n\nQuery steps:\n- GROUP BY customer to aggregate.\n- ORDER BY total descending.\n- LIMIT to top 3."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Top Customers Example",
+            "content": "Run to see top 3:",
+            "codeSnippet": "SELECT customer, SUM(amount) AS total FROM orders GROUP BY customer ORDER BY total DESC LIMIT 3;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_4",
+            "type": "quiz",
+            "title": "Top N Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "To get the bottom 2 customers by total spending, you change:",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "ORDER BY total_spent ASC LIMIT 2",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "ORDER BY total_spent DESC LIMIT -2",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "ORDER BY customer LIMIT 2",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "ORDER BY 1 LIMIT 2",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Ascending order gives smallest first; LIMIT 2 gives the two smallest.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_5",
+            "type": "text",
+            "title": "Question 2: Average Order Value per Region 🔍",
+            "content": "**Compute average order amount per region, but only for regions with at least 2 orders.**\n\n```sql\nSELECT region, AVG(amount) AS avg_order\nFROM orders\nGROUP BY region\nHAVING COUNT(*) >= 2\nORDER BY avg_order DESC;\n```"
+        },
+        {
+            "id": "s_l6_6",
+            "type": "code",
+            "title": "Conditional Group Report",
+            "content": "Show only regions with enough orders:",
+            "codeSnippet": "SELECT region, AVG(amount) FROM orders GROUP BY region HAVING COUNT(*) >= 2 ORDER BY AVG(amount) DESC;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_7",
+            "type": "text",
+            "title": "Question 3: Percentage of Orders Above Threshold 📊",
+            "content": "**What percentage of orders are above $300?**\n\n```sql\nSELECT\n    (COUNT(CASE WHEN amount > 300 THEN 1 END) * 100.0 / COUNT(*)) AS percentage_above_300\nFROM orders;\n```\n\nThis uses conditional COUNT and division to get a percentage. Use `* 100.0` to avoid integer division."
+        },
+        {
+            "id": "s_l6_8",
+            "type": "code",
+            "title": "Percentage Query",
+            "content": "Run to see the share of big orders:",
+            "codeSnippet": "SELECT ROUND(COUNT(CASE WHEN amount > 300 THEN 1 END) * 100.0 / COUNT(*), 1) AS pct_above_300 FROM orders;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_9",
+            "type": "quiz",
+            "title": "Percentage Logic 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "multiple_choice",
+                "question": "Why multiply by 100.0 instead of 100?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To avoid integer division returning 0",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To get a string result",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's required by SQL standard",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "No reason",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "In SQL, dividing two integers may truncate to an integer. Using 100.0 forces float division.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_10",
+            "type": "text",
+            "title": "Question 4: Customer Order Frequency 📅",
+            "content": "**For each customer, show total spent and number of orders, but only customers who have spent more than the average total spend across all customers.**\n\nThis requires a subquery (or CTE). A simple version without subquery:\n\n```sql\n-- This doesn't work in one step without window functions.\n-- But we can use a subquery (covered later). For now, we can compute overall average and then filter manually.\n```\n\nWe'll save subqueries for a later chapter."
+        },
+        {
+            "id": "s_l6_11",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Always Check Your Logic with Small Data\n\nBefore running complex queries on millions of rows, test them on a small subset or `LIMIT`."
+        },
+        {
+            "id": "s_l6_12",
+            "type": "exercise",
+            "title": "Build Your Own Report 🏋️",
+            "content": "Given the `orders` table:\n1. Show the customer with the highest single order amount (not total). (Hint: MAX and maybe ORDER BY)\n2. For each region, show the number of orders and total revenue, sorted by revenue descending.\n3. Show the percentage of orders in each region (e.g., East contributes 50% of orders). Use conditional COUNT or GROUP BY.\n\nWrite the SQL."
+        },
+        {
+            "id": "s_l6_13",
+            "type": "text",
+            "title": "Reporting Skills Unlocked 🎉",
+            "content": "You can now answer complex business questions with SQL. Next chapter, we'll learn to join tables!"
+        }
+    ]
+}

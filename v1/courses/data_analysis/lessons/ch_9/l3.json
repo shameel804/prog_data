@@ -1,0 +1,185 @@
+{
+    "id": "l3",
+    "chapterId": "ch_9",
+    "title": "SELECT: Choosing Columns & Distinct Values 🎯",
+    "description": "Retrieve specific columns, use DISTINCT to remove duplicates, and limit result rows.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Querying",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Select Specific Columns 📌",
+            "content": "# Move Beyond `SELECT *`\n\nIn practice, you rarely need all columns. Specify exactly the columns you want:\n\n```sql\nSELECT name, salary FROM employees;\n```\n\nThis returns only the `name` and `salary` columns. The order of columns in the result matches the order you list them.\n\nYou can even reorder columns:\n```sql\nSELECT salary, name FROM employees;\n```"
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Column Selection Example",
+            "content": "Against our sample data, this would yield:",
+            "codeSnippet": "SELECT name, department FROM employees;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Expected Output 📋",
+            "content": "```\nname    | department\n--------|------------\nAlice   | Sales\nBob     | IT\nCharlie | Sales\n```"
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "Column Selection Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What does `SELECT department, name FROM employees;` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Only the department column",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The department and name columns, in that order",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "All columns",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "An error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "You can choose columns and control their order.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Removing Duplicates with `DISTINCT` 🧹",
+            "content": "## Only Unique Values\n\nThe `DISTINCT` keyword eliminates duplicate rows in the result.\n\n```sql\nSELECT DISTINCT department FROM employees;\n```\n\nThis returns:\n```\ndepartment\n----------\nSales\nIT\n```\n\nDuplicates disappear. You can use `DISTINCT` with multiple columns – then the combination of values must be unique."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "code",
+            "title": "DISTINCT Example",
+            "content": "Get unique departments:",
+            "codeSnippet": "SELECT DISTINCT department FROM employees;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_7",
+            "type": "quiz",
+            "title": "DISTINCT Logic 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "What does `SELECT DISTINCT department, salary FROM employees;` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "All rows",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Unique combinations of department and salary",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Unique departments only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Unique salaries only",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`DISTINCT` applies to all selected columns together.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_8",
+            "type": "text",
+            "title": "Limiting the Number of Rows 🔢",
+            "content": "## `LIMIT`\n\nWhen exploring a large table, you often want only the first few rows:\n\n```sql\nSELECT * FROM employees LIMIT 3;\n```\n\nIn SQLite (and MySQL, PostgreSQL) this returns the first 3 rows. Some databases use `TOP` or `FETCH FIRST`.\n\nYou can also skip rows with `OFFSET`:\n```sql\nSELECT * FROM employees LIMIT 2 OFFSET 1;\n```\nThis skips the first row and returns the next two."
+        },
+        {
+            "id": "s_l3_9",
+            "type": "code",
+            "title": "LIMIT Example",
+            "content": "Get the first 2 employees:",
+            "codeSnippet": "SELECT name, salary FROM employees LIMIT 2;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_10",
+            "type": "quiz",
+            "title": "LIMIT Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_3",
+                "type": "multiple_choice",
+                "question": "What does `LIMIT 5 OFFSET 10` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Skips the first 10 rows and returns the next 5 rows",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Returns first 10 rows, then 5 more",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Returns 15 rows",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Deletes the first 10 rows",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`OFFSET` skips rows, `LIMIT` restricts count after offset.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_11",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `LIMIT` to Test Queries\n\nWhen developing complex queries, always add `LIMIT` to avoid accidentally returning millions of rows and freezing your tool."
+        },
+        {
+            "id": "s_l3_12",
+            "type": "exercise",
+            "title": "Try It: Column Selection 🏋️",
+            "content": "1. Write a query to show only `name` and `department` from `employees`.\n2. Write a query to display all unique departments.\n3. Write a query that returns the first 3 employees, ordered by whatever (we haven’t learned ordering yet; just LIMIT will do).\n\nUse the sample table structure: id, name, department, salary."
+        },
+        {
+            "id": "s_l3_13",
+            "type": "text",
+            "title": "Column Control Done! 🎉",
+            "content": "Now you can pick exactly the data you want. Next, we’ll filter rows with conditions."
+        }
+    ]
+}

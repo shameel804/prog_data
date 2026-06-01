@@ -1,0 +1,185 @@
+{
+    "id": "l1",
+    "chapterId": "ch_10",
+    "title": "Aggregate Functions: COUNT, SUM, AVG, MIN, MAX 📊",
+    "description": "Learn to compute totals, averages, counts, and extremes across rows.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Aggregates",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "What Are Aggregate Functions? 🤔",
+            "content": "# Turning Rows into Insights\n\nAggregate functions take multiple rows and return a single value. They are the heart of data analysis:\n\n- **COUNT()** – number of rows\n- **SUM()** – total sum of a column\n- **AVG()** – average (mean)\n- **MIN()** – smallest value\n- **MAX()** – largest value\n\nThey ignore NULL values (except COUNT(*) which counts all rows).\n\nExample: \"How many employees? What is the total salary?\""
+        },
+        {
+            "id": "s_l1_2",
+            "type": "code",
+            "title": "Sample Data: orders Table",
+            "content": "We'll work with a fictional `orders` table:\n\n```sql\norder_id | customer | amount | region\n---------|----------|--------|-------\n1        | Alice    | 250    | East\n2        | Bob      | 180    | West\n3        | Alice    | 320    | East\n4        | Charlie  | 450    | North\n5        | Bob      | 200    | West\n6        | Alice    | 150    | East\n```",
+            "codeSnippet": "",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "COUNT() 🔢",
+            "content": "## Counting Rows\n\n- `COUNT(*)` counts all rows (including NULLs).\n- `COUNT(column)` counts non‑NULL values in that column.\n\n```sql\nSELECT COUNT(*) FROM orders;\n```\n→ 6\n\n```sql\nSELECT COUNT(amount) FROM orders;\n```\n→ 6 (if no NULLs)"
+        },
+        {
+            "id": "s_l1_4",
+            "type": "quiz",
+            "title": "COUNT Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What does `SELECT COUNT(*) FROM orders;` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Total sum of amounts",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Number of rows in the table",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The largest order ID",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Number of distinct customers",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`COUNT(*)` counts every row, regardless of NULLs.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_5",
+            "type": "text",
+            "title": "SUM() and AVG() ➕➗",
+            "content": "## Total and Average\n\n```sql\nSELECT SUM(amount) FROM orders;\n```\n→ 1550\n\n```sql\nSELECT AVG(amount) FROM orders;\n```\n→ 258.333...\n\nThey apply only to numeric columns."
+        },
+        {
+            "id": "s_l1_6",
+            "type": "code",
+            "title": "SUM/AVG Example",
+            "content": "Compute total and average order amount:",
+            "codeSnippet": "SELECT SUM(amount) AS total_revenue, AVG(amount) AS avg_order FROM orders;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_7",
+            "type": "quiz",
+            "title": "SUM vs AVG 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "If the amounts are 10,20,30, what does `SELECT AVG(amount)*3 FROM orders;` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "60",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "20",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "90",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Average is 20, multiplied by 3 gives 60 (which equals the sum).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_8",
+            "type": "text",
+            "title": "MIN() and MAX() 🔽🔼",
+            "content": "## Extremes\n\n```sql\nSELECT MIN(amount) AS smallest_order, MAX(amount) AS largest_order FROM orders;\n```\n→ smallest: 150, largest: 450\n\nAlso work on dates, strings (alphabetical order)."
+        },
+        {
+            "id": "s_l1_9",
+            "type": "code",
+            "title": "MIN/MAX Demo",
+            "content": "Get the range of order amounts:",
+            "codeSnippet": "SELECT MIN(amount), MAX(amount), MAX(amount)-MIN(amount) AS range FROM orders;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_10",
+            "type": "quiz",
+            "title": "Aggregate NULL Behavior 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_3",
+                "type": "multiple_choice",
+                "question": "If a column contains NULLs, how does AVG() handle them?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Treats them as zero",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Ignores them",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Returns NULL",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Raises an error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "AVG ignores NULLs and computes average over non‑NULL values.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_11",
+            "type": "text",
+            "title": "Aliases for Readability 🏷️",
+            "content": "## Use AS to Name Result Columns\n\n```sql\nSELECT COUNT(*) AS total_orders, SUM(amount) AS revenue FROM orders;\n```\n\nMakes the output clearer."
+        },
+        {
+            "id": "s_l1_12",
+            "type": "exercise",
+            "title": "Try It Yourself 🏋️",
+            "content": "Using the `orders` table structure:\n1. Count the number of orders.\n2. Compute total and average order amount.\n3. Find the smallest and largest order amount.\n4. Write a query that returns all these stats in one row (use aliases).\n\nWrite the SQL statements."
+        },
+        {
+            "id": "s_l1_13",
+            "type": "text",
+            "title": "Aggregate Functions Mastered 🎉",
+            "content": "Now you can summarize whole tables. Next, we'll break summaries down by groups."
+        }
+    ]
+}

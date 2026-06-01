@@ -1,0 +1,189 @@
+{
+    "id": "l3",
+    "chapterId": "ch_13",
+    "title": "In‑Depth Analysis & Visualization 📊",
+    "description": "Perform grouping, pivot tables, statistical analysis, and create a dashboard of visualizations.",
+    "xpReward": 40,
+    "estimatedMinutes": 10,
+    "section": "Analysis",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Answering Business Questions 🔬",
+            "content": "# Let’s Extract Insights\n\nWe’ll systematically answer each question using the master DataFrame.\n\n1. Revenue by product and category.\n2. Sales by store and month.\n3. Top customers.\n4. Age vs spending correlation.\n5. Outliers in revenue."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "1️⃣ Revenue by Product & Category 🏆",
+            "content": "**Total revenue per product** (we have `revenue` column).\n\n```python\nproduct_rev = master.groupby('product_name')['revenue'].sum().sort_values(ascending=False)\nprint(product_rev)\n```\n\n**Revenue by category:**\n```python\ncategory_rev = master.groupby('category')['revenue'].sum().sort_values(ascending=False)\nprint(category_rev)\n```\n\nWe can also plot a bar chart of category revenue."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Product & Category Revenue",
+            "content": "Compute and visualize:",
+            "codeSnippet": "import matplotlib.pyplot as plt\n\nproduct_rev = master.groupby('product_name')['revenue'].sum().sort_values(ascending=False)\ncategory_rev = master.groupby('category')['revenue'].sum().sort_values(ascending=False)\n\nfig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12,5))\nproduct_rev.plot(kind='bar', ax=ax1, color='skyblue', title='Revenue by Product')\ncategory_rev.plot(kind='bar', ax=ax2, color='lightgreen', title='Revenue by Category')\nax1.set_ylabel('Revenue ($)')\nax2.set_ylabel('Revenue ($)')\nplt.tight_layout()\nplt.show()",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "Revenue Insights 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which product had the highest total revenue?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It varies by run; check the output",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Widget",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Gadget",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Always the first in alphabetical order",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Because the data is random, you must examine the generated plot or series to find the top product.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "2️⃣ Sales by Store & Month 🗓️",
+            "content": "**Total revenue per store:**\n\n```python\nstore_rev = master.groupby('store_name')['revenue'].sum()\n```\n\n**Monthly revenue trend:** Extract month from `transaction_date`, then group.\n\n```python\nmaster['month'] = master['transaction_date'].dt.month\nmonthly_rev = master.groupby('month')['revenue'].sum()\n```\n\nPlot a line chart for monthly trend."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "code",
+            "title": "Store & Monthly Sales",
+            "content": "Create plots:",
+            "codeSnippet": "master['month'] = master['transaction_date'].dt.month\nmonthly_rev = master.groupby('month')['revenue'].sum()\nstore_rev = master.groupby('store_name')['revenue'].sum()\n\nfig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12,5))\nstore_rev.plot(kind='bar', ax=ax1, color='coral', title='Revenue by Store')\nmonthly_rev.plot(kind='line', ax=ax2, marker='o', title='Monthly Revenue')\nax1.set_ylabel('Revenue ($)')\nax2.set_ylabel('Revenue ($)')\nplt.tight_layout()\nplt.show()",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "3️⃣ Top Customers 👑",
+            "content": "**Total spending per customer:**\n\n```python\ncust_rev = master.groupby('name')['revenue'].sum().sort_values(ascending=False).head(5)\nprint(cust_rev)\n```\n\nAlso, we can see how many transactions they made:\n\n```python\ncust_freq = master.groupby('name')['transaction_id'].count().sort_values(ascending=False)\n```"
+        },
+        {
+            "id": "s_l3_8",
+            "type": "code",
+            "title": "Top 5 Customers",
+            "content": "Display top spenders:",
+            "codeSnippet": "cust_rev = master.groupby('name')['revenue'].sum().sort_values(ascending=False).head(5)\nprint('Top 5 customers by revenue:')\nprint(cust_rev)\n\ncust_freq = master.groupby('name')['transaction_id'].count().sort_values(ascending=False).head(5)\nprint('\\nTop 5 by number of transactions:')\nprint(cust_freq)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_9",
+            "type": "quiz",
+            "title": "Top Customers 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "How do you find the customer with the highest average order value?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Group by name and use max()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Group by name, compute mean of revenue, then sort",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Use value_counts() on revenue",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Sort the DataFrame by revenue descending and take the first row",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "To get average order value per customer, group by customer and compute the mean of revenue, then sort.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_10",
+            "type": "text",
+            "title": "4️⃣ Age vs Spending 💸",
+            "content": "Is there a correlation between customer age and total spending?\n\nWe need to compute total spending per customer, then merge with the unique `age`.\n\n```python\ncust_spend = master.groupby('customer_id').agg(total_spent=('revenue','sum'), age=('age','first')).reset_index()\ncorr = cust_spend['total_spent'].corr(cust_spend['age'])\nprint('Correlation:', corr)\n```\n\nScatter plot to visualize."
+        },
+        {
+            "id": "s_l3_11",
+            "type": "code",
+            "title": "Correlation and Scatter",
+            "content": "Compute and plot:",
+            "codeSnippet": "cust_spend = master.groupby('customer_id').agg(\n    total_spent=('revenue','sum'),\n    age=('age','first')\n).reset_index()\n\ncorr = cust_spend['total_spent'].corr(cust_spend['age'])\nprint(f'Correlation: {corr:.2f}')\n\ncust_spend.plot(kind='scatter', x='age', y='total_spent', title='Age vs Total Spending', alpha=0.6)\nplt.show()",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_12",
+            "type": "text",
+            "title": "5️⃣ Outlier Detection 📦",
+            "content": "Check for extreme revenue values using a box plot or IQR.\n\n```python\nQ1 = master['revenue'].quantile(0.25)\nQ3 = master['revenue'].quantile(0.75)\nIQR = Q3 - Q1\nlower = Q1 - 1.5 * IQR\nupper = Q3 + 1.5 * IQR\noutliers = master[(master['revenue'] < lower) | (master['revenue'] > upper)]\nprint(f'Outlier count: {len(outliers)}')\n```\n\nWe can also create a box plot by category or store."
+        },
+        {
+            "id": "s_l3_13",
+            "type": "code",
+            "title": "Outlier Analysis",
+            "content": "Find and visualize outliers:",
+            "codeSnippet": "Q1 = master['revenue'].quantile(0.25)\nQ3 = master['revenue'].quantile(0.75)\nIQR = Q3 - Q1\nlower = Q1 - 1.5 * IQR\nupper = Q3 + 1.5 * IQR\noutliers = master[(master['revenue'] < lower) | (master['revenue'] > upper)]\nprint(f'Number of outlier transactions: {len(outliers)}')\n\n# Boxplot by category\nmaster.boxplot(column='revenue', by='category', grid=False, figsize=(8,5))\nplt.title('Revenue Distribution by Category')\nplt.suptitle('')\nplt.show()",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_14",
+            "type": "text",
+            "title": "Pivot Table: Average Revenue by Category & Month 📋",
+            "content": "Create a pivot table for a high‑level summary:\n\n```python\npivot = pd.pivot_table(master, values='revenue', index='month', columns='category', aggfunc='mean')\nprint(pivot)\n```"
+        },
+        {
+            "id": "s_l3_15",
+            "type": "code",
+            "title": "Pivot Table",
+            "content": "Average revenue per category per month:",
+            "codeSnippet": "pivot = pd.pivot_table(master, values='revenue', index='month', columns='category', aggfunc='mean', fill_value=0)\nprint(pivot)\n\n# Optional heatmap (if seaborn installed)\n# import seaborn as sns\n# sns.heatmap(pivot, annot=True, cmap='YlGnBu')\n# plt.show()",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_16",
+            "type": "exercise",
+            "title": "Full Analysis Practice 🏋️",
+            "content": "1. Create a bar chart of revenue by store and category (stacked or grouped).\n2. Find the city with the highest average customer spending.\n3. Identify which age group (e.g., 18‑30, 31‑50, 51+) has the highest average revenue.\n4. Create a hexbin plot of age vs total spending."
+        },
+        {
+            "id": "s_l3_17",
+            "type": "text",
+            "title": "Analysis Complete! 🎉",
+            "content": "We have answered all business questions with data and visuals. Next, we’ll compile the final report."
+        }
+    ]
+}

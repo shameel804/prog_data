@@ -1,0 +1,144 @@
+{
+    "id": "l3",
+    "chapterId": "ch_12",
+    "title": "Writing DataFrames to SQL 📤",
+    "description": "Save DataFrames back to a database using to_sql, with replace, append, and index control.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Data Writing",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "`DataFrame.to_sql()` 🏗️",
+            "content": "# Pandas Becomes a Data Producer\n\nAfter cleaning or transforming data, you may want to save it back to a database.\n\n```python\ndf.to_sql('table_name', conn, if_exists='replace', index=False)\n```\n\n- `name`: the table name to create or overwrite.\n- `con`: connection or engine.\n- `if_exists`: `'fail'` (default, error if exists), `'replace'` (drop and recreate), `'append'` (add rows).\n- `index`: whether to write the DataFrame index as a column."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Create a Table from DataFrame",
+            "content": "Save a DataFrame to the database:",
+            "codeSnippet": "import pandas as pd\nimport sqlite3\nconn = sqlite3.connect(':memory:')\ndf = pd.DataFrame({'id':[1,2,3], 'name':['X','Y','Z'], 'value':[10,20,30]})\ndf.to_sql('my_table', conn, index=False)\n# Verify\nresult = pd.read_sql('SELECT * FROM my_table', conn)\nprint(result)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "to_sql Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What does `index=False` in `to_sql` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Prevents the table from being created",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Does not write the DataFrame index as a column",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Drops all indexes from the database",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Creates a primary key index",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "By default, `to_sql` writes the index as a column; `index=False` omits it.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "`if_exists` Options 🗂️",
+            "content": "- `'fail'`: raise ValueError if table exists.\n- `'replace'`: drop the existing table and create a new one with the DataFrame.\n- `'append'`: insert new rows into the existing table (must match columns).\n\nExample:\n```python\ndf_new.to_sql('my_table', conn, if_exists='append', index=False)\n```"
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Append Example",
+            "content": "Add new rows to an existing table:",
+            "codeSnippet": "new_data = pd.DataFrame({'id':[4,5], 'name':['W','V'], 'value':[40,50]})\nnew_data.to_sql('my_table', conn, if_exists='append', index=False)\nupdated = pd.read_sql('SELECT * FROM my_table', conn)\nprint(updated)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "if_exists Logic 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "If you use `if_exists='replace'`, what happens to the old table?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "New rows are added",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The table is dropped and recreated",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "An error is raised",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The table is renamed",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`replace` drops the old table and creates a fresh one.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Specifying Data Types 💾",
+            "content": "Use the `dtype` parameter to define column types in the database:\n\n```python\ndf.to_sql('table', conn, dtype={'id': 'INTEGER PRIMARY KEY', 'name': 'VARCHAR(100)'})\n```\n\nThis ensures the schema matches your expectations. SQLAlchemy types can also be used: `dtype={'col': sqlalchemy.types.Integer}`."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "code",
+            "title": "Dtype Example",
+            "content": "Create a table with a primary key:",
+            "codeSnippet": "df.to_sql('products', conn, index=False, dtype={'id': 'INTEGER PRIMARY KEY', 'price': 'REAL'})\nschema = pd.read_sql(\"SELECT sql FROM sqlite_master WHERE name='products'\", conn)\nprint(schema.iloc[0,0])",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l3_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use SQLAlchemy Engine for Automatic Type Mapping\n\nIf you use an SQLAlchemy engine instead of a raw connection, pandas can infer better column types based on the DataFrame’s dtypes."
+        },
+        {
+            "id": "s_l3_10",
+            "type": "exercise",
+            "title": "Write to SQL Practice 🏋️",
+            "content": "1. Create a DataFrame with columns: emp_id, name, salary.\n2. Use `to_sql` to save it as `employees` table (replace if exists, no index).\n3. Add another DataFrame with two more rows and append to the same table.\n4. Read the table back and print."
+        },
+        {
+            "id": "s_l3_11",
+            "type": "text",
+            "title": "Writing Mastered 🎉",
+            "content": "Now data flows both ways. Next, let's ensure security with parameterized queries."
+        }
+    ]
+}

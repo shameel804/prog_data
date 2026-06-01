@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_12",
+    "title": "Clean and Write Back 🔄",
+    "description": "Read a table, clean missing values, and write the cleaned DataFrame back to a new table.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Task: Data Cleaning Pipeline\n\n1. Create an in‑memory SQLite table `raw_customers` with columns: `id`, `name`, `email`. Insert some rows with NULL emails.\n2. Read the table into a DataFrame.\n3. Fill missing `email` values with `'unknown@example.com'`.\n4. Write the cleaned DataFrame to a new table `cleaned_customers` using `to_sql` with `index=False` and `if_exists='replace'`.\n5. Read the new table and print it to verify.\n\n**Expected output:**\n```\n   id     name                 email\n0   1    Alice    alice@example.com\n1   2      Bob  unknown@example.com\n2   3  Charlie  charlie@example.com\n3   4    Diana  unknown@example.com\n```\n\nWrite the Python script.",
+    "hints": [
+        "Insert NULLs with `None`.",
+        "Fill with `df['email'].fillna('unknown@example.com', inplace=True)`.",
+        "`df.to_sql('cleaned_customers', conn, index=False, if_exists='replace')`."
+    ],
+    "expectedOutput": "   id     name                 email\n0   1    Alice    alice@example.com\n1   2      Bob  unknown@example.com\n2   3  Charlie  charlie@example.com\n3   4    Diana  unknown@example.com",
+    "solutionCode": "import sqlite3, pandas as pd\nconn = sqlite3.connect(':memory:')\nconn.execute('CREATE TABLE raw_customers (id INTEGER, name TEXT, email TEXT)')\nrows = [\n    (1, 'Alice', 'alice@example.com'),\n    (2, 'Bob', None),\n    (3, 'Charlie', 'charlie@example.com'),\n    (4, 'Diana', None)\n]\nconn.executemany('INSERT INTO raw_customers VALUES (?,?,?)', rows)\nconn.commit()\n\ndf = pd.read_sql('SELECT * FROM raw_customers', conn)\ndf['email'] = df['email'].fillna('unknown@example.com')\n\ndf.to_sql('cleaned_customers', conn, index=False, if_exists='replace')\nresult = pd.read_sql('SELECT * FROM cleaned_customers', conn)\nprint(result)"
+}

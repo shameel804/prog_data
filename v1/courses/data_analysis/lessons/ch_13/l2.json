@@ -1,0 +1,200 @@
+{
+    "id": "l2",
+    "chapterId": "ch_13",
+    "title": "Data Cleaning & Integration 🧹",
+    "description": "Clean the raw CSV data, merge it with database tables, and prepare a unified master dataset.",
+    "xpReward": 35,
+    "estimatedMinutes": 9,
+    "section": "Preparation",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Why Clean and Merge? 🧹",
+            "content": "# Garbage In, Garbage Out\n\nBefore analysis, we must ensure:\n- No missing values in critical columns.\n- No duplicate transactions.\n- Correct data types.\n- All relevant columns are brought together from different sources.\n\nWe’ll clean each dataset individually, then merge them into one **master DataFrame**."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Cleaning the Transactions DataFrame 🛠️",
+            "content": "We will:\n1. Check for missing values.\n2. Check for duplicates (on `transaction_id`).\n3. Ensure `transaction_date` is datetime.\n4. Create a derived column `revenue = quantity * price`."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Transactions Cleaning",
+            "content": "Run the cleaning steps:",
+            "codeSnippet": "# Check missing\nprint('Missing in transactions:')\nprint(transactions.isna().sum())\n\n# Drop duplicates (if any)\nprint('Duplicate rows:', transactions.duplicated().sum())\ntransactions.drop_duplicates(inplace=True)\n\n# Date type\ntransactions['transaction_date'] = pd.to_datetime(transactions['transaction_date'])\n\n# Revenue column\ntransactions['revenue'] = transactions['quantity'] * transactions['price']\n\nprint('Transactions after cleaning:')\nprint(transactions.head())",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Cleaning Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What does `df.duplicated().sum()` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Number of missing values",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Number of duplicate rows",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Number of columns",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Total row count",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`duplicated()` marks duplicates; `.sum()` counts the True values.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Cleaning Customers 👥",
+            "content": "Steps:\n1. Check for missing values.\n2. Drop duplicates on `customer_id` (keeping first).\n3. Ensure `age` is integer.\n4. Standardize gender to 'Male'/'Female' (our data uses 'M'/'F', but we could map)."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "code",
+            "title": "Customers Cleaning",
+            "content": "Clean the customer data:",
+            "codeSnippet": "print('Missing in customers:')\nprint(customers.isna().sum())\n\n# Drop duplicates based on customer_id\ncustomers.drop_duplicates(subset='customer_id', keep='first', inplace=True)\n\n# Map gender to full form\ncustomers['gender'] = customers['gender'].map({'M':'Male', 'F':'Female'})\n\nprint('Customers after cleaning:')\nprint(customers.head())",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "Duplicate Handling 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "If you drop duplicates on 'customer_id' with keep='first', what happens?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "All duplicates are removed, keeping the first occurrence",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Only the last occurrence is kept",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "No rows are dropped",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "An error is raised",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`keep='first'` retains the first row with a given customer_id and drops subsequent duplicates.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_8",
+            "type": "text",
+            "title": "Merging: The Big Join 🧩",
+            "content": "# Combining DataFrames\n\nWe want one master DataFrame that includes all transaction details plus customer info, product info, and store info.\n\nWe need to map each transaction to a store. Since our transactions don’t have a store_id, we’ll assume each customer is tied to a store via their city (each store serves a city). So we can map city → store_id via the stores table.\n\nMerging steps:\n1. Merge transactions with customers on `customer_id`.\n2. Merge with products on `product_id`.\n3. Merge with stores on `city` (since store.city matches customer.city)."
+        },
+        {
+            "id": "s_l2_9",
+            "type": "code",
+            "title": "Merging All Sources",
+            "content": "Build the master dataset:",
+            "codeSnippet": "# Merge transactions with customers\nmaster = transactions.merge(customers, on='customer_id', how='left')\n\n# Merge with products\nmaster = master.merge(df_products, on='product_id', how='left')\n\n# Merge with stores (match city)\nmaster = master.merge(df_stores, left_on='city', right_on='city', how='left')\n\nprint('Master DataFrame shape:', master.shape)\nprint(master.head())",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_10",
+            "type": "quiz",
+            "title": "Merge Logic 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_3",
+                "type": "multiple_choice",
+                "question": "What type of merge is performed by default with `.merge()`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "INNER JOIN",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "LEFT JOIN",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "OUTER JOIN",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "CROSS JOIN",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "By default, `merge()` performs an inner join. In our code, we used `how='left'` to keep all transactions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_11",
+            "type": "text",
+            "title": "Checking the Master Data 🧐",
+            "content": "Let’s ensure no critical columns are missing and that the merge didn’t introduce unintended NULLs.\n\n```python\nprint(master.isna().sum())\n```\n\nIf any NULLs appear in `product_name` or `store_name`, it means a product_id or city didn’t match. That’s fine as long as we’re aware."
+        },
+        {
+            "id": "s_l2_12",
+            "type": "code",
+            "title": "Missing Check",
+            "content": "Count missing values in master:",
+            "codeSnippet": "print('Missing in master:')\nprint(master.isna().sum())",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l2_13",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Keep a Copy of the Raw Data\n\nAlways keep the original DataFrames unmodified until your cleaning is verified. This allows you to backtrack if something goes wrong."
+        },
+        {
+            "id": "s_l2_14",
+            "type": "exercise",
+            "title": "Data Prep Challenge 🏋️",
+            "content": "1. Check for any duplicate transaction IDs in the master DataFrame.\n2. Verify that the total revenue column (`revenue`) sums to the product of `quantity * price` (no mismatch).\n3. List the distinct `city` values in the master and confirm they all appear in the stores table."
+        },
+        {
+            "id": "s_l2_15",
+            "type": "text",
+            "title": "Data Is Clean and Combined! 🎉",
+            "content": "Now we have a single master DataFrame ready for deep analysis. Next, we’ll visualize and answer all the business questions."
+        }
+    ]
+}

@@ -1,0 +1,106 @@
+{
+    "id": "l5",
+    "chapterId": "ch_11",
+    "title": "Joining Multiple Tables 🧩",
+    "description": "Chain JOINs to query from three or more tables in a single statement.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Joins",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Beyond Two Tables 🌉",
+            "content": "# Adding More Tables\n\nReal databases often involve many related tables. You can chain JOINs:\n\n```sql\nSELECT ...\nFROM table1\nJOIN table2 ON condition1\nJOIN table3 ON condition2\n...\n```\n\nThe order matters logically but the query optimizer may reorder for speed."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Example Schema",
+            "content": "We'll extend our schema with a `products` table and `order_items`:\n\n```\ncustomers: customer_id, name, city\norders: order_id, customer_id, order_date\norder_items: order_item_id, order_id, product_id, quantity\nproducts: product_id, product_name, price\n```\n\nEach order can have multiple items. `order_items` links orders to products."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Joining 3 Tables 📎",
+            "content": "To get customer names, order IDs, and product names:\n\n```sql\nSELECT c.name, o.order_id, p.product_name, oi.quantity\nFROM customers c\nJOIN orders o ON c.customer_id = o.customer_id\nJOIN order_items oi ON o.order_id = oi.order_id\nJOIN products p ON oi.product_id = p.product_id;\n```\n\nNotice the chain: customers → orders → order_items → products."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Three‑Table JOIN",
+            "content": "Run this hypothetical query:",
+            "codeSnippet": "SELECT c.name, o.order_id, p.product_name, oi.quantity\nFROM customers c\nJOIN orders o ON c.customer_id = o.customer_id\nJOIN order_items oi ON o.order_id = oi.order_id\nJOIN products p ON oi.product_id = p.product_id\nORDER BY c.name;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Multi‑Join Logic 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "When joining multiple tables, what condition do you typically use?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A condition linking primary key to foreign key between each pair",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Any condition involving columns from the tables",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only equality on 'id' columns",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "No condition needed",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "You join each table to the next using matching key columns, usually PK = FK.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Adding Filters and Aggregates ⚙️",
+            "content": "You can add WHERE, GROUP BY, HAVING after the joins. For example, total revenue per customer from these three tables:\n\n```sql\nSELECT c.name, SUM(oi.quantity * p.price) AS total_spent\nFROM customers c\nJOIN orders o ON c.customer_id = o.customer_id\nJOIN order_items oi ON o.order_id = oi.order_id\nJOIN products p ON oi.product_id = p.product_id\nGROUP BY c.name;\n```"
+        },
+        {
+            "id": "s_l5_7",
+            "type": "code",
+            "title": "Aggregation with Joins",
+            "content": "Compute customer total spending:",
+            "codeSnippet": "SELECT c.name, SUM(oi.quantity * p.price) AS total\nFROM customers c\nJOIN orders o ON c.customer_id = o.customer_id\nJOIN order_items oi ON o.order_id = oi.order_id\nJOIN products p ON oi.product_id = p.product_id\nGROUP BY c.name\nORDER BY total DESC;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use INNER JOIN by Default, LEFT JOIN When Necessary\n\nWith multiple tables, if you use a LEFT JOIN at any step, it will preserve rows from that table even if later joins fail. This can cause unexpected NULLs. Be explicit about your intent."
+        },
+        {
+            "id": "s_l5_9",
+            "type": "exercise",
+            "title": "Multi‑Table Practice 🏋️",
+            "content": "Assume tables: `students(id,name)`, `courses(id,title)`, `enrollments(student_id, course_id, grade)`. Write a query to list each student’s name and the titles of courses they are enrolled in."
+        },
+        {
+            "id": "s_l5_10",
+            "type": "text",
+            "title": "Multi‑Table Mastery 🎉",
+            "content": "Now you can traverse an entire database. Let’s combine joins with advanced aggregations."
+        }
+    ]
+}

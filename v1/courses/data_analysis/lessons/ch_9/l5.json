@@ -1,0 +1,200 @@
+{
+    "id": "l5",
+    "chapterId": "ch_9",
+    "title": "Sorting Results with ORDER BY 🔃",
+    "description": "Order your query results ascending or descending by one or multiple columns.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Querying",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Why Sort? 📊",
+            "content": "# Bring Order to Your Results\n\nSQL tables don’t guarantee any row order unless you explicitly sort. Use `ORDER BY` to control the output sequence.\n\n```sql\nSELECT * FROM employees ORDER BY salary;\n```\n\nBy default, sorting is **ascending** (smallest to largest)."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Basic ORDER BY",
+            "content": "Sort employees by salary (lowest first):",
+            "codeSnippet": "SELECT name, salary FROM employees ORDER BY salary;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Expected Output 📋",
+            "content": "```\nname    | salary\n--------|-------\nCharlie | 52000\nAlice   | 55000\nBob     | 68000\n```"
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "ORDER BY Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the default sort order of `ORDER BY column`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Ascending",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Descending",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Random",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "As inserted",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Default is ASC (ascending).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Descending Order 🔽",
+            "content": "## Use `DESC`\n\nAdd `DESC` (descending) after the column name:\n\n```sql\nSELECT * FROM employees ORDER BY salary DESC;\n```\n\nNow highest salary comes first.\n\nYou can explicitly write `ASC` for ascending, but it’s the default."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "code",
+            "title": "Sort Descending",
+            "content": "Highest paid first:",
+            "codeSnippet": "SELECT name, salary FROM employees ORDER BY salary DESC;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Sorting by Multiple Columns 📑",
+            "content": "## Tie‑Breaking\n\nIf two rows have the same value in the first sort column, you can specify a second column:\n\n```sql\nSELECT * FROM employees ORDER BY department ASC, salary DESC;\n```\n\nThis sorts by department alphabetically, and within each department, by salary descending.\n\nSeparate column names with commas, each with its own `ASC`/`DESC`."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "code",
+            "title": "Multi‑Column Sort",
+            "content": "Order by department then salary descending:",
+            "codeSnippet": "SELECT name, department, salary\nFROM employees\nORDER BY department, salary DESC;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_9",
+            "type": "quiz",
+            "title": "Multi‑Sort Logic 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What does `ORDER BY col1 DESC, col2 ASC` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Sorts by col1 descending; where col1 ties, sorts by col2 ascending",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Sorts by col1 ascending, then col2 descending",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Sorts both descending",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Sorts by col2 primarily",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The first column takes precedence; subsequent columns break ties.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_10",
+            "type": "text",
+            "title": "Sorting with Expressions and Aliases 📐",
+            "content": "## You Can Sort by Calculated Values\n\n```sql\nSELECT name, salary * 1.1 AS adjusted_salary\nFROM employees\nORDER BY adjusted_salary DESC;\n```\n\nYou can also sort by column position (ordinal), e.g., `ORDER BY 2 DESC`, but that’s brittle. Prefer column names."
+        },
+        {
+            "id": "s_l5_11",
+            "type": "code",
+            "title": "Sort by Expression",
+            "content": "Sort by a 10% bonus column:",
+            "codeSnippet": "SELECT name, salary, salary * 1.1 AS bonus FROM employees ORDER BY bonus DESC;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_12",
+            "type": "quiz",
+            "title": "Alias Sorting 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_3",
+                "type": "multiple_choice",
+                "question": "Can you use `ORDER BY 2` to sort by the second column in the SELECT list?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Yes, it refers to the position",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "No, it’s invalid",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only in PostgreSQL",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It means sort by the constant 2",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Ordinal positions are allowed but considered bad practice because they break if columns are re‑ordered.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_13",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## NULLS in Sorting\n\nBy default, NULLs appear at the beginning in SQLite for ascending order. Use `NULLS FIRST` or `NULLS LAST` in PostgreSQL; SQLite doesn’t support that but you can work around it."
+        },
+        {
+            "id": "s_l5_14",
+            "type": "exercise",
+            "title": "Sort Challenge 🏋️",
+            "content": "Write queries:\n1. List all employees sorted by name alphabetically.\n2. List employees from Sales first, then by salary descending.\n3. Show name and a 5% raise as `new_salary`, and sort by that new salary descending.\n\nUse the `employees` table."
+        },
+        {
+            "id": "s_l5_15",
+            "type": "text",
+            "title": "Sorting Complete! 🎉",
+            "content": "You can now retrieve and order data exactly how you want. In the next chapter, we’ll dive deeper into advanced filtering and aggregations."
+        }
+    ]
+}

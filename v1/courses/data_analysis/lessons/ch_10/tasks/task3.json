@@ -1,0 +1,19 @@
+{
+    "id": "task3",
+    "chapterId": "ch_10",
+    "title": "Executive Dashboard Queries 📈",
+    "description": "Combine conditional aggregates and sorting to build a mini report.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Task: Executive Summary\n\nUsing the same `orders` table, produce the following single‑row summary:\n\n1. Total number of orders.\n2. Total revenue.\n3. Average order value.\n4. Number of unique customers.\n5. Revenue from the 'East' region (use conditional sum).\n6. Percentage of orders that are above 300 (use conditional count and percentage).\n\nAll in one query. Use meaningful aliases.\n\n**Expected output (single row):**\n```\ntotal_orders | total_revenue | avg_order | unique_customers | east_revenue | pct_above_300\n7            | 2050          | 292.857   | 4                | 720          | 28.571\n```\n\nWrite the SQL query.",
+    "hints": [
+        "Total orders: COUNT(*)",
+        "Total revenue: SUM(amount)",
+        "Avg order: AVG(amount)",
+        "Unique customers: COUNT(DISTINCT customer)",
+        "East revenue: SUM(CASE WHEN region = 'East' THEN amount ELSE 0 END)",
+        "Percentage above 300: (COUNT(CASE WHEN amount > 300 THEN 1 END) * 100.0 / COUNT(*))",
+        "Round the percentage if needed using ROUND(..., 2)."
+    ],
+    "expectedOutput": "7|2050|292.85714285714283|4|720|28.571428571428573",
+    "solutionCode": "SELECT\n    COUNT(*) AS total_orders,\n    SUM(amount) AS total_revenue,\n    AVG(amount) AS avg_order,\n    COUNT(DISTINCT customer) AS unique_customers,\n    SUM(CASE WHEN region = 'East' THEN amount ELSE 0 END) AS east_revenue,\n    ROUND(COUNT(CASE WHEN amount > 300 THEN 1 END) * 100.0 / COUNT(*), 2) AS pct_above_300\nFROM orders;"
+}

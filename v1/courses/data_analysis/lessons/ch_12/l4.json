@@ -1,0 +1,135 @@
+{
+    "id": "l4",
+    "chapterId": "ch_12",
+    "title": "Parameterized Queries for Safety 🛡️",
+    "description": "Avoid SQL injection and improve readability by using query parameters.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Best Practices",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Danger of String Concatenation ⚠️",
+            "content": "# Never Do This!\n\n```python\nname = input('Enter name: ')\ndf = pd.read_sql(f\"SELECT * FROM users WHERE name = '{name}'\", conn)\n```\n\nIf a malicious user types `' OR 1=1 --`, they can steal all data. This is called **SQL injection**.\n\nInstead, use **parameterized queries** where placeholders are safely substituted."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Using `params` in `read_sql` 🛡️",
+            "content": "## Safe Parameter Passing\n\n`pd.read_sql()` accepts a `params` argument:\n\n```python\nname = 'Alice'\ndf = pd.read_sql('SELECT * FROM students WHERE name = ?', conn, params=[name])\n```\n\nThe `?` placeholder (or `%s` depending on database) is replaced with the properly escaped value.\n\nWith SQLAlchemy engines, you can use named parameters:\n```python\ndf = pd.read_sql('SELECT * FROM students WHERE name = :name', engine, params={'name': 'Alice'})\n```"
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Parameterized Query Demo",
+            "content": "Safe query with a variable:",
+            "codeSnippet": "import sqlite3, pandas as pd\nconn = sqlite3.connect(':memory:')\ncur = conn.cursor()\ncur.execute('CREATE TABLE students (id INTEGER, name TEXT, score INTEGER)')\ncur.executemany(\"INSERT INTO students VALUES (?,?,?)\", [(1,'Alice',85),(2,'Bob',92),(3,'Charlie',78)])\nconn.commit()\n\nsearch_name = 'Bob'\ndf = pd.read_sql('SELECT * FROM students WHERE name = ?', conn, params=[search_name])\nprint(df)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Safety Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Why are parameterized queries safer than string formatting?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They run faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They escape special characters and prevent injection",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They don't require a connection",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They use less memory",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The database driver separates code from data, treating parameters as values only.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Placeholder Styles 🔣",
+            "content": "- **sqlite3 / sqlalchemy (SQLite)**: `?` for positional, `:name` for named.\n- **MySQL / PostgreSQL (via sqlalchemy)**: `%s` for positional, `%(name)s` for named.\n\nWhen using `pd.read_sql` with an SQLAlchemy engine, the `?` placeholder usually works because the engine adapts.\n\n```python\n# With sqlalchemy engine\nparams = {'min_score': 80}\ndf = pd.read_sql('SELECT * FROM students WHERE score >= :min_score', engine, params=params)\n```"
+        },
+        {
+            "id": "s_l4_6",
+            "type": "code",
+            "title": "Named Parameters",
+            "content": "Using a dictionary with SQLAlchemy:",
+            "codeSnippet": "from sqlalchemy import create_engine\nengine = create_engine('sqlite:///:memory:')\n# Create table via pandas (a quick way)\npd.DataFrame({'id':[1,2],'score':[70,90]}).to_sql('exams', engine, index=False)\n\nparams = {'cutoff': 80}\ndf = pd.read_sql('SELECT * FROM exams WHERE score >= :cutoff', engine, params=params)\nprint(df)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "Named Parameters 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Which placeholder style works with SQLAlchemy engine for named parameters?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "?",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": ":name",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "%s",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "@name",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "SQLAlchemy engines use `:name` for named parameters.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Multiple Parameters\n\nFor multiple placeholders, pass a list (positional) or dict (named):\n```python\npd.read_sql('SELECT * FROM t WHERE col1 = ? AND col2 = ?', conn, params=[val1, val2])\n```"
+        },
+        {
+            "id": "s_l4_9",
+            "type": "exercise",
+            "title": "Safe Query Practice 🏋️",
+            "content": "1. Write a function `get_students_above(conn, threshold)` that returns a DataFrame of students with score above the threshold, using a parameterized query.\n2. Test it with threshold 80 and 90.\n3. Explain why `f\"SELECT * FROM students WHERE score > {threshold}\"` is safe if threshold is an integer? (It might be, but using params is always safer and recommended.)"
+        },
+        {
+            "id": "s_l4_10",
+            "type": "text",
+            "title": "Secure and Clean 🎉",
+            "content": "Now you write safe queries. Finally, let’s see advanced patterns combining SQL and pandas."
+        }
+    ]
+}

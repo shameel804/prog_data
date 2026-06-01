@@ -1,0 +1,14 @@
+{
+    "id": "task3",
+    "chapterId": "ch_11",
+    "title": "Self‑Join & Conditional Aggregates 🔄",
+    "description": "Use a self‑join to analyze hierarchical data and apply conditional sums on joins.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Task: Employee Hierarchy and Sales Summary\n\n**employees**\n|emp_id|name|manager_id|\n|---|---|---|\n|1|Alice|NULL|\n|2|Bob|1|\n|3|Charlie|1|\n|4|Diana|2|\n\n**sales**\n|sale_id|emp_id|amount|\n|---|---|---|\n|1|2|200|\n|2|3|150|\n|3|4|300|\n|4|2|100|\n\n1. Write a self‑join on employees to list each employee (except top) with their manager's name. Include columns: employee_name, manager_name. (Use LEFT JOIN from employees e to employees m ON e.manager_id = m.emp_id; filter for employees who have a manager.)\n2. Using a JOIN between employees and sales, calculate total sales amount per manager (sum the sales of employees who report to them). Show manager name and total_team_sales. (Hint: join employees e (the subordinate) with sales s on e.emp_id = s.emp_id, then join with employees m on e.manager_id = m.emp_id, group by manager.)\n\n**Expected output:**\n\nQuery 1:\n```\nBob|Alice\nCharlie|Alice\nDiana|Bob\n```\n\nQuery 2:\n```\nAlice|450   (Bob 200+100=300, Charlie 150 -> total 450)\nBob|300     (Diana 300)\n```\n(Alice's team includes Bob, Charlie, and indirectly Diana? But we only sum direct reports per manager. So Alice gets sum of Bob's and Charlie's sales: 300+150=450. Bob gets Diana's sales: 300. Only managers with direct reports who have sales appear.)\n\nWrite both queries.",
+    "hints": [
+        "Self‑join: `FROM employees e JOIN employees m ON e.manager_id = m.emp_id` where e is the subordinate, m is the manager.",
+        "Manager sales: join employees e (subordinate) with sales, then join with employees m (manager) on e.manager_id = m.emp_id, group by manager."
+    ],
+    "expectedOutput": "Query 1:\nBob|Alice\nCharlie|Alice\nDiana|Bob\n\nQuery 2:\nAlice|450\nBob|300",
+    "solutionCode": "SELECT e.name AS employee, m.name AS manager\nFROM employees e\nJOIN employees m ON e.manager_id = m.emp_id;\n--\nSELECT m.name AS manager, SUM(s.amount) AS team_sales\nFROM employees e\nJOIN sales s ON e.emp_id = s.emp_id\nJOIN employees m ON e.manager_id = m.emp_id\nGROUP BY m.emp_id, m.name;"
+}

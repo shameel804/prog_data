@@ -1,0 +1,150 @@
+{
+    "id": "l3",
+    "chapterId": "ch_11",
+    "title": "LEFT and RIGHT JOINs: Keeping All Records 🧾",
+    "description": "Retain all rows from one table even if there’s no match in the other with LEFT/RIGHT JOIN.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Joins",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "LEFT JOIN (LEFT OUTER JOIN) ⬅️",
+            "content": "# Keep All Rows from the Left Table\n\n`LEFT JOIN` returns all rows from the left table (the first one), and matching rows from the right table. If no match, NULLs appear for right‑table columns.\n\n```sql\nSELECT c.name, o.order_id\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id;\n```\n\nEvery customer appears, even those with no orders."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "LEFT JOIN Example",
+            "content": "Run this on our sample data:",
+            "codeSnippet": "SELECT c.name, o.order_id, o.amount\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nORDER BY c.name;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Result Explanation 📋",
+            "content": "```\nname    | order_id | amount\n--------|----------|-------\nAlice   | 101      | 250\nAlice   | 103      | 320\nBob     | 102      | 180\nCharlie | NULL     | NULL\n```\n\nCharlie appears with NULLs because he has no orders. This is useful for finding customers who haven’t ordered."
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "LEFT JOIN Logic 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What does LEFT JOIN guarantee?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "All rows from the right table appear",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "All rows from the left table appear",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only matching rows appear",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "No NULLs",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "LEFT JOIN preserves every row of the left table.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Finding Unmatched Rows 🔍",
+            "content": "## Who has no orders?\n\nAdd a `WHERE` clause checking for NULL in a column from the right table:\n\n```sql\nSELECT c.name\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nWHERE o.order_id IS NULL;\n```\n\nThis returns customers who never placed an order."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "code",
+            "title": "Unmatched Example",
+            "content": "Find customers with no orders:",
+            "codeSnippet": "SELECT c.name FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_id IS NULL;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "RIGHT JOIN (RIGHT OUTER JOIN) ➡️",
+            "content": "# Keep All Rows from the Right Table\n\n`RIGHT JOIN` is the opposite: all rows from the right table appear, with NULLs for missing left‑table matches.\n\n```sql\nSELECT c.name, o.order_id\nFROM customers c\nRIGHT JOIN orders o ON c.customer_id = o.customer_id;\n```\n\nHere, order 104 (customer_id=4) appears with NULL customer name.\n\nNote: Many developers avoid RIGHT JOIN by simply swapping the table order and using LEFT JOIN. It’s equivalent."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "code",
+            "title": "RIGHT JOIN Example",
+            "content": "All orders, with customer info if available:",
+            "codeSnippet": "SELECT c.name, o.order_id, o.amount\nFROM customers c\nRIGHT JOIN orders o ON c.customer_id = o.customer_id;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_9",
+            "type": "quiz",
+            "title": "RIGHT JOIN Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "If you swap the tables and use LEFT JOIN instead of RIGHT JOIN, will the results be the same?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Yes, if you also swap the column references",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "No, completely different",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only if there are no NULLs",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only in INNER JOIN",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`A RIGHT JOIN B` = `B LEFT JOIN A`. Swapping and using LEFT yields identical rows, just column order might differ.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Stick with LEFT JOIN\n\nFor consistency and readability, most SQL developers use only LEFT JOIN. It makes the intent clearer."
+        },
+        {
+            "id": "s_l3_11",
+            "type": "exercise",
+            "title": "LEFT/RIGHT JOIN Practice 🏋️",
+            "content": "1. Write a LEFT JOIN to show all customers and their order amounts, ordering by customer name.\n2. Write a query to list customers who have no orders.\n3. Write a RIGHT JOIN (or swapped LEFT JOIN) to show all orders with customer name, even if customer is missing."
+        },
+        {
+            "id": "s_l3_12",
+            "type": "text",
+            "title": "Outer Joins Mastered 🎉",
+            "content": "Now we’ll cover the remaining join types."
+        }
+    ]
+}

@@ -1,0 +1,17 @@
+{
+    "id": "task1",
+    "chapterId": "ch_10",
+    "title": "Sales Summary Report 📊",
+    "description": "Use aggregate functions and GROUP BY to summarize sales data.",
+    "estimatedMinutes": 12,
+    "problemStatement": "## Task: Sales Summary\n\nAssume you have a table `sales`:\n\n| id | product | category | price | quantity | sale_date |\n|----|---------|----------|-------|----------|------------|\n| 1  | Widget  | A        | 10    | 3        | 2024-01-15 |\n| 2  | Gadget  | A        | 20    | 1        | 2024-01-16 |\n| 3  | Widget  | A        | 10    | 5        | 2024-01-17 |\n| 4  | Doohickey| B       | 15    | 2        | 2024-01-18 |\n| 5  | Gadget  | A        | 20    | 4        | 2024-01-19 |\n\nWrite SQL queries to answer:\n\n1. **Total revenue** (sum of `price * quantity`).\n2. **Number of unique products** sold.\n3. **Average price** across all rows (use `AVG(price)`).\n4. **Total quantity sold per category**, ordered by total quantity descending.\n5. **Total revenue per product** (revenue = price * quantity), with column alias `revenue`, ordered by revenue descending.\n\n**Expected output (example):**\n\n```\nQuery 1: total_revenue = 10*3 + 20*1 + 10*5 + 15*2 + 20*4 = 30+20+50+30+80 = 210\nQuery 2: unique_products = 3 (Widget, Gadget, Doohickey)\nQuery 3: avg_price = (10+20+10+15+20)/5 = 15\nQuery 4: category A total quantity = 3+1+5+4 = 13; B = 2. Ordered A:13, B:2\nQuery 5: product revenues: Widget: (3+5)*10 = 80, Gadget: (1+4)*20=100, Doohickey: 2*15=30. Sorted descending: Gadget 100, Widget 80, Doohickey 30.\n```\n\nWrite each SQL query.",
+    "hints": [
+        "1: `SELECT SUM(price * quantity) AS total_revenue FROM sales;`",
+        "2: `SELECT COUNT(DISTINCT product) FROM sales;`",
+        "3: `SELECT AVG(price) FROM sales;`",
+        "4: `SELECT category, SUM(quantity) AS total_qty FROM sales GROUP BY category ORDER BY total_qty DESC;`",
+        "5: `SELECT product, SUM(price * quantity) AS revenue FROM sales GROUP BY product ORDER BY revenue DESC;`"
+    ],
+    "expectedOutput": "Query 1: 210\nQuery 2: 3\nQuery 3: 15.000\nQuery 4: A|13, B|2\nQuery 5: Gadget|100, Widget|80, Doohickey|30",
+    "solutionCode": "SELECT SUM(price * quantity) AS total_revenue FROM sales;\n--\nSELECT COUNT(DISTINCT product) AS unique_products FROM sales;\n--\nSELECT AVG(price) AS avg_price FROM sales;\n--\nSELECT category, SUM(quantity) AS total_qty FROM sales GROUP BY category ORDER BY total_qty DESC;\n--\nSELECT product, SUM(price * quantity) AS revenue FROM sales GROUP BY product ORDER BY revenue DESC;"
+}

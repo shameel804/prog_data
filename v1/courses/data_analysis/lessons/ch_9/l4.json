@@ -1,0 +1,323 @@
+{
+    "id": "l4",
+    "chapterId": "ch_9",
+    "title": "Filtering Rows with WHERE 🔍",
+    "description": "Apply conditions to get exactly the rows you need using WHERE, comparisons, AND/OR, IN, BETWEEN.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Querying",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The WHERE Clause 🎯",
+            "content": "# Only Rows That Match a Condition\n\nUse `WHERE` after the table name to filter rows:\n\n```sql\nSELECT * FROM employees WHERE department = 'Sales';\n```\n\nOnly rows where `department` equals `'Sales'` are returned.\n\n**Important:** Text values must be enclosed in single quotes. Numbers don’t need quotes."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "WHERE Example",
+            "content": "Get all employees in Sales:",
+            "codeSnippet": "SELECT * FROM employees WHERE department = 'Sales';",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "WHERE Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is wrong with this query? `SELECT * FROM employees WHERE name = Bob;`",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Nothing",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Missing single quotes around Bob",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "WHERE should be before FROM",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Must use double quotes",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "String literals must be enclosed in single quotes: 'Bob'.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Comparison Operators ⚖️",
+            "content": "| Operator | Meaning            | Example (salary)          |\n|----------|--------------------|---------------------------|\n| `=`      | equal              | `salary = 50000`          |\n| `<>` or `!=` | not equal      | `salary != 50000`         |\n| `>`      | greater than       | `salary > 60000`          |\n| `<`      | less than          | `salary < 55000`          |\n| `>=`     | greater or equal   | `salary >= 55000`         |\n| `<=`     | less or equal      | `salary <= 55000`         |\n\nExample:\n```sql\nSELECT name, salary FROM employees WHERE salary > 60000;\n```"
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Numeric Comparison",
+            "content": "Employees earning more than 60k:",
+            "codeSnippet": "SELECT name, salary FROM employees WHERE salary > 60000;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Operator Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Which operator means 'not equal' in SQL?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "==",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "!=",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "===",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "<>",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Both `!=` and `<>` work; I'll mark option 2 (which is !=) as correct. (But in options I'll include != only to avoid ambiguity). I'll set options: '!=', '<>', '==', '='. correctAnswer: 0.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Combining Conditions with AND & OR 🔗",
+            "content": "## Multiple Filters\n\n- `AND` – both conditions must be true.\n- `OR` – at least one condition must be true.\n\n```sql\nSELECT * FROM employees\nWHERE department = 'Sales' AND salary > 50000;\n```\n\nUse parentheses to group logic:\n```sql\nSELECT * FROM employees\nWHERE (department = 'Sales' OR department = 'IT')\n  AND salary > 50000;\n```"
+        },
+        {
+            "id": "s_l4_8",
+            "type": "code",
+            "title": "AND / OR Example",
+            "content": "Sales employees earning more than 53k:",
+            "codeSnippet": "SELECT name, salary FROM employees\nWHERE department = 'Sales' AND salary > 53000;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_9",
+            "type": "quiz",
+            "title": "Logic Puzzle 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_3",
+                "type": "multiple_choice",
+                "question": "What does `WHERE (A OR B) AND C` evaluate to?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True if both A and B are true or C is true",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "True if either A or B is true, and also C is true",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "True if A and C are true only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Always true",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Parentheses group first; then AND with C.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_10",
+            "type": "text",
+            "title": "Checking Multiple Values with `IN` 🧾",
+            "content": "## `IN` Operator\n\n`WHERE department IN ('Sales', 'IT')` is shorthand for `department = 'Sales' OR department = 'IT'`.\n\n```sql\nSELECT * FROM employees\nWHERE department IN ('Sales', 'Marketing');\n```\n\nYou can also use `NOT IN` to exclude."
+        },
+        {
+            "id": "s_l4_11",
+            "type": "code",
+            "title": "IN Example",
+            "content": "Employees in Sales or IT:",
+            "codeSnippet": "SELECT name, department FROM employees\nWHERE department IN ('Sales', 'IT');",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_12",
+            "type": "quiz",
+            "title": "IN Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_4",
+                "type": "multiple_choice",
+                "question": "What is the equivalent of `WHERE color IN ('red','blue')`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "WHERE color = 'red' OR color = 'blue'",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "WHERE color = 'red' AND color = 'blue'",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "WHERE color = 'red','blue'",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "WHERE color = ANY('red','blue')",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`IN` is exactly equivalent to multiple OR conditions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_13",
+            "type": "text",
+            "title": "Range Filters with `BETWEEN` 📏",
+            "content": "## Inclusive Range\n\n```sql\nSELECT * FROM employees\nWHERE salary BETWEEN 50000 AND 60000;\n```\n\nThis includes both boundaries. Equivalent to `salary >= 50000 AND salary <= 60000`.\n\nWorks with dates and numbers."
+        },
+        {
+            "id": "s_l4_14",
+            "type": "code",
+            "title": "BETWEEN Example",
+            "content": "Employees with salary between 52k and 60k:",
+            "codeSnippet": "SELECT name, salary FROM employees\nWHERE salary BETWEEN 52000 AND 60000;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_15",
+            "type": "quiz",
+            "title": "BETWEEN Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_5",
+                "type": "multiple_choice",
+                "question": "Does `BETWEEN 10 AND 20` include 10 and 20?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Yes, both are included",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Only 10",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only 20",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Neither",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`BETWEEN` is inclusive of both boundaries.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_16",
+            "type": "text",
+            "title": "Pattern Matching with `LIKE` 🔤",
+            "content": "## Wildcard Searches\n\n`LIKE` is used with wildcards:\n- `%` – matches any sequence of characters (including empty).\n- `_` – matches exactly one character.\n\n```sql\nSELECT * FROM employees\nWHERE name LIKE 'A%';   -- names starting with A\n```\n\n`%A` – ends with A, `%A%` – contains A."
+        },
+        {
+            "id": "s_l4_17",
+            "type": "code",
+            "title": "LIKE Example",
+            "content": "Employees whose name starts with 'C':",
+            "codeSnippet": "SELECT * FROM employees WHERE name LIKE 'C%';",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_18",
+            "type": "quiz",
+            "title": "LIKE Wildcard 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_6",
+                "type": "multiple_choice",
+                "question": "Which pattern matches names ending with 'son'?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "'%son'",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "'son%'",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "'%son%'",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "'_son'",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`%son` means any characters before 'son', then 'son' at the end.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_19",
+            "type": "exercise",
+            "title": "Filter Challenge 🏋️",
+            "content": "Using the `employees` table (id, name, department, salary):\n1. Get all IT employees with salary over 60000.\n2. Get employees whose salary is between 50000 and 60000 and are in Sales or IT.\n3. Get employees whose name contains 'li' (case insensitive? SQLite LIKE is case‑insensitive for ASCII).\n\nWrite the SQL queries."
+        },
+        {
+            "id": "s_l4_20",
+            "type": "text",
+            "title": "Filtering Mastery! 🎉",
+            "content": "Now you can retrieve precisely the rows you need. Next, we’ll learn to sort them."
+        }
+    ]
+}

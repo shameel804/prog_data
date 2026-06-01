@@ -1,0 +1,150 @@
+{
+    "id": "l1",
+    "chapterId": "ch_13",
+    "title": "Project Kickoff & Data Import 🚀",
+    "description": "Understand the business problem, set up your environment, and load all raw data sources.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Setup",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Welcome to Your Capstone Project 🎓",
+            "content": "# Real‑World Data Analysis Project\n\nYou are a data analyst for **RetailCo**, a nationwide retail chain. The management wants to understand sales performance, customer behaviour, and product profitability.\n\nYou’ll be working with:\n- A CSV file of daily transactions.\n- A CSV file of customer information.\n- A SQLite database containing product details and store locations.\n\nYour mission: **Deliver insights and a final report** that helps the company make data‑driven decisions."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "The Business Questions ❓",
+            "content": "1. Which **products and categories** generate the most revenue?\n2. How do sales vary by **store location** and **month**?\n3. Who are our **top customers** by total spending?\n4. Is there a **correlation** between customer age and spending?\n5. Are there any **outliers** or data quality issues that need attention?\n\nWe’ll answer all of these step‑by‑step, using the skills you’ve mastered throughout this course."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "Your Data Toolkit 🧰",
+            "content": "We’ll create a small, fictional dataset for you to work with. The principles apply to any real‑world data.\n\n**Files you’ll work with:**\n1. `transactions.csv` – daily sales records.\n2. `customers.csv` – customer demographic data.\n3. `retail.db` – SQLite database with `products` and `stores` tables.\n\nLet’s start by loading everything into pandas and setting up the database connection."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "code",
+            "title": "Creating the Sample Data",
+            "content": "We'll generate the CSV and database in memory for this lesson. In a real project, you'd have actual files.",
+            "codeSnippet": "import pandas as pd\nimport sqlite3\nimport numpy as np\n\n# Set random seed for reproducibility\nnp.random.seed(123)\n\n# Transactions data\ntransactions = pd.DataFrame({\n    'transaction_id': range(1, 101),\n    'customer_id': np.random.randint(1, 21, 100),\n    'product_id': np.random.randint(1, 11, 100),\n    'quantity': np.random.randint(1, 5, 100),\n    'price': np.random.uniform(5, 50, 100).round(2),\n    'transaction_date': pd.date_range('2024-01-01', periods=100, freq='D')\n})\n\n# Customers data\ncustomers = pd.DataFrame({\n    'customer_id': range(1, 21),\n    'name': ['Alice','Bob','Charlie','Diana','Eve','Frank','Grace','Henry','Ivy','Jack',\n             'Karen','Leo','Mona','Nate','Olivia','Paul','Quinn','Rose','Sam','Tina'],\n    'age': np.random.randint(18, 70, 20),\n    'gender': np.random.choice(['M','F'], 20),\n    'city': np.random.choice(['New York','Los Angeles','Chicago','Houston'], 20)\n})\n\nprint('Data created.')",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "Setting Up the SQLite Database",
+            "content": "Create the products and stores tables in an in‑memory database.",
+            "codeSnippet": "conn = sqlite3.connect(':memory:')\n\n# Products table\nconn.execute('''CREATE TABLE products (\n    product_id INTEGER PRIMARY KEY,\n    product_name TEXT,\n    category TEXT,\n    cost_price REAL\n)''')\n\nproducts_data = [\n    (1,'Widget','Electronics',3.50),\n    (2,'Gadget','Electronics',5.00),\n    (3,'Thingamajig','Home',2.00),\n    (4,'DooDad','Home',4.50),\n    (5,'Gizmo','Toys',1.50),\n    (6,'Contraption','Toys',2.00),\n    (7,'Apparatus','Tools',3.00),\n    (8,'Instrument','Tools',4.00),\n    (9,'Device','Electronics',6.00),\n    (10,'Module','Home',3.50)\n]\nconn.executemany('INSERT INTO products VALUES (?,?,?,?)', products_data)\n\n# Stores table\nconn.execute('''CREATE TABLE stores (\n    store_id INTEGER PRIMARY KEY,\n    store_name TEXT,\n    city TEXT\n)''')\n\nstores_data = [\n    (1,'Downtown','New York'),\n    (2,'Uptown','Los Angeles'),\n    (3,'Midtown','Chicago'),\n    (4,'Suburb','Houston')\n]\nconn.executemany('INSERT INTO stores VALUES (?,?,?)', stores_data)\n\nconn.commit()\nprint('Database ready.')",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What types of data sources are we using in this project?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Only CSV files",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Only a SQL database",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "CSV files and a SQLite database",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "JSON and XML",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "We are using two CSV files (transactions, customers) and a SQLite database (products, stores).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_7",
+            "type": "text",
+            "title": "Load CSVs into DataFrames 📥",
+            "content": "Normally you’d use `pd.read_csv()`. Since we generated them in memory, we can just reference the DataFrames.\n\n```python\n# In real project:\n# df_trans = pd.read_csv('transactions.csv')\n# df_cust = pd.read_csv('customers.csv')\n```\n\nFor our in‑memory example, `transactions` and `customers` are already DataFrames."
+        },
+        {
+            "id": "s_l1_8",
+            "type": "code",
+            "title": "Load SQL Tables",
+            "content": "Use `pd.read_sql` to bring products and stores into DataFrames.",
+            "codeSnippet": "df_products = pd.read_sql('SELECT * FROM products', conn)\ndf_stores = pd.read_sql('SELECT * FROM stores', conn)\nprint('Products:')\nprint(df_products.head())\nprint('\\nStores:')\nprint(df_stores)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_9",
+            "type": "quiz",
+            "title": "Data Inventory 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "How many rows does the products table have?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "4",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "10",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "100",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "20",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "We inserted 10 rows into the products table.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_10",
+            "type": "text",
+            "title": "Initial Data Exploration 🔍",
+            "content": "Before cleaning, let’s look at the raw data with `.info()`, `.head()`, `.describe()`.\n\n```python\nprint(transactions.info())\nprint(customers.head())\nprint(df_products.describe())\n```\n\nWe’ll do that next."
+        },
+        {
+            "id": "s_l1_11",
+            "type": "exercise",
+            "title": "Try It Yourself 🏋️",
+            "content": "1. Print the info of the transactions DataFrame.\n2. Display the first 5 rows of customers.\n3. Show the summary statistics of the products DataFrame.\n4. Run `df_stores.shape` and note the result."
+        },
+        {
+            "id": "s_l1_12",
+            "type": "text",
+            "title": "Setup Complete! 🎉",
+            "content": "All data is loaded and ready. Next, we’ll clean and integrate it into a single master dataset."
+        }
+    ]
+}

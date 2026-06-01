@@ -1,0 +1,126 @@
+{
+    "id": "l4",
+    "chapterId": "ch_10",
+    "title": "Query Order of Execution 🧭",
+    "description": "Understand how SQL processes clauses: FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Concept",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Confusion: Writing vs Execution 🤯",
+            "content": "# How SQL Actually Thinks\n\nYou write:\n```sql\nSELECT ... FROM ... WHERE ... GROUP BY ... HAVING ... ORDER BY ...\n```\nBut the database engine processes the clauses in a logical order:\n\n1. **FROM** – identifies tables\n2. **WHERE** – filters rows\n3. **GROUP BY** – groups rows\n4. **HAVING** – filters groups\n5. **SELECT** – computes expressions, aliases\n6. **ORDER BY** – sorts the result\n7. **LIMIT** – restricts rows\n\nUnderstanding this prevents many errors."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Why It Matters 💡",
+            "content": "- You can't use a column alias from SELECT in the WHERE clause (because WHERE runs before SELECT).\n- You **can** use it in ORDER BY (because ORDER BY runs after SELECT).\n- Aggregate functions are not allowed in WHERE because aggregation happens after WHERE.\n\nExample of error:\n```sql\nSELECT salary * 1.1 AS new_salary\nFROM employees\nWHERE new_salary > 60000;   -- FAILS: new_salary not defined yet\n```\nFix: repeat the expression in WHERE or use a subquery."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Execution Order 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "In which clause can you use a column alias defined in SELECT?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "WHERE",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "HAVING",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "GROUP BY",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "FROM",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "HAVING and ORDER BY can use SELECT aliases because they are processed after SELECT.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Alias in ORDER BY Works",
+            "content": "This is allowed:\n```sql\nSELECT customer, SUM(amount) AS total_spent\nFROM orders\nGROUP BY customer\nORDER BY total_spent DESC;\n```",
+            "codeSnippet": "",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Alias in WHERE? 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What happens if you try `SELECT amount*2 AS double_amt FROM orders WHERE double_amt > 500;`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Works fine",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Error: column 'double_amt' does not exist",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Returns rows where amount>250",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Returns NULL",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "WHERE is processed before SELECT, so the alias is not yet defined.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "The Complete Pipeline 🧵",
+            "content": "1. **FROM & JOINs** – source tables, combine.\n2. **WHERE** – filter rows.\n3. **GROUP BY** – create groups.\n4. **HAVING** – filter groups.\n5. **SELECT** – choose columns, compute aggregates, assign aliases.\n6. **ORDER BY** – sort.\n7. **LIMIT / OFFSET** – pagination.\n\nKeep this mental model, and your queries will be correct."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use Derived Tables / Subqueries to Work Around Limitations\n\nIf you need to filter on a computed column, wrap the query in a subquery or CTE."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "exercise",
+            "title": "Order of Execution Challenge 🏋️",
+            "content": "True or False (explain why):\n1. `SELECT name, COUNT(*) FROM students WHERE COUNT(*) > 5 GROUP BY name;` is valid.\n2. `SELECT name, score*0.8 AS weighted FROM exams ORDER BY weighted;` works.\n3. `SELECT region, SUM(sales) AS total FROM orders WHERE total > 1000 GROUP BY region;` works.\n\nWrite your answers."
+        },
+        {
+            "id": "s_l4_9",
+            "type": "text",
+            "title": "Now You Know the Flow 🎉",
+            "content": "With the execution order clear, you can write complex queries confidently. Next, we'll explore advanced aggregations."
+        }
+    ]
+}

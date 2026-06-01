@@ -1,0 +1,135 @@
+{
+    "id": "l4",
+    "chapterId": "ch_11",
+    "title": "FULL OUTER JOIN, CROSS JOIN, and Self‑Joins 🔄",
+    "description": "Explore the remaining join types and how to join a table to itself.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Joins",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "FULL OUTER JOIN 🌐",
+            "content": "# Keep Everything from Both Tables\n\n`FULL OUTER JOIN` returns all rows from both tables, with NULLs where no match exists.\n\n```sql\nSELECT c.name, o.order_id\nFROM customers c\nFULL OUTER JOIN orders o ON c.customer_id = o.customer_id;\n```\n\nIt includes:\n- Customers with orders (matched)\n- Customers without orders (NULL order)\n- Orders without a customer (NULL customer)\n\n**Note:** SQLite does not support FULL OUTER JOIN directly, but you can simulate with LEFT JOIN + UNION + RIGHT JOIN. We'll focus on standard SQL concepts."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "FULL JOIN Concept",
+            "content": "Hypothetical result if supported:",
+            "codeSnippet": "-- Not valid in SQLite, but standard SQL:\nSELECT c.name, o.order_id\nFROM customers c\nFULL OUTER JOIN orders o ON c.customer_id = o.customer_id;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "CROSS JOIN 🧮",
+            "content": "# Cartesian Product\n\n`CROSS JOIN` pairs every row from the first table with every row from the second. No ON condition.\n\n```sql\nSELECT c.name, o.order_id\nFROM customers c\nCROSS JOIN orders o;\n```\n\nIf customers has 3 rows and orders 4, the result has 3×4=12 rows. Rarely used intentionally; can be useful for generating combinations."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "CROSS JOIN Count 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "If table A has 5 rows and table B has 7 rows, how many rows does A CROSS JOIN B return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "12",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "35",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Max of 5 and 7",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Depends on matching keys",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Cross join produces the Cartesian product: every combination.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Self‑Join 🔄",
+            "content": "# Joining a Table to Itself\n\nSometimes you need to compare rows within the same table. For example, find employees and their managers, where both are stored in the same `employees` table.\n\n```sql\nSELECT e1.name AS employee, e2.name AS manager\nFROM employees e1\nJOIN employees e2 ON e1.manager_id = e2.employee_id;\n```\n\nAliases are essential to distinguish the two \"copies\" of the table."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "code",
+            "title": "Self‑Join Example",
+            "content": "Assume an `employees` table with columns: employee_id, name, manager_id. To list each employee with their manager:",
+            "codeSnippet": "SELECT e.name AS employee, m.name AS manager\nFROM employees e\nLEFT JOIN employees m ON e.manager_id = m.employee_id;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "Self‑Join Logic 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Why are aliases crucial in a self‑join?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To reduce typing",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To distinguish the two instances of the same table",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To improve performance",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They are optional but recommended",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Without aliases, you can't refer to columns from different roles of the same table.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_8",
+            "type": "text",
+            "title": "When to Use Self‑Join 🔍",
+            "content": "- Hierarchical data (employees‑managers)\n- Sequential data (current vs previous record)\n- Finding duplicates within a table\n\nSelf‑joins are powerful but can be slow on large tables; indexes help."
+        },
+        {
+            "id": "s_l4_9",
+            "type": "exercise",
+            "title": "Self‑Join Practice 🏋️",
+            "content": "Given a table `staff(id, name, supervisor_id)`, write a query to list each staff member alongside their supervisor's name. Include staff with no supervisor (use LEFT JOIN)."
+        },
+        {
+            "id": "s_l4_10",
+            "type": "text",
+            "title": "All Join Types Covered 🎉",
+            "content": "Now you know every join variant. Next, we’ll chain multiple tables."
+        }
+    ]
+}

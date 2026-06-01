@@ -1,0 +1,129 @@
+{
+    "id": "l1",
+    "chapterId": "ch_12",
+    "title": "Setting Up a Database Connection 🔌",
+    "description": "Use sqlite3 and SQLAlchemy to connect Python to SQLite, MySQL, or PostgreSQL.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Connections",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Bridging Python and SQL 🌉",
+            "content": "# Pandas + SQL = Superpowers\n\nPandas can directly talk to SQL databases. This means you can:\n- Pull data from a database into a DataFrame\n- Clean and analyze it with pandas\n- Write results back to the database\n\nWe need a **connection** object. Two main options:\n1. **sqlite3** (built‑in) – for SQLite databases\n2. **SQLAlchemy** – for many databases (MySQL, PostgreSQL, SQLite, etc.)"
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "Method 1: sqlite3 (Built‑in) 🐍",
+            "content": "## For SQLite Only\n\n```python\nimport sqlite3\n\n# Create a connection to a file (or :memory: for in‑memory)\nconn = sqlite3.connect('my_database.db')\n\n# Use the connection\n# ...\n\n# Close when done\nconn.close()\n```\n\nYou can pass this connection directly to `pd.read_sql()`."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "code",
+            "title": "sqlite3 Demo",
+            "content": "Create an in‑memory database with sample data:",
+            "codeSnippet": "import sqlite3\nconn = sqlite3.connect(':memory:')\ncursor = conn.cursor()\ncursor.execute('''CREATE TABLE students (id INTEGER, name TEXT, score INTEGER)''')\ncursor.execute(\"INSERT INTO students VALUES (1,'Alice',85)\")\ncursor.execute(\"INSERT INTO students VALUES (2,'Bob',92)\")\nconn.commit()\nprint('Table created and data inserted.')",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What does `sqlite3.connect(':memory:')` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Connects to a remote SQLite server",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Creates a temporary database in RAM",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Opens an existing file",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Returns an error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`:memory:` creates an in‑memory database that disappears when the connection closes.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_5",
+            "type": "text",
+            "title": "Method 2: SQLAlchemy 🧪",
+            "content": "## The Universal Connector\n\nSQLAlchemy is a powerful library that works with many databases. Install with `pip install sqlalchemy`.\n\n```python\nfrom sqlalchemy import create_engine\n\n# SQLite\nengine = create_engine('sqlite:///my_data.db')\n\n# PostgreSQL\n# engine = create_engine('postgresql://user:pass@localhost/dbname')\n\n# MySQL\n# engine = create_engine('mysql+pymysql://user:pass@localhost/dbname')\n```\n\nPandas can use this engine for `read_sql` and `to_sql`."
+        },
+        {
+            "id": "s_l1_6",
+            "type": "code",
+            "title": "SQLAlchemy Engine",
+            "content": "Create an engine and test it:",
+            "codeSnippet": "from sqlalchemy import create_engine\nengine = create_engine('sqlite:///:memory:')\n# We'll create tables later using pandas directly.\nprint('Engine created:', engine)",
+            "codeLanguage": "python",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l1_7",
+            "type": "quiz",
+            "title": "Engine vs Connection 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "What advantage does SQLAlchemy provide over raw sqlite3?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Faster queries",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Works with multiple database types",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Requires no SQL knowledge",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Built into Python",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "SQLAlchemy abstracts away database differences, so the same Python code works with SQLite, PostgreSQL, etc.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Context Managers for Auto‑Close\n\nUse `with` statement for sqlite3 connections:\n```python\nwith sqlite3.connect('my.db') as conn:\n    # use conn\n# auto‑closes\n```\nSQLAlchemy engine doesn’t need explicit closing; it manages connections internally."
+        },
+        {
+            "id": "s_l1_9",
+            "type": "text",
+            "title": "Connected and Ready! 🎉",
+            "content": "Now you have a live database connection. Next, we’ll load data into pandas."
+        }
+    ]
+}

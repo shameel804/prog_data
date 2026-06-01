@@ -1,0 +1,184 @@
+{
+    "id": "l2",
+    "chapterId": "ch_10",
+    "title": "GROUP BY: Summarizing by Categories 📦",
+    "description": "Split your data into groups and apply aggregate functions to each group.",
+    "xpReward": 35,
+    "estimatedMinutes": 9,
+    "section": "Grouping",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Why Group? 🤔",
+            "content": "# From Whole Table to Sub‑Groups\n\n`GROUP BY` divides rows into sets based on a column (or columns). You then apply aggregate functions to each group independently.\n\nExample: \"Total sales per region\" or \"Average order by customer\".\n\nSyntax:\n```sql\nSELECT column, aggregate(column)\nFROM table\nGROUP BY column;\n```\n\nThe column you group by must appear in the SELECT clause (unless it's inside an aggregate)."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Simple GROUP BY Example",
+            "content": "Using our `orders` table:\n```sql\nSELECT region, SUM(amount) AS total_revenue\nFROM orders\nGROUP BY region;\n```\nThis gives one row per region.",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Expected Output 📋",
+            "content": "```\nregion | total_revenue\n-------|--------------\nEast   | 720\nWest   | 380\nNorth  | 450\n```"
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "GROUP BY Rule 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What happens if you SELECT a column that is not in GROUP BY nor inside an aggregate?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It returns the first value of that column per group",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Most databases raise an error (unless it's functionally dependent)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It returns NULL",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It works fine",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Standard SQL requires all non‑aggregated columns in SELECT to be in GROUP BY.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Multiple Aggregate Functions 🧮",
+            "content": "You can compute several aggregates per group:\n\n```sql\nSELECT region,\n       COUNT(*) AS num_orders,\n       SUM(amount) AS total,\n       AVG(amount) AS avg_order\nFROM orders\nGROUP BY region;\n```"
+        },
+        {
+            "id": "s_l2_6",
+            "type": "code",
+            "title": "Multi‑Aggregate Group",
+            "content": "Run this against sample data to see per‑region stats.",
+            "codeSnippet": "SELECT region, COUNT(*), SUM(amount), AVG(amount) FROM orders GROUP BY region;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "Count per Group 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What does `SELECT customer, COUNT(*) FROM orders GROUP BY customer;` show?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Total number of orders",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Number of orders per customer",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "List of distinct customers",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Average order amount per customer",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It groups rows by customer and counts rows in each group.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_8",
+            "type": "text",
+            "title": "GROUP BY Multiple Columns 🧩",
+            "content": "## Hierarchical Grouping\n\n```sql\nSELECT region, customer, SUM(amount) AS total_spent\nFROM orders\nGROUP BY region, customer;\n```\n\nNow you get one row per unique (region, customer) combination."
+        },
+        {
+            "id": "s_l2_9",
+            "type": "code",
+            "title": "Two‑Column Group",
+            "content": "Total spending per customer per region:",
+            "codeSnippet": "SELECT region, customer, SUM(amount) FROM orders GROUP BY region, customer ORDER BY region, customer;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_10",
+            "type": "quiz",
+            "title": "Group Order 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_3",
+                "type": "multiple_choice",
+                "question": "If you `GROUP BY A, B`, how many rows are returned?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Same as number of unique values in A",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Number of unique combinations of A and B",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Total number of rows",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Always 1",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Each distinct pair (A, B) gets its own row.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_11",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## GROUP BY 1,2 Shortcut\n\nYou can use column positions: `GROUP BY 1,2` groups by the first and second columns in SELECT. But it's brittle if the column order changes."
+        },
+        {
+            "id": "s_l2_12",
+            "type": "exercise",
+            "title": "Group By Practice 🏋️",
+            "content": "Using the `orders` table:\n1. Show total revenue per customer.\n2. Show average order amount per region.\n3. Show number of orders per region and customer (combine).\n\nWrite SQL queries."
+        },
+        {
+            "id": "s_l2_13",
+            "type": "text",
+            "title": "Group By Mastered 🎉",
+            "content": "Now you can slice summaries by any category. Next, we'll filter those groups."
+        }
+    ]
+}

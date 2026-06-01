@@ -1,0 +1,150 @@
+{
+    "id": "l5",
+    "chapterId": "ch_10",
+    "title": "Advanced Aggregations: DISTINCT & CASE 🧠",
+    "description": "Count unique values, and use conditional logic inside aggregate functions.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Counting Unique Values 🔢",
+            "content": "# DISTINCT Inside COUNT\n\n`COUNT(DISTINCT column)` counts the number of distinct (unique) values in a column.\n\n```sql\nSELECT COUNT(DISTINCT customer) AS unique_customers FROM orders;\n```\n\nThis tells you how many different customers placed orders, not how many orders."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Distinct Count Example",
+            "content": "How many different customers?",
+            "codeSnippet": "SELECT COUNT(DISTINCT customer) FROM orders;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "COUNT DISTINCT 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "If the orders table has customers [A, B, A, C, B], what does `SELECT COUNT(DISTINCT customer)` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "5",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "3",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "2",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "NULL",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Unique customers: A, B, C → 3.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Multiple Distinct Aggregates 📊",
+            "content": "You can count distinct in different columns:\n\n```sql\nSELECT COUNT(DISTINCT customer) AS cust_count,\n       COUNT(DISTINCT region) AS region_count\nFROM orders;\n```\n\nBut you cannot do `COUNT(DISTINCT *)` – you must specify a column."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Conditional Aggregation with CASE 🎯",
+            "content": "# The Power of CASE Inside Aggregates\n\n`CASE` expression creates conditional values inside an aggregate.\n\n```sql\nSELECT\n    SUM(CASE WHEN region = 'East' THEN amount ELSE 0 END) AS east_total,\n    SUM(CASE WHEN region = 'West' THEN amount ELSE 0 END) AS west_total\nFROM orders;\n```\n\nThis pivots data horizontally – great for reports."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "code",
+            "title": "Conditional SUM Example",
+            "content": "Compute per‑region totals in separate columns:",
+            "codeSnippet": "SELECT\n    SUM(CASE WHEN region = 'East' THEN amount ELSE 0 END) AS East,\n    SUM(CASE WHEN region = 'West' THEN amount ELSE 0 END) AS West,\n    SUM(CASE WHEN region = 'North' THEN amount ELSE 0 END) AS North\nFROM orders;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "CASE Logic 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What does `COUNT(CASE WHEN amount > 200 THEN 1 END)` count?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "All rows",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Rows where amount > 200",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Total of amounts > 200",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Number of distinct amounts > 200",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "For rows where condition is true, CASE returns 1 (counted); otherwise NULL (ignored by COUNT).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_8",
+            "type": "text",
+            "title": "Conditional COUNT for Frequency 🔢",
+            "content": "Count how many orders are 'large' (>300) and 'small' (≤300) per customer:\n\n```sql\nSELECT customer,\n       COUNT(CASE WHEN amount > 300 THEN 1 END) AS large_orders,\n       COUNT(CASE WHEN amount <= 300 THEN 1 END) AS small_orders\nFROM orders\nGROUP BY customer;\n```"
+        },
+        {
+            "id": "s_l5_9",
+            "type": "code",
+            "title": "CASE COUNT Example",
+            "content": "Grouped conditional counts:",
+            "codeSnippet": "SELECT customer,\n       COUNT(CASE WHEN amount > 300 THEN 1 END) AS high,\n       COUNT(CASE WHEN amount <= 300 THEN 1 END) AS low\nFROM orders\nGROUP BY customer;",
+            "codeLanguage": "sql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Pivot Tables with Conditional Aggregates\n\nThis technique is how you manually create pivot tables in SQL when your database doesn’t have a PIVOT function."
+        },
+        {
+            "id": "s_l5_11",
+            "type": "exercise",
+            "title": "Advanced Aggregation Practice 🏋️",
+            "content": "Using the `orders` table:\n1. Count how many distinct customers placed orders.\n2. Write a query that shows total revenue for each region in separate columns (East, West, North) in a single row.\n3. Show for each customer the number of orders above 200 and below or equal to 200."
+        },
+        {
+            "id": "s_l5_12",
+            "type": "text",
+            "title": "Advanced Aggregations Done 🎉",
+            "content": "Now you can count unique values and conditionally aggregate. Next, we'll put everything together in real reports."
+        }
+    ]
+}

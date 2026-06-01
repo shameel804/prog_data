@@ -1,0 +1,76 @@
+{
+    "id": "l1",
+    "chapterId": "ch_11",
+    "title": "Understanding Table Relationships 💍",
+    "description": "Learn about primary and foreign keys, and how tables connect in a relational database.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Relationships",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Why Multiple Tables? 🗂️",
+            "content": "# Avoiding Redundancy\n\nA single table might store customer names and addresses with every order, leading to duplication. A better design:\n- **customers** table: customer_id, name, email\n- **orders** table: order_id, customer_id, amount, date\n\nThe `customer_id` column in `orders` references the `customers` table. This is a **foreign key**.\n\nThis separation is called **normalization**. We use **JOINs** to reconstruct the combined view when needed."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "code",
+            "title": "Sample Tables",
+            "content": "We’ll work with these throughout the chapter:\n\n```\ncustomers\ncustomer_id | name    | city\n------------|---------|---------\n1           | Alice   | London\n2           | Bob     | Paris\n3           | Charlie | London\n\norders\norder_id | customer_id | amount | order_date\n---------|-------------|--------|------------\n101      | 1           | 250    | 2024-01-10\n102      | 2           | 180    | 2024-01-12\n103      | 1           | 320    | 2024-02-05\n104      | 4           | 450    | 2024-02-10  (no customer 4!)\n```\nNotice order 104 references customer_id = 4, which doesn’t exist in customers table."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What is a foreign key?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A unique identifier for each row in a table",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A column that refers to a primary key in another table",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A column with NULL values",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The first column of every table",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A foreign key links one table to the primary key of another table.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "How JOINs Work 🧩",
+            "content": "# Matching Rows Across Tables\n\nA JOIN condition specifies how rows from one table relate to rows in another, usually by matching a foreign key with a primary key.\n\nExample:\n```sql\nSELECT *\nFROM orders\nJOIN customers ON orders.customer_id = customers.customer_id;\n```\n\nFor each order, SQL finds the corresponding customer row where the IDs match, and combines them into one result row."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use Table Aliases\n\nLong table names can be abbreviated: `FROM orders o JOIN customers c ON o.customer_id = c.customer_id`. Then use `o.amount`, `c.name`."
+        },
+        {
+            "id": "s_l1_6",
+            "type": "text",
+            "title": "Ready to Join 🤝",
+            "content": "Now you understand the concept. Next, we’ll dive into INNER JOIN – the most common join type."
+        }
+    ]
+}

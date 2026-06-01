@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_9",
+    "title": "Sorting & Reporting 📊",
+    "description": "Order query results and prepare a simple report using sorting and expression aliases.",
+    "estimatedMinutes": 12,
+    "problemStatement": "## Task: Ordered Reports\n\nAgain using the `employees` table, write queries:\n\n1. List all employees sorted by `salary` in descending order (highest first). Show `first_name`, `last_name`, `salary`.\n2. List employees sorted by `department` alphabetically, and within each department sort by `salary` descending.\n3. Show `first_name`, `last_name`, `salary`, and a 10% bonus as `bonus` column. Sort by the bonus descending.\n\n**Expected output:**\n\nQuery 1:\n```\nEve   | Black | 72000\nBob   | Jones | 68000\nDiana | White | 60000\nAlice | Smith | 55000\nCharlie| Brown | 52000\n```\n\nQuery 2:\n```\nBob     | Jones | IT         | 68000\nEve     | Black | IT         | 72000 (but sorted by dept then salary desc, so within IT, Eve(72000) before Bob(68000)? Actually descending salary, so within IT, Eve then Bob. Marketing: Diana 60000. Sales: Alice 55000 then Charlie 52000. So order: IT (Eve,Bob), Marketing (Diana), Sales (Alice,Charlie).)\n```\n\nLet's produce the correct output:\n\n```\nEve    | Black | IT        | 72000\nBob    | Jones | IT        | 68000\nDiana  | White | Marketing | 60000\nAlice  | Smith | Sales     | 55000\nCharlie| Brown | Sales     | 52000\n```\n\nQuery 3:\n```\nEve    | Black | 72000 | 7920.0\nBob    | Jones | 68000 | 7480.0\nDiana  | White | 60000 | 6600.0\nAlice  | Smith | 55000 | 6050.0\nCharlie| Brown | 52000 | 5720.0\n```\n\nWrite the queries.",
+    "hints": [
+        "1: `ORDER BY salary DESC`",
+        "2: `ORDER BY department, salary DESC`",
+        "3: `SELECT first_name, last_name, salary, salary*0.1 AS bonus FROM employees ORDER BY bonus DESC`"
+    ],
+    "expectedOutput": "Query 1:\nEve|Black|72000\nBob|Jones|68000\nDiana|White|60000\nAlice|Smith|55000\nCharlie|Brown|52000\n\nQuery 2:\nEve|Black|IT|72000\nBob|Jones|IT|68000\nDiana|White|Marketing|60000\nAlice|Smith|Sales|55000\nCharlie|Brown|Sales|52000\n\nQuery 3:\nEve|Black|72000|7920.0\nBob|Jones|68000|7480.0\nDiana|White|60000|6600.0\nAlice|Smith|55000|6050.0\nCharlie|Brown|52000|5720.0",
+    "solutionCode": "SELECT first_name, last_name, salary FROM employees ORDER BY salary DESC;\n--\nSELECT first_name, last_name, department, salary FROM employees ORDER BY department, salary DESC;\n--\nSELECT first_name, last_name, salary, salary * 0.1 AS bonus FROM employees ORDER BY bonus DESC;"
+}

@@ -1,0 +1,16 @@
+{
+    "id": "task2",
+    "chapterId": "ch_10",
+    "title": "Customer Segmentation with HAVING 🧑‍🤝‍🧑",
+    "description": "Identify high‑value customers and filter group results.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Task: Customer Orders Analysis\n\nConsider an `orders` table with columns: `order_id`, `customer`, `amount`, `region`.\n\nSample data:\n\n| order_id | customer | amount | region |\n|----------|----------|--------|--------|\n| 1        | Alice    | 250    | East   |\n| 2        | Bob      | 180    | West   |\n| 3        | Alice    | 320    | East   |\n| 4        | Charlie  | 450    | North  |\n| 5        | Bob      | 200    | West   |\n| 6        | Alice    | 150    | East   |\n| 7        | Diana    | 500    | North  |\n\nWrite queries:\n\n1. **Total spending per customer**, ordered by total descending.\n2. Show only customers who have **spent more than 500** in total.\n3. Show **regions** where the **average order amount is greater than 250**.\n4. Show customers who have **at least 2 orders**.\n\n**Expected output:**\n\nQuery 1:\n```\nAlice|720\nDiana|500\nCharlie|450\nBob|380\n```\n\nQuery 2:\n```\nAlice|720\nDiana|500 (no, 500 is not >500, so only Alice). So expected: Alice|720\n```\n\nQuery 3:\nRegion averages: East (250+320+150)/3=240; West (180+200)/2=190; North (450+500)/2=475. Only North >250. So North|475.\n\nQuery 4:\nCustomers with count >=2: Alice (3 orders), Bob (2 orders). So Alice|3, Bob|2.\n\nWrite SQL.",
+    "hints": [
+        "1: `SELECT customer, SUM(amount) AS total FROM orders GROUP BY customer ORDER BY total DESC;`",
+        "2: `SELECT customer, SUM(amount) AS total FROM orders GROUP BY customer HAVING SUM(amount) > 500;`",
+        "3: `SELECT region, AVG(amount) AS avg_amt FROM orders GROUP BY region HAVING AVG(amount) > 250;`",
+        "4: `SELECT customer, COUNT(*) AS num_orders FROM orders GROUP BY customer HAVING COUNT(*) >= 2;`"
+    ],
+    "expectedOutput": "Query 1:\nAlice|720\nDiana|500\nCharlie|450\nBob|380\n\nQuery 2:\nAlice|720\n\nQuery 3:\nNorth|475.000\n\nQuery 4:\nAlice|3\nBob|2",
+    "solutionCode": "SELECT customer, SUM(amount) AS total FROM orders GROUP BY customer ORDER BY total DESC;\n--\nSELECT customer, SUM(amount) AS total FROM orders GROUP BY customer HAVING SUM(amount) > 500;\n--\nSELECT region, AVG(amount) AS avg_amt FROM orders GROUP BY region HAVING AVG(amount) > 250;\n--\nSELECT customer, COUNT(*) AS num_orders FROM orders GROUP BY customer HAVING COUNT(*) >= 2;"
+}

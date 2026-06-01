@@ -1,0 +1,82 @@
+{
+    "id": "sq_data_analysis_4",
+    "title": "Full Stack Foretell",
+    "triggerChapterIndex": 11,
+    "metadata": {
+        "type": "prediction"
+    },
+    "questions": [
+        {
+            "id": "sq_data_analysis_4_q1",
+            "type": "code_output",
+            "question": "What is the output?",
+            "codeSnippet": "import pandas as pd\nimport sqlite3\nconn = sqlite3.connect(':memory:')\npd.DataFrame({'id':[1,2], 'val':[10,20]}).to_sql('t', conn, index=False)\ndf = pd.read_sql('SELECT * FROM t WHERE val > 15', conn)\nprint(df['id'].tolist())",
+            "correctOutput": "[2]",
+            "correctAnswer": "[2]",
+            "options": [],
+            "explanation": "Only row with val=20 satisfies val>15, its id is 2.",
+            "xpReward": 25,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_data_analysis_4_q2",
+            "type": "code_output",
+            "question": "What is the output?",
+            "codeSnippet": "import pandas as pd\norders = pd.DataFrame({\n    'customer': ['A','B','A','C'],\n    'amount': [100, 200, 150, 300]\n})\nresult = orders.groupby('customer')['amount'].sum().reset_index()\nprint(result[result['customer'] == 'A']['amount'].values)",
+            "correctOutput": "[250]",
+            "correctAnswer": "[250]",
+            "options": [],
+            "explanation": "Customer A has two orders (100+150=250).",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_data_analysis_4_q3",
+            "type": "code_output",
+            "question": "What is the output?",
+            "codeSnippet": "import pandas as pd\ndf = pd.DataFrame({'city':['London','Paris','London'], 'temp':[15,20,18]})\nprint(df['city'].value_counts()['London'])",
+            "correctOutput": "2",
+            "correctAnswer": "2",
+            "options": [],
+            "explanation": "London appears twice in the 'city' column.",
+            "xpReward": 25,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_data_analysis_4_q4",
+            "type": "code_output",
+            "question": "Given the SQL query below, what does it return (assume tables exist)?",
+            "codeSnippet": "SELECT c.name, COUNT(o.id) AS order_count\nFROM customers c\nLEFT JOIN orders o ON c.id = o.cust_id\nGROUP BY c.name\nHAVING order_count = 0;",
+            "correctOutput": "Names of customers with no orders",
+            "correctAnswer": "Names of customers with no orders",
+            "options": [],
+            "explanation": "The LEFT JOIN combined with HAVING COUNT(o.id)=0 finds customers without matching orders.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_data_analysis_4_q5",
+            "type": "code_output",
+            "question": "What is the output?",
+            "codeSnippet": "import pandas as pd\ns = pd.Series([10, 20, 30], index=['a','b','c'])\nprint(s['b':'c'].index.tolist())",
+            "correctOutput": "['b', 'c']",
+            "correctAnswer": "['b', 'c']",
+            "options": [],
+            "explanation": "Label‑based slicing with `loc`-style bracket is inclusive on stop.",
+            "xpReward": 25,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_data_analysis_4_q6",
+            "type": "code_output",
+            "question": "What is the output?",
+            "codeSnippet": "import pandas as pd\nimport numpy as np\ndf = pd.DataFrame({'A': [1, np.nan, 3]})\nprint(df['A'].fillna(df['A'].mean())[1])",
+            "correctOutput": "2.0",
+            "correctAnswer": "2.0",
+            "options": [],
+            "explanation": "Mean of (1,3) is 2.0. The second element (index 1) becomes 2.0.",
+            "xpReward": 25,
+            "difficulty": 2
+        }
+    ]
+}

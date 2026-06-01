@@ -1,0 +1,20 @@
+{
+    "id": "task3",
+    "chapterId": "ch_13",
+    "title": "Final Summary Report 📋",
+    "description": "Compile your findings into a structured summary with metrics and charts.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Task: Executive Report\n\nUsing the results from Task 2 and the `master_df`, create a final summary that includes:\n\n1. **Key Metrics**: total revenue, total number of transactions, unique customers.\n2. **Category Revenue Share**: percentage of total revenue each category contributes. Print as a table.\n3. **Summary Table**: create a DataFrame `summary` with columns: `category`, `total_revenue`, `avg_order_value` (total revenue / number of transactions in that category), `outlier_count` (number of outlier transactions in that category).\n4. **Export**: save the `summary` DataFrame to a CSV file named `category_summary.csv` (without index).\n5. **Written Executive Summary**: print a string that states the top category, the month with highest revenue, and the top customer.\n\n**Expected output:**\n- Printed key metrics.\n- Printed category revenue share.\n- Printed summary DataFrame.\n- A CSV file (or statement that it would be saved).\n- Executive summary text.\n\nWrite the complete Python script.",
+    "hints": [
+        "Total revenue: `master_df['revenue'].sum()`.",
+        "Total transactions: `master_df['transaction_id'].nunique()` (or `len(master_df)` if no duplicates).",
+        "Unique customers: `master_df['customer_id'].nunique()`.",
+        "Category share: `cat_rev / total_revenue * 100`.",
+        "Summary table: group by category, aggregate revenue, average order value (revenue / count), and outlier count. For outlier count, reuse the outlier detection logic within a groupby apply or compute separately and merge.",
+        "For outliers per category, you can compute a boolean column `is_outlier` then `groupby('category')['is_outlier'].sum()`.",
+        "Export: `summary.to_csv('category_summary.csv', index=False)`.",
+        "Executive summary: use the month with highest revenue from `monthly_rev.idxmax()`, top customer from `cust_rev.idxmax()`."
+    ],
+    "expectedOutput": "Key metrics, share table, summary DataFrame, executive summary text.",
+    "solutionCode": "total_revenue = master_df['revenue'].sum()\ntotal_txns = master_df['transaction_id'].nunique()\nunique_cust = master_df['customer_id'].nunique()\n\nprint(f'Total Revenue: ${total_revenue:,.2f}')\nprint(f'Total Transactions: {total_txns}')\nprint(f'Unique Customers: {unique_cust}')\n\n# Category revenue share\ncat_rev = master_df.groupby('category')['revenue'].sum()\ncat_share = (cat_rev / total_revenue * 100).round(2)\nprint('\\nCategory Revenue Share (%):')\nprint(cat_share)\n\n# Create outlier flag\nQ1 = master_df['revenue'].quantile(0.25)\nQ3 = master_df['revenue'].quantile(0.75)\nIQR = Q3 - Q1\nlower = Q1 - 1.5 * IQR\nupper = Q3 + 1.5 * IQR\nmaster_df['is_outlier'] = (master_df['revenue'] < lower) | (master_df['revenue'] > upper)\n\n# Summary table\nsummary = master_df.groupby('category').agg(\n    total_revenue=('revenue','sum'),\n    avg_order_value=('revenue','mean'),\n    outlier_count=('is_outlier','sum'),\n    txn_count=('revenue','count')\n).reset_index()\nsummary['avg_order_value'] = summary['total_revenue'] / summary['txn_count']\nsummary = summary[['category','total_revenue','avg_order_value','outlier_count']]\n\nprint('\\nSummary Table:')\nprint(summary)\n\n# Export (commented if file write not allowed)\nsummary.to_csv('category_summary.csv', index=False)\nprint('\\nSummary exported to category_summary.csv')\n\n# Executive summary\nmonthly_rev = master_df.groupby(master_df['transaction_date'].dt.month)['revenue'].sum()\ntop_month = monthly_rev.idxmax()\ncust_rev = master_df.groupby('name')['revenue'].sum()\ntop_customer = cust_rev.idxmax()\ntop_category = cat_rev.idxmax()\n\nprint(f'\\nExecutive Summary: The top‑performing category was {top_category}. The highest revenue month was month {top_month}. The top customer was {top_customer}.')"
+}
