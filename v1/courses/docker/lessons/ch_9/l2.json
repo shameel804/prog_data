@@ -1,0 +1,120 @@
+{
+    "id": "l2",
+    "chapterId": "ch_9",
+    "title": "The `compose.yaml` File Explained 📄",
+    "description": "Write your first Compose file with services, networks, and volumes in a declarative way.",
+    "xpReward": 35,
+    "estimatedMinutes": 8,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Core Structure of `compose.yaml` 🏗️",
+            "content": "# Top‑Level Keys\n\n```yaml\nversion: \"3.8\"  # optional nowadays\nservices:        # required\nnetworks:        # optional\nvolumes:         # optional\n```\n\n- **services**: each container you want to run.\n- **networks**: custom networks (otherwise Compose creates one).\n- **volumes**: named volumes shared among services."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Defining a Service 🧩",
+            "content": "# Service Configuration Options\n\nUnder `services`, each key is a unique service name. Common keys:\n\n```yaml\nservices:\n  app:\n    image: node:18-alpine       # pre‑built image\n    build: ./app                # build from Dockerfile\n    ports:\n      - \"3000:3000\"\n    volumes:\n      - app-data:/data\n      - ./config:/etc/app:ro\n    environment:\n      - NODE_ENV=production\n    networks:\n      - frontend\n    depends_on:\n      - database\n```\n\nYou can mix `image` and `build` (if both, Compose builds then tags)."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Service Keys 🔑",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What does `build: .` do in a Compose service definition?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Pulls an image from Docker Hub",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Builds an image from a Dockerfile in the specified directory",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Creates a container from the current directory",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Mounts the current directory as a volume",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`build` specifies a path to a directory containing a Dockerfile (or a specific Dockerfile with `dockerfile` key).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Networking in Compose 🌐",
+            "content": "# Automatic DNS & Isolation\n\nBy default, Compose creates a **default network** for your app. All services join it and can resolve each other by **service name** (just like custom bridge networks).\n\nYou can define additional networks:\n```yaml\nnetworks:\n  frontend:\n  backend:\n    driver: bridge\n\nservices:\n  web:\n    networks:\n      - frontend\n  db:\n    networks:\n      - backend\n```\n\nConnecting a service to both networks bridges them.\n\n> No need to manually create networks; Compose handles it."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "quiz",
+            "title": "Compose DNS 📡",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Within a Compose application, how does a web service reach a database service?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "By its container ID",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "By IP address only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "By the service name defined in compose.yaml",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "By the host machine's localhost",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Compose sets up DNS so service names resolve to the container’s IP.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Volumes in Compose 💾",
+            "content": "# Declare Once, Use Everywhere\n\nDefine volumes at the top level, then reference them in services:\n```yaml\nvolumes:\n  db-data:\n\nservices:\n  db:\n    image: postgres:15\n    volumes:\n      - db-data:/var/lib/postgresql/data\n```\n\nYou can also use bind mounts directly in the service:\n```yaml\nvolumes:\n  - ./host-folder:/container-folder\n```\n\n> Named volumes declared at the top level are created automatically by `docker compose up`."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "code",
+            "title": "Complete Example: Web + DB 🌍",
+            "content": "A full compose file with a Python Flask app and PostgreSQL:",
+            "codeSnippet": "services:\n  web:\n    build: ./web\n    ports:\n      - \"5000:5000\"\n    environment:\n      DATABASE_URL: postgresql://postgres:secret@db/mydb\n    depends_on:\n      db:\n        condition: service_healthy\n  db:\n    image: postgres:15-alpine\n    environment:\n      POSTGRES_PASSWORD: secret\n    volumes:\n      - pgdata:/var/lib/postgresql/data\n    healthcheck:\n      test: [\"CMD-SHELL\", \"pg_isready -U postgres\"]\n      interval: 5s\n      timeout: 5s\n      retries: 5\n\nvolumes:\n  pgdata:",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## `depends_on` with `condition`\nUse `condition: service_healthy` to wait for a service to be healthy before starting dependent services. Requires `healthcheck` defined."
+        }
+    ]
+}

@@ -1,0 +1,14 @@
+{
+    "id": "task1",
+    "chapterId": "ch_7",
+    "title": "Custom Network & DNS Lab",
+    "description": "Create a custom bridge network, run containers, and test DNS name resolution.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Objective\nExperience how custom networks provide automatic DNS resolution, unlike the default bridge.\n\n### Steps\n1. Create a custom network named `mynet`:\n   ```bash\n   docker network create mynet\n   ```\n2. Run two Alpine containers on `mynet` named `alpha` and `beta`:\n   ```bash\n   docker run -d --name alpha --network mynet alpine sleep 3600\n   docker run -d --name beta --network mynet alpine sleep 3600\n   ```\n3. Verify their IP addresses with:\n   ```bash\n   docker inspect alpha | grep IPAddress\n   docker inspect beta | grep IPAddress\n   ```\n4. From `alpha`, ping `beta` by IP (using the IP you noted) – it should work.\n5. Now ping `beta` by **name**:\n   ```bash\n   docker exec alpha ping -c 2 beta\n   ```\n   This should also work, thanks to DNS.\n6. Start a third container on the default bridge network:\n   ```bash\n   docker run -d --name gamma alpine sleep 3600\n   ```\n7. Try to ping `alpha` (name) from `gamma` – it should fail. Why? Because `gamma` is on the default bridge, not `mynet`.\n8. Try to ping `alpha` by IP from `gamma` – it might work (if they are on different networks, typically no routing between them). It will likely fail because the default bridge and `mynet` are isolated.\n9. Clean up: remove all containers and the network `mynet`.\n\n### Deliverable\nShow terminal output of the successful name‑based ping from `alpha` to `beta`, and the failure from `gamma` to `alpha`.",
+    "hints": [
+        "Use `docker exec` to run `ping` inside containers.",
+        "Default bridge network may not have `ping` available on all images, but Alpine includes it."
+    ],
+    "expectedOutput": "`docker exec alpha ping -c 2 beta` succeeds (0% packet loss). `docker exec gamma ping -c 2 alpha` fails (unknown host or no route).",
+    "solutionCode": "docker network create mynet\ndocker run -d --name alpha --network mynet alpine sleep 3600\ndocker run -d --name beta --network mynet alpine sleep 3600\ndocker exec alpha ping -c 2 beta\ndocker run -d --name gamma alpine sleep 3600\ndocker exec gamma ping -c 2 alpha  # fails\ndocker rm -f alpha beta gamma\ndocker network rm mynet"
+}

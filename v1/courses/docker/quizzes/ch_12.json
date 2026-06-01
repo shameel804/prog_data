@@ -1,0 +1,220 @@
+{
+    "id": "quiz_ch_12",
+    "chapterId": "ch_12",
+    "title": "Chapter 12 Quiz",
+    "description": "Test your knowledge of CI/CD with Docker, logging, monitoring, resource limits, and production best practices!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the primary purpose of a CI pipeline for Docker images?",
+            "options": [
+                "To manually test images before release",
+                "To automate building, testing, and pushing images on every commit",
+                "To replace Docker Hub",
+                "To deploy containers without Docker"
+            ],
+            "correctAnswer": 1,
+            "explanation": "CI automates the build‑test‑push workflow, ensuring fast feedback and consistency."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "You should scan Docker images for vulnerabilities only after pushing them to a registry.",
+            "correctAnswer": false,
+            "explanation": "Scanning should happen before push, ideally in CI, to prevent vulnerable images from ever being stored."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "Which Docker flag allows using a previously built image as a cache source during build?",
+            "options": [
+                "--cache-from",
+                "--build-cache",
+                "--use-cache",
+                "--from-cache"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`--cache-from` pulls an image and uses its layers as cache for the current build."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "In a CI environment, why might you use `docker pull` before `docker build`?",
+            "options": [
+                "To test if the registry is up",
+                "To warm the layer cache for faster builds",
+                "To verify the image tag exists",
+                "To clean up old images"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Pulling the previous image provides a cache source for `--cache-from`, speeding up the build."
+        },
+        {
+            "id": "q5",
+            "type": "fill_blank",
+            "question": "The default Docker logging driver is `______`.",
+            "options": [
+                "json-file",
+                "syslog",
+                "journald",
+                "none"
+            ],
+            "correctAnswer": "json-file",
+            "explanation": "By default, Docker logs container output to JSON files on the host."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "Which logging option helps prevent log files from filling the disk?",
+            "options": [
+                "max-size and max-file",
+                "log-rotate and log-compress",
+                "log-limit",
+                "--log-driver=none"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`--log-opt max-size=10m --log-opt max-file=3` rotates logs."
+        },
+        {
+            "id": "q7",
+            "type": "true_false",
+            "question": "`docker stats` is sufficient for production monitoring and alerting.",
+            "correctAnswer": false,
+            "explanation": "`docker stats` is a real‑time snapshot tool. Production monitoring needs time‑series data, dashboards, and alerts (Prometheus/Grafana)."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "Which tool is commonly used to expose container resource metrics to Prometheus?",
+            "options": [
+                "cAdvisor",
+                "Docker Compose",
+                "Trivy",
+                "BuildKit"
+            ],
+            "correctAnswer": 0,
+            "explanation": "cAdvisor provides container metrics in a Prometheus‑compatible format."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "What does the `--memory` flag in `docker run` control?",
+            "options": [
+                "The CPU limit",
+                "The maximum amount of RAM the container can use",
+                "The disk I/O limit",
+                "The network bandwidth limit"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`--memory` sets a hard limit on memory usage."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "If you set `--memory=256m` and `--memory-swap=256m`, what happens?",
+            "options": [
+                "The container gets 256 MB RAM and 256 MB swap",
+                "The container cannot use swap",
+                "The container gets unlimited swap",
+                "Swap is disabled globally"
+            ],
+            "correctAnswer": 1,
+            "explanation": "When `--memory-swap` equals `--memory`, swap usage is disabled for that container."
+        },
+        {
+            "id": "q11",
+            "type": "true_false",
+            "question": "Resource limits should only be set in production, not in development.",
+            "correctAnswer": false,
+            "explanation": "Setting limits in development helps catch memory leaks and ensures parity with production."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "What is the purpose of a HEALTHCHECK in a Dockerfile?",
+            "options": [
+                "To replace CMD",
+                "To provide a command Docker uses to test if the container is still healthy",
+                "To check for vulnerabilities",
+                "To set resource limits"
+            ],
+            "correctAnswer": 1,
+            "explanation": "HEALTHCHECK runs a command inside the container to determine its health status."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "Which restart policy should you use to ensure a container restarts unless it was explicitly stopped?",
+            "options": [
+                "always",
+                "on-failure",
+                "unless-stopped",
+                "no"
+            ],
+            "correctAnswer": 2,
+            "explanation": "`unless-stopped` restarts the container even after daemon restart, but not if you ran `docker stop`."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "In a Docker Compose file for Swarm, how do you set a memory limit for a service?",
+            "options": [
+                "Under `resources.limits.memory`",
+                "Using `--memory` in `command`",
+                "Under `deploy.resources.limits.memory`",
+                "Both a and c are valid, but c is the Swarm‑aware way"
+            ],
+            "correctAnswer": 3,
+            "explanation": "You can use `deploy.resources.limits.memory` for swarm services (and also the simplified `resources` in newer compose versions)."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "Which of the following is NOT a Docker best practice?",
+            "options": [
+                "Use specific tags instead of latest",
+                "Run multiple unrelated processes in a single container",
+                "Scan images for vulnerabilities",
+                "Use volumes for persistent data"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Best practice is one process per container. Multiple processes should be split into separate containers or use a process manager deliberately."
+        },
+        {
+            "id": "q16",
+            "type": "true_false",
+            "question": "Docker Compose and Docker Swarm are competing alternatives; you should only use one.",
+            "correctAnswer": false,
+            "explanation": "They complement each other. Compose is for local development; Swarm (or Kubernetes) for production orchestration. Compose files can be adapted for Swarm stacks."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "What is the next logical step after mastering Docker?",
+            "options": [
+                "Stop learning and deploy everything manually",
+                "Learn container orchestration (Kubernetes or Swarm) and CI/CD",
+                "Only use VMs from now on",
+                "Throw away Dockerfiles"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Docker is the foundation; orchestration and automation are the next natural steps in cloud‑native journey."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "Which of these is a correct principle for Docker in production?",
+            "options": [
+                "Containers should be treated like pets, each with a unique name",
+                "Containers should be immutable and replaceable; state should be externalised",
+                "All containers must run as root to simplify management",
+                "Manually updating containers is preferred over CI/CD"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Production containers should be ephemeral and stateless; persistent state goes to volumes or external services."
+        }
+    ]
+}

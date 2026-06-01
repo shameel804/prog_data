@@ -1,0 +1,240 @@
+{
+    "id": "quiz_ch_11",
+    "chapterId": "ch_11",
+    "title": "Chapter 11 Quiz",
+    "description": "Test your knowledge of Docker security essentials: namespaces, capabilities, rootless mode, runtime hardening, and image trust!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "Which Linux kernel feature provides process isolation so a container sees only its own processes?",
+            "options": [
+                "Control groups (cgroups)",
+                "PID namespace",
+                "AppArmor",
+                "Seccomp"
+            ],
+            "correctAnswer": 1,
+            "explanation": "PID namespace isolates the process ID number space."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "By default, Docker containers run with full root privileges on the host.",
+            "correctAnswer": false,
+            "explanation": "Even when running as root inside the container, capabilities are limited and namespaces isolate the container."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "What are Linux capabilities used for in Docker?",
+            "options": [
+                "To define CPU and memory limits",
+                "To split the traditional root privileges into smaller, assignable units",
+                "To encrypt container traffic",
+                "To create virtual networks"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Capabilities allow granting specific powers (like binding to low ports) without full root."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "What does `--cap-drop ALL` do?",
+            "options": [
+                "Adds all possible capabilities",
+                "Removes all capabilities from the container",
+                "Disables the container's network",
+                "Runs the container as a non‑root user"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It starts the container with no capabilities. You then add back only needed ones with `--cap-add`."
+        },
+        {
+            "id": "q5",
+            "type": "true_false",
+            "question": "Rootless Docker runs the Docker daemon and containers without any root privileges on the host.",
+            "correctAnswer": true,
+            "explanation": "Rootless mode uses user namespaces and other techniques to run entirely as a non‑root user."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "What is a limitation of rootless Docker regarding networking?",
+            "options": [
+                "It cannot use bridge networks",
+                "It cannot bind to ports below 1024 by default",
+                "It requires a separate network plugin",
+                "It does not support overlay networks"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Because the daemon runs without root, binding to privileged ports (<1024) requires system configuration."
+        },
+        {
+            "id": "q7",
+            "type": "fill_blank",
+            "question": "The `--read-only` flag makes the container’s root filesystem ________.",
+            "options": [
+                "immutable",
+                "read-only",
+                "temporary",
+                "encrypted"
+            ],
+            "correctAnswer": "read-only",
+            "explanation": "It mounts the root filesystem in read‑only mode."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "What is the purpose of `--tmpfs /tmp` when combined with `--read-only`?",
+            "options": [
+                "To back up the /tmp directory",
+                "To provide a writable temporary filesystem for paths that need write access",
+                "To encrypt the /tmp directory",
+                "To share /tmp between containers"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Some applications expect writable directories like /tmp; tmpfs provides an in‑memory writable space."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "What does `--security-opt no-new-privileges` prevent?",
+            "options": [
+                "Container from creating new processes",
+                "Setuid binaries from granting additional privileges",
+                "Container from accessing the network",
+                "Container from writing to disk"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It sets the `no_new_privs` flag, blocking privilege escalation via setuid executables."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "What is Docker Content Trust?",
+            "options": [
+                "A vulnerability scanner",
+                "A system for signing and verifying images using digital signatures",
+                "A configuration management tool",
+                "A network security plugin"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Content Trust uses Notary to sign images and verify publishers."
+        },
+        {
+            "id": "q11",
+            "type": "true_false",
+            "question": "With Docker Content Trust enabled, you can still pull unsigned images.",
+            "correctAnswer": false,
+            "explanation": "DCT will refuse to pull images that are not signed or whose signatures cannot be verified."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "Which tool can scan a Docker image for known vulnerabilities?",
+            "options": [
+                "Docker Compose",
+                "Trivy",
+                "Notary",
+                "BuildKit"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Trivy is a popular open‑source vulnerability scanner for container images."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "Why should vulnerability scanning be part of your CI pipeline?",
+            "options": [
+                "To speed up builds",
+                "To prevent deploying images with known critical vulnerabilities",
+                "To automatically fix vulnerabilities",
+                "To tag images"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Shifting left catches issues before they reach production."
+        },
+        {
+            "id": "q14",
+            "type": "true_false",
+            "question": "Docker's default seccomp profile allows all system calls.",
+            "correctAnswer": false,
+            "explanation": "The default profile blocks around 44 syscalls to reduce the attack surface."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "Which command would you use to run a container with the most restrictive capabilities?",
+            "options": [
+                "docker run --cap-add ALL …",
+                "docker run --privileged …",
+                "docker run --cap-drop ALL --cap-add NET_BIND_SERVICE …",
+                "docker run --security-opt seccomp=unconfined …"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Dropping all and adding back only the needed capability follows the least privilege principle."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "What does Docker Scout provide?",
+            "options": [
+                "Container orchestration",
+                "Image signing",
+                "Software Bill of Materials (SBOM) and vulnerability insights",
+                "Network overlay management"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Docker Scout helps with SBOM generation and vulnerability analysis."
+        },
+        {
+            "id": "q17",
+            "type": "true_false",
+            "question": "You can apply AppArmor or SELinux profiles to containers using the `--security-opt` flag.",
+            "correctAnswer": true,
+            "explanation": "Yes, `--security-opt apparmor=profile` or `--security-opt label=type:...`"
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "Which of the following is NOT a Linux namespace used by Docker?",
+            "options": [
+                "PID",
+                "Network",
+                "User",
+                "Database"
+            ],
+            "correctAnswer": 3,
+            "explanation": "Docker uses PID, network, mount, UTS, IPC, and user namespaces. 'Database' is not a namespace."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "What is the primary benefit of user namespaces (userns-remap) in Docker?",
+            "options": [
+                "It improves network speed",
+                "It maps the container’s root to a non‑root user on the host, reducing breakout impact",
+                "It provides DNS resolution",
+                "It enables multi‑host networking"
+            ],
+            "correctAnswer": 1,
+            "explanation": "User namespaces remap UIDs, so even if a process escapes, it has limited host privileges."
+        },
+        {
+            "id": "q20",
+            "type": "fill_blank",
+            "question": "To enable Docker Content Trust for a single session, you can `export ________=1`.",
+            "options": [
+                "DOCKER_CONTENT_TRUST",
+                "DOCKER_TRUST",
+                "CONTENT_TRUST",
+                "DOCKER_SIGN"
+            ],
+            "correctAnswer": "DOCKER_CONTENT_TRUST",
+            "explanation": "Setting this environment variable activates content trust enforcement."
+        }
+    ]
+}

@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_9",
+    "title": "Profiles, Overrides, and Environment Variables",
+    "description": "Use an override file for development, environment variables for configuration, and profiles to start optional tools.",
+    "estimatedMinutes": 25,
+    "problemStatement": "## Objective\nMaster advanced Compose features by creating a base production config and a development override with profiles.\n\n### Steps\n1. Create a base `compose.yaml` for a simple Python app (or use Nginx) that uses an environment variable for a message:\n   ```yaml\n   services:\n     app:\n       image: alpine\n       command: sh -c \"echo Hello, $${GREETING:-World}! && sleep 3600\"\n       environment:\n         - GREETING=${GREETING}\n   ```\n2. Create an `.env` file:\n   ```\n   GREETING=Compose\n   ```\n3. Start the app and view logs to see the greeting.\n4. Create a `compose.override.yaml` that:\n   - Adds a bind mount for the current directory.\n   - Adds a debug profile service (e.g., `debug-util`) that uses `alpine` and sleeps.\n   - Example:\n     ```yaml\n     services:\n       app:\n         volumes:\n           - ./logs:/logs\n       debug-util:\n         image: alpine\n         command: sleep 3600\n         profiles:\n           - debug\n     ```\n5. Start without profile: `docker compose up -d`. Verify that `debug-util` is not started.\n6. Start with the debug profile: `docker compose --profile debug up -d`. Now `debug-util` should be running.\n7. Check with `docker compose ps`.\n8. Stop everything and clean up.\n9. (Bonus) Override the `GREETING` variable by setting it in your shell before running, and see that it takes precedence.\n\n### Deliverable\nShow the output of `docker compose ps` with and without the debug profile.",
+    "hints": [
+        "The `$$` in `command` escapes the dollar sign so Compose doesn't substitute it; it's passed to shell.",
+        "If you don't see `debug-util`, ensure the profile name matches exactly."
+    ],
+    "expectedOutput": "Without profile, only `app` runs. With `--profile debug`, both `app` and `debug-util` appear.",
+    "solutionCode": "# compose.yaml\nservices:\n  app:\n    image: alpine\n    command: sh -c \"echo Hello, $${GREETING:-World}! && sleep 3600\"\n    environment:\n      - GREETING=${GREETING}\n\n# compose.override.yaml\nservices:\n  app:\n    volumes:\n      - ./logs:/logs\n  debug-util:\n    image: alpine\n    command: sleep 3600\n    profiles:\n      - debug\n\n# .env\nGREETING=Compose\n\n# commands:\ndocker compose up -d\ndocker compose ps\ndocker compose logs app\ndocker compose --profile debug up -d\ndocker compose ps\ndocker compose down"
+}

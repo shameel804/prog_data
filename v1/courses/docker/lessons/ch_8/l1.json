@@ -1,0 +1,98 @@
+{
+    "id": "l1",
+    "chapterId": "ch_8",
+    "title": "Why Data Persistence Matters 💡",
+    "description": "Understand the ephemeral nature of containers and why you need volumes for stateful apps.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Containers Are Born to Die 💀",
+            "content": "# Ephemeral by Design\n\nDocker containers are meant to be disposable. When you remove a container, its writable layer (all file changes) is gone forever.\n\n- Database files, user uploads, logs – all vanish if stored inside the container.\n- This is great for stateless apps, but most real‑world apps need **persistent data**.\n\nDocker provides two main solutions:\n1. **Volumes** – managed by Docker, stored outside the container’s filesystem.\n2. **Bind mounts** – any directory on the host mounted into the container.\n\nWe’ll master both in this chapter."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Why Not Just Keep Data Inside? 🤔",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What happens to files created inside a container when the container is removed?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They are automatically saved to a volume",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They are permanently lost (unless committed or stored in a volume)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They are moved to the host’s /tmp directory",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They are backed up to Docker Hub",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The container’s writable layer is removed along with the container. Only data stored in volumes or bind mounts survives.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "Volumes vs Bind Mounts – Quick Comparison ⚖️",
+            "content": "# The Two Pillars\n\n| Feature         | Volumes                  | Bind Mounts               |\n|-----------------|--------------------------|---------------------------|\n| Managed by      | Docker                   | Host filesystem           |\n| Location        | `/var/lib/docker/volumes/` (default) | Any host path you choose |\n| Portability     | Easier to share between containers | Tied to host directory structure |\n| Use case        | Persistent app data (DB files, uploads) | Development (live code reloading, config files) |\n\n> Think volumes as the “Docker way” – portable and decoupled from host layout."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "code",
+            "title": "The Data Loss Demo 🎭",
+            "content": "See ephemeral nature in action:",
+            "codeSnippet": "# Create a container, write a file inside\ndocker run --name temp alpine touch /data.txt\n\n# Stop and remove the container\ndocker rm temp\n\n# Run another container from the same image – the file is gone!\ndocker run --rm alpine ls /data.txt   # error: No such file or directory",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_5",
+            "type": "quiz",
+            "title": "Persistence Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "true_false",
+                "question": "Committing a container with `docker commit` is the recommended way to persist data.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Committing creates an image from the container's state, but it's not meant for ongoing data persistence. Volumes separate data from the container lifecycle.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_6",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Stateful = Volumes\nFor any container that must remember something (database, key‑value store, file storage), plan your volume strategy from the start."
+        }
+    ]
+}

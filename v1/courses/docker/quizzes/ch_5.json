@@ -1,0 +1,292 @@
+{
+    "id": "quiz_ch_5",
+    "chapterId": "ch_5",
+    "title": "Chapter 5 Quiz",
+    "description": "Test your knowledge of Dockerfiles, instructions, build context, and best practices!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the first instruction that must appear in a Dockerfile?",
+            "options": [
+                "RUN",
+                "FROM",
+                "CMD",
+                "COPY"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Every Dockerfile must start with a FROM instruction to specify the base image (except ARG before FROM)."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "Which of the following best describes why a Dockerfile is preferable to `docker commit`?",
+            "options": [
+                "It creates smaller images automatically",
+                "It provides a reproducible, version‑controlled blueprint",
+                "It requires no build step",
+                "It works on all operating systems"
+            ],
+            "correctAnswer": 1,
+            "explanation": "A Dockerfile is a script that can be shared, reviewed, and run repeatedly to produce identical images."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "What does `docker build -t myapp:v2 .` do?",
+            "options": [
+                "Creates a container named myapp:v2",
+                "Builds an image tagged myapp:v2 using the current directory as build context",
+                "Tags an existing image as myapp:v2",
+                "Pushes an image to Docker Hub with the tag v2"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`-t` tags the resulting image, and `.` specifies the build context."
+        },
+        {
+            "id": "q4",
+            "type": "true_false",
+            "question": "The `RUN` instruction is executed when a container starts from the image.",
+            "correctAnswer": false,
+            "explanation": "RUN commands execute during the image build. CMD/ENTRYPOINT specify runtime commands."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "Why is it recommended to chain RUN commands with `&&` instead of using multiple RUN lines?",
+            "options": [
+                "For better readability",
+                "To reduce the number of layers and image size",
+                "Because multiple RUNs are deprecated",
+                "To run commands in parallel"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Each RUN creates a new layer. Chaining reduces the layer count and can save disk space."
+        },
+        {
+            "id": "q6",
+            "type": "fill_blank",
+            "question": "The instruction to copy files from the build context into the image is `_____`.",
+            "options": [
+                "ADD",
+                "COPY",
+                "FETCH",
+                "IMPORT"
+            ],
+            "correctAnswer": "COPY",
+            "explanation": "COPY is the straightforward instruction for adding local files. ADD has extra features."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "What is the difference between CMD and ENTRYPOINT?",
+            "options": [
+                "CMD sets the default command that can be overridden; ENTRYPOINT sets the fixed executable and arguments are appended",
+                "CMD is for build time; ENTRYPOINT is for runtime",
+                "There is no difference",
+                "CMD runs before ENTRYPOINT"
+            ],
+            "correctAnswer": 0,
+            "explanation": "CMD provides defaults that can be overridden in `docker run`. ENTRYPOINT is the main program, and run arguments are appended to it."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "Given:\n```\nENTRYPOINT [\"echo\"]\nCMD [\"Hello\"]\n```\nWhat is the output of `docker run myimage World`?",
+            "options": [
+                "Hello World",
+                "World",
+                "echo Hello",
+                "Error"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The CMD 'Hello' is overridden by 'World', so the command becomes `echo World`."
+        },
+        {
+            "id": "q9",
+            "type": "true_false",
+            "question": "You can override the ENTRYPOINT with the `--entrypoint` flag in `docker run`.",
+            "correctAnswer": true,
+            "explanation": "Yes, `docker run --entrypoint /bin/bash myimage` will override the Dockerfile's ENTRYPOINT."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "What does the `WORKDIR /app` instruction do?",
+            "options": [
+                "It sets the working directory for subsequent instructions and the running container",
+                "It creates the `/app` directory only if it doesn't exist",
+                "It is the same as `RUN cd /app`",
+                "Both a and b are correct"
+            ],
+            "correctAnswer": 3,
+            "explanation": "WORKDIR creates the directory if needed and sets it as the context for all subsequent Dockerfile commands and the final container."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "Which file can you use to exclude files from the build context?",
+            "options": [
+                ".gitignore",
+                ".dockerignore",
+                "Dockerfile.exclude",
+                "build.ignore"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`.dockerignore` works like `.gitignore` but for the Docker build context."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "What is the purpose of the `ENV` instruction?",
+            "options": [
+                "To set build‑time variables only",
+                "To set environment variables that are available during build and at runtime",
+                "To expose network ports",
+                "To define the default command"
+            ],
+            "correctAnswer": 1,
+            "explanation": "ENV persists in the image and is accessible in subsequent build steps and inside running containers."
+        },
+        {
+            "id": "q13",
+            "type": "true_false",
+            "question": "The `EXPOSE` instruction automatically maps the container port to a host port.",
+            "correctAnswer": false,
+            "explanation": "EXPOSE is purely informational. You must use `-p` or `-P` to publish ports."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "How do you pass a value to an ARG during build?",
+            "options": [
+                "docker build --arg KEY=value .",
+                "docker build --build-arg KEY=value .",
+                "docker build --env KEY=value .",
+                "docker build -e KEY=value ."
+            ],
+            "correctAnswer": 1,
+            "explanation": "The flag is `--build-arg`. ARG values are only available during the build process."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "What is the primary advantage of a multi‑stage build?",
+            "options": [
+                "It makes the Dockerfile more readable",
+                "It produces a smaller final image by excluding build‑time dependencies",
+                "It allows building multiple images in one Dockerfile",
+                "It speeds up the build by using caching"
+            ],
+            "correctAnswer": 1,
+            "explanation": "By copying only the necessary artifacts from a build stage to a runtime stage, the final image is much smaller."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "In a multi‑stage build, how do you copy files from a previous stage?",
+            "options": [
+                "COPY --from=<stage> <src> <dest>",
+                "COPY --stage=<stage> <src> <dest>",
+                "ADD --from=<stage> <src> <dest>",
+                "FETCH FROM <stage> <src> <dest>"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`COPY --from=<stage_name_or_index>` allows copying from a named stage or an external image."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "Which of the following is a recommended Dockerfile best practice?",
+            "options": [
+                "Use `latest` tag for base images to always get updates",
+                "Put COPY for application code before RUN installation commands",
+                "Use multi‑stage builds to separate build and runtime",
+                "Store API keys as ENV for convenience"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Multi‑stage builds are a best practice. Using `latest` is dangerous, ordering matters for caching, and secrets should never be in ENV."
+        },
+        {
+            "id": "q18",
+            "type": "true_false",
+            "question": "ARG values are available inside running containers.",
+            "correctAnswer": false,
+            "explanation": "ARG is only for build time. They are not persisted in the final image (unless used in an ENV instruction)."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "What does the `USER` instruction do in a Dockerfile?",
+            "options": [
+                "Sets the user for logging into Docker Hub",
+                "Sets the user ID under which the container runs",
+                "Creates a new user in the image",
+                "Both b and c"
+            ],
+            "correctAnswer": 3,
+            "explanation": "USER changes the user for any subsequent RUN, CMD, ENTRYPOINT, and also creates the user if it doesn’t exist (in some cases)."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "Why is it beneficial to copy `package.json` and run `npm install` before copying the rest of the application code?",
+            "options": [
+                "To keep the Dockerfile organized",
+                "To leverage layer caching – if package.json hasn't changed, the install layer is cached",
+                "Because npm install fails otherwise",
+                "To reduce network usage"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Docker caches layers. If you copy package.json first, the install step only runs when dependencies change, not on every code change."
+        },
+        {
+            "id": "q21",
+            "type": "mcq",
+            "question": "What is the shell form of CMD?",
+            "options": [
+                "CMD echo Hello",
+                "CMD [\"echo\", \"Hello\"]",
+                "CMD /bin/sh -c \"echo Hello\"",
+                "RUN echo Hello"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`CMD echo Hello` is shell form; it gets executed as `/bin/sh -c \"echo Hello\"`."
+        },
+        {
+            "id": "q22",
+            "type": "mcq",
+            "question": "Which of the following is NOT a valid Dockerfile instruction?",
+            "options": [
+                "RUN",
+                "MAINTAINER (deprecated but still works)",
+                "EXECUTE",
+                "HEALTHCHECK"
+            ],
+            "correctAnswer": 2,
+            "explanation": "EXECUTE is not a Dockerfile instruction. MAINTAINER is deprecated; LABEL maintainer is now preferred."
+        },
+        {
+            "id": "q23",
+            "type": "fill_blank",
+            "question": "To prevent sensitive files from being included in the build context, you list them in a file named `________`.",
+            "options": [
+                ".gitignore",
+                ".dockerignore",
+                "Dockerfile.ignore",
+                ".exclude"
+            ],
+            "correctAnswer": ".dockerignore",
+            "explanation": "`.dockerignore` is used to exclude files and directories from the build context."
+        },
+        {
+            "id": "q24",
+            "type": "true_false",
+            "question": "You can use `ARG` to conditionally change the base image with a dynamic `FROM`.",
+            "correctAnswer": true,
+            "explanation": "`ARG` can be used before the first `FROM` to parameterize the base image, but the syntax is limited (the ARG must be declared before FROM)."
+        }
+    ]
+}

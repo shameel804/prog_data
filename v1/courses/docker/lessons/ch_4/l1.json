@@ -1,0 +1,139 @@
+{
+    "id": "l1",
+    "chapterId": "ch_4",
+    "title": "Image Naming & Tagging Like a Pro 🏷️",
+    "description": "Master the [repository:tag] syntax, latest tag pitfalls, and versioning strategies.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The Full Image Name Format 📛",
+            "content": "# Anatomy of an Image Reference\n\nEvery Docker image is identified by a full path:\n\n`[registry/][namespace/]repository[:tag]`\n\n- **registry** (optional): The host where the image is stored (e.g., `docker.io`, `myregistry.local:5000`). If omitted, Docker Hub is used.\n- **namespace** (optional): Your username or organisation (e.g., `library` for official images, `john_doe`).\n- **repository**: The name of the image (e.g., `nginx`, `my-app`).\n- **tag** (optional): A version label (e.g., `v1.2.3`, `latest`). If omitted, `latest` is assumed.\n\n**Examples:**\n- `nginx` → `docker.io/library/nginx:latest`\n- `john/myapp:dev` → `docker.io/john/myapp:dev`\n- `localhost:5000/my-image:1.0`"
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Image Reference Parsing 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "If you run `docker pull python:3.11`, what is the full default registry and repository?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "docker.io/library/python:3.11",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "dockerhub.com/python:3.11",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "registry.docker.com/python:3.11",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "github.com/python:3.11",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Without a registry and namespace, Docker defaults to `docker.io` (Docker Hub) and the `library` namespace for official images.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "The Truth About `latest` 🕵️",
+            "content": "# `latest` Is Just a Tag\n\n- `latest` does **not** mean “the newest version” — it’s merely the default tag if you don’t specify one.\n- Many official images update `latest` with each release, but not all. Some never move `latest`.\n- In production, **never** rely on `latest`. Always pin exact tags like `nginx:1.25.3`.\n\n> Pulling `node:latest` today might give you Node 20; next week it could be Node 22 — silently breaking your app."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "quiz",
+            "title": "latest Is Dangerous ⚠️",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "true_false",
+                "question": "Using the `latest` tag guarantees you will always get the most recent version of an image.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "`latest` is a tag that points to whatever the image publisher decides. It may lag behind or even point to a legacy version.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_5",
+            "type": "text",
+            "title": "Tagging an Image 🏷️",
+            "content": "# `docker tag` — Adding or Changing Labels\n\nYou can create a new tag for an existing image without copying it.\n\n```bash\ndocker tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]\n```\n\n**Examples:**\n```bash\ndocker tag nginx:alpine myrepo/nginx:custom\ndocker tag 5e2b554c1c45 myapp:staging\ndocker tag myapp:staging myapp:latest\n```\n\nThis creates an alias — no extra disk space is used because the underlying layers are shared.\n\n> Think of `docker tag` as a symlink, not a copy."
+        },
+        {
+            "id": "s_l1_6",
+            "type": "code",
+            "title": "Tagging in Action 👇",
+            "content": "Let’s pull an image and create multiple tags:",
+            "codeSnippet": "docker pull alpine:3.18\ndocker tag alpine:3.18 my-alpine:old\ndocker tag alpine:3.18 my-alpine:stable\ndocker images | grep my-alpine",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_7",
+            "type": "quiz",
+            "title": "Tag vs Copy 💾",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_3",
+                "type": "multiple_choice",
+                "question": "After running `docker tag alpine:3.18 my-alpine:v1`, how much extra disk space is consumed?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The same as the original image size",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Negligible, because the tag is just a pointer to the same layers",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Depends on the image size",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Double the original size",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`docker tag` creates a new reference to the same image ID. No new layers are created, so disk usage is virtually zero.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_8",
+            "type": "tip",
+            "title": "Versioning Strategy 📅",
+            "content": "## Use Semantic Versioning (or Date‑Based)\n\n- **Semantic**: `myapp:1.4.2`, `myapp:1.4` (minor), `myapp:1` (major).\n- **Date**: `myapp:2024-01-15`.\n- **Env**: `myapp:prod`, `myapp:staging` (but these move, so be careful).\n\nAlways add a unique tag and a rolling tag only if you understand the implications."
+        }
+    ]
+}

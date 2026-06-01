@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_5",
+    "title": "Implement ENTRYPOINT & CMD Patterns",
+    "description": "Create a utility image using ENTRYPOINT and CMD, experimenting with overrides.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Objective\nDeepen your understanding of ENTRYPOINT and CMD by building a `curl` utility image and testing different invocation patterns.\n\n### Steps\n1. Create a new directory and a `Dockerfile`:\n   ```dockerfile\n   FROM alpine:3.18\n   RUN apk add --no-cache curl\n   ENTRYPOINT [\"curl\"]\n   CMD [\"--help\"]\n   ```\n2. Build the image as `curler:latest`:\n   ```bash\n   docker build -t curler .\n   ```\n3. Run the container without arguments:\n   ```bash\n   docker run --rm curler\n   ```\n   Expected: curl's help output.\n4. Run with a URL:\n   ```bash\n   docker run --rm curler https://example.com\n   ```\n   Expected: HTML content of example.com.\n5. Override CMD with different curl options:\n   ```bash\n   docker run --rm curler -v https://example.com\n   ```\n   Expected: verbose output from curl.\n6. Override the ENTRYPOINT entirely to get a shell:\n   ```bash\n   docker run -it --entrypoint sh curler\n   ```\n   Inside the shell, verify curl exists. Type `exit`.\n7. (Bonus) Modify the Dockerfile to have CMD as default options and ENTRYPOINT as `curl`. Then override CMD by passing a different URL and see that ENTRYPOINT remains.\n\n### Deliverable\nProvide the terminal commands and outputs from steps 3, 4, 5, and 6.",
+    "hints": [
+        "If curl complains about missing CA certificates, add `apk add ca-certificates` or use `-k` for testing.",
+        "Remember that overriding CMD replaces all arguments, not appends."
+    ],
+    "expectedOutput": "Step 3 shows curl help. Step 4 fetches example.com. Step 5 runs curl -v. Step 6 opens a shell.",
+    "solutionCode": "FROM alpine:3.18\nRUN apk add --no-cache curl\nENTRYPOINT [\"curl\"]\nCMD [\"--help\"]\n# Build\ndocker build -t curler .\ndocker run --rm curler\ndocker run --rm curler https://example.com\ndocker run --rm curler -v https://example.com\ndocker run -it --entrypoint sh curler"
+}

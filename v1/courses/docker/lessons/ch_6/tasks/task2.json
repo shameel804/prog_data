@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_6",
+    "title": "Optimize and Harden a Dockerfile",
+    "description": "Refactor a given Dockerfile to follow best practices: caching, non‑root user, minimal base, linting.",
+    "estimatedMinutes": 25,
+    "problemStatement": "## Objective\nTake a poorly written Dockerfile and improve it following the deep‑dive lessons.\n\n### Starting Dockerfile (intentionally bad)\n```dockerfile\nFROM node:latest\nCOPY . /app\nWORKDIR /app\nRUN npm install\nCMD npm start\n```\n\n### Tasks\n1. Identify at least 5 issues with the above Dockerfile (e.g., using latest, no .dockerignore, no version pinning, running as root, etc.).\n2. Rewrite the Dockerfile to address those issues. Use:\n   - A specific Node version and slim/alpine base.\n   - Separation of dependency installation and code copy for caching.\n   - A non‑root user.\n   - Proper `CMD` exec form.\n   - (Optional) Multi‑stage build.\n3. Create a `.dockerignore` file to exclude `node_modules`, `.git`, etc.\n4. Lint your new Dockerfile using Hadolint:\n   ```bash\n   docker run --rm -i hadolint/hadolint < Dockerfile\n   ```\n   Fix any warnings.\n5. Build and verify the image works (assume a simple Express app or just test the image).\n6. Compare image size with the original approach (you may not build the original, but estimate the improvement).\n\n### Deliverable\nProvide the improved Dockerfile, `.dockerignore`, and the Hadolint output (clean or with minimal warnings).",
+    "hints": [
+        "Use `node:18-alpine` as base.",
+        "Create `package.json` and `server.js` (a simple hello world Express) to test if you want.",
+        "For non‑root, add `RUN addgroup -S app && adduser -S app -G app && chown -R app:app /app` then `USER app`."
+    ],
+    "expectedOutput": "Hadolint reports no errors (or only acceptable info). Image builds and runs. The Dockerfile follows best practices.",
+    "solutionCode": "# Improved Dockerfile\nFROM node:18-alpine\nRUN addgroup -S app && adduser -S app -G app\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci --only=production\nCOPY . .\nRUN chown -R app:app /app\nUSER app\nEXPOSE 3000\nCMD [\"node\", \"server.js\"]\n\n# .dockerignore\nnode_modules\n.git\n*.md\nDockerfile\n.dockerignore\n\n# Lint command:\ndocker run --rm -i hadolint/hadolint < Dockerfile"
+}

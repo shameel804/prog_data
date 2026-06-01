@@ -1,0 +1,120 @@
+{
+    "id": "l1",
+    "chapterId": "ch_12",
+    "title": "CI/CD with Docker: Build, Test, Push 🚀",
+    "description": "Integrate Docker into continuous integration pipelines for automated building, testing and deployment.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Why Automate with CI/CD? 🔁",
+            "content": "# From Manual to Pipeline\n\nImagine you need to:\n- Build an image\n- Run tests inside it\n- Push the image to a registry\n- Deploy to staging\n\nDoing this manually is slow and error‑prone. **Continuous Integration (CI)** automates building and testing on every commit. **Continuous Delivery/Deployment (CD)** takes it further to deploy automatically.\n\nDocker fits perfectly: the same image that passes tests goes to production, ensuring consistency."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "A Typical Docker CI Pipeline 🏗️",
+            "content": "# Steps\n\n1. **Checkout code**\n2. **Lint Dockerfile** (Hadolint) – catch anti‑patterns early.\n3. **Build image** – using cache, multi‑stage, BuildKit.\n4. **Run unit tests** inside a container or against the built image.\n5. **Scan for vulnerabilities** (Trivy, Docker Scout) – fail on criticals.\n6. **Tag & push image** to a registry (Docker Hub, ECR, GCR).\n7. **Trigger deployment** (webhook, ArgoCD, swarm update).\n\nAll of this happens automatically when you push to `main`."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Pipeline Steps 🔁",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Why should you scan an image for vulnerabilities during CI?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To reduce image size",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To prevent vulnerable images from being pushed to the registry",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To generate API documentation",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To test the application logic",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Vulnerability scanning at CI stage blocks insecure images before they ever leave the pipeline.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "Caching in CI for Faster Builds ⚡",
+            "content": "# Use Docker Layer Caching Effectively\n\nCI environments often start fresh. You can cache layers using:\n- **`--cache-from`**: pull previous image and use its layers as cache.\n- **BuildKit cache mounts** (with `--mount=type=cache`).\n- **Registry cache** (inline caching with BuildKit).\n\nExample workflow:\n```bash\n# Pull the previous image to use as cache\ndocker pull myregistry/myapp:latest || true\n\n# Build with --cache-from\ndocker build --cache-from myregistry/myapp:latest -t myapp:$COMMIT_SHA .\n```\n\nThis dramatically reduces build time."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "CI Pipeline Snippet (GitHub Actions) 📜",
+            "content": "Example job that builds and pushes:",
+            "codeSnippet": "jobs:\n  build-and-push:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - name: Set up Docker Buildx\n        uses: docker/setup-buildx-action@v3\n      - name: Login to Docker Hub\n        uses: docker/login-action@v3\n        with:\n          username: ${{ secrets.DOCKER_USERNAME }}\n          password: ${{ secrets.DOCKER_TOKEN }}\n      - name: Build and push\n        uses: docker/build-push-action@v5\n        with:\n          context: .\n          push: true\n          tags: user/app:latest, user/app:${{ github.sha }}\n          cache-from: type=gha\n          cache-to: type=gha,mode=max",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "Cache Strategy 🚀",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "What does `--cache-from` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Clears the build cache",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Uses a previously built image as a cache source to speed up the current build",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Disables caching for the current build",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Creates a new cache volume",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`--cache-from` tells Docker to reuse layers from a specified image, even if it's pulled from a registry.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_7",
+            "type": "text",
+            "title": "Testing with Docker in CI 🧪",
+            "content": "# Run Tests Inside Containers\n\n- Use `docker run` or `docker compose run` to execute your test suite.\n- Spin up dependencies (database, cache) with Compose.\n- Isolate tests: each CI job gets a fresh environment.\n\nExample:\n```bash\ndocker compose run --rm app npm test\n```\n\n> If tests pass, the same code is ready to be built into a final image."
+        },
+        {
+            "id": "s_l1_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use Multi‑stage Builds in CI\nBuild the test environment as a separate stage, then copy only production artefacts into the final stage. This keeps the CI image small and secure."
+        }
+    ]
+}

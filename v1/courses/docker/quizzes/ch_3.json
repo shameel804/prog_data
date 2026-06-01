@@ -1,0 +1,266 @@
+{
+    "id": "quiz_ch_3",
+    "chapterId": "ch_3",
+    "title": "Chapter 3 Quiz",
+    "description": "Test your knowledge of interactive containers, inspection, monitoring, file operations, and advanced container management!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "Which command runs a new interactive Bash shell inside an existing container named 'web'?",
+            "options": [
+                "docker attach web bash",
+                "docker exec -it web bash",
+                "docker run -it web bash",
+                "docker start -i web bash"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker exec -it web bash` starts a new Bash process interactively. `docker attach` connects to the main process, not a new shell."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "`docker exec` can only run commands in a stopped container.",
+            "correctAnswer": false,
+            "explanation": "`docker exec` requires the container to be running. A stopped container has no running processes to attach to."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "What does the `-t` flag do in `docker exec -it`?",
+            "options": [
+                "Keeps STDIN open",
+                "Allocates a pseudo‑TTY",
+                "Runs the command as root",
+                "Times the command execution"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`-t` allocates a terminal driver, allowing proper interactive shell behaviour. `-i` keeps STDIN open."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "How do you safely detach from a container using `docker attach` without stopping it?",
+            "options": [
+                "Press Ctrl+C",
+                "Press Ctrl+D",
+                "Press Ctrl+P then Ctrl+Q",
+                "Type 'exit'"
+            ],
+            "correctAnswer": 2,
+            "explanation": "`Ctrl+P` `Ctrl+Q` detaches without killing the main process. `Ctrl+C` would send SIGINT and likely stop the container."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "What is the main difference between `docker attach` and `docker exec`?",
+            "options": [
+                "`attach` starts a new process, `exec` connects to the main process",
+                "`attach` connects to the main process, `exec` starts a new process",
+                "There is no difference",
+                "`attach` requires the container to be stopped"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker attach` hooks into PID 1, while `docker exec` launches a completely new process."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "Which command shows low‑level JSON metadata for a container?",
+            "options": [
+                "docker info",
+                "docker ps --json",
+                "docker inspect",
+                "docker describe"
+            ],
+            "correctAnswer": 2,
+            "explanation": "`docker inspect` returns a JSON array with all container details."
+        },
+        {
+            "id": "q7",
+            "type": "fill_blank",
+            "question": "To extract only the IP address of a container using `docker inspect`, you would use the template `{{.NetworkSettings._____}}`.",
+            "options": [
+                "IP",
+                "Gateway",
+                "IPAddress",
+                "Netmask"
+            ],
+            "correctAnswer": "IPAddress",
+            "explanation": "The Go template path for the IP address is `.NetworkSettings.IPAddress`."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "What does `docker stats` display?",
+            "options": [
+                "The full process list inside a container",
+                "Real‑time CPU, memory, network and I/O usage of containers",
+                "The container’s environment variables",
+                "The container’s log output"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker stats` gives a live stream of resource consumption."
+        },
+        {
+            "id": "q9",
+            "type": "true_false",
+            "question": "`docker stats --no-stream` shows a single snapshot of resource usage.",
+            "correctAnswer": true,
+            "explanation": "Adding `--no-stream` disables the continuous refresh, printing one set of values and exiting."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "Which command shows the running processes inside a container?",
+            "options": [
+                "docker top",
+                "docker ps --processes",
+                "docker processes",
+                "docker exec ps"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`docker top` lists the processes of a container without needing to exec into it."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "How do you copy a file `report.html` from the container `app` to the local directory?",
+            "options": [
+                "docker cp app:/report.html .",
+                "docker cp . report.html app",
+                "docker cp app:/report.html /host/report.html",
+                "docker copy app:/report.html ."
+            ],
+            "correctAnswer": 0,
+            "explanation": "The syntax is `docker cp SRC DEST`. To get a file out, the container path is the source."
+        },
+        {
+            "id": "q12",
+            "type": "true_false",
+            "question": "`docker cp` can copy files between two running containers.",
+            "correctAnswer": false,
+            "explanation": "`docker cp` works between host and container, not directly container‑to‑container."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "What does `docker commit my-container my-image:v2` do?",
+            "options": [
+                "Creates a new container from my-image:v2",
+                "Saves the current state of my-container as a new image tagged my-image:v2",
+                "Pushes my-container to the registry",
+                "Deletes my-container and replaces it with my-image:v2"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker commit` captures a container’s filesystem changes into a new image."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "Why is `docker commit` generally not recommended for building production images?",
+            "options": [
+                "It results in images that are too small",
+                "It does not record how the image was created, making it less reproducible",
+                "It cannot be pushed to Docker Hub",
+                "It only works on Windows containers"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Commit lacks a build history (Dockerfile), making it opaque and hard to recreate."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "Which command renames a container from 'old_name' to 'new_name'?",
+            "options": [
+                "docker tag old_name new_name",
+                "docker rename old_name new_name",
+                "docker mv old_name new_name",
+                "docker container rename old_name new_name"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker rename` is the dedicated command. `docker tag` is for images."
+        },
+        {
+            "id": "q16",
+            "type": "true_false",
+            "question": "Setting a restart policy of `--restart=always` means the container will restart even if you explicitly run `docker stop`.",
+            "correctAnswer": false,
+            "explanation": "`always` restarts the container unless the daemon stops. `unless-stopped` respects a manual stop."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "Which flag limits a container to 512 MB of RAM?",
+            "options": [
+                "--ram=512m",
+                "--memory=512m",
+                "--mem-limit=512m",
+                "--limit-memory=512m"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`--memory` (or `-m`) sets the memory limit. The value can be `512m` for megabytes."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "What does `--cpus=2` restrict?",
+            "options": [
+                "The number of container instances allowed",
+                "The number of CPU cores the container can use",
+                "The CPU architecture",
+                "The priority of the container in the scheduler"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`--cpus` specifies how much of the host CPU a container can use. `2` means 2 CPU cores."
+        },
+        {
+            "id": "q19",
+            "type": "fill_blank",
+            "question": "To remove all stopped containers in one command, you use `docker container _____`.",
+            "options": [
+                "prune",
+                "delete",
+                "clean",
+                "purge"
+            ],
+            "correctAnswer": "prune",
+            "explanation": "`docker container prune` removes all stopped containers. It’s a quick cleanup command."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "You want to run a container and automatically delete it when it stops. Which flag do you add?",
+            "options": [
+                "--delete-on-exit",
+                "--rm",
+                "--auto-clean",
+                "--ephemeral"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`--rm` ensures the container is automatically removed after it exits."
+        },
+        {
+            "id": "q21",
+            "type": "true_false",
+            "question": "`docker stats` works on stopped containers.",
+            "correctAnswer": false,
+            "explanation": "`docker stats` only shows running containers because a stopped container consumes no resources."
+        },
+        {
+            "id": "q22",
+            "type": "mcq",
+            "question": "How can you see the environment variables set inside a container using `docker inspect`?",
+            "options": [
+                "docker inspect -f '{{.Env}}' container",
+                "docker inspect -f '{{.Config.Env}}' container",
+                "docker inspect --env container",
+                "docker env container"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The environment variables are stored under `.Config.Env`. The template syntax is needed to extract them."
+        }
+    ]
+}

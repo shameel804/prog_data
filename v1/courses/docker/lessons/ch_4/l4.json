@@ -1,0 +1,129 @@
+{
+    "id": "l4",
+    "chapterId": "ch_4",
+    "title": "Saving, Loading & Moving Images 📦",
+    "description": "Export images to tar files, load them on another machine, and transfer without a registry.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Why Move Images Manually? 🚚",
+            "content": "# Air‑Gapped Environments\n\nSometimes you can’t use a registry:\n\n- No internet access on a secure server.\n- Sending an image to a colleague on a USB stick.\n- Backing up a specific version of an image.\n\nDocker provides two commands: `docker save` (export to tar) and `docker load` (import from tar)."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "`docker save` — Export to Tar 💾",
+            "content": "# Syntax\n\n```bash\ndocker save -o output.tar IMAGE [IMAGE...]\n```\n\n- Exports one or more images into a single tar archive.\n- The tar contains the layer blobs and metadata (manifest).\n- You can also pipe to `gzip` for compression.\n\n**Examples:**\n```bash\ndocker save -o myimage.tar nginx:alpine\ndocker save alpine:3.18 ubuntu:22.04 -o two-images.tar\n\n# Compressed on the fly\ndocker save nginx:alpine | gzip > nginx-alpine.tar.gz\n```"
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Save Demo 💾",
+            "content": "Export an Alpine image to a tar file:",
+            "codeSnippet": "docker pull alpine:3.18\ndocker save -o alpine-3.18.tar alpine:3.18\nls -lh alpine-3.18.tar",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "What’s in the Tar? 📦",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does a `docker save` tar file contain?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Only the final filesystem of the image",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The image layers, metadata, and manifest",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Just the Dockerfile used to build the image",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A compressed snapshot of a running container",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`docker save` preserves the entire image structure — layers, manifests, and tags — so it can be loaded elsewhere.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "`docker load` — Import from Tar 📥",
+            "content": "# Restore Images on Another Machine\n\n```bash\ndocker load -i input.tar\n```\n\n- The image (with all its original tags) is loaded into the local Docker image store.\n- No network required.\n\n**Example:**\n```bash\ndocker load -i alpine-3.18.tar\n```\n\nYou can also pipe from stdin:\n```bash\ndocker load < alpine-3.18.tar\n```"
+        },
+        {
+            "id": "s_l4_6",
+            "type": "code",
+            "title": "Load & Verify ✅",
+            "content": "On the new machine (or after deleting the image locally to simulate), load the image:",
+            "codeSnippet": "# On a different machine (or after `docker rmi alpine:3.18`)\ndocker load -i alpine-3.18.tar\ndocker images | grep alpine",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "Save vs Export 🆚",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Which command would you use to back up an image to a portable file?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "docker export",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "docker save",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "docker commit",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "docker pull --backup",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`docker save` exports an image including layers. `docker export` works on containers, not images (and flattens them).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_8",
+            "type": "warning",
+            "title": "Save vs Export Confusion ⚠️",
+            "content": "## Don’t Mix Them Up\n\n- `docker save` → works with **images** (preserves layers and history).\n- `docker export` → works with **containers** (flattens the filesystem into a tar, losing layer history).\n\nIf you want to move an image, use `save`. If you want to get a flat file system snapshot of a container, use `export`."
+        },
+        {
+            "id": "s_l4_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Combine Save & Load with SSH\n\nYou can transfer an image directly between machines without intermediate files:\n```bash\ndocker save myimage:latest | ssh user@host 'docker load'\n```\nThis pipes the tar over SSH and loads it on the remote machine in one step."
+        }
+    ]
+}

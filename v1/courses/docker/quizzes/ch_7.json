@@ -1,0 +1,272 @@
+{
+    "id": "quiz_ch_7",
+    "chapterId": "ch_7",
+    "title": "Chapter 7 Quiz",
+    "description": "Test your knowledge of Docker networking: default bridge, custom networks, DNS, port mapping, and network management!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "Which network driver is used by default when you start a container without specifying a network?",
+            "options": [
+                "host",
+                "none",
+                "bridge",
+                "overlay"
+            ],
+            "correctAnswer": 2,
+            "explanation": "The default network driver is `bridge`, and the network name is `bridge`."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "Containers on the default bridge network can resolve each other by name.",
+            "correctAnswer": false,
+            "explanation": "The default bridge does not have embedded DNS. Only custom bridge networks provide automatic name resolution."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "What command lists all Docker networks on the host?",
+            "options": [
+                "docker network show",
+                "docker network ls",
+                "docker ls networks",
+                "docker ps --networks"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker network ls` lists the networks. `docker network inspect` gives details on one."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "How do you create a custom bridge network named 'backend'?",
+            "options": [
+                "docker create network backend",
+                "docker network create backend",
+                "docker bridge create backend",
+                "docker network add backend"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker network create <name>` creates a network with the default bridge driver."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "What is the main advantage of using a custom bridge network over the default bridge?",
+            "options": [
+                "It provides automatic DNS resolution by container name",
+                "It uses a faster protocol",
+                "It supports IPv6 by default",
+                "It allows containers to share the host network"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Custom bridge networks have a built‑in DNS server that resolves container names to IPs."
+        },
+        {
+            "id": "q6",
+            "type": "fill_blank",
+            "question": "The embedded DNS server in a custom network listens on IP `________` inside the container.",
+            "options": [
+                "127.0.0.1",
+                "127.0.0.11",
+                "8.8.8.8",
+                "172.17.0.1"
+            ],
+            "correctAnswer": "127.0.0.11",
+            "explanation": "Docker’s embedded DNS runs at 127.0.0.11 within each container attached to a custom network."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "When you map a port with `-p 8080:80`, what does the first number (8080) represent?",
+            "options": [
+                "The container port",
+                "The host port",
+                "A random port",
+                "The protocol"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The syntax is `host_port:container_port`. So 8080 is the port on the host machine."
+        },
+        {
+            "id": "q8",
+            "type": "true_false",
+            "question": "If you run a container with `-P`, Docker publishes all exposed ports to random host ports.",
+            "correctAnswer": true,
+            "explanation": "`-P` (uppercase) publishes all ports listed in the image’s EXPOSE instructions to random high ports."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "Which command shows the port mapping for a running container named 'web'?",
+            "options": [
+                "docker show ports web",
+                "docker port web",
+                "docker ps -a web",
+                "docker inspect web --ports"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker port <container>` displays the current port mappings."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "What does the `--network host` option do?",
+            "options": [
+                "Creates a new host network",
+                "The container shares the host’s network namespace",
+                "Connects the container to all networks",
+                "Disables all networking"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The container uses the host's network directly; no virtual network is created."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "Which network driver would you use to completely isolate a container from the network?",
+            "options": [
+                "host",
+                "bridge",
+                "none",
+                "isolated"
+            ],
+            "correctAnswer": 2,
+            "explanation": "The `none` driver gives the container no network interface except loopback."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "You have a container `app` on network `front`. How do you attach it also to network `back` without recreating it?",
+            "options": [
+                "docker network add back app",
+                "docker network connect back app",
+                "docker connect back app",
+                "docker run --network back app"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker network connect` adds a running container to an existing network."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "What does `docker network prune` do?",
+            "options": [
+                "Deletes all networks, even those in use",
+                "Removes all unused networks (no containers connected)",
+                "Reclaims IP addresses from all networks",
+                "Cleans the DNS cache"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It removes networks that are not referenced by any container."
+        },
+        {
+            "id": "q14",
+            "type": "true_false",
+            "question": "Docker automatically configures iptables rules to enable port mapping.",
+            "correctAnswer": true,
+            "explanation": "Docker manipulates iptables to create NAT rules for port publishing."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "If you bind a port to `127.0.0.1:8080:80`, what does it mean?",
+            "options": [
+                "The container listens on localhost only",
+                "The host only forwards traffic from localhost to the container",
+                "The container is only reachable from inside the Docker network",
+                "It's an invalid syntax"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Binding to 127.0.0.1 limits the host port to the loopback interface, so remote hosts cannot access it."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "What information does `docker network inspect my-net` provide?",
+            "options": [
+                "Only the driver name",
+                "Subnet, gateway, connected containers and their IPs",
+                "Network usage statistics",
+                "The network password"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It returns a JSON document with all configuration details and attached containers."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "Why is the legacy `--link` option discouraged?",
+            "options": [
+                "It doesn't work with custom networks",
+                "It is less flexible than DNS-based service discovery and has been deprecated",
+                "It requires root privileges",
+                "It only supports TCP"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`--link` provided environment variables and host entries; DNS on custom networks is simpler and more robust."
+        },
+        {
+            "id": "q18",
+            "type": "true_false",
+            "question": "Two containers on the same custom bridge network can communicate without any port mapping.",
+            "correctAnswer": true,
+            "explanation": "Within a network, containers can talk to each other directly on any port; port mapping is only for traffic from outside the network."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "What is the purpose of the `--subnet` option in `docker network create`?",
+            "options": [
+                "To define a custom IP address range for the network",
+                "To enable the overlay driver",
+                "To set the container's hostname",
+                "To restrict which ports can be mapped"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`--subnet` lets you specify the CIDR range for the network, overriding the default auto‑assigned range."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "Which command shows detailed information about all containers and their network settings?",
+            "options": [
+                "docker ps",
+                "docker inspect <container>",
+                "docker network list",
+                "docker info"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker inspect` includes a `NetworkSettings` section with IPs, gateways, and port mappings."
+        },
+        {
+            "id": "q21",
+            "type": "fill_blank",
+            "question": "To remove a specific network, you use `docker network ___ <name>`.",
+            "options": [
+                "delete",
+                "rm",
+                "remove",
+                "prune"
+            ],
+            "correctAnswer": "rm",
+            "explanation": "`docker network rm <name>` removes a specific network. `prune` removes all unused."
+        },
+        {
+            "id": "q22",
+            "type": "mcq",
+            "question": "When using the `host` network driver, what happens to port mappings (`-p`)?",
+            "options": [
+                "They are required to expose ports",
+                "They are ignored because the container uses the host network directly",
+                "They are automatically assigned",
+                "They double the throughput"
+            ],
+            "correctAnswer": 1,
+            "explanation": "In host mode, the container is using the host’s interfaces, so port mapping is meaningless; the container’s ports are directly accessible on the host."
+        }
+    ]
+}

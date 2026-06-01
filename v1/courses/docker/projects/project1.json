@@ -1,0 +1,22 @@
+{
+    "id": "project1",
+    "title": "Dockerize a Full‑Stack Web App 🏗️",
+    "description": "Build Dockerfiles for a Node.js backend, React frontend, and MongoDB database. Use Docker Compose to orchestrate services, volumes for data persistence, and custom networks for isolation.",
+    "difficulty": "Intermediate",
+    "estimatedHours": "2-4",
+    "problemStatement": "## Goal\nTransform a multi‑service application (provided skeleton) into a fully containerized solution using Dockerfiles and Docker Compose.\n\nYou’ll create:\n- A **backend** service (Node.js/Express) with a Dockerfile that uses multi‑stage build for production.\n- A **frontend** service (React) with a Dockerfile that builds static files and serves them via Nginx.\n- A **database** service (MongoDB) using an official image with a named volume for data.\n\nThen you’ll write a `compose.yaml` that:\n- Defines all three services.\n- Connects them on a custom bridge network.\n- Uses environment variables to configure the backend’s database connection.\n- Maps appropriate ports (e.g., 3000 for backend, 80 for frontend).\n- Ensures the database data persists across restarts.\n\nFinally, test the full stack: add a to‑do item via the frontend, verify it’s stored in MongoDB, and survive a `docker compose down` and `up` without data loss.",
+    "requirements": [
+        "Backend Dockerfile must use `node:18-alpine` base and copy only production dependencies.",
+        "Frontend Dockerfile must use a build stage (node) and a runtime stage (nginx:alpine).",
+        "Compose file must define a custom network `app-net` and attach all services.",
+        "MongoDB service must use a named volume `db-data` for persistence.",
+        "Backend service must connect to MongoDB using the service name `db` (DNS).",
+        "Frontend must proxy API requests to the backend (configurable)."
+    ],
+    "hints": [
+        "Use `COPY package*.json ./` then `RUN npm ci --only=production` before copying source code to leverage layer caching.",
+        "The React app can be built with `npm run build` and the output served by Nginx. Copy the build directory to `/usr/share/nginx/html`.",
+        "In Compose, set `restart: unless-stopped` and `depends_on` with health check for MongoDB."
+    ],
+    "expectedOutput": "Running `docker compose up -d` starts all services. Accessing `http://localhost` (frontend) shows the UI. Adding data persists after `docker compose down` and `docker compose up -d` (volume survives). `docker compose ps` shows all three services healthy."
+}

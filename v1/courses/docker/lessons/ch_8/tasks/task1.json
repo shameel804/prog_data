@@ -1,0 +1,14 @@
+{
+    "id": "task1",
+    "chapterId": "ch_8",
+    "title": "Data Persistence with Named Volumes",
+    "description": "Create a volume, mount it to a container, write data, and verify it survives container removal.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Objective\nProve that data stored in a Docker volume outlives the container.\n\n### Steps\n1. Create a named volume called `my-data`:\n   ```bash\n   docker volume create my-data\n   ```\n2. Run a temporary container that writes a file into the volume:\n   ```bash\n   docker run --rm -v my-data:/data alpine sh -c 'echo \"Persistent text\" > /data/note.txt'\n   ```\n3. Verify the container is gone (`docker ps -a`).\n4. Read the file using another temporary container:\n   ```bash\n   docker run --rm -v my-data:/data alpine cat /data/note.txt\n   ```\n   You should see the text.\n5. (Optional) Write more data from a different container and confirm it’s available.\n6. Inspect the volume to see its mount point on the host:\n   ```bash\n   docker volume inspect my-data\n   ```\n7. List all volumes and note that `my-data` exists.\n8. Remove the volume when you’re done:\n   ```bash\n   docker volume rm my-data\n   ```\n\n### Deliverable\nTerminal output showing the file content after container removal.",
+    "hints": [
+        "The `--rm` flag automatically removes the container after it exits, proving the data persists solely in the volume.",
+        "If you get 'No such file' error, ensure the volume name matches exactly."
+    ],
+    "expectedOutput": "After step 4, the terminal prints 'Persistent text'.",
+    "solutionCode": "docker volume create my-data\ndocker run --rm -v my-data:/data alpine sh -c 'echo \"Persistent text\" > /data/note.txt'\ndocker run --rm -v my-data:/data alpine cat /data/note.txt\ndocker volume inspect my-data\ndocker volume rm my-data"
+}

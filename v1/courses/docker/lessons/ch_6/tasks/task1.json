@@ -1,0 +1,14 @@
+{
+    "id": "task1",
+    "chapterId": "ch_6",
+    "title": "Secure Build with BuildKit Secrets",
+    "description": "Use a secret mount to pass an API key during build without leaking it.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Objective\nExperience BuildKit’s `--secret` feature to safely use a secret at build time.\n\n### Prerequisites\n- Docker with BuildKit enabled (Docker Desktop, or set `DOCKER_BUILDKIT=1`).\n\n### Steps\n1. Create a simple Dockerfile that reads a secret file and echoes its content (for demonstration only; in real life you’d use it for something like authenticating to a private package registry).\n   ```dockerfile\n   FROM alpine\n   RUN --mount=type=secret,id=mysecret cat /run/secrets/mysecret > /tmp/output.txt\n   CMD [\"cat\", \"/tmp/output.txt\"]\n   ```\n2. Create a file named `secret.txt` with some dummy text (e.g., `my-super-secret-key`).\n3. Build the image, passing the secret:\n   ```bash\n   docker build --secret id=mysecret,src=secret.txt -t secret-test .\n   ```\n4. Run a container from the image and verify that the output file contains the secret:\n   ```bash\n   docker run --rm secret-test\n   ```\n5. Now check if the secret is visible in the image layers:\n   ```bash\n   docker history secret-test\n   ```\n   Observe that there is no trace of the secret content in the history.\n6. (Bonus) Modify the Dockerfile to use the secret as an environment variable (e.g., `export MY_SECRET=$(cat /run/secrets/mysecret)`) and run a command that uses it. Check that the env variable is not persisted.\n\n### Deliverable\nShow the output of `docker run` confirming the secret was used, and the `docker history` output showing no secret leakage.",
+    "hints": [
+        "Make sure BuildKit is enabled. The build should not show any errors.",
+        "The secret file path inside the build is always `/run/secrets/<id>`."
+    ],
+    "expectedOutput": "The container prints 'my-super-secret-key'. Docker history does not show the secret.",
+    "solutionCode": "echo 'my-super-secret-key' > secret.txt\ncat > Dockerfile <<EOF\nFROM alpine\nRUN --mount=type=secret,id=mysecret cat /run/secrets/mysecret > /tmp/output.txt\nCMD [\"cat\", \"/tmp/output.txt\"]\nEOF\ndocker build --secret id=mysecret,src=secret.txt -t secret-test .\ndocker run --rm secret-test\ndocker history secret-test"
+}

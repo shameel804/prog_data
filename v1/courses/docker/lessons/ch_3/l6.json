@@ -1,0 +1,189 @@
+{
+    "id": "l6",
+    "chapterId": "ch_3",
+    "title": "Committing, Renaming & Resource Limits 🧪",
+    "description": "Save container state as a new image, rename containers, and control CPU/memory.",
+    "xpReward": 35,
+    "estimatedMinutes": 8,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Saving Container State: `docker commit` 💾",
+            "content": "# Turn a Container into an Image\n\nIf you’ve modified a container (installed packages, changed files) and want to reuse that state, you can **commit** it as a new image.\n\n```bash\ndocker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]\n```\n\n**Example:**\n```bash\ndocker commit my-debug-container my-debug-image:latest\n```\n\nThis creates a new image with all the changes made to the container.\n\n> ⚠️ Committing is **not** the recommended way to build images; Dockerfiles are much better (reproducible, versioned). But `commit` is useful for quick snapshots and debugging."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "quiz",
+            "title": "Commit vs Dockerfile 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Why is using `docker commit` often discouraged for production images?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It always produces larger images than Dockerfiles.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It doesn’t record the commands used to build the image, making it less reproducible.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It cannot push images to registries.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It only works on Linux containers.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`docker commit` creates an image from a container’s state, but there’s no Dockerfile – you can’t see what changes were made. Dockerfiles are transparent and repeatable.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Commit Demo 🧪",
+            "content": "Make a change inside a container and save it:",
+            "codeSnippet": "# Run a container\ndocker run -d --name devbox alpine sleep 3600\n\n# Install a package inside (e.g., curl)\ndocker exec devbox apk add curl\n\n# Verify curl is installed\ndocker exec devbox curl --version\n\n# Commit the container as a new image\ndocker commit devbox my-alpine-curl:1.0\n\n# Now run a container from the new image\ndocker run --rm my-alpine-curl:1.0 curl --version\n\n# Cleanup\ndocker stop devbox\ndocker rm devbox",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Renaming Containers 🏷️",
+            "content": "# `docker rename`\n\nIf you gave a container a poor name, you can rename it:\n\n```bash\ndocker rename OLD_NAME NEW_NAME\n```\n\n**Example:**\n```bash\ndocker rename hopeful_swirles frontend\n```\n\nThe container ID remains the same. Works on both running and stopped containers."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "quiz",
+            "title": "Rename Effect 🆕",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "true_false",
+                "question": "Renaming a container changes its unique container ID.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "The ID is immutable. Only the name label is changed.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_6",
+            "type": "text",
+            "title": "Setting Resource Limits 🎛️",
+            "content": "# Control CPU and Memory\n\nContainers share the host kernel; without limits, one container can hog all resources. Set limits at runtime:\n\n```bash\ndocker run -d --name limited --memory=512m --cpus=1.5 nginx\n```\n\n- `--memory` (or `-m`): maximum memory (e.g., `512m` for 512 MB, `2g` for 2 GB).\n- `--cpus`: how many CPU cores the container can use (e.g., `1.5` = one and a half cores).\n\nYou can also set `--memory-swap` (swap space) and `--cpu-shares` (relative weight)."
+        },
+        {
+            "id": "s_l6_7",
+            "type": "code",
+            "title": "Resource Limits in Action 🔒",
+            "content": "Limit memory and CPU for a container:",
+            "codeSnippet": "# Run a container with a 256 MB memory limit and 0.5 CPU\ndocker run -d --name constrained --memory=256m --cpus=0.5 alpine sleep 600\n\n# Inspect the limits\ndocker inspect -f 'Memory: {{.HostConfig.Memory}} CPUs: {{.HostConfig.NanoCpus}}' constrained",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_8",
+            "type": "quiz",
+            "title": "Memory Limit Syntax 🔢",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_3",
+                "type": "multiple_choice",
+                "question": "Which `docker run` flag sets a memory limit of 1 GB?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "--limit 1g",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "-m 1g",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "--mem 1GB",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "--memory-swap 1g",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`-m` or `--memory` sets the hard memory limit. The unit can be `m` for megabytes or `g` for gigabytes.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_9",
+            "type": "text",
+            "title": "Restart Policies 🔄",
+            "content": "# Keep Containers Alive\n\nControl what happens when a container exits:\n\n- `--restart no` (default) – don’t restart.\n- `--restart on-failure[:max-retries]` – restart only if exit code is non‑zero.\n- `--restart always` – always restart, even on daemon restart.\n- `--restart unless-stopped` – always restart, unless you explicitly stop it.\n\n**Example:**\n```bash\ndocker run -d --restart=always nginx\n```\n\nUseful for production services to survive crashes."
+        },
+        {
+            "id": "s_l6_10",
+            "type": "quiz",
+            "title": "Policy Picker 📋",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_4",
+                "type": "multiple_choice",
+                "question": "If you want a container to restart automatically unless you explicitly run `docker stop`, which restart policy should you use?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "always",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "unless-stopped",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "on-failure",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "no",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`unless-stopped` restarts the container even after daemon restart, but not if you intentionally stopped it with `docker stop`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_11",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `--restart=always` for development, but consider orchestration (like Docker Swarm or Kubernetes) for production‑grade restart logic."
+        }
+    ]
+}

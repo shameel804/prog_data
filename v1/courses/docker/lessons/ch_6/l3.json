@@ -1,0 +1,114 @@
+{
+    "id": "l3",
+    "chapterId": "ch_6",
+    "title": "Mastering Build Caching & Layer Optimization ⚡",
+    "description": "Leverage cache mounts, order instructions for speed, and reduce rebuild times drastically.",
+    "xpReward": 35,
+    "estimatedMinutes": 8,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Docker Build Cache Basics 🧠",
+            "content": "# How Caching Works\n\nDocker caches each layer. When rebuilding, it checks if the instruction and its inputs have changed. If not, the cached layer is reused.\n\n**Cache invalidation rules:**\n- If a layer changes, **all subsequent layers** are rebuilt.\n- `COPY` and `ADD` compare file checksums from the context.\n- `RUN` caches based on the command string (not its side effects).\n\nThat’s why ordering matters: put instructions that change **least** at the top."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Optimal Dockerfile Order 📑",
+            "content": "# Skeleton for Fast Builds\n\n```dockerfile\n# 1. Base image (rarely changes)\nFROM node:18-alpine\n\n# 2. Install system packages\nRUN apk add --no-cache git\n\n# 3. Set environment variables\nENV NODE_ENV=production\n\n# 4. Copy dependency definitions and install (separate layer)\nCOPY package*.json ./\nRUN npm ci --only=production\n\n# 5. Copy application code (changes most often)\nCOPY . .\n\n# 6. Final command\nCMD [\"node\", \"app.js\"]\n```\nThis way, when you change a source file, only the `COPY . .` and later layers rebuild."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Cache Order ⏱️",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Why does changing a source file cause the `npm ci` layer to be rebuilt in the above Dockerfile?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Because `npm ci` always runs",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Because `COPY package*.json ./` is before `COPY . .`, so the source change doesn't affect that layer",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It doesn't; the `npm ci` layer is cached",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Because the cache is disabled",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Since `COPY package*.json` comes before the source code copy, changing a source file does not invalidate the dependency installation layer. The `npm ci` layer remains cached.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Cache Mounts (BuildKit) ⚡",
+            "content": "# Persist Build‑Time Caches Across Builds\n\nWith BuildKit, you can mount a cache directory that persists between builds, even if the layer is rebuilt.\n\n**Package manager caches:**\n```dockerfile\nRUN --mount=type=cache,target=/root/.npm \\\n    npm install\n```\n\nThe next build reuses this cache, skipping downloads.\n\n**Supported:** `apt`, `apk`, `npm`, `yarn`, `pip`, `go build` etc.\n\n> This speeds up builds dramatically and reduces network usage."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Cache Mount Example 🚀",
+            "content": "Using cache mounts for a Python project:",
+            "codeSnippet": "# Dockerfile\nFROM python:3.11\nWORKDIR /app\nCOPY requirements.txt .\nRUN --mount=type=cache,target=/root/.cache/pip \\\n    pip install -r requirements.txt\nCOPY . .\nCMD [\"python\", \"app.py\"]",
+            "codeLanguage": "dockerfile",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Cache Mount Benefit 🏦",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "What does `--mount=type=cache` achieve in a RUN instruction?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It saves the layer permanently in the image",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It reuses a cache directory across builds, even when the layer is rebuilt",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It invalidates the cache for that instruction",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It encrypts the layer",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Cache mounts keep intermediate data (like downloaded packages) between builds, reducing time spent downloading.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Multi‑Stage Caching Strategy 🎯",
+            "content": "# Combining Multi‑Stage and Cache Mounts\n\nYou can further optimize by using a separate **dependency stage**:\n\n```dockerfile\nFROM node:18-alpine AS deps\nWORKDIR /app\nCOPY package*.json ./\nRUN --mount=type=cache,target=/root/.npm npm ci\n\nFROM node:18-alpine\nCOPY --from=deps /app/node_modules ./node_modules\nCOPY . .\nCMD [\"node\", \"app.js\"]\n```\n\nNow the dependency stage is only rebuilt when `package.json` changes."
+        }
+    ]
+}

@@ -1,0 +1,130 @@
+{
+    "id": "l1",
+    "chapterId": "ch_6",
+    "title": "Advanced Instructions: HEALTHCHECK, ONBUILD & More 🧬",
+    "description": "Explore less common but powerful Dockerfile instructions that make your images smarter.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "`HEALTHCHECK` – Container Self‑Diagnosis 🩺",
+            "content": "# Tell Docker How to Check Health\n\nBy default, Docker only knows if a container’s main process is running. But a process can be alive yet unresponsive.\n\n```dockerfile\nHEALTHCHECK [OPTIONS] CMD <command>\n```\n\n**Options:**\n- `--interval=DURATION` (default 30s)\n- `--timeout=DURATION` (default 30s)\n- `--start-period=DURATION` (initial grace time)\n- `--retries=N` (default 3)\n\n**Example:**\n```dockerfile\nHEALTHCHECK --interval=5s --timeout=3s CMD curl -f http://localhost/ || exit 1\n```\n\nDocker will run this command periodically. If it fails, the container’s status becomes `unhealthy`."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Health Check Logic 💓",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What happens when a container’s HEALTHCHECK command fails?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The container is automatically restarted",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The container status changes to 'unhealthy' (and can be used by orchestrators)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Docker kills the container immediately",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Nothing; HEALTHCHECK is only informational",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Docker reports the status as unhealthy, but does not restart by itself unless a restart policy is also configured.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "`ONBUILD` – Triggers for Child Images 👶",
+            "content": "# Instructions Deferred to Derived Images\n\n`ONBUILD` stores a command that will be executed **only when this image is used as a base for another build**.\n\n```dockerfile\nONBUILD INSTRUCTION\n```\n\n**Example:**\n```dockerfile\nONBUILD COPY . /app\n```\n\nIf you build `my-base` with this line, nothing happens. But when someone writes `FROM my-base`, the `COPY . /app` runs automatically in their build.\n\n> Useful for framework base images (e.g., a Node.js base that copies package.json and runs npm install)."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "quiz",
+            "title": "ONBUILD Trigger 🧬",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "When does an `ONBUILD` instruction execute?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "During the build of the image containing the ONBUILD",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "When the image is used as a base for another Dockerfile build",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "When a container is started from the image",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Never; it's deprecated",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "ONBUILD defers the instruction to the next build that uses the image as a FROM line.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_5",
+            "type": "text",
+            "title": "`STOPSIGNAL` & `SHELL` ⚙️",
+            "content": "# Fine‑Tuning Process Behaviour\n\n- **STOPSIGNAL**: sets the system call signal that will be sent to the container to stop it (default is `SIGTERM`).\n  ```dockerfile\n  STOPSIGNAL SIGQUIT\n  ```\n- **SHELL**: changes the default shell used for the shell form of instructions.\n  ```dockerfile\n  SHELL [\"/bin/bash\", \"-c\"]\n  RUN echo $HOME  # now uses bash\n  ```\n  Useful for images that don’t have `/bin/sh` or need a specific shell."
+        },
+        {
+            "id": "s_l1_6",
+            "type": "text",
+            "title": "`USER` – Running as Non‑Root 👤",
+            "content": "# Security Best Practice\n\n```dockerfile\nUSER <user>[:<group>]\n# or\nUSER <UID>[:<GID>]\n```\n\nChanges the user for all subsequent `RUN`, `CMD`, `ENTRYPOINT`.\n\n- Always create a dedicated user and switch to it before the final `CMD`.\n- Example:\n  ```dockerfile\n  RUN addgroup -S appgroup && adduser -S appuser -G appgroup\n  USER appuser\n  ```\n- Running as root inside a container is risky (especially if combined with `--privileged` or volume mounts)."
+        },
+        {
+            "id": "s_l1_7",
+            "type": "quiz",
+            "title": "User Security 🔒",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_3",
+                "type": "true_false",
+                "question": "By default, a Docker container runs as root unless the image specifies otherwise.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Unless the Dockerfile uses `USER`, the container process will run as root (UID 0).",
+                "xpReward": 10
+            }
+        }
+    ]
+}

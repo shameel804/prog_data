@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_3",
+    "title": "Inspect, Monitor, and Copy Files",
+    "description": "Practice docker inspect, docker stats, docker top, and docker cp to manage a container.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Objective\nUse inspection and monitoring tools to diagnose a running container, and practice file transfers.\n\n### Steps\n1. Run an Nginx container in detached mode:\n   ```bash\n   docker run -d --name web-server -p 8080:80 nginx:alpine\n   ```\n2. Inspect the container and extract its IP address using `--format`:\n   ```bash\n   docker inspect -f '{{.NetworkSettings.IPAddress}}' web-server\n   ```\n3. Inspect to see the environment variables set inside:\n   ```bash\n   docker inspect -f '{{range .Config.Env}}{{println .}}{{end}}' web-server\n   ```\n4. Monitor its resource usage with a single snapshot:\n   ```bash\n   docker stats --no-stream web-server\n   ```\n5. List the running processes inside the container:\n   ```bash\n   docker top web-server\n   ```\n6. Copy the default `index.html` file from the container to your host:\n   ```bash\n   docker cp web-server:/usr/share/nginx/html/index.html ./nginx-index.html\n   ```\n   Open it in a text editor to verify.\n7. Modify the file on your host (add a comment), then copy it back into the container:\n   ```bash\n   echo \"<!-- Hello from host -->\" >> nginx-index.html\n   docker cp nginx-index.html web-server:/usr/share/nginx/html/index.html\n   ```\n8. Refresh `http://localhost:8080` – the source code may not visually change, but the file inside should have the comment. Verify with:\n   ```bash\n   docker exec web-server cat /usr/share/nginx/html/index.html\n   ```\n9. Stop and remove the container.",
+    "hints": [
+        "The IP address will be something like 172.17.0.2. It’s a private IP on the Docker bridge network.",
+        "When copying files back, ensure the destination path includes the filename, not just the directory."
+    ],
+    "expectedOutput": "The IP address is printed. The `docker stats` snapshot shows memory/CPU usage. The copied file exists locally. After copying back, `cat` inside shows the comment.",
+    "solutionCode": "docker run -d --name web-server -p 8080:80 nginx:alpine\ndocker inspect -f '{{.NetworkSettings.IPAddress}}' web-server\ndocker inspect -f '{{range .Config.Env}}{{println .}}{{end}}' web-server\ndocker stats --no-stream web-server\ndocker top web-server\ndocker cp web-server:/usr/share/nginx/html/index.html ./nginx-index.html\necho \"<!-- Hello from host -->\" >> nginx-index.html\ndocker cp nginx-index.html web-server:/usr/share/nginx/html/index.html\ndocker exec web-server cat /usr/share/nginx/html/index.html\ndocker stop web-server\ndocker rm web-server"
+}

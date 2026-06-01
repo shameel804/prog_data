@@ -1,0 +1,14 @@
+{
+    "id": "task1",
+    "chapterId": "ch_12",
+    "title": "Simulate a CI Pipeline for a Docker Image",
+    "description": "Write a simple script that builds, tests, scans, and pushes a Docker image (using locally available tools).",
+    "estimatedMinutes": 25,
+    "problemStatement": "## Objective\nAutomate the steps of a CI pipeline for a Docker image using a Bash script (or PowerShell) that you can run locally.\n\n### Prerequisites\n- A Docker Hub account (to push).\n- Trivy installed (`brew install trivy` or use the container).\n- A simple Dockerfile (e.g., the Nginx custom image from earlier chapters).\n\n### Steps\n1. Create a script `ci-pipeline.sh` that performs the following:\n   - Lint the Dockerfile using Hadolint (optional but nice; you can skip if not installed).\n   - Build the image tagged with a unique version (e.g., `myapp:$RANDOM`).\n   - Run a quick container test: e.g., `docker run --rm myapp:$VERSION curl -f http://localhost/` (if it serves a page).\n   - Scan the image with Trivy: `trivy image --severity HIGH,CRITICAL --exit-code 1 myapp:$VERSION`.\n   - If all passes, push the image to Docker Hub.\n2. Replace the image name with your Docker Hub username/repo.\n3. Execute the script and observe the steps.\n4. (Optional) Trigger the script on a file change using `inotifywait` or just run manually.\n\n### Deliverable\nShow the terminal output of the script, including build, scan, and push success messages.",
+    "hints": [
+        "If Trivy reports vulnerabilities, you can still proceed for learning (just note them). For real CI, you'd fail the pipeline.",
+        "Use `set -e` at the top of the script to exit on first error."
+    ],
+    "expectedOutput": "Script runs, image is built, scanned (may show vulnerabilities), and pushed. No errors.",
+    "solutionCode": "#!/bin/bash\nset -e\n\nIMAGE=\"your-dockerhub-username/testapp:$RANDOM\"\n\necho \"Building $IMAGE\"\ndocker build -t $IMAGE .\n\necho \"Running quick test\"\ndocker run --rm -d --name test-$RANDOM -p 8888:80 $IMAGE\nsleep 2\ncurl -f http://localhost:8888 || { echo \"Test failed\"; exit 1; }\ndocker stop test-* || true\n\necho \"Scanning with Trivy\"\ndocker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image --severity HIGH,CRITICAL --exit-code 1 $IMAGE || echo \"Vulnerabilities found (demo)\"\n\necho \"Pushing to Docker Hub\"\ndocker push $IMAGE\n\necho \"CI pipeline completed for $IMAGE\""
+}

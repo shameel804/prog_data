@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_8",
+    "title": "Backup, Restore, and Clean Up Volumes",
+    "description": "Back up a volume to a tar file, delete the volume, restore it, and verify data integrity.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Objective\nLearn to back up a Docker volume to your host, delete the volume, and restore it from the backup.\n\n### Steps\n1. Create a volume named `db-data`.\n2. Add some files to it by running a container:\n   ```bash\n   docker run --rm -v db-data:/data alpine sh -c 'echo \"file1\" > /data/f1.txt && echo \"file2\" > /data/f2.txt'\n   ```\n3. Back up the volume to a tar file in your current directory:\n   ```bash\n   docker run --rm -v db-data:/data -v $(pwd):/backup alpine tar czf /backup/db-data.tar.gz -C /data .\n   ```\n4. Delete the original volume:\n   ```bash\n   docker volume rm db-data\n   ```\n5. Create a new volume (same name or different) `db-data-restored`.\n6. Restore the backup into the new volume:\n   ```bash\n   docker run --rm -v db-data-restored:/data -v $(pwd):/backup alpine tar xzf /backup/db-data.tar.gz -C /data\n   ```\n7. Verify the files are restored:\n   ```bash\n   docker run --rm -v db-data-restored:/data alpine ls /data\n   docker run --rm -v db-data-restored:/data alpine cat /data/f1.txt\n   ```\n8. Clean up the backup file and volume:\n   ```bash\n   rm db-data.tar.gz\n   docker volume rm db-data-restored\n   ```\n\n### Deliverable\nTerminal output showing the backup file creation, volume removal, and successful file listing after restore.",
+    "hints": [
+        "The `$(pwd)` substitutes the current directory. Ensure you have write permissions there.",
+        "If `tar` fails, check that the volume name is correct and that the volume contains files."
+    ],
+    "expectedOutput": "The restored volume shows f1.txt and f2.txt, and their content matches the original.",
+    "solutionCode": "docker volume create db-data\ndocker run --rm -v db-data:/data alpine sh -c 'echo \"file1\" > /data/f1.txt && echo \"file2\" > /data/f2.txt'\ndocker run --rm -v db-data:/data -v $(pwd):/backup alpine tar czf /backup/db-data.tar.gz -C /data .\ndocker volume rm db-data\ndocker volume create db-data-restored\ndocker run --rm -v db-data-restored:/data -v $(pwd):/backup alpine tar xzf /backup/db-data.tar.gz -C /data\ndocker run --rm -v db-data-restored:/data alpine ls /data\ndocker run --rm -v db-data-restored:/data alpine cat /data/f1.txt\nrm db-data.tar.gz\ndocker volume rm db-data-restored"
+}

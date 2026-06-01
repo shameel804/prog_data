@@ -1,0 +1,114 @@
+{
+    "id": "l2",
+    "chapterId": "ch_3",
+    "title": "Attaching & Detaching: `docker attach` 🔗",
+    "description": "Connect your terminal to a container’s main process and detach safely.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "What is `docker attach`? 🔄",
+            "content": "# Connect to PID 1\n\n`docker attach` hooks your terminal’s **STDIN, STDOUT and STDERR** to the container’s **main process** (PID 1).\n\n```bash\ndocker attach [OPTIONS] CONTAINER\n```\n\nUnlike `docker exec` (which starts a new process), `attach` connects to the already‑running main process.\n\nThis is how `docker run` works in attached mode by default (without `-d`)."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Attach vs Exec – Key Differences ⚖️",
+            "content": "| Feature          | `docker exec`                     | `docker attach`                      |\n|------------------|-----------------------------------|--------------------------------------|\n| New process?     | Yes, a new command                | No, uses existing PID 1              |\n| Shell available? | Yes, with `-it bash`             | Only if PID 1 is a shell             |\n| Detaching        | `exit` or `Ctrl+D`               | `Ctrl+P` `Ctrl+Q` (detach without stopping) |\n| Use case         | Debugging, maintenance            | Watching real‑time logs of PID 1     |\n\n> `attach` is rarely used today; `exec` and `docker logs -f` are more flexible."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Attach vs Exec 🤔",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "You want to get a Bash shell inside a running container. Which command should you use?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "docker attach my-container bash",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "docker exec -it my-container bash",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "docker enter my-container",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "docker ssh my-container",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`exec` creates a new Bash process. `attach` would only work if the main process was already a shell.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Detaching Safely ✂️",
+            "content": "# The Magic Key Sequence\n\nWhen you are attached with `docker attach`, pressing `Ctrl+C` sends SIGINT to PID 1 and **stops the container** (unless the process handles it gracefully).\n\nTo **detach without stopping**, use the escape sequence:\n\n```\nCtrl+P, Ctrl+Q\n```\n\nThis returns you to your host terminal while keeping the container running.\n\n> Some containers may not support this if they don’t handle the escape sequence correctly."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `--sig-proxy=false`\n\nIf you want `Ctrl+C` to work locally without affecting the container, attach with:\n```bash\ndocker attach --sig-proxy=false my-container\n```\nNow `Ctrl+C` detaches gracefully without stopping the container."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "code",
+            "title": "attach Example 📺",
+            "content": "Start a counter in the background and attach to see its output:",
+            "codeSnippet": "# Start a script that prints every second\ndocker run -d --name counter alpine sh -c 'i=1; while true; do echo $i; i=$((i+1)); sleep 1; done'\n\n# Attach to see the numbers\ndocker attach counter\n\n# Detach with Ctrl+P, Ctrl+Q\n# Container keeps running\n\ndocker ps",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "Detach Key Combo ⌨️",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What key sequence detaches from a container without stopping it?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Ctrl+D",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Ctrl+C",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Ctrl+P then Ctrl+Q",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Ctrl+Z",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`Ctrl+P` `Ctrl+Q` is the default detach sequence. `Ctrl+C` would stop the container, and `Ctrl+D` usually exits the shell.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

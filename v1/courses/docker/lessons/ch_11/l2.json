@@ -1,0 +1,104 @@
+{
+    "id": "l2",
+    "chapterId": "ch_11",
+    "title": "Rootless Docker: Run Containers Without Root 🦾",
+    "description": "Set up and use rootless mode so the Docker daemon and containers run as a normal user.",
+    "xpReward": 35,
+    "estimatedMinutes": 8,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Risk of the Docker Daemon Running as Root 👑",
+            "content": "# Why Rootless?\n\nBy default, the Docker daemon (`dockerd`) runs as root on the host. If an attacker escapes a container (rare but possible), they might gain root access to the host.\n\n**Rootless mode** runs the entire Docker daemon and all containers as a non‑root user (using user namespaces and other tricks).\n\n- The daemon runs inside a user namespace.\n- Containers are further nested.\n- Even if a container breakout occurs, the attacker gets only the unprivileged user’s permissions on the host.\n\n> Available since Docker 19.03 (experimental) and production‑ready from 20.10+."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "How Rootless Works ⚙️",
+            "content": "# User Namespaces + Slirp4netns\n\nRootless mode leverages:\n- **User namespaces** to map the container’s root to an unprivileged UID on the host.\n- **`rootlesskit`** to set up networking (using `slirp4netns` for tap device without root).\n- **`fuse-overlayfs`** for storage driver (instead of overlay2 which needs root).\n\nLimitations:\n- Cannot bind to privileged ports (<1024) without adjusting `/proc/sys/net/ipv4/ip_unprivileged_port_start`.\n- Some features like `ping` need extra capabilities (`NET_RAW`), which may need to be added via sysctl.\n- Slightly reduced networking performance (user‑mode networking)."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Rootless Benefit 🛡️",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the main security advantage of rootless Docker?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Faster container startup",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The daemon runs without root privileges, reducing host compromise risk",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It uses a different container runtime",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It disables all capabilities",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Rootless means even if an attacker breaks out of a container, they are not root on the host.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Installing Rootless Docker 🛠️",
+            "content": "# Step‑by‑Step Setup\n\nOn a Linux host with a normal user account:\n\n1. Remove any existing rootful Docker (optional, they can coexist).\n2. Install `uidmap` package:\n   ```bash\n   sudo apt install uidmap\n   ```\n3. Run the official install script:\n   ```bash\n   curl -fsSL https://get.docker.com/rootless | sh\n   ```\n   This installs Docker binaries in `~/.docker/` and sets up systemd user service.\n4. Set environment variables (added to `~/.bashrc` by the script):\n   ```bash\n   export PATH=/home/$USER/bin:$PATH\n   export DOCKER_HOST=unix:///run/user/1000/docker.sock\n   ```\n5. Start the daemon:\n   ```bash\n   systemctl --user start docker\n   ```\n\nNow `docker run hello-world` works as a non‑root user!"
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Verify Rootless Operation 🔍",
+            "content": "Check that the daemon is not running as root:",
+            "codeSnippet": "ps aux | grep dockerd\n# Should show the daemon under your username, not root\n\ndocker info | grep -i rootless\n# Should show: rootless: true",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Rootless Limitations ⚠️",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "true_false",
+                "question": "Rootless Docker can bind to privileged ports (below 1024) without any additional configuration.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "By default, non‑root users cannot bind to ports <1024. You can lower `net.ipv4.ip_unprivileged_port_start` to allow it, but it's not enabled by default.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Rootless in Production\nRootless Docker is excellent for CI pipelines, development, and multi‑tenant environments. For production, evaluate the networking performance overhead and consider user namespace remapping (`userns-remap`) as an alternative if rootless is not feasible."
+        }
+    ]
+}

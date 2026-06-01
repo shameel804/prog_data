@@ -1,0 +1,114 @@
+{
+    "id": "l3",
+    "chapterId": "ch_3",
+    "title": "Inspecting Containers Deeply 🔍",
+    "description": "Use `docker inspect` to see full configuration and filter specific fields.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The Ultimate Diagnostic Tool 🔬",
+            "content": "# `docker inspect`\n\n`docker inspect` returns **low‑level information** about any Docker object (container, image, volume, network).\n\n```bash\ndocker inspect OBJECT\n```\n\nOutput is a **JSON array** with all metadata: environment variables, network settings, mounts, state, command, etc.\n\n**Example:**\n```bash\ndocker inspect my-container\n```\n\nThis dumps a lot of information. Let’s learn to filter it."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Formatting Output with `--format` (Go Templates) 🧩",
+            "content": "# Filter Specific Fields\n\nUse `--format` (or `-f`) with a Go template to extract exactly what you need.\n\n```bash\ndocker inspect -f '{{.State.Status}}' my-container\n```\n\nThis prints only the status (e.g., `running`).\n\n**Useful fields:**\n- `{{.NetworkSettings.IPAddress}}` – container’s IP\n- `{{.HostConfig.Memory}}` – memory limit\n- `{{.Config.Env}}` – environment variables list\n- `{{.Mounts}}` – volume mounts\n\nCombine with `range` for arrays:\n```bash\ndocker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' my-container\n```"
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Inspect Filter 🎯",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "How would you extract the container’s hostname using `--format`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "docker inspect -f '{{.Config.Hostname}}' mycontainer",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "docker inspect -f '{{Hostname}}' mycontainer",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "docker inspect hostname mycontainer",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "docker inspect -h mycontainer",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The path to the hostname is `.Config.Hostname`. The full JSON structure can be seen by running `docker inspect` without filter.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Inspecting Images 🖼️",
+            "content": "# Image Metadata\n\nYou can inspect images too:\n```bash\ndocker inspect nginx:alpine\n```\n\nIt reveals:\n- Environment variables the image expects.\n- Exposed ports.\n- Default command.\n- Layers and creation date.\n\nFilter example:\n```bash\ndocker inspect -f '{{.Config.ExposedPorts}}' nginx:alpine\n```"
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Practical Inspection 📋",
+            "content": "Let’s inspect a running Nginx container:",
+            "codeSnippet": "docker run -d --name web nginx:alpine\ndocker inspect -f 'IP: {{.NetworkSettings.IPAddress}} Status: {{.State.Status}}' web\n# Output: IP: 172.17.0.2 Status: running",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Image vs Container 🆚",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Which of the following can be inspected with `docker inspect`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Only containers",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Containers, images, networks and volumes",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Containers and images only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only running containers",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`docker inspect` works on any Docker object – containers (running or stopped), images, networks, volumes, etc.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "tip",
+            "title": "Tip: Use `jq` for Complex Queries 💡",
+            "content": "## Piping to jq\n\nIf you have `jq` installed, you can parse the full JSON:\n```bash\ndocker inspect my-container | jq '.[0].NetworkSettings.IPAddress'\n```\nThis gives you more power than Go templates for complex logic."
+        }
+    ]
+}

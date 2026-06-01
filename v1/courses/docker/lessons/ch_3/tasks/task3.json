@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_3",
+    "title": "Commit, Rename, and Limit Resources",
+    "description": "Modify a container, commit it to a new image, rename it, and apply resource limits.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Objective\nPractice `docker commit` to capture container state, rename a container, and run a container with memory and CPU limits.\n\n### Steps\n1. Start an Alpine container named `workspace`:\n   ```bash\n   docker run -d --name workspace alpine sleep 3600\n   ```\n2. Install a package inside it (e.g., `curl`):\n   ```bash\n   docker exec workspace apk add curl\n   ```\n3. Verify that `curl` works:\n   ```bash\n   docker exec workspace curl --version\n   ```\n4. Commit the container’s changes to a new image called `my-alpine-curl:1.0`:\n   ```bash\n   docker commit workspace my-alpine-curl:1.0\n   ```\n5. Stop and remove the original container:\n   ```bash\n   docker stop workspace && docker rm workspace\n   ```\n6. Run a new container from the custom image with a different name and test `curl`:\n   ```bash\n   docker run --rm my-alpine-curl:1.0 curl --version\n   ```\n7. Now, run a new container from the same image with a name and rename it:\n   ```bash\n   docker run -d --name old-name my-alpine-curl:1.0 sleep 600\n   docker rename old-name new-name\n   ```\n   Verify the rename with `docker ps`.\n8. Finally, run a container with memory and CPU limits:\n   ```bash\n   docker run -d --name limited --memory=128m --cpus=0.25 alpine sleep 600\n   ```\n9. Inspect the limits:\n   ```bash\n   docker inspect -f 'Memory: {{.HostConfig.Memory}} CPUs: {{.HostConfig.NanoCpus}}' limited\n   ```\n   (NanoCpus value is in billionths; 0.25 CPU = 250000000)\n10. Clean up all remaining containers.",
+    "hints": [
+        "The package manager in Alpine is `apk`.",
+        "If you get a conflict when renaming, ensure no container is already named `new-name`.",
+        "Resource limits are enforced by the kernel; `docker inspect` shows what was requested."
+    ],
+    "expectedOutput": "`curl --version` works from the committed image. `docker ps` shows the container name as `new-name`. The inspect command shows Memory=134217728 (128m) and NanoCpus=250000000.",
+    "solutionCode": "docker run -d --name workspace alpine sleep 3600\ndocker exec workspace apk add curl\ndocker exec workspace curl --version\ndocker commit workspace my-alpine-curl:1.0\ndocker stop workspace\ndocker rm workspace\ndocker run --rm my-alpine-curl:1.0 curl --version\ndocker run -d --name old-name my-alpine-curl:1.0 sleep 600\ndocker rename old-name new-name\ndocker ps\ndocker run -d --name limited --memory=128m --cpus=0.25 alpine sleep 600\ndocker inspect -f 'Memory: {{.HostConfig.Memory}} CPUs: {{.HostConfig.NanoCpus}}' limited\ndocker stop new-name limited\ndocker rm new-name limited"
+}

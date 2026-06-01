@@ -1,0 +1,152 @@
+{
+    "id": "l2",
+    "chapterId": "ch_12",
+    "title": "Logging, Monitoring & Resource Limits 📊",
+    "description": "Master logging drivers, docker stats, and set resource constraints to run production workloads safely.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Logging Drivers – More Than Just Stdout 📜",
+            "content": "# Where Do Container Logs Go?\n\nBy default, Docker captures stdout/stderr and stores them as JSON files (json‑file driver). You can change the logging driver:\n\n- `json-file` – default, logs on disk (can be rotated).\n- `syslog` – send to syslog server.\n- `journald` – send to systemd journal.\n- `fluentd`, `gelf`, `splunk` – send to centralised log collectors.\n\nSet globally in `/etc/docker/daemon.json` or per‑container:\n```bash\ndocker run --log-driver fluentd --log-opt fluentd-address=localhost:24224 nginx\n```\n\n> Centralised logging is essential for multi‑host setups."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Log Driver Choice 🚚",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which logging driver is the default for Docker containers?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "syslog",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "fluentd",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "json-file",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "journald",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The default driver is `json-file`, which stores logs as JSON on the host filesystem.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Docker Logging Options 🛠️",
+            "content": "# Configure Log Rotation\n\nJSON logs can fill your disk. Use `--log-opt` to limit them:\n```bash\ndocker run --log-opt max-size=10m --log-opt max-file=3 nginx\n```\n\nOr in `daemon.json`:\n```json\n{\n  \"log-driver\": \"json-file\",\n  \"log-opts\": {\n    \"max-size\": \"10m\",\n    \"max-file\": \"3\"\n  }\n}\n```\n\nYou can also use `docker logs --tail 100 -f mycontainer` to stream recent logs."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Monitoring Containers 📈",
+            "content": "# Beyond `docker stats`\n\n`docker stats` gives real‑time CPU/memory. For production, integrate with:\n\n- **cAdvisor** (Container Advisor) – collects resource usage and exports metrics.\n- **Prometheus** – scrapes cAdvisor metrics, stores time‑series.\n- **Grafana** – dashboards.\n\nDocker also exposes a metrics endpoint (experimental): `http://localhost:9323/metrics`.\n\n> Use monitoring to detect memory leaks, CPU spikes, and plan capacity."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "quiz",
+            "title": "Monitoring Stack 🥞",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Which tool is commonly used to collect container resource metrics and export them to Prometheus?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Docker Swarm",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "cAdvisor",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Trivy",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "BuildKit",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "cAdvisor (Container Advisor) provides resource usage and performance characteristics of running containers.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Resource Limits – Avoid Noisy Neighbours 🤫",
+            "content": "# Enforce CPU and Memory Boundaries\n\nIn production, always set resource constraints:\n\n- `--memory` (or `-m`): maximum memory (e.g., `--memory 512m`).\n- `--memory-swap`: total memory+swap; set same as memory to disable swap.\n- `--cpus`: how many CPUs (e.g., `--cpus 1.5`).\n- `--cpu-shares`: relative weight when CPU is contended.\n\n**Example:**\n```bash\ndocker run -d --memory=256m --cpus=0.5 nginx\n```\n\n> Without limits, one container can starve others. The kernel's OOM killer may terminate it."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "Health Checks & Restart Policies 🩺",
+            "content": "# Keep Services Alive\n\n- **HEALTHCHECK** in Dockerfile: tells Docker how to test if the app is healthy.\n- **Restart policy**: `--restart always`, `unless-stopped`, `on-failure`.\n- Swarm services also have `update_config` for rolling updates and failure handling.\n\nIn Compose:\n```yaml\nservices:\n  api:\n    image: myapi\n    healthcheck:\n      test: [\"CMD\", \"curl\", \"-f\", \"http://localhost/health\"]\n      interval: 30s\n      timeout: 10s\n      retries: 3\n    restart: always\n    deploy:\n      resources:\n        limits:\n          memory: 256M\n```\n\n> Combining these ensures Docker can automatically recover from failures."
+        },
+        {
+            "id": "s_l2_8",
+            "type": "quiz",
+            "title": "Resource Limits 📏",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_3",
+                "type": "multiple_choice",
+                "question": "What does `--memory-swap` set to the same value as `--memory` achieve?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Doubles the memory limit",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Disables swap for the container",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Enables unlimited swap",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Sets the container's memory limit to zero",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Setting `--memory-swap` equal to `--memory` prevents the container from using any swap space.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Test Your Limits\nRun `docker stats` while load‑testing your app to see actual resource usage. Set limits about 20‑30% above peak observed values."
+        }
+    ]
+}

@@ -1,0 +1,120 @@
+{
+    "id": "l3",
+    "chapterId": "ch_4",
+    "title": "Peeking Under the Hood: Image Layers & History 🔬",
+    "description": "Explore the layered filesystem, dive into image history, and understand why layers matter.",
+    "xpReward": 35,
+    "estimatedMinutes": 8,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The Layered Filesystem 🧅",
+            "content": "# Images Are Built in Layers\n\nEach command in a Dockerfile creates a **new layer**. Layers are read‑only and stacked on top of each other.\n\n- **Union filesystem (OverlayFS, aufs, etc.)** merges layers to present a single coherent filesystem.\n- Layers are shared across images — if two images use the same base layer, it’s stored only once.\n\nWhen you run a container, Docker adds a thin **writable layer** on top. All changes (new files, modifications) go there. This writable layer is lost when the container is removed (unless you commit or use volumes)."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Why Layers Matter 📊",
+            "content": "# Benefits of Layers\n\n1. **Storage efficiency**: Common base layers are reused across many images.\n2. **Faster pulls/pushes**: Only new layers are transferred.\n3. **Build caching**: Docker can skip rebuilding unchanged layers.\n\n```\n Layer 5: Your application code\n Layer 4: Install dependencies\n Layer 3: Update apt-get\n Layer 2: Set environment variables\n Layer 1: Base OS (Ubuntu, Alpine)\n```\n\n> The order of layers determines caching effectiveness. Place frequently changing layers at the end (e.g., code)."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Layer Reuse 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "If you pull two images that both use `ubuntu:20.04` as a base, how many times is the Ubuntu layer stored?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Twice — once for each image",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Once, because layers are shared across images",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Depends on the tags",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's not stored; it's only in the registry",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Docker stores each layer uniquely by its content hash. Identical layers are stored only once on disk.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Viewing Image Layers with `docker history` 📜",
+            "content": "# `docker image history`\n\nSee how an image was built — each layer’s size, command, and creation time.\n\n```bash\ndocker history nginx:alpine\n```\n\nOutput columns:\n- **IMAGE**: layer ID\n- **CREATED**: when the layer was made\n- **CREATED BY**: the Dockerfile command that generated the layer (or build instruction)\n- **SIZE**: layer size (compressed? it’s the compressed size after push)\n- **COMMENT**: optional\n\n> This is incredibly useful for troubleshooting or understanding what an image contains."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "History Example 📖",
+            "content": "Let’s look at the history of a simple Alpine image:",
+            "codeSnippet": "docker pull alpine:3.18\ndocker history alpine:3.18\n\n# Sample output:\n# IMAGE          CREATED       CREATED BY                                      SIZE\n# 5e2b554c1c45   2 weeks ago   /bin/sh -c #(nop)  CMD [\"/bin/sh\"]              0B\n# <missing>      2 weeks ago   /bin/sh -c #(nop) ADD file:... in /             7.33MB",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "History Detective 🔎",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "What does the `<missing>` label in `docker history` output indicate?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The layer was deleted",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The layer’s image ID is not available locally (often from a base image that was squashed or not pulled)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The layer is a writable container layer",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's a bug in Docker",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`<missing>` appears when the intermediate layer doesn’t have an ID locally, often because the image was imported or built with older Docker versions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Inspecting Individual Layers 🔍",
+            "content": "# `docker image inspect` for Layer IDs\n\nFull layer information is in the image’s JSON:\n\n```bash\ndocker inspect alpine:3.18\n```\n\nLook for the `RootFS.Layers` array — these are the layer digests (SHA256 hashes).\n\nYou can also use tools like **dive** (`wagoodman/dive`) to visually explore layers and wasted space."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Layer Caching for Faster Builds\n\nWhen building your own images (next chapter!), put commands that change **least** at the top of the Dockerfile (e.g., OS updates) and frequently changing commands (e.g., copying source code) at the bottom. This maximises cache hits."
+        }
+    ]
+}

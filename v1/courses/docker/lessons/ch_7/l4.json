@@ -1,0 +1,104 @@
+{
+    "id": "l4",
+    "chapterId": "ch_7",
+    "title": "Port Mapping & Exposing Services 🚪",
+    "description": "Master `-p`, `-P` and understand how traffic flows from host to container.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Container Network Is Private 🔐",
+            "content": "# Why Port Mapping?\n\nBy default, containers on a bridge network have private IPs. The host cannot reach a web server running on container port 80 unless you explicitly open a door.\n\nPort mapping creates a **DNAT** (Destination Network Address Translation) rule on the host, forwarding traffic from a host port to the container’s port.\n\nSyntax:\n```bash\ndocker run -p HOST_PORT:CONTAINER_PORT IMAGE\n```"
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "`-p` Examples 📝",
+            "content": "# Common Port Mapping Patterns\n\n- Map 8080 on host to 80 in container:\n  `-p 8080:80`\n- Map to a specific host interface:\n  `-p 127.0.0.1:8080:80` (only localhost)\n- Map multiple ports:\n  `-p 8080:80 -p 443:443`\n- Use `-P` to publish all EXPOSEd ports to random high ports on the host (10000+).\n\n> The container must be listening on the container port for mapping to work."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Port Syntax 🧮",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "In `-p 9090:80`, which port is accessed by the browser on the host?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "80",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "9090",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "8080",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Random",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The first number is the host port, the second is the container port. So 9090 on the host maps to 80 inside.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Mapping Demo 🎬",
+            "content": "Run an Nginx container and access it from your browser:",
+            "codeSnippet": "docker run -d --name nginx-host -p 8080:80 nginx:alpine\n# Open http://localhost:8080\n\n# Check the mapping with docker port\ndocker port nginx-host\n# Output: 80/tcp -> 0.0.0.0:8080",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Firewall & iptables 🔥",
+            "content": "# How Docker Does It\n\nDocker manipulates the host’s `iptables` to create NAT rules. When traffic hits the host port, it is forwarded to the container’s IP and port.\n\n- You don’t need to configure firewalls manually for `-p` (Docker handles it).\n- On Linux, local firewall (like ufw) may block; ensure Docker’s rules are allowed.\n\n> Be careful: Binding to `0.0.0.0` makes the service available to the whole network (unless you bind to localhost)."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Firewall Awareness 🔥",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "Mapping a port with `-p 80:80` makes the container’s port 80 accessible from outside the host machine.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Unless you bind to a specific interface, Docker will bind to `0.0.0.0`, making the port available on all network interfaces.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `docker port` to Verify\nAfter starting a container with `-p`, run `docker port <container>` to see the exact mapping. It’s very useful for debugging."
+        }
+    ]
+}

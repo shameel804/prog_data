@@ -1,0 +1,114 @@
+{
+    "id": "l3",
+    "chapterId": "ch_9",
+    "title": "Building Images & Managing Environment Variables 🏗️",
+    "description": "Integrate Dockerfiles into Compose and use environment variables and .env files effectively.",
+    "xpReward": 35,
+    "estimatedMinutes": 8,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Building Images with Compose 🏗️",
+            "content": "# `build` vs `image`\n\nYou can have Compose build your image from a Dockerfile:\n```yaml\nservices:\n  app:\n    build:\n      context: ./app       # path to Dockerfile directory\n      dockerfile: Dockerfile.dev  # optional, default is 'Dockerfile'\n      args:                # build args\n        - NODE_ENV=development\n```\n\nThen `docker compose build` builds all services with `build` defined. `docker compose up --build` forces a rebuild before starting.\n\n> If you also specify `image`, Compose tags the built image with that name."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Build Example 🔨",
+            "content": "Multi‑service build:",
+            "codeSnippet": "services:\n  frontend:\n    build:\n      context: ./frontend\n      args:\n        API_URL: http://backend:3000\n    ports:\n      - \"80:80\"\n  backend:\n    build: ./backend\n    ports:\n      - \"3000:3000\"",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Build Trigger 🔨",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "How do you force Docker Compose to rebuild images before starting services?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "docker compose rebuild up",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "docker compose up --build",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "docker compose build --force",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "docker compose start --rebuild",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`docker compose up --build` will build images (if build context defined) before starting containers.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Environment Variables in Compose 🌍",
+            "content": "# Injecting Configuration\n\nYou can define environment variables directly in the compose file:\n```yaml\nenvironment:\n  - NODE_ENV=production\n  - API_KEY=12345\n```\n\nOr use an `.env` file (placed next to compose.yaml):\n```\n# .env\nNODE_ENV=development\nAPI_KEY=dev_key\n```\n\nIn compose.yaml, reference them with `${VARIABLE}`:\n```yaml\nenvironment:\n  - NODE_ENV=${NODE_ENV}\n```\n\n> Compose automatically reads the `.env` file in the project directory. You can specify a different file with `--env-file`."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Secrets vs Environment Variables 🤫",
+            "content": "# For Sensitive Data\n\nNever put secrets directly in `compose.yaml` or `.env` if committed to version control. Use:\n- **Compose secrets** (Swarm only)\n- Runtime injection via `env_file` with a file outside VCS\n- Docker secrets (Swarm)\n\nFor local development, you can use an `override` file (`compose.override.yaml`) that is gitignored."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Env File Magic ✨",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "If you have a `.env` file with `APP_PORT=5000`, how can you use it in `compose.yaml`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Simply write `APP_PORT` in ports",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Write `${APP_PORT}`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Use `--env APP_PORT` with docker compose",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's automatically available in all containers",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Compose substitutes `${VAR}` with the value from the `.env` file (or the host's environment if set).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Override Files\n`compose.override.yaml` is automatically merged on top of `compose.yaml` (when both exist). Use it for development‑specific settings (bind mounts, debug ports)."
+        }
+    ]
+}

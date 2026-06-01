@@ -1,0 +1,108 @@
+{
+    "id": "l4",
+    "chapterId": "ch_3",
+    "title": "Monitoring Performance: Stats & Top 📊",
+    "description": "Real‑time resource monitoring and seeing processes inside containers.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Real‑Time Resource Usage: `docker stats` 📈",
+            "content": "# Live Dashboard for Containers\n\n`docker stats` displays a live stream of resource usage for one or all running containers.\n\n```bash\ndocker stats\n```\n\nColumns:\n- **CONTAINER** – name or ID\n- **CPU %** – CPU utilisation\n- **MEM USAGE / LIMIT** – current memory and limit\n- **MEM %** – percentage of limit\n- **NET I/O** – network bytes received/transmitted\n- **BLOCK I/O** – disk I/O\n- **PIDS** – number of processes inside the container\n\nPress `Ctrl+C` to exit."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Filtering and Formatting Stats 🔍",
+            "content": "# Target Specific Containers\n\n```bash\ndocker stats my-container1 my-container2\n```\n\nTo get a one‑time snapshot (non‑streaming), use `--no-stream`:\n```bash\ndocker stats --no-stream\n```\n\nCombine with `--format` to extract specific values:\n```bash\ndocker stats --no-stream --format \"table {{.Name}}\\t{{.MemUsage}}\" \n```\n\n> The `table` keyword enables column headers."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Resource Limits 🔢",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does the MEM USAGE / LIMIT column show?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "CPU speed divided by memory",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Current memory used and the maximum memory the container is allowed to use",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Total host memory and container memory",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Swap usage and memory usage",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It shows the current usage and the limit set on the container (if any). If no limit is set, LIMIT equals the host’s total memory.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Process List Inside a Container: `docker top` 📋",
+            "content": "# See What’s Running Inside\n\n`docker top` displays the running processes of a container (like `ps`).\n\n```bash\ndocker top my-container\n```\n\nOutput columns: `UID`, `PID`, `PPID`, `C`, `STIME`, `TTY`, `TIME`, `CMD`.\n\nYou can pass `ps` options:\n```bash\ndocker top my-container aux\n```\n\nThis is an easy way to check if your application spawned child processes or if a zombie is hanging around."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Live Monitoring Demo 📺",
+            "content": "Let’s start a busy container and monitor it:",
+            "codeSnippet": "# Start a container that stresses CPU a bit\ndocker run -d --name busy alpine sh -c 'while true; do a=1; done'\n\ndocker stats --no-stream busy\ndocker top busy\n\ndocker stop busy\ndocker rm busy",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Top vs Stats ⚡",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Which command would you use to see the PID of the main process inside a container?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "docker stats my-container",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "docker top my-container",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "docker logs my-container",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "docker inspect my-container",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`docker top` shows the process list. `docker stats` shows resource usage, not process IDs.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

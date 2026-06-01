@@ -1,0 +1,240 @@
+{
+    "id": "quiz_ch_8",
+    "chapterId": "ch_8",
+    "title": "Chapter 8 Quiz",
+    "description": "Test your knowledge of Docker volumes, bind mounts, tmpfs, and data management!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the primary reason to use volumes instead of storing data inside the container’s writable layer?",
+            "options": [
+                "Volumes are faster",
+                "Data in the writable layer is lost when the container is removed",
+                "Docker Hub requires volumes",
+                "Volumes compress data"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The container's writable layer is ephemeral. Volumes persist independently of the container lifecycle."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "Which command creates a named volume called 'db-data'?",
+            "options": [
+                "docker create volume db-data",
+                "docker volume create db-data",
+                "docker volume add db-data",
+                "docker mount create db-data"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker volume create <name>` is the correct command."
+        },
+        {
+            "id": "q3",
+            "type": "true_false",
+            "question": "When you remove a container, any volumes attached to it are automatically deleted.",
+            "correctAnswer": false,
+            "explanation": "Volumes survive container removal unless you explicitly use `-v` with `docker rm` or use `docker volume prune`."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "What is the default location where Docker stores volume data on a Linux host?",
+            "options": [
+                "/var/lib/docker/volumes/",
+                "/opt/docker/data/",
+                "/etc/docker/volumes/",
+                "/tmp/docker-volumes/"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Docker stores volumes under `/var/lib/docker/volumes/` by default."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "Which flag mounts a volume called 'mydata' to the container path '/data'?",
+            "options": [
+                "-p mydata:/data",
+                "-v mydata:/data",
+                "--mount mydata:/data",
+                "--volume mydata:/data"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The short form is `-v <volume>:<container_path>`. The `--mount` syntax is more explicit."
+        },
+        {
+            "id": "q6",
+            "type": "true_false",
+            "question": "A volume can be mounted to multiple containers simultaneously.",
+            "correctAnswer": true,
+            "explanation": "Yes, volumes support shared access across multiple containers."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "What does adding `:ro` at the end of a volume mount do?",
+            "options": [
+                "Removes the volume after use",
+                "Makes the mount read‑only",
+                "Only allows root to access it",
+                "Optimises for random I/O"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`:ro` mounts the volume in read‑only mode for that container."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "What is a bind mount?",
+            "options": [
+                "A volume stored in a remote registry",
+                "A mapping of a host directory or file into the container",
+                "A mount that binds two containers together",
+                "A volume that is automatically created by Docker"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Bind mounts use an existing host path."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "Which is a potential downside of bind mounts compared to named volumes?",
+            "options": [
+                "They are slower",
+                "They tie the container to the host's directory structure and permissions",
+                "They cannot be shared",
+                "They are only available on Windows"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Bind mounts depend on the host filesystem layout, reducing portability."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "What is a tmpfs mount?",
+            "options": [
+                "A volume stored on an external USB drive",
+                "A temporary in‑memory filesystem",
+                "A mount that synchronises data with the cloud",
+                "A volume that uses compression"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Tmpfs stores data in memory only, and it's lost when the container stops."
+        },
+        {
+            "id": "q11",
+            "type": "true_false",
+            "question": "Data in a tmpfs mount is written to the container's writable layer.",
+            "correctAnswer": false,
+            "explanation": "Tmpfs resides in memory, not in the container’s filesystem layers."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "Which command would you use to back up a volume named `mydata` to a tar file on the host?",
+            "options": [
+                "docker backup mydata > backup.tar",
+                "docker run --rm -v mydata:/data -v $(pwd):/backup alpine tar czf /backup/backup.tar.gz -C /data .",
+                "docker cp mydata:/ backup.tar",
+                "docker export mydata"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The trick is to use a temporary container that mounts both the volume and a host directory to perform the tar operation."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "What does `--volumes-from another_container` do?",
+            "options": [
+                "Copies the volumes to a new location",
+                "Mounts the same volumes that are attached to another_container into the new container",
+                "Deletes the volumes from another_container",
+                "Backs up the volumes"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It shares the exact same volume mounts as the referenced container."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "How do you remove all unused volumes?",
+            "options": [
+                "docker volume rm --all",
+                "docker volume prune",
+                "docker system prune",
+                "docker clean volumes"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker volume prune` removes all anonymous and unused named volumes."
+        },
+        {
+            "id": "q15",
+            "type": "true_false",
+            "question": "Docker volumes can be stored on network‑attached storage using volume drivers.",
+            "correctAnswer": true,
+            "explanation": "Volume plugins allow Docker to integrate with external storage systems like NFS, EBS, etc."
+        },
+        {
+            "id": "q16",
+            "type": "fill_blank",
+            "question": "To inspect the details of a volume named `appdata`, you would use `docker volume ______ appdata`.",
+            "options": [
+                "inspect",
+                "show",
+                "detail",
+                "ls"
+            ],
+            "correctAnswer": "inspect",
+            "explanation": "`docker volume inspect <name>` returns JSON details including mountpoint."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "When you mount a volume to a directory that already contains files in the image, what happens?",
+            "options": [
+                "The volume hides the existing files",
+                "The existing files are copied into the volume (if the volume is empty)",
+                "An error occurs",
+                "The volume is ignored"
+            ],
+            "correctAnswer": 1,
+            "explanation": "If the volume is empty, Docker populates it with the content from the image directory. If the volume already has data, that data takes precedence."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "Which is NOT a valid mount type in Docker?",
+            "options": [
+                "volume",
+                "bind",
+                "tmpfs",
+                "cache"
+            ],
+            "correctAnswer": 3,
+            "explanation": "The three mount types are `volume`, `bind`, and `tmpfs`. There is no `cache` mount type."
+        },
+        {
+            "id": "q19",
+            "type": "true_false",
+            "question": "Using `--tmpfs` is equivalent to `--mount type=tmpfs,destination=/path`.",
+            "correctAnswer": true,
+            "explanation": "`--tmpfs` is a shorthand; `--mount type=tmpfs` is the long form."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "What is one advantage of using named volumes over anonymous volumes?",
+            "options": [
+                "They are encrypted",
+                "They are easier to manage, back up, and reference by name",
+                "They are faster",
+                "They can only be used by one container"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Named volumes have a predictable name, making management and scripting much easier."
+        }
+    ]
+}

@@ -1,0 +1,119 @@
+{
+    "id": "l5",
+    "chapterId": "ch_9",
+    "title": "Development Workflow & Advanced Features 🚀",
+    "description": "Leverage profiles, watch mode, and overrides to create a smooth developer experience.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Service Profiles – Selective Startup 🎯",
+            "content": "# Run Only What You Need\n\nProfiles let you group services and start them conditionally.\n\n```yaml\nservices:\n  app:\n    image: myapp\n    profiles: [\"debug\"]\n```\n\nStart with:\n```bash\ndocker compose --profile debug up\n```\n\nOr multiple profiles: `--profile frontend --profile backend`.\n\n> Services without a profile are always started. With a profile, only when that profile is activated."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Profile Activation 🎬",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "If a service has `profiles: [\"tools\"]`, when will it be started by `docker compose up`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Always",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Only when `--profile tools` is passed",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only in production",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It will never start",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Profiled services are opt‑in via the `--profile` flag.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Compose Watch – Live Reload 🔄",
+            "content": "# Automatic Sync & Rebuild\n\nCompose `watch` (v2.22+) monitors file changes and triggers actions defined in `compose.yaml`:\n\n```yaml\nservices:\n  web:\n    build: .\n    develop:\n      watch:\n        - path: ./src\n          action: sync\n          target: /app/src\n        - path: ./package.json\n          action: rebuild\n```\n\nStart with:\n```bash\ndocker compose up --watch\n```\n\nChanges to `src/` are synced instantly; changes to `package.json` trigger a rebuild.\n\n> Great for interpreted languages (Python, Node) without needing bind mounts and custom reload tools."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Multiple Compose Files – Override Pattern 🧩",
+            "content": "# Base + Environment Specific\n\nCompose automatically reads `compose.override.yaml` if present, merging it on top of `compose.yaml`. You can also specify additional files with `-f`:\n\n```bash\ndocker compose -f compose.yaml -f compose.prod.yaml up\n```\n\nTypical project structure:\n- `compose.yaml` – base definition\n- `compose.override.yaml` – development overrides (bind mounts, debug ports) – gitignored\n- `compose.prod.yaml` – production settings (replicas, logging)\n\n> The later files override/merge with previous ones."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Override Example 📦",
+            "content": "Base `compose.yaml`:\n```yaml\nservices:\n  web:\n    image: myapp\n    ports:\n      - \"80:80\"\n```\n\nOverride `compose.override.yaml`:\n```yaml\nservices:\n  web:\n    build: .\n    volumes:\n      - .:/app\n```\n\nNow `docker compose up` builds locally and mounts code.",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "File Merging 🧬",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What happens when you have both `compose.yaml` and `compose.override.yaml`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "You must choose one with `-f`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Override file is ignored",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The two files are merged, with override values taking precedence",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Compose throws an error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`compose.override.yaml` is automatically applied on top of the base file. This is great for development tweaks.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Development Best Practices 🧑‍💻",
+            "content": "# Workflow Tips\n\n- Keep `compose.yaml` version‑controlled with production‑ready defaults.\n- Use `compose.override.yaml` for local dev settings (bind mounts, exposed ports, debug flags) and **gitignore** it.\n- Use `.env` for environment‑specific values (not secrets!).\n- Use profiles for optional tools (adminer, phpMyAdmin, etc.).\n- Run `docker compose config` to see the final merged configuration before deployment.\n- Integrate `compose up` with your CI to run integration tests against real databases."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## `docker compose config`\nThis command prints the final, merged configuration without running anything. It’s excellent for debugging and documentation."
+        }
+    ]
+}

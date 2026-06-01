@@ -1,0 +1,110 @@
+{
+    "id": "l3",
+    "chapterId": "ch_10",
+    "title": "Stacks: Compose Meets Swarm 🎼",
+    "description": "Deploy entire multi‑service applications with `docker stack deploy` using Compose files.",
+    "xpReward": 35,
+    "estimatedMinutes": 8,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Stacks – Multi‑Service Swarm Apps 📚",
+            "content": "# Beyond Individual Services\n\nA **stack** is a collection of services that make up an application, deployed together using a **Compose file**.\n\n- Defined in a `docker-compose.yml` (v3+).\n- Deployed with `docker stack deploy`.\n- Stacks group services under a common name (the stack name).\n- Swarm handles networking, secrets, configs declared in the Compose file.\n\n> Think of a stack as a Swarm‑aware Docker Compose application."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Deploying a Stack 🚀",
+            "content": "# `docker stack deploy`\n\n```bash\ndocker stack deploy -c compose.yml STACK_NAME\n```\n\n- `-c` specifies the Compose file.\n- `STACK_NAME` becomes the namespace for the services, networks, volumes, etc.\n\nExample:\n```bash\ndocker stack deploy -c myapp.yml myapp\n```\n\nCheck stacks:\n```bash\ndocker stack ls\n```\n\nList services of a stack:\n```bash\ndocker stack services myapp\n```"
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Stack vs Service 🆚",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is a Docker stack?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A single container",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A group of services deployed together using a Compose file in Swarm mode",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A way to store Docker images",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A monitoring tool for Docker",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Stacks are the Swarm equivalent of Compose apps, deploying all services with one command.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Compose File for Stacks (v3+) 📄",
+            "content": "# What’s Supported?\n\nA Compose file for `docker stack deploy` must use version 3.x (or the Compose Specification).\n\nNew top‑level keys (compared to Compose V2):\n- `deploy`: swarm‑specific settings (replicas, update config, restart policy, placement constraints).\n- `secrets`: define and mount secrets.\n- `configs`: define and mount configs.\n\nExample snippet:\n```yaml\nversion: \"3.8\"\nservices:\n  web:\n    image: nginx:alpine\n    deploy:\n      replicas: 3\n      update_config:\n        parallelism: 1\n        delay: 10s\n      restart_policy:\n        condition: on-failure\n```\n\n> `build` is **ignored** in `docker stack deploy`. Images must be pre‑built and pushed to a registry."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Full Stack Example 🧩",
+            "content": "A voting app stack (simplified):",
+            "codeSnippet": "version: \"3.8\"\nservices:\n  vote:\n    image: dockersamples/examplevotingapp_vote:before\n    ports:\n      - \"5000:80\"\n    deploy:\n      replicas: 2\n  redis:\n    image: redis:alpine\n    deploy:\n      replicas: 1\n  worker:\n    image: dockersamples/examplevotingapp_worker\n    deploy:\n      replicas: 1\n  db:\n    image: postgres:9.4\n    deploy:\n      replicas: 1\n  result:\n    image: dockersamples/examplevotingapp_result:before\n    ports:\n      - \"5001:80\"",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Stack Compose Rules 📋",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "true_false",
+                "question": "`build` instructions in a Compose file are executed when you run `docker stack deploy`.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Swarm does not support building images. You must pull pre‑built images from a registry.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Updating & Removing Stacks 🔄",
+            "content": "# Stack Lifecycle\n\nUpdate a stack by deploying again:\n```bash\ndocker stack deploy -c updated-compose.yml myapp\n```\nSwarm will perform rolling updates where needed.\n\nRemove a stack (stops all services, removes networks and secrets):\n```bash\ndocker stack rm myapp\n```\n\n> `docker stack services myapp` shows the current state."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Convert Existing Compose to Swarm\nYou can often reuse your `compose.yaml` by adding `deploy` keys and ensuring images are in a registry. Test locally with `docker stack deploy` (single‑node swarm works fine)."
+        }
+    ]
+}

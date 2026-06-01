@@ -1,0 +1,246 @@
+{
+    "id": "quiz_ch_10",
+    "chapterId": "ch_10",
+    "title": "Chapter 10 Quiz",
+    "description": "Test your knowledge of Docker Swarm, services, stacks, networking, secrets, and orchestration concepts!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is Docker Swarm mode?",
+            "options": [
+                "A GUI for managing containers",
+                "Docker's native clustering and orchestration solution",
+                "A third‑party plugin for Kubernetes",
+                "A storage driver for volumes"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Swarm mode turns a group of Docker engines into a single, managed cluster."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "Which node type schedules tasks in a Swarm?",
+            "options": [
+                "Worker",
+                "Manager",
+                "Any node",
+                "Load balancer"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Manager nodes handle orchestration and scheduling. Workers simply run tasks."
+        },
+        {
+            "id": "q3",
+            "type": "true_false",
+            "question": "A worker node can also act as a manager if needed.",
+            "correctAnswer": true,
+            "explanation": "You can promote a worker to manager. By default, nodes are workers; managers are manually promoted."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "What command initializes a new Swarm on a node?",
+            "options": [
+                "docker cluster init",
+                "docker swarm init",
+                "docker init swarm",
+                "docker swarm create"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker swarm init` turns the current Docker engine into a manager."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "What is the purpose of the `--replicas` flag in `docker service create`?",
+            "options": [
+                "Sets the number of manager nodes",
+                "Defines how many copies of the service should run",
+                "Limits the memory of each replica",
+                "Specifies the restart policy"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Replicas determine how many container instances (tasks) of that service are running."
+        },
+        {
+            "id": "q6",
+            "type": "true_false",
+            "question": "The Docker Swarm routing mesh ensures that only nodes running a replica can receive traffic on the published port.",
+            "correctAnswer": false,
+            "explanation": "The routing mesh makes every node listen on the published port, and forwards traffic to a node running a replica."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "How do you scale a service named `api` to 5 replicas?",
+            "options": [
+                "docker service update --replicas=5 api",
+                "docker service scale api=5",
+                "docker scale api=5",
+                "Both a and b are valid"
+            ],
+            "correctAnswer": 3,
+            "explanation": "Both `docker service scale api=5` and `docker service update --replicas=5 api` work."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "What is a rolling update in Swarm?",
+            "options": [
+                "Stopping all replicas and restarting them",
+                "Updating replicas one by one to avoid downtime",
+                "Moving the service to another node",
+                "Changing the network driver"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Swarm replaces one replica at a time with the new version, maintaining availability."
+        },
+        {
+            "id": "q9",
+            "type": "fill_blank",
+            "question": "To view all tasks (containers) of a service named `web`, use `docker service ___ web`.",
+            "options": [
+                "ps",
+                "ls",
+                "tasks",
+                "inspect"
+            ],
+            "correctAnswer": "ps",
+            "explanation": "`docker service ps <service>` shows the tasks of that service and their status."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "Which command deploys a stack defined in `docker-compose.yml`?",
+            "options": [
+                "docker compose up",
+                "docker stack deploy -c docker-compose.yml mystack",
+                "docker swarm deploy docker-compose.yml",
+                "docker stack up"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker stack deploy` is used to deploy Compose files in Swarm mode."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "What happens to `build` instructions in a Compose file when used with `docker stack deploy`?",
+            "options": [
+                "Images are built automatically",
+                "They are ignored; images must already exist in a registry",
+                "They are executed on the manager node",
+                "They produce an error"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Swarm does not build images. You must push built images to a registry accessible by all nodes."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "What network driver allows containers on different Swarm nodes to communicate transparently?",
+            "options": [
+                "bridge",
+                "host",
+                "overlay",
+                "macvlan"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Overlay networks span multiple hosts and provide multi‑host connectivity."
+        },
+        {
+            "id": "q13",
+            "type": "true_false",
+            "question": "By default, communication on Swarm overlay networks is unencrypted.",
+            "correctAnswer": false,
+            "explanation": "Swarm overlay networks encrypt data plane traffic using AES‑GCM by default."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "Where are Docker secrets mounted inside containers?",
+            "options": [
+                "/etc/secrets/",
+                "/run/secrets/",
+                "/var/run/secrets/",
+                "/opt/secrets/"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Secrets appear as files under `/run/secrets/<secret_name>`."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "Which command creates a secret named `db_pass` from a file?",
+            "options": [
+                "docker secret create db_pass ./password.txt",
+                "docker secret create db_pass < ./password.txt",
+                "docker create secret db_pass ./password.txt",
+                "docker secret add db_pass ./password.txt"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`docker secret create <name> <file>` reads the file content. Use `-` to read from stdin."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "What is the difference between a config and a secret in Swarm?",
+            "options": [
+                "Configs are encrypted; secrets are plain‑text",
+                "Secrets are encrypted; configs are plain‑text",
+                "No difference",
+                "Secrets cannot be used with stacks"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Secrets are for sensitive data and are encrypted. Configs are for non‑sensitive config files."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "You want to take a node offline for maintenance without disrupting running services. What should you do?",
+            "options": [
+                "docker node rm <node>",
+                "docker node update --availability drain <node>",
+                "docker swarm leave",
+                "docker service scale <service>=0"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Draining a node causes its tasks to be rescheduled to other nodes, allowing safe maintenance."
+        },
+        {
+            "id": "q18",
+            "type": "true_false",
+            "question": "A manager node cannot also run service tasks.",
+            "correctAnswer": false,
+            "explanation": "By default, managers can run tasks. In production, you may want to set `--availability drain` on managers to keep them only for orchestration."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "How do you list all nodes in a Swarm?",
+            "options": [
+                "docker swarm ls",
+                "docker node ls",
+                "docker cluster nodes",
+                "docker service ls"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker node ls` shows the status of every node in the swarm."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "Which command would you use to see the logs of all replicas of a service?",
+            "options": [
+                "docker logs <service>",
+                "docker service logs <service>",
+                "docker swarm logs <service>",
+                "docker stack logs <service>"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker service logs` aggregates logs from all replicas of a service."
+        }
+    ]
+}

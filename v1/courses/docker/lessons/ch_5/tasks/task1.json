@@ -1,0 +1,14 @@
+{
+    "id": "task1",
+    "chapterId": "ch_5",
+    "title": "Build Your First Custom Image with a Dockerfile",
+    "description": "Create a simple Dockerfile, build an image, and run a container from it.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Objective\nWrite a Dockerfile that creates an image serving a static HTML page with Nginx.\n\n### Steps\n1. Create a new directory `my-web` and navigate into it.\n2. Inside, create a subdirectory `html` and put an `index.html` file with some content (e.g., `<h1>Hello from Docker!</h1>`).\n3. Create a file named `Dockerfile` with the following content:\n   ```dockerfile\n   FROM nginx:alpine\n   COPY ./html /usr/share/nginx/html\n   ```\n4. Build the image and tag it `my-web:1.0`:\n   ```bash\n   docker build -t my-web:1.0 .\n   ```\n5. Run a container from the image, mapping port 8080 to 80:\n   ```bash\n   docker run -d --name web1 -p 8080:80 my-web:1.0\n   ```\n6. Open `http://localhost:8080` in your browser and verify your page is displayed.\n7. Stop and remove the container.\n8. (Optional) Improve the Dockerfile by adding a `LABEL` and an `EXPOSE` instruction. Rebuild and test.\n\n### Deliverable\nShow the terminal output of `docker build` and a screenshot/curl of the served page.",
+    "hints": [
+        "Ensure the `html` folder is in the build context (same directory as Dockerfile).",
+        "If port 8080 is already in use, choose another host port."
+    ],
+    "expectedOutput": "A web page showing 'Hello from Docker!' when accessing localhost:8080.",
+    "solutionCode": "# Directory structure:\n# my-web/\n#   Dockerfile\n#   html/\n#     index.html\n\n# Dockerfile content:\nFROM nginx:alpine\nCOPY ./html /usr/share/nginx/html\n\n# Build and run:\ndocker build -t my-web:1.0 .\ndocker run -d --name web1 -p 8080:80 my-web:1.0\ncurl http://localhost:8080"
+}

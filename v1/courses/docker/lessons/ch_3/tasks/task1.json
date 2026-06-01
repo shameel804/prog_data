@@ -1,0 +1,14 @@
+{
+    "id": "task1",
+    "chapterId": "ch_3",
+    "title": "Interactive Shell & Process Exploration",
+    "description": "Use docker exec to open a shell, run commands, and explore a container’s internals.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Objective\nLearn to interact with running containers by executing commands and opening a shell.\n\n### Steps\n1. Start a long‑lived container with Alpine:\n   ```bash\n   docker run -d --name explorer alpine sleep 3600\n   ```\n2. Use `docker exec` to list files in the root directory:\n   ```bash\n   docker exec explorer ls /\n   ```\n3. Open an interactive shell (`sh`) inside the container:\n   ```bash\n   docker exec -it explorer sh\n   ```\n4. Inside the shell, do the following:\n   - Print the current user: `whoami`\n   - Check environment variables: `env`\n   - Create a file: `echo \"Hello from inside\" > /tmp/inside.txt`\n   - Verify the file: `cat /tmp/inside.txt`\n   - Type `exit` to leave the shell.\n5. From the host, verify that the file exists without re‑entering the shell:\n   ```bash\n   docker exec explorer cat /tmp/inside.txt\n   ```\n6. Run a command as a different user (e.g., `nobody`):\n   ```bash\n   docker exec -u nobody explorer whoami\n   ```\n7. Stop and remove the container when finished:\n   ```bash\n   docker stop explorer && docker rm explorer\n   ```",
+    "hints": [
+        "If `sh` doesn’t work, try `bash`. But on Alpine, `sh` is available.",
+        "You can chain commands in the shell with `;` to save time, but `docker exec` only runs one command unless you use `sh -c`."
+    ],
+    "expectedOutput": "The `whoami` inside should show 'root'. The file `inside.txt` should be readable from the host. The `nobody` user should show 'nobody'.",
+    "solutionCode": "docker run -d --name explorer alpine sleep 3600\ndocker exec explorer ls /\ndocker exec -it explorer sh\n# inside: whoami; env; echo \"Hello from inside\" > /tmp/inside.txt; cat /tmp/inside.txt; exit\ndocker exec explorer cat /tmp/inside.txt\ndocker exec -u nobody explorer whoami\ndocker stop explorer\ndocker rm explorer"
+}

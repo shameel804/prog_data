@@ -1,0 +1,108 @@
+{
+    "id": "l4",
+    "chapterId": "ch_5",
+    "title": "Workdir, Context & Ignoring Files 🎯",
+    "description": "Set working directories, understand build context, and use .dockerignore to speed up builds.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "`WORKDIR` – Your Home Inside the Image 🏠",
+            "content": "# Set the Default Directory\n\n```dockerfile\nWORKDIR /path/to/dir\n```\n\n- Creates the directory if it doesn't exist.\n- All subsequent `RUN`, `CMD`, `ENTRYPOINT`, `COPY`, `ADD` commands will execute from this path.\n- You can have multiple `WORKDIR` instructions; they are relative to the previous one if not absolute.\n\n**Example:**\n```dockerfile\nWORKDIR /app\nCOPY . .   # copies to /app\n```\n\n> Best practice: Use `WORKDIR` instead of `RUN cd /some/dir`. `cd` does not persist across layers."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "WORKDIR vs cd 🔄",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Why is `WORKDIR /app` preferred over `RUN cd /app` in a Dockerfile?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "`cd` is not a Docker command",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "`cd` only affects the current RUN layer; `WORKDIR` persists for subsequent instructions",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "`WORKDIR` is faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "`cd` requires root privileges",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Each RUN runs in a new shell, so a `cd` has no effect on later instructions. WORKDIR sets the directory for the entire image build.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "The Build Context Deep Dive 📦",
+            "content": "# What Gets Sent to the Daemon?\n\nWhen you run `docker build .`, Docker packages the entire directory (recursively) and sends it to the daemon. This includes:\n\n- All files and subdirectories\n- Hidden files (`.` files, `.git`)\n- `node_modules`, build artifacts, etc.\n\nThis can be HUGE and slow down the build.\n\n**Solution: `.dockerignore`** file – similar to `.gitignore` – lists files/folders to exclude from the context.\n\nExample `.dockerignore`:\n```\nnode_modules\n.git\n*.md\nDockerfile\n.dockerignore\n```"
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Using .dockerignore 🧹",
+            "content": "Create a `.dockerignore` in the same directory as your Dockerfile:",
+            "codeSnippet": "# .dockerignore\nnode_modules\nnpm-debug.log\n.git\n.env\n*.md\nDockerfile\n.dockerignore\n",
+            "codeLanguage": "plaintext",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Context Size 📏",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What is the primary purpose of `.dockerignore`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To exclude sensitive files from the final image",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To reduce the size of the build context sent to the daemon",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To tell Docker which files to ignore when running containers",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To ignore certain Dockerfile instructions",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`.dockerignore` prevents files from being sent in the build context, speeding up builds and avoiding accidental inclusion.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Always Create a .dockerignore\nEven if you have a tiny project, a `.dockerignore` prevents the `Dockerfile` itself and Git history from bloating the context. Minimize context size for faster builds."
+        }
+    ]
+}

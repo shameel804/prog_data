@@ -1,0 +1,14 @@
+{
+    "id": "task1",
+    "chapterId": "ch_9",
+    "title": "Build Your First Compose App (Web + DB)",
+    "description": "Create a compose file for a web service and a database, run them, and test connectivity.",
+    "estimatedMinutes": 25,
+    "problemStatement": "## Objective\nCreate a two‑service application using Docker Compose: a simple web server and a database, demonstrating DNS and networking.\n\n### Setup\nWe'll use Nginx as the web server and a small database (like Redis for simplicity).\n\n### Steps\n1. Create a directory `compose-demo` and inside it create `compose.yaml` with:\n   ```yaml\n   services:\n     web:\n       image: nginx:alpine\n       ports:\n         - \"8080:80\"\n       networks:\n         - app-net\n     db:\n       image: redis:alpine\n       networks:\n         - app-net\n\n   networks:\n     app-net:\n   ```\n2. Start the application:\n   ```bash\n   docker compose up -d\n   ```\n3. Verify both services are running: `docker compose ps`.\n4. Test DNS resolution from `web` to `db`:\n   ```bash\n   docker compose exec web sh -c \"ping -c 2 db\"\n   ```\n   (If ping is not available in Nginx, use `nslookup db` or `getent hosts db`)\n5. Verify Nginx is accessible on `http://localhost:8080`.\n6. Stop and remove everything:\n   ```bash\n   docker compose down\n   ```\n7. (Bonus) Add a volume to persist Redis data and test that data survives `down` and `up` (without `-v`).\n\n### Deliverable\nShow output of `docker compose ps` and the DNS resolution test (or the Nginx page).",
+    "hints": [
+        "If `ping` is not available, install it: `docker compose exec web apk add iputils` (but that changes the container). Instead, use `getent hosts db` which is available in Alpine Nginx.",
+        "Custom network isn't strictly necessary here (default works), but defining one shows the concept."
+    ],
+    "expectedOutput": "`getent hosts db` returns an IP address. Nginx serves default page on port 8080.",
+    "solutionCode": "# compose.yaml\nservices:\n  web:\n    image: nginx:alpine\n    ports:\n      - \"8080:80\"\n  db:\n    image: redis:alpine\n\n# Commands:\ndocker compose up -d\ndocker compose ps\ndocker compose exec web getent hosts db\ndocker compose down"
+}

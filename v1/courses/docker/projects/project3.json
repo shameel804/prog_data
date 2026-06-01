@@ -1,0 +1,23 @@
+{
+    "id": "project3",
+    "title": "Production Swarm Stack with Secrets & Monitoring 🐝",
+    "description": "Deploy a full‑stack application to a Docker Swarm cluster using stacks, overlay networks, secrets, and resource limits. Implement health checks and rolling updates.",
+    "difficulty": "Advanced",
+    "estimatedHours": "3-5",
+    "projectStatement": "## Goal\nTake the Docker Compose application from Project 1 and adapt it for production deployment on a Docker Swarm (even a single‑node Swarm).\n\nYou will:\n- Convert the `compose.yaml` into a Swarm stack file (`stack.yml`) with version 3.8+.\n- Add `deploy` keys for replicas, resource limits, restart policies, and update configuration.\n- Replace hardcoded sensitive data with **Docker secrets** (e.g., MongoDB connection string, API keys).\n- Define an **overlay network** for inter‑service communication.\n- Add **health checks** for all services.\n- Deploy the stack to your Swarm and demonstrate zero‑downtime rolling updates.\n- (Optional) Set up a monitoring stack (Prometheus + Grafana) as additional services in the same Swarm.\n\nFinally, simulate a failure by draining a node and observe that Swarm reschedules tasks.",
+    "requirements": [
+        "Stack file must use Swarm‑specific deploy options (replicas, resources, update_config).",
+        "Secrets must be created externally and referenced in the stack, not stored in the file.",
+        "All services must have health checks.",
+        "Rolling update for the web service must use `parallelism: 1` and `delay: 10s`.",
+        "Database service must use a volume backed by a host directory or external volume plugin (simulated).",
+        "Port publishing must leverage the Swarm routing mesh (no host port needed for internal communication)."
+    ],
+    "hints": [
+        "Use `docker secret create` to create secrets from files before deploying the stack.",
+        "Use `docker stack deploy -c stack.yml myapp` to launch.",
+        "To test rolling update, change an environment variable and redeploy; watch with `docker stack ps myapp`.",
+        "To drain a node: `docker node update --availability drain <node>`; tasks will move to other nodes."
+    ],
+    "expectedOutput": "After `docker stack deploy`, all services show `REPLICAS 1/1` (or more). Health checks pass. Accessing the published port serves the app. `docker stack ps` shows old tasks replaced gracefully after an update. After draining, tasks are rescheduled to active nodes."
+}

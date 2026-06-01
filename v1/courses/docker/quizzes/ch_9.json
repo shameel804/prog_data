@@ -1,0 +1,266 @@
+{
+    "id": "quiz_ch_9",
+    "chapterId": "ch_9",
+    "title": "Chapter 9 Quiz",
+    "description": "Test your knowledge of Docker Compose: service definitions, networking, volumes, CLI commands, and development workflow!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the primary purpose of Docker Compose?",
+            "options": [
+                "Building single images",
+                "Defining and running multi‑container Docker applications with a YAML file",
+                "Replacing Dockerfiles",
+                "Monitoring container logs"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Compose simplifies multi‑container orchestration on a single host using a declarative file."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "In Compose V2, the command to start services is `docker-compose up`.",
+            "correctAnswer": false,
+            "explanation": "V2 uses `docker compose` (without hyphen). Legacy uses `docker-compose`."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "Which top‑level key in `compose.yaml` defines the individual containers?",
+            "options": [
+                "containers",
+                "services",
+                "apps",
+                "instances"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Services are the container definitions in a Compose file."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "How can you build an image from a Dockerfile located in the `./api` directory within a service?",
+            "options": [
+                "image: ./api",
+                "build: ./api",
+                "context: ./api",
+                "dockerfile: ./api"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`build` can be a simple path to the context, or an object with `context` and `dockerfile`."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "What is the default network behavior in Docker Compose?",
+            "options": [
+                "No network is created; you must define one",
+                "All services join a single default network with DNS resolution by service name",
+                "Each service gets an isolated network",
+                "Services share the host network"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Compose automatically creates a network and attaches all services to it, enabling DNS."
+        },
+        {
+            "id": "q6",
+            "type": "true_false",
+            "question": "You can define a volume at the top level of `compose.yaml` and reference it by name in multiple services.",
+            "correctAnswer": true,
+            "explanation": "Yes, top‑level `volumes:` declares named volumes that can be used across services."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "What does `depends_on` with `condition: service_healthy` do?",
+            "options": [
+                "It restarts the dependent service if the dependency crashes",
+                "It waits for the dependency to pass its HEALTHCHECK before starting the dependent service",
+                "It forces the dependency to use a specific network",
+                "It shares volumes between services"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`depends_on` with health condition ensures service startup order based on health checks."
+        },
+        {
+            "id": "q8",
+            "type": "fill_blank",
+            "question": "To run a one‑off command in a new container for a service, you use `docker compose ____ <service> <cmd>`.",
+            "options": [
+                "exec",
+                "run",
+                "start",
+                "cmd"
+            ],
+            "correctAnswer": "run",
+            "explanation": "`docker compose run` creates a new container. `exec` runs in an existing running container."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "Which command stops and removes containers, networks, and optionally volumes defined in the compose file?",
+            "options": [
+                "docker compose stop",
+                "docker compose rm",
+                "docker compose down",
+                "docker compose clean"
+            ],
+            "correctAnswer": 2,
+            "explanation": "`docker compose down` tears down the application. `-v` adds volumes."
+        },
+        {
+            "id": "q10",
+            "type": "true_false",
+            "question": "`docker compose up --build` will always rebuild images even if nothing changed.",
+            "correctAnswer": false,
+            "explanation": "`--build` forces a build before starting, but Docker’s build cache still applies; it rebuilds layers that changed."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "How can you view the final merged configuration of your Compose files without starting anything?",
+            "options": [
+                "docker compose view",
+                "docker compose config",
+                "docker compose validate",
+                "docker compose show"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker compose config` prints the resolved configuration, merging all files and resolving variables."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "What is the purpose of service profiles in Compose?",
+            "options": [
+                "To run services with different user profiles",
+                "To group services that can be enabled conditionally with `--profile`",
+                "To set resource limits",
+                "To encrypt secrets"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Profiles allow selective activation of services, e.g., debug tools only when needed."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "Which command starts only services that have the `debug` profile?",
+            "options": [
+                "docker compose up --services debug",
+                "docker compose --profile debug up",
+                "docker compose up debug",
+                "docker compose profile debug up"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`--profile` enables services with that profile. Services without a profile are always started."
+        },
+        {
+            "id": "q14",
+            "type": "true_false",
+            "question": "Compose Watch can automatically rebuild a container when a specific file changes.",
+            "correctAnswer": true,
+            "explanation": "With `develop.watch` and action `rebuild`, Compose can rebuild the image and restart the service on file changes."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "If you have both `compose.yaml` and `compose.override.yaml`, what does `docker compose up` do?",
+            "options": [
+                "Only uses `compose.yaml`",
+                "Merges both files, with override values taking precedence",
+                "Asks which one to use",
+                "Throws an error because of ambiguity"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The override file is automatically applied. It’s a standard pattern for development vs production."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "Which command shows logs for all services defined in the current compose file?",
+            "options": [
+                "docker logs --compose",
+                "docker compose logs",
+                "docker compose ps --logs",
+                "docker compose show logs"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker compose logs` aggregates logs from all services. Use `-f` to follow."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "How can you specify a non‑default `.env` file for variable substitution?",
+            "options": [
+                "docker compose --env-file custom.env up",
+                "docker compose up --env custom.env",
+                "It's not possible; only `.env` works",
+                "docker compose up --env-file=custom.env"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`--env-file` flag allows specifying an alternative environment file. Option d is also valid syntax in some versions, but a is a safe choice; the key is `--env-file`."
+        },
+        {
+            "id": "q18",
+            "type": "true_false",
+            "question": "You can override an environment variable defined in `.env` by setting it in your shell before running `docker compose up`.",
+            "correctAnswer": true,
+            "explanation": "Shell environment variables take precedence over the `.env` file."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "Which of the following is NOT a valid top‑level key in a Compose file?",
+            "options": [
+                "services",
+                "networks",
+                "configs",
+                "pods"
+            ],
+            "correctAnswer": 3,
+            "explanation": "`pods` is a Kubernetes concept. Compose uses `services`. `configs` is valid for Swarm."
+        },
+        {
+            "id": "q20",
+            "type": "fill_blank",
+            "question": "To stop services without removing containers, use `docker compose _____`.",
+            "options": [
+                "down",
+                "stop",
+                "kill",
+                "pause"
+            ],
+            "correctAnswer": "stop",
+            "explanation": "`stop` halts services but keeps containers. `down` removes them. `pause` freezes processes."
+        },
+        {
+            "id": "q21",
+            "type": "mcq",
+            "question": "What is the purpose of `docker compose config`?",
+            "options": [
+                "To edit the compose file interactively",
+                "To validate and view the merged Compose configuration",
+                "To configure Docker daemon settings",
+                "To set environment variables"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It prints the resolved configuration, useful for debugging."
+        },
+        {
+            "id": "q22",
+            "type": "mcq",
+            "question": "If you want to rebuild a specific service and then start it, you can use:",
+            "options": [
+                "docker compose up --build service_name",
+                "docker compose build service_name && docker compose up service_name",
+                "docker compose restart --build service_name",
+                "Both a and b are valid ways"
+            ],
+            "correctAnswer": 3,
+            "explanation": "You can pass `--build` to `up` or separately build and then up. Both achieve the goal."
+        }
+    ]
+}

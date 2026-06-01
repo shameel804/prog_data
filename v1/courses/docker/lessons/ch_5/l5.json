@@ -1,0 +1,139 @@
+{
+    "id": "l5",
+    "chapterId": "ch_5",
+    "title": "ENV, EXPOSE, ARG & Labels 🏷️",
+    "description": "Configure environment variables, declare ports, pass build arguments, and add metadata.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "`ENV` – Setting Environment Variables 🌍",
+            "content": "# Persistent Variables for the Image\n\n```dockerfile\nENV <key> <value>\n# or\nENV <key>=<value>\n```\n\nVariables set with ENV are available:\n- During the build (in subsequent RUN instructions)\n- At runtime (inside the container)\n\n**Example:**\n```dockerfile\nENV NODE_ENV production\nENV APP_HOME /usr/src/app\nWORKDIR $APP_HOME\n```\n\nYou can override ENV variables at runtime with `-e`:\n```bash\ndocker run -e NODE_ENV=development myimage\n```"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "ENV Scope 📍",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "When does an ENV variable take effect?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Only at runtime",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Only during build",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Both during build and at runtime",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only if the container is started with `-e`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "ENV sets an environment variable in the image that is available during subsequent build steps and inside running containers.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "`EXPOSE` – Documenting Ports 🚪",
+            "content": "# Informational, Not Functional\n\n```dockerfile\nEXPOSE <port> [<port>/<protocol>...]\n```\n\n- `EXPOSE 80` tells Docker that the container listens on port 80.\n- It does **not** publish the port to the host! That's done with `-p` at runtime.\n- It serves as documentation and can be used by `-P` (publish all exposed ports to random host ports).\n\n**Example:**\n```dockerfile\nEXPOSE 8080/tcp\n```\n\n> Think of it as a hint: “This container will need port 8080”."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "EXPOSE Reality 🔌",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "true_false",
+                "question": "`EXPOSE 3000` in a Dockerfile automatically makes the container accessible on localhost:3000 when you run it.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "EXPOSE only documents the port; you still need `-p 3000:3000` (or `-P`) to actually map it.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "`ARG` – Build‑Time Variables 🔧",
+            "content": "# Variables for `docker build`\n\n```dockerfile\nARG <name>[=<default value>]\n```\n\n- ARG is available **only during build** (not at runtime).\n- You can pass a value with `--build-arg`:\n  ```bash\n  docker build --build-arg VERSION=1.2 .\n  ```\n\n**Example:**\n```dockerfile\nARG APP_VERSION=unknown\nRUN echo \"Building version $APP_VERSION\"\n```\n\n> Use ARG for things like version numbers, download URLs, or temporary build secrets (but be careful: ARG values persist in image history)."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "ARG vs ENV ⚖️",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_3",
+                "type": "multiple_choice",
+                "question": "When would you use ARG instead of ENV?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To set environment variables that the container needs at runtime",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To pass build‑time values that are not needed after the image is built",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To expose network ports",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To define the default command",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "ARG is for build‑only parameters, like selecting a package version during build. ENV is for runtime configuration.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "`LABEL` – Adding Metadata 🏷️",
+            "content": "# Describe Your Image\n\n```dockerfile\nLABEL <key>=<value> <key2>=<value2>\n```\n\nAdds custom metadata to the image. Useful for version, maintainer, description.\n\n**Example:**\n```dockerfile\nLABEL maintainer=\"john@example.com\"\nLABEL version=\"1.0\"\nLABEL description=\"This is my awesome app.\"\n```\n\nYou can view labels with `docker inspect`."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "code",
+            "title": "Full Example with ENV, EXPOSE, ARG, LABEL 🎨",
+            "content": "A Dockerfile for a Node.js app:",
+            "codeSnippet": "FROM node:18-alpine\nLABEL maintainer=\"me@example.com\"\nARG NODE_ENV=production\nENV NODE_ENV=$NODE_ENV\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci --only=production\nCOPY . .\nEXPOSE 3000\nCMD [\"node\", \"server.js\"]",
+            "codeLanguage": "dockerfile",
+            "canRunCode": false
+        }
+    ]
+}

@@ -1,0 +1,94 @@
+{
+    "id": "sq_docker_2",
+    "title": "Image Illusions – Chapters 1‑6 Review 🖼️",
+    "triggerChapterIndex": 5,
+    "metadata": {
+        "type": "prediction"
+    },
+    "questions": [
+        {
+            "id": "sq_docker_2_q1",
+            "type": "code_output",
+            "question": "What will be the output of the following?",
+            "codeSnippet": "docker run --rm alpine echo \"Hello\"\ndocker run --rm alpine echo \"World\"",
+            "correctOutput": "Hello\nWorld",
+            "correctAnswer": "Hello\nWorld",
+            "options": [],
+            "explanation": "Two separate containers are run, each executing echo and then exiting. Output is printed to the terminal.",
+            "xpReward": 20,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_docker_2_q2",
+            "type": "code_output",
+            "question": "Given this Dockerfile, what happens when you run `docker build -t test .` and then `docker run test`?",
+            "codeSnippet": "FROM alpine\nCMD [\"echo\", \"Hi\"]\nENTRYPOINT [\"echo\", \"Bye\"]",
+            "correctOutput": "Bye Hi",
+            "correctAnswer": "Bye Hi",
+            "options": [],
+            "explanation": "ENTRYPOINT sets the main command, CMD provides default arguments. The final command becomes `echo Bye Hi`.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_docker_2_q3",
+            "type": "code_output",
+            "question": "What does the following command sequence output?",
+            "codeSnippet": "docker run -d --name test alpine sleep 10\ndocker exec test ls /\ndocker stop test && docker rm test",
+            "correctOutput": "bin\ndev\netc\nhome\n... (standard Alpine root directories)",
+            "correctAnswer": "bin\ndev\netc\nhome\n...",
+            "options": [],
+            "explanation": "`docker exec test ls /` runs inside the still‑running container and prints the root directory listing.",
+            "xpReward": 20,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_docker_2_q4",
+            "type": "code_output",
+            "question": "Predict the output of this command after building the given Dockerfile.",
+            "codeSnippet": "FROM alpine\nWORKDIR /app\nRUN echo \"test\" > file.txt\nCOPY file.txt /tmp\nCMD [\"cat\", \"/tmp/file.txt\"]",
+            "correctOutput": "test",
+            "correctAnswer": "test",
+            "options": [],
+            "explanation": "The file `file.txt` is created in `/app`, then copied to `/tmp`. The container’s CMD prints its content.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_docker_2_q5",
+            "type": "code_output",
+            "question": "What is printed when you run this multi‑stage image?",
+            "codeSnippet": "FROM alpine AS stage1\nRUN echo \"secret\" > /data.txt\nFROM alpine\nCOPY --from=stage1 /data.txt /data.txt\nCMD [\"cat\", \"/data.txt\"]",
+            "correctOutput": "secret",
+            "correctAnswer": "secret",
+            "options": [],
+            "explanation": "The file created in the first stage is copied to the second stage and then printed.",
+            "xpReward": 25,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_docker_2_q6",
+            "type": "code_output",
+            "question": "What does this `docker images` command display after the following sequence?",
+            "codeSnippet": "docker pull alpine:3.18\ndocker tag alpine:3.18 myalpine:1.0\ndocker rmi alpine:3.18\ndocker images myalpine",
+            "correctOutput": "REPOSITORY   TAG       IMAGE ID       CREATED        SIZE\nmyalpine     1.0       <image id>    ...            7.33MB",
+            "correctAnswer": "myalpine     1.0",
+            "options": [],
+            "explanation": "After tagging and removing the original tag, the image still exists under the new tag.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_docker_2_q7",
+            "type": "code_output",
+            "question": "What will `docker ps -a` show after running the following?",
+            "codeSnippet": "docker run --name temp alpine echo done\ndocker ps -a --filter name=temp",
+            "correctOutput": "CONTAINER ID   IMAGE     COMMAND        CREATED         STATUS                     PORTS     NAMES\n<id>           alpine    \"echo done\"    ...            Exited (0) ...                       temp",
+            "correctAnswer": "temp Exited (0)",
+            "options": [],
+            "explanation": "The container runs and immediately exits. `docker ps -a` shows all containers, including stopped ones.",
+            "xpReward": 20,
+            "difficulty": 1
+        }
+    ]
+}

@@ -1,0 +1,120 @@
+{
+    "id": "l1",
+    "chapterId": "ch_11",
+    "title": "Linux Security Features: Namespaces & Capabilities 🧱",
+    "description": "Discover how Docker uses Linux kernel features to isolate containers and limit their power.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Containers Are Not Magic 🔮",
+            "content": "# The Kernel Does the Heavy Lifting\n\nA container is just a group of processes with restricted views of the system. Docker achieves this using two main Linux kernel features:\n\n- **Namespaces**: limit what a process can **see** (processes, network, filesystem, etc.).\n- **Control Groups (cgroups)**: limit what a process can **use** (CPU, memory, disk I/O).\n\nWe’ll focus on namespaces and another key feature: **capabilities**."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "Linux Namespaces – The Walls 🧱",
+            "content": "# Isolated Views\n\nEach container gets its own set of namespaces:\n- **PID namespace** – the container sees only its own processes (PID 1 inside = main process).\n- **Network namespace** – its own network interfaces, IP addresses, routing tables.\n- **Mount namespace** – its own filesystem root (the image).\n- **UTS namespace** – its own hostname and domain name.\n- **IPC namespace** – isolated inter‑process communication.\n- **User namespace** (optional) – maps UIDs inside the container to different UIDs on the host.\n\nThese namespaces create the illusion of a separate machine."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Namespaces Check 🧐",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What does the PID namespace give a container?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Its own network stack",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Its own process tree, with PID 1 being the main container process",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Its own filesystem root",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Its own CPU limits",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "PID namespace isolates processes. Inside the container, only its own processes are visible, and the main process appears as PID 1.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "Capabilities – Fine‑Grained Root 🎛️",
+            "content": "# Not All Root Is Equal\n\nTraditionally, the `root` user can do anything. Linux **capabilities** break this power into small pieces (e.g., `CAP_NET_BIND_SERVICE`, `CAP_SYS_TIME`).\n\nDocker starts containers with a limited set of capabilities (even when running as root inside the container). You can further drop or add capabilities.\n\n**Default list** includes `CHOWN`, `DAC_OVERRIDE`, `FSETID`, `FOWNER`, `SETGID`, `SETUID`, `NET_BIND_SERVICE`, etc.\n\n> Important: The container’s root user is **not the same as the host’s root**. It is confined by capabilities and namespaces."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "Check Container Capabilities 🔍",
+            "content": "See the capabilities of a running container:",
+            "codeSnippet": "# Run a container and inspect its capabilities\ndocker run --rm alpine sh -c 'apk add libcap; capsh --print'\n\n# Drop all capabilities and add only what you need\ndocker run --rm --cap-drop ALL --cap-add NET_BIND_SERVICE alpine sh",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "Capability Drop 🛡️",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "What does `--cap-drop ALL --cap-add NET_BIND_SERVICE` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Grants the container full root privileges",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Removes all capabilities except the ability to bind to low ports",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Disables networking",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Adds all possible capabilities",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It starts with an empty set of capabilities and adds only `NET_BIND_SERVICE`, severely limiting what the container can do.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_7",
+            "type": "text",
+            "title": "Seccomp & AppArmor/SELinux 🔒",
+            "content": "# Additional Layers\n\n- **Seccomp** (Secure Computing Mode): filters the system calls a container can make. Docker uses a default seccomp profile that blocks around 44 of 300+ syscalls (e.g., `reboot`, `mount`).\n- **AppArmor / SELinux**: mandatory access control systems that can apply policies to containers.\n\nYou can apply custom profiles with `--security-opt seccomp=profile.json` or `--security-opt apparmor=myprofile`.\n\n> These are advanced but powerful tools for defence in depth."
+        },
+        {
+            "id": "s_l1_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Least Privilege\nAlways drop capabilities you don’t need. Even the default set may be too generous for a simple stateless app."
+        }
+    ]
+}

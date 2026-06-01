@@ -1,0 +1,14 @@
+{
+    "id": "task1",
+    "chapterId": "ch_10",
+    "title": "Init Swarm and Deploy a Service",
+    "description": "Initialize a single‑node Swarm, create a service with multiple replicas, and scale it.",
+    "estimatedMinutes": 25,
+    "problemStatement": "## Objective\nSet up a Swarm on your local machine (single‑node) and learn basic service operations.\n\n### Steps\n1. Initialize Swarm mode:\n   ```bash\n   docker swarm init\n   ```\n   (If you have multiple IPs, you may need `--advertise-addr`.)\n2. Verify the node is active:\n   ```bash\n   docker node ls\n   ```\n3. Create a service named `web` running Nginx with 3 replicas and publish port 8080:\n   ```bash\n   docker service create --name web --replicas 3 -p 8080:80 nginx:alpine\n   ```\n4. List the service:\n   ```bash\n   docker service ls\n   ```\n5. See the tasks and which nodes they are running on:\n   ```bash\n   docker service ps web\n   ```\n6. Open `http://localhost:8080` – you should see the Nginx welcome page.\n7. Scale the service to 5 replicas:\n   ```bash\n   docker service scale web=5\n   ```\n   Check with `docker service ps web` to see the new tasks.\n8. Update the service to a different Nginx image (e.g., `nginx:1.25-alpine`):\n   ```bash\n   docker service update --image nginx:1.25-alpine web\n   ```\n   Watch the rolling update: `docker service ps web`.\n9. Clean up:\n   ```bash\n   docker service rm web\n   docker swarm leave --force\n   ```\n\n### Deliverable\nShow the output of `docker service ps web` after scaling, and after the update showing the new image.",
+    "hints": [
+        "If port 8080 is in use, choose another host port.",
+        "On a single node, all replicas run on the same host. In a multi‑node cluster they'd be distributed."
+    ],
+    "expectedOutput": "Service ps output shows 5 replicas after scaling, and tasks with the new image after update.",
+    "solutionCode": "docker swarm init\ndocker node ls\ndocker service create --name web --replicas 3 -p 8080:80 nginx:alpine\ndocker service ls\ndocker service ps web\ndocker service scale web=5\ndocker service ps web\ndocker service update --image nginx:1.25-alpine web\ndocker service ps web\ndocker service rm web\ndocker swarm leave --force"
+}

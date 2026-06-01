@@ -1,0 +1,143 @@
+{
+    "id": "l2",
+    "chapterId": "ch_5",
+    "title": "Building Blocks: FROM, COPY, RUN 🧱",
+    "description": "Write your first Dockerfile using the fundamental instructions to set up an environment.",
+    "xpReward": 35,
+    "estimatedMinutes": 8,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "`FROM` – Choosing Your Base Image 🏗️",
+            "content": "# Every Dockerfile Must Start with `FROM`\n\n```dockerfile\nFROM <image>[:<tag>]\n```\n\nThis sets the starting point. You can use any image (official, custom, or even `scratch` for an empty base).\n\n- **Official images**: `python:3.11`, `node:20-alpine`, `ubuntu:22.04`\n- **Smaller is faster**: prefer slim/alpine variants when possible.\n- **Pin versions**: avoid `latest`.\n\n**Example:**\n```dockerfile\nFROM node:18-alpine\n```\n\nYou can also have multiple FROM statements in multi‑stage builds (we'll see later)."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "FROM Foundation 🧱",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which FROM line is recommended for production?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "FROM node:latest",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "FROM node:18-alpine",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "FROM node (without tag)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "FROM node:latest-alpine",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Pinning a specific major version and using a small base (Alpine) is best practice. `latest` is unpredictable.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "`RUN` – Executing Commands During Build 🏃",
+            "content": "# Install Packages, Run Scripts\n\n```dockerfile\nRUN <command>\n# or for multiple commands (shell form)\nRUN command1 && command2\n```\n\nEach `RUN` creates a **new layer**. Combine commands with `&&` to reduce layers and keep the image slim.\n\n**Best Practice:**\n```dockerfile\nRUN apt-get update && \\\n    apt-get install -y curl git && \\\n    rm -rf /var/lib/apt/lists/*\n```\nThis updates, installs, and cleans up in one layer.\n\n> Shell form uses `/bin/sh -c`. There is also exec form: `RUN [\"executable\", \"arg1\"]`."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "RUN Efficiency 🏋️",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Why chain RUN commands with `&&` instead of multiple RUN lines?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's just a style preference",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Multiple RUNs create extra image layers, increasing size",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Chained commands run faster because they bypass the shell",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's required by Docker Hub",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Each RUN instruction produces a new layer. Chaining reduces layer count and keeps the image smaller.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "`COPY` – Bring Files Into the Image 📁",
+            "content": "# Copy from Host to Image\n\n```dockerfile\nCOPY <src>... <dest>\n```\n\n- `<src>`: path(s) relative to the **build context**.\n- `<dest>`: absolute path inside the image (or relative to WORKDIR).\n\n**Examples:**\n```dockerfile\nCOPY . /app\nCOPY index.html /usr/share/nginx/html/\nCOPY package*.json /app/\n```\n\nUse `.dockerignore` to exclude files (like `node_modules`, `.git`).\n\n> `ADD` is similar but has auto‑extraction for tar files and URL support. Prefer `COPY` unless you need those extras."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "code",
+            "title": "A Complete Basic Dockerfile 🎯",
+            "content": "Let's build a simple static website with Nginx:",
+            "codeSnippet": "# Dockerfile\nFROM nginx:alpine\n\n# Copy website files into Nginx's default HTML directory\nCOPY ./html /usr/share/nginx/html\n\n# No need for CMD because the base image already starts Nginx",
+            "codeLanguage": "dockerfile",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "COPY vs ADD 🆚",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_3",
+                "type": "multiple_choice",
+                "question": "Which instruction should you prefer for simply copying local files into an image?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "ADD",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "COPY",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "RUN cp",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "FETCH",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "COPY is straightforward and transparent. ADD has extra magic (tar extraction, URLs) that can obscure the intent.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

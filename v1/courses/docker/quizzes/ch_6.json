@@ -1,0 +1,272 @@
+{
+    "id": "quiz_ch_6",
+    "chapterId": "ch_6",
+    "title": "Chapter 6 Quiz",
+    "description": "Test your knowledge of advanced Dockerfile instructions, BuildKit secrets, caching, minimal images, and security!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What does the HEALTHCHECK instruction do?",
+            "options": [
+                "Replaces the main CMD with a health command",
+                "Tells Docker how to test if a container is still healthy",
+                "Restarts the container if it fails",
+                "Checks the size of the image"
+            ],
+            "correctAnswer": 1,
+            "explanation": "HEALTHCHECK defines a command Docker runs periodically to determine the container’s health status."
+        },
+        {
+            "id": "q2",
+            "type": "true_false",
+            "question": "A container with a failed HEALTHCHECK is automatically restarted by Docker.",
+            "correctAnswer": false,
+            "explanation": "Docker only marks the status as unhealthy. It does not restart the container unless a restart policy is configured."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "When does an ONBUILD instruction execute?",
+            "options": [
+                "During the build of the image containing the ONBUILD line",
+                "When the image is used as a base in another Dockerfile",
+                "When a container is started from the image",
+                "It is deprecated and no longer used"
+            ],
+            "correctAnswer": 1,
+            "explanation": "ONBUILD defers the instruction to the next build stage where the image is used as a FROM."
+        },
+        {
+            "id": "q4",
+            "type": "fill_blank",
+            "question": "To change the default shell used by shell‑form instructions, you use the `______` instruction.",
+            "options": [
+                "SHELL",
+                "SET",
+                "RUN",
+                "CMD"
+            ],
+            "correctAnswer": "SHELL",
+            "explanation": "SHELL [\"/bin/bash\", \"-c\"] changes the shell for subsequent RUN, CMD, etc."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "How does BuildKit’s `--secret` mount work?",
+            "options": [
+                "It copies a secret file into the final image as a permanent file",
+                "It makes a secret available only during a specific RUN command, then removes it",
+                "It encrypts the entire image",
+                "It stores secrets in Docker Hub"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The secret file is mounted temporarily for the duration of the RUN command and is not saved in any layer."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "Which build flag is used to inject a secret file into a BuildKit build?",
+            "options": [
+                "--env SECRET=value",
+                "--secret id=mysecret,src=file.txt",
+                "--build-arg SECRET=value",
+                "--mount secret=file.txt"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`--secret id=mysecret,src=file.txt` is the correct syntax."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "What is the purpose of `--mount=type=cache` in a RUN instruction?",
+            "options": [
+                "To cache the entire layer forever",
+                "To mount a directory that persists across builds for caching, even when the layer is rebuilt",
+                "To bind‑mount a host directory",
+                "To clean the package cache"
+            ],
+            "correctAnswer": 1,
+            "explanation": "BuildKit cache mounts keep data like downloaded packages between builds, speeding up re‑builds."
+        },
+        {
+            "id": "q8",
+            "type": "true_false",
+            "question": "In a Dockerfile, placing `COPY . .` before `RUN npm install` improves caching.",
+            "correctAnswer": false,
+            "explanation": "Copying source code first would invalidate the cache for npm install on every code change. You should copy package.json first, run install, then copy source."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "Which Linux distribution is the smallest common base image (around 5 MB)?",
+            "options": [
+                "Ubuntu",
+                "Debian Slim",
+                "Alpine",
+                "CentOS"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Alpine Linux is known for its tiny size (~5 MB)."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "What is a potential issue when using Alpine as a base for some applications?",
+            "options": [
+                "It uses glibc which may be incompatible with musl",
+                "It uses musl libc, which might cause incompatibilities with software compiled against glibc",
+                "It lacks a package manager",
+                "It cannot run web servers"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Alpine’s musl libc can cause issues with pre‑compiled binaries that expect glibc."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "What is characteristic of a Distroless image?",
+            "options": [
+                "It contains a shell and package manager",
+                "It contains only the application and its runtime dependencies; no shell or package manager",
+                "It is based on Ubuntu",
+                "It requires a separate debug image to run"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Distroless images are minimal, containing just the app and runtime. They lack a shell for security."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "What is required to build an image from `scratch`?",
+            "options": [
+                "A Go compiler",
+                "A statically compiled binary (no dynamic libraries)",
+                "Alpine as an intermediate stage",
+                "Root privileges"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Scratch provides absolutely nothing, so your binary must be statically linked."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "Which tool can be used to lint a Dockerfile for best practices?",
+            "options": [
+                "Docker Scout",
+                "Hadolint",
+                "Trivy",
+                "Kubernetes"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Hadolint is a popular Dockerfile linter that checks for common mistakes and anti‑patterns."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "What does Trivy do?",
+            "options": [
+                "Lints Dockerfiles",
+                "Scans container images for known vulnerabilities",
+                "Builds minimal images",
+                "Creates Docker Compose files"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Trivy is an open‑source vulnerability scanner for container images."
+        },
+        {
+            "id": "q15",
+            "type": "true_false",
+            "question": "Using `ARG` to pass secrets during build is safe because they are not visible in the final image.",
+            "correctAnswer": false,
+            "explanation": "ARG values persist in the image history (`docker history`) and are not secure for secrets."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "Which Dockerfile instruction changes the user for subsequent commands?",
+            "options": [
+                "RUN user",
+                "SU",
+                "USER",
+                "LOGIN"
+            ],
+            "correctAnswer": 2,
+            "explanation": "USER <username> sets the user for RUN, CMD, ENTRYPOINT."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "What is the benefit of running a container as a non‑root user?",
+            "options": [
+                "It is required by Docker Hub",
+                "Reduces the risk of container breakout vulnerabilities",
+                "It makes the container faster",
+                "It allows the container to access the host’s root filesystem"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Running as non‑root limits the damage if an attacker compromises the container."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "Which BuildKit feature allows you to use the host’s SSH agent to clone private repos during build?",
+            "options": [
+                "--secret",
+                "--ssh",
+                "--cache-from",
+                "--network=host"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The `--ssh` flag in `docker build` forwards the SSH agent. Combined with `RUN --mount=type=ssh`."
+        },
+        {
+            "id": "q19",
+            "type": "true_false",
+            "question": "It is recommended to use `ADD` instead of `COPY` for simply copying local files.",
+            "correctAnswer": false,
+            "explanation": "COPY is preferred for local files because it is explicit. ADD has extra magic like URL fetching and tar extraction."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "What does the `--cache-from` flag in `docker build` do?",
+            "options": [
+                "Pulls a previous image to use as a cache source",
+                "Clears the build cache",
+                "Specifies the location of a cache mount",
+                "Uses a remote registry as a build cache backend"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`--cache-from` allows using an external image (e.g., from a registry) as a cache source, helpful in CI environments."
+        },
+        {
+            "id": "q21",
+            "type": "fill_blank",
+            "question": "To stop a container with a specific signal, you can set `______` in the Dockerfile.",
+            "options": [
+                "KILLSIGNAL",
+                "STOPSIGNAL",
+                "TERM",
+                "EXIT"
+            ],
+            "correctAnswer": "STOPSIGNAL",
+            "explanation": "STOPSIGNAL sets the signal used by `docker stop`. Default is SIGTERM."
+        },
+        {
+            "id": "q22",
+            "type": "mcq",
+            "question": "Which command would you use to check if BuildKit is enabled and working?",
+            "options": [
+                "docker info",
+                "docker buildx version",
+                "docker system df",
+                "docker version"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker buildx version` confirms that Buildx (BuildKit client) is installed. `docker build` uses it if DOCKER_BUILDKIT=1."
+        }
+    ]
+}

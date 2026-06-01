@@ -1,0 +1,135 @@
+{
+    "id": "l2",
+    "chapterId": "ch_4",
+    "title": "Pushing Images to Docker Hub ☁️",
+    "description": "Authenticate, tag correctly, and push your own images to a registry for sharing.",
+    "xpReward": 35,
+    "estimatedMinutes": 8,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Registries & Repositories 🌐",
+            "content": "# Where Do Images Live?\n\n- **Docker Hub**: The default public registry (`hub.docker.com`).\n- **Amazon ECR**, **Azure ACR**, **Google GCR/Artifact Registry**: Cloud provider registries.\n- **Self‑hosted**: Docker Registry, Harbor, GitLab Container Registry, etc.\n\nYou **pull** images from them, and you **push** to share your own images."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Creating a Docker Hub Account 🧑‍💻",
+            "content": "# Free Account\n\n1. Go to [hub.docker.com/signup](https://hub.docker.com/signup).\n2. Choose a username (this is your **namespace**).\n3. Verify email.\n\nOnce you have an account, you can create **repositories** (public or private)."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Logging In from the CLI 🔐",
+            "content": "Authenticate your local Docker client with Docker Hub:",
+            "codeSnippet": "docker login\n# Enter your username and password when prompted\n\n# Or supply credentials non‑interactively (careful in scripts)\n# docker login -u myuser -p mytoken",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Why Login? 🔑",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What does `docker login` do on your machine?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Starts the Docker daemon",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Authenticates you to a registry and stores credentials securely",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Creates a new Docker ID",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Downloads the latest Docker image list",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`docker login` saves your credentials in a local credential store, allowing you to push/pull private images.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Tagging Before Pushing 🏷️",
+            "content": "# The Push Formula\n\nYou can only push images to your own namespace. So an image must be tagged as:\n\n`<your-dockerhub-username>/<repository>:<tag>`\n\n**Workflow:**\n1. Build or pull an image locally.\n2. Tag it with your Docker Hub username.\n3. Push.\n\n```bash\ndocker tag alpine:3.18 myusername/alpine:3.18\ndocker push myusername/alpine:3.18\n```"
+        },
+        {
+            "id": "s_l2_6",
+            "type": "code",
+            "title": "Push Demo 🚀",
+            "content": "Let’s push a custom tag of Alpine to your Docker Hub (replace `myusername` with your real username):",
+            "codeSnippet": "# Pull a base image\ndocker pull alpine:3.18\n\n# Tag with your username\ndocker tag alpine:3.18 myusername/my-alpine:3.18\n\n# Push\ndocker push myusername/my-alpine:3.18\n\n# Output shows layers being pushed, then a digest",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "Tag Requirement 📛",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Why does `docker push nginx:latest` fail for most users?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Because nginx is not a valid image",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Because you don't own the `library/nginx` namespace on Docker Hub",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Because you need to be logged in",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Because nginx is too large",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "You can only push to repositories under your own Docker Hub username or organization. `nginx` belongs to the `library` namespace.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_8",
+            "type": "text",
+            "title": "Pulling from Your Own Registry 📥",
+            "content": "# After pushing, anyone can pull (if public)\n\n```bash\ndocker pull myusername/my-alpine:3.18\n```\n\nIf you set the repository as **private** on Docker Hub, only authenticated users with permissions can pull.\n\nTo pull from a different registry, prefix the image name:\n```bash\ndocker pull localhost:5000/my-image:latest\ndocker pull myregistry.azurecr.io/myapp:1.0\n```"
+        },
+        {
+            "id": "s_l2_9",
+            "type": "tip",
+            "title": "Authentication Beyond Login 🔐",
+            "content": "## Personal Access Tokens\n\nDocker Hub supports **access tokens** for CI/CD pipelines. Create one in your account settings, then:\n```bash\ndocker login -u youruser -p your_token\n```\nNever expose your password in scripts."
+        },
+        {
+            "id": "s_l2_10",
+            "type": "warning",
+            "title": "Beware of Pushing Sensitive Data 🛑",
+            "content": "## Images Can Contain Secrets\n\nIf you baked a password or API key into an image layer, it will be visible to anyone who pulls that image. **Never** store secrets in images. Use environment variables, Docker secrets, or external vaults."
+        }
+    ]
+}

@@ -1,0 +1,126 @@
+{
+    "id": "l2",
+    "chapterId": "ch_10",
+    "title": "Deploying Services: Replicas, Scaling & Rolling Updates ⚡",
+    "description": "Create, scale, and update services seamlessly across a cluster of Docker nodes.",
+    "xpReward": 35,
+    "estimatedMinutes": 8,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Creating a Service 🛠️",
+            "content": "# `docker service create`\n\nSimilar to `docker run` but for a cluster.\n\n```bash\ndocker service create --name web --replicas 3 -p 80:80 nginx:alpine\n```\n\n- `--replicas`: number of container instances.\n- `-p`: publishes the port across the swarm (routing mesh).\n- Swarm schedules the containers across available nodes.\n\nCheck services:\n```bash\ndocker service ls\ndocker service ps web   # see tasks (containers) for this service\n```"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "The Routing Mesh 🌐",
+            "content": "# Port Publishing in Swarm\n\nWhen you publish a service port, **every node** in the swarm listens on that port, even if it’s not running a replica. Traffic is automatically load‑balanced to a container running the service.\n\n- This is called **routing mesh**.\n- Works with ingress overlay network.\n- You can hit any node on the published port and get the service.\n\n> This means you don’t need an external load balancer for basic distribution."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Routing Mesh 🕸️",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "In Swarm, if you publish a service on port 80, how do clients access it?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Only through the manager node",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Through any node's IP on port 80, and traffic is routed to a replica",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only through the node running the replica",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "You must configure an external load balancer",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The routing mesh makes all nodes participate in serving the published port.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Scaling Services 📈",
+            "content": "# `docker service scale`\n\nChange the number of replicas on the fly:\n```bash\ndocker service scale web=5\n```\n\nSwarm will add or remove containers to match the desired count.\n\nCheck the distribution:\n```bash\ndocker service ps web\n```\n\n> Zero downtime: existing replicas continue serving while new ones start."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Scaling Demo 🧮",
+            "content": "Create, inspect, and scale:",
+            "codeSnippet": "# Start a service with 2 replicas\ndocker service create --name demo --replicas 2 alpine sleep 3600\n\n# See tasks\ndocker service ps demo\n\n# Scale up to 4\ndocker service scale demo=4\n\n# See new tasks\ndocker service ps demo",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Rolling Updates 🔄",
+            "content": "# Update a Service Without Downtime\n\n```bash\ndocker service update --image nginx:1.25 web\n```\n\nBy default, Swarm performs a **rolling update**:\n- Replaces one replica at a time with the new version.\n- If the update fails, it can rollback automatically (configurable with `--update-failure-action rollback`).\n\nYou can control:\n- `--update-parallelism` (how many replicas to update simultaneously)\n- `--update-delay` (wait between batches)\n\nMonitor with:\n```bash\ndocker service ps web\n```\n\n> You can also rollback manually: `docker service rollback web`."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "Rolling Update ⚡",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What is the default update strategy for a Docker Swarm service?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Delete all replicas and recreate them",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Rolling update – replace replicas one by one",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Blue‑green deployment",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Canary deployment",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Swarm performs rolling updates by default to maintain service availability.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_8",
+            "type": "text",
+            "title": "Inspecting & Removing Services 🔍",
+            "content": "# `docker service inspect` & `docker service rm`\n\nGet detailed info:\n```bash\ndocker service inspect --pretty web\n```\n\nRemove a service (all its tasks are stopped):\n```bash\ndocker service rm web\n```\n\n> `docker service logs` also works to view logs from all replicas."
+        },
+        {
+            "id": "s_l2_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Placement Constraints\nControl where replicas run:\n```bash\ndocker service create --constraint node.role==worker ...\n```\nOr use node labels for more fine‑grained placement."
+        }
+    ]
+}

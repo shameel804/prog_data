@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_12",
+    "title": "Apply Resource Limits and Logging",
+    "description": "Run a container with memory/CPU limits, custom logging options, and verify the constraints.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Objective\nPractice setting production‑grade runtime options for containers.\n\n### Steps\n1. Create a directory for logs: `mkdir -p /tmp/docker-logs`.\n2. Start a container with:\n   - Memory limit: `--memory=128m`\n   - CPU limit: `--cpus=0.5`\n   - Log driver: `--log-driver json-file` with options `--log-opt max-size=1m --log-opt max-file=2`\n   - A name: `resource-test`\n   - Use a small stress image or just `alpine` running a script that allocates memory (safe) or just sleep.\n   Since stress tools might be unsafe, simply run `alpine sleep 360` and verify limits via inspect.\n   ```bash\n   docker run -d --name resource-test \\\n     --memory=128m --cpus=0.5 \\\n     --log-driver json-file --log-opt max-size=1m --log-opt max-file=2 \\\n     alpine sleep 360\n   ```\n3. Inspect the container to see the limits:\n   ```bash\n   docker inspect resource-test | jq '.[0].HostConfig.Memory'\n   docker inspect resource-test | jq '.[0].HostConfig.NanoCpus'\n   ```\n   (NanoCpus = 500000000 for 0.5 CPU).\n4. Verify the logging options:\n   ```bash\n   docker inspect resource-test | jq '.[0].HostConfig.LogConfig'\n   ```\n5. Try to write a large log and see that it rotates (optional).\n6. Clean up: `docker rm -f resource-test`.\n\n### Deliverable\nShow the inspection output proving memory, CPU, and logging config.",
+    "hints": [
+        "If you don't have `jq`, use `docker inspect resource-test` and look for the relevant fields.",
+        "You can test memory limit by running a container that allocates memory (e.g., `stress --vm 1 --vm-bytes 200M`), but that might actually use resources; for learning, `sleep` is fine."
+    ],
+    "expectedOutput": "Memory: 134217728 (128 MB), NanoCpus: 500000000 (0.5), LogConfig type: json-file with max-size and max-file.",
+    "solutionCode": "docker run -d --name resource-test \\\n  --memory=128m --cpus=0.5 \\\n  --log-driver json-file --log-opt max-size=1m --log-opt max-file=2 \\\n  alpine sleep 360\n\ndocker inspect resource-test | jq '.[0].HostConfig.Memory'\ndocker inspect resource-test | jq '.[0].HostConfig.NanoCpus'\ndocker inspect resource-test | jq '.[0].HostConfig.LogConfig'\n\ndocker rm -f resource-test"
+}

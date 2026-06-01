@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_5",
+    "title": "Multi‑Stage Build for a Mini Web App",
+    "description": "Build a small Go or Node.js app using a multi‑stage Dockerfile to keep the image lean.",
+    "estimatedMinutes": 25,
+    "problemStatement": "## Objective\nApply multi‑stage builds to create a tiny production image for a simple application.\n\n### Choice\nPick one of the two options:\n- **Go app** (simple HTTP server)\n- **Node.js app** (Express server)\n\n### Go Version\n1. Create a file `main.go` with a basic HTTP server (e.g., \"Hello, Go\").\n2. Write a multi‑stage Dockerfile:\n   ```dockerfile\n   # Stage 1: build\n   FROM golang:1.21-alpine AS builder\n   WORKDIR /app\n   COPY main.go .\n   RUN go build -o server main.go\n   \n   # Stage 2: runtime\n   FROM alpine:3.18\n   COPY --from=builder /app/server /server\n   EXPOSE 8080\n   CMD [\"/server\"]\n   ```\n3. Build and run, mapping port 8080. Verify the server responds.\n4. Compare image size: `docker images` shows the final image is very small (a few MB).\n\n### Node.js Version\n1. Initialize a minimal Express app (`package.json`, `server.js`).\n2. Write a Dockerfile with two stages: build (including `npm install` of devDependencies and `npm run build` if needed) and production (only production dependencies and built code).\n3. Build and run, verify, and note image size.\n\n### Deliverable\nShow the final image size with `docker images` and a curl response from the app.",
+    "hints": [
+        "For Go, ensure the `main.go` listens on `0.0.0.0:8080` or the port you expose.",
+        "For Node, use `npm ci --only=production` in the second stage or copy `node_modules` from build stage.",
+        "Use `docker history <image>` to see that build tools are absent in the final stage."
+    ],
+    "expectedOutput": "A minimal image (around 10‑20 MB for Go, maybe 50‑100 MB for Node Alpine) and a working HTTP response.",
+    "solutionCode": "// Go example main.go:\npackage main\nimport (\"fmt\"; \"net/http\")\nfunc main() { http.HandleFunc(\"/\", func(w http.ResponseWriter, r *http.Request) { fmt.Fprintln(w, \"Hello Go\") }); http.ListenAndServe(\":8080\", nil) }\n\n// Dockerfile:\nFROM golang:1.21-alpine AS builder\nWORKDIR /app\nCOPY main.go .\nRUN go build -o server main.go\n\nFROM alpine:3.18\nCOPY --from=builder /app/server /server\nEXPOSE 8080\nCMD [\"/server\"]\n\n# Build and run:\ndocker build -t go-server .\ndocker run -d -p 8080:8080 --name goapp go-server\ncurl localhost:8080"
+}

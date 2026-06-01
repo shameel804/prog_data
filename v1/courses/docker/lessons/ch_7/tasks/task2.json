@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_7",
+    "title": "Multi‑Network Communication",
+    "description": "Connect a container to two networks and demonstrate isolation and bridging.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Objective\nLearn to connect a container to multiple networks and understand network isolation.\n\n### Scenario\nYou have a `front` network (web apps) and a `back` network (databases). A middleware container needs to talk to both.\n\n### Steps\n1. Create two networks:\n   ```bash\n   docker network create front\n   docker network create back\n   ```\n2. Start a database container on `back`:\n   ```bash\n   docker run -d --name database --network back alpine sleep 3600\n   ```\n3. Start a web container on `front`:\n   ```bash\n   docker run -d --name web --network front alpine sleep 3600\n   ```\n4. Start a middleware container initially on `front`:\n   ```bash\n   docker run -d --name middleware --network front alpine sleep 3600\n   ```\n5. From `middleware`, verify you can ping `web` (on same network) by name.\n6. Try to ping `database` from `middleware` – it should fail (different network).\n7. Connect `middleware` to the `back` network:\n   ```bash\n   docker network connect back middleware\n   ```\n8. Now from `middleware`, ping `database` by name – it should succeed.\n9. Inspect `middleware` to see it has IPs on both networks:\n   ```bash\n   docker inspect middleware\n   ```\n10. Clean up all containers and networks.\n\n### Deliverable\nShow the ping output before and after connecting to the `back` network.",
+    "hints": [
+        "Use `docker network connect <network> <container>`.",
+        "Remember that `web` and `database` are on separate networks and cannot talk to each other."
+    ],
+    "expectedOutput": "Ping to database fails initially, succeeds after `docker network connect back middleware`.",
+    "solutionCode": "docker network create front\ndocker network create back\ndocker run -d --name database --network back alpine sleep 3600\ndocker run -d --name web --network front alpine sleep 3600\ndocker run -d --name middleware --network front alpine sleep 3600\ndocker exec middleware ping -c 2 web\ndocker exec middleware ping -c 2 database  # fails\ndocker network connect back middleware\ndocker exec middleware ping -c 2 database  # succeeds\ndocker rm -f web middleware database\ndocker network rm front back"
+}

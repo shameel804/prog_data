@@ -1,0 +1,126 @@
+{
+    "id": "l5",
+    "chapterId": "ch_7",
+    "title": "Advanced Drivers & Network Management 🧰",
+    "description": "Quick tour of host, none, overlay and macvlan drivers; inspect, connect and prune.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "`host` Driver – No Isolation 🏠",
+            "content": "# Container Shares Host’s Network\n\n```bash\ndocker run --network host nginx\n```\n\n- The container directly uses the host’s network interfaces.\n- No port mapping needed – `localhost:80` is the container’s Nginx.\n- Very fast, but less secure.\n- Only one container can listen on a given port (no conflict management).\n\nUse cases: high‑performance network applications, simpler access to host services."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "`none` Driver – Air‑Gapped 🚫",
+            "content": "# Total Network Isolation\n\n```bash\ndocker run --network none alpine\n```\n\n- Container has no network interfaces (only loopback).\n- Cannot access network or be accessed.\n- Useful for batch processing jobs that don’t need network, or for security sandboxing."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Host vs None 🆚",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which network driver would you use for a container that must appear as if it were running directly on the host network?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "bridge",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "host",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "none",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "overlay",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `host` driver makes the container share the host's network namespace, eliminating virtual networking.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "`overlay` & `macvlan` – Multi‑Host & Physical 🕸️",
+            "content": "# Beyond a Single Host\n\n- **overlay**: Connects containers across multiple Docker daemons (Swarm mode). Creates a VXLAN tunnel between hosts.\n- **macvlan**: Assigns a unique MAC address to each container, making them appear as physical devices on the local network. Useful when you need containers to get IPs from the real network DHCP.\n\nBoth are advanced topics; we’ll scratch the surface in the orchestration chapter."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Inspecting Networks 🔍",
+            "content": "# `docker network inspect`\n\n```bash\ndocker network inspect my-net\n```\n\nReturns JSON with:\n- Subnet, gateway, IP range\n- Containers connected, their IPs and MAC addresses\n- Driver, options\n\nThis is your go‑to tool for debugging network issues."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "code",
+            "title": "Connecting a Running Container 🔗",
+            "content": "You can attach a container to additional networks on‑the‑fly:",
+            "codeSnippet": "# Create two networks\ndocker network create net1\ndocker network create net2\n\n# Run container on net1\ndocker run -d --name multi --network net1 alpine sleep 3600\n\n# Connect it to net2\ndocker network connect net2 multi\n\n# Inspect to see both networks\ndocker inspect multi | jq '.[0].NetworkSettings.Networks | keys'",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Connect Command 🔌",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "Which command attaches a running container to an existing network?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "docker network attach",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "docker network connect",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "docker connect",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "docker network add",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`docker network connect <network> <container>` adds a container to a network without restarting it.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_8",
+            "type": "text",
+            "title": "Cleaning Up Networks 🧹",
+            "content": "# `docker network prune`\n\nRemoves all unused networks (not used by any container).\n\n```bash\ndocker network prune\n```\n\nTo remove a specific network:\n```bash\ndocker network rm my-net\n```\n\nMust have no containers attached.\n\n> Custom networks are cheap; don’t hoard them."
+        },
+        {
+            "id": "s_l5_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Disconnect a Container\n```bash\ndocker network disconnect my-net my-container\n```\nThis removes one network while keeping others attached."
+        }
+    ]
+}

@@ -1,0 +1,117 @@
+{
+    "id": "l4",
+    "chapterId": "ch_9",
+    "title": "Compose CLI: Up, Down, Logs & More 🎮",
+    "description": "Master the essential Compose commands to control your entire application stack.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Starting the Application: `up` 🚀",
+            "content": "# `docker compose up`\n\nBuilds, (re)creates, and starts containers.\n\nCommon options:\n- `-d` – detached mode (background)\n- `--build` – rebuild images before starting\n- `--force-recreate` – recreate containers even if configuration hasn’t changed\n- `--no-deps` – don’t start linked services\n\n```bash\ndocker compose up -d\n```\n\nStarts the whole stack. If images need building, it builds them first."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Stopping and Cleaning: `down` 🧹",
+            "content": "# `docker compose down`\n\nStops containers and removes containers, networks created by `up`.\n\nAdd `-v` to also remove volumes (caution!):\n```bash\ndocker compose down -v\n```\n\nAdd `--rmi` to remove images:\n```bash\ndocker compose down --rmi all\n```\n\n> Use `docker compose stop` to just stop without removing resources."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Up vs Start 🔄",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does `docker compose up` do that `docker compose start` does not?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Starts containers",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Creates containers and networks if they don't exist",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Stops existing containers first",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Removes volumes",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`start` only starts existing stopped containers. `up` creates them if needed, and also creates networks/volumes.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Viewing Logs and Status 📋",
+            "content": "# `docker compose logs` & `docker compose ps`\n\nSee logs from all or specific services:\n```bash\ndocker compose logs -f\n```\n- `-f` follows output\n- `--tail 50` last 50 lines\n- add service name to filter: `docker compose logs web`\n\nCheck running containers:\n```bash\ndocker compose ps\n```\n\n> These commands work only when run from the directory containing `compose.yaml` (or specify with `-f`)."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Log Inspection 🔎",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Which command shows the status of only the services defined in your current compose file?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "docker ps",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "docker compose ps",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "docker compose status",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "docker compose logs",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`docker compose ps` lists containers that belong to the current project.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Running One‑Off Commands: `exec` & `run` ⚡",
+            "content": "# Interact with Services\n\n- `docker compose exec <service> <command>` – run a command in a running service container (like `docker exec`).\n- `docker compose run <service> <command>` – start a new container for the service, overriding the command.\n\n**Example:**\n```bash\ndocker compose exec web bash\ndocker compose run --rm web python manage.py migrate\n```\n\n`run` respects volumes, networks, and dependencies (unless `--no-deps`)."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Other Useful Commands 🧰",
+            "content": "# Compose Toolkit\n\n- `docker compose restart` – restart services.\n- `docker compose pull` – pull latest images.\n- `docker compose build` – build or rebuild services.\n- `docker compose config` – validate and view the merged compose file.\n- `docker compose top` – display running processes.\n- `docker compose pause/unpause` – freeze/unfreeze containers."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Graceful Shutdown\n`docker compose down -t 20` gives containers 20 seconds to gracefully stop before killing them (default is 10s)."
+        }
+    ]
+}

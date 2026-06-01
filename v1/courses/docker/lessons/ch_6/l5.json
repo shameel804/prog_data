@@ -1,0 +1,120 @@
+{
+    "id": "l5",
+    "chapterId": "ch_6",
+    "title": "Dockerfile Security & Linting 🛡️",
+    "description": "Scan Dockerfiles for vulnerabilities and enforce best practices with linters.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Why Lint Your Dockerfile? 🔍",
+            "content": "# Catch Mistakes Early\n\nEven a valid Dockerfile can contain anti‑patterns:\n- Running as root\n- Using `latest` tag\n- Not cleaning up package caches\n- Using ADD instead of COPY\n- Leaving secrets in layers\n\nDockerfile linters like **Hadolint** and **Docker Bench for Security** catch these automatically.\n\nYou can integrate linters into CI/CD pipelines."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Hadolint – The Popular Dockerfile Linter 🐳",
+            "content": "# How to Use Hadolint\n\nRun with Docker:\n```bash\ndocker run --rm -i hadolint/hadolint < Dockerfile\n```\n\nOr install locally. It outputs rule violations with severity.\n\n**Example rules:**\n- DL3006: Always tag the version of an image explicitly.\n- DL3009: Delete the apt-get lists after installing something.\n- DL3018: Pin versions in apk add.\n- DL3059: Multiple consecutive RUN instructions."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Linting Benefits 🧹",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What does Hadolint rule DL3006 typically warn about?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Missing HEALTHCHECK",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Using `latest` tag in FROM",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Using RUN without apt-get update",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Copying files before setting WORKDIR",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "DL3006: Always tag the version of an image explicitly. Using `latest` is discouraged.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Image Vulnerability Scanning 🔐",
+            "content": "# Scan Images for Known CVEs\n\nAfter building, scan the image for known vulnerabilities in packages.\n\n- **Docker Scout** (built‑in):\n  ```bash\n  docker scout quickview myimage\n  ```\n- **Trivy** (popular open‑source):\n  ```bash\n  trivy image myimage\n  ```\n- **Snyk**, **Clair**, **Anchore**\n\nThese tools compare the installed packages against vulnerability databases.\n\n> Integrate scanning into CI to block vulnerable images from being pushed."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Scanning Demo 📡",
+            "content": "Use Trivy to scan an image:",
+            "codeSnippet": "# Pull trivy\ndocker pull aquasec/trivy\n\n# Scan local image\ndocker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image myimage:latest\n\n# Or install trivy locally and run\nbrew install trivy\ntrivy image myimage:latest",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Other Security Best Practices 🔒",
+            "content": "# Defense in Depth\n\n- **Avoid running as root** (use `USER`).\n- **Drop Linux capabilities** with `--cap-drop` at runtime.\n- **Set resource limits** (`--memory`, `--cpus`).\n- **Enable Docker Content Trust** (`DOCKER_CONTENT_TRUST=1`) to verify image signatures.\n- **Use read‑only filesystems** (`--read-only`) where possible.\n- **Regularly rebuild images** to pick up security updates.\n\n> Combine secure Dockerfiles with secure runtime policies."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Security Posture 🛡️",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "Which runtime flag drops all Linux capabilities and mounts the root filesystem as read‑only?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "--security-opt no-new-privileges",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "--cap-drop ALL --read-only",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "--privileged",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "--cap-add ALL",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`--cap-drop ALL` removes all capabilities, and `--read-only` makes the filesystem read‑only. This is a strong security posture.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Automate Security in CI\n\nAdd a stage in your pipeline that:\n1. Lints the Dockerfile (Hadolint)\n2. Builds the image\n3. Scans it (Trivy / Docker Scout)\n4. Fails if any critical vulnerabilities are found."
+        }
+    ]
+}

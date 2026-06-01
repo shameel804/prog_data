@@ -1,0 +1,111 @@
+{
+    "id": "l4",
+    "chapterId": "ch_6",
+    "title": "Slimming Images: Alpine, Distroless & Scratch 🪶",
+    "description": "Pick the right base to minimize attack surface and image size for production.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Spectrum of Minimal Bases 🌌",
+            "content": "# From Heavy to Ultra‑Light\n\n1. **Full OS images** (ubuntu, centos) – hundreds of MB, many tools.\n2. **Slim variants** (debian-slim, python-slim) – stripped down versions.\n3. **Alpine Linux** – ~5 MB base, uses musl libc and BusyBox.\n4. **Distroless** – contains only your app and runtime dependencies (no shell, no package manager).\n5. **Scratch** – completely empty base; you must provide everything.\n\nThe lighter the base, the smaller the attack surface and the faster the pull/deploy."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Alpine Linux 🏔️",
+            "content": "# The Popular Lightweight Champion\n\n```dockerfile\nFROM alpine:3.18\n```\n\n- Size: ~5 MB.\n- Package manager: `apk`.\n- Uses **musl libc** instead of glibc – some binaries compiled against glibc won't work.\n- Excellent for Go, Node, Python (with compiled wheels) and static binaries.\n\n**Note:** musl can have subtle differences (DNS resolution, timezone handling)."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Alpine Awareness 🏔️",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which of the following is a potential drawback of Alpine images?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They are larger than Ubuntu images",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They use musl libc, which can cause compatibility issues with some software",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They don’t have a package manager",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They cannot run web servers",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Alpine uses musl, not glibc. Some pre‑compiled binaries expect glibc and may fail.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Distroless Images 🔒",
+            "content": "# No Shell, No Package Manager\n\nGoogle’s Distroless images contain only your application and its runtime dependencies. They have:\n- No shell (no `bash`/`sh`)\n- No package manager\n- No standard Linux tools\n\nExample: `gcr.io/distroless/nodejs18-debian12`\n\n**Benefits:**\n- Extremely small attack surface.\n- You cannot exec into them – great for security.\n\n**Challenge:** Debugging is hard. You might need a separate debug image."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Scratch – The Empty Slate 📜",
+            "content": "# FROM scratch\n\n```dockerfile\nFROM scratch\nCOPY mybinary /\nCMD [\"/mybinary\"]\n```\n\n- Literally zero bytes base. No libraries, no filesystem.\n- Only works with **statically compiled binaries** (no dynamic linking).\n- Perfect for Go or Rust apps compiled with `CGO_ENABLED=0`.\n\n> You cannot debug inside a scratch container – there is no shell."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Scratch Capabilities 🪶",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What is required to use `FROM scratch` for a Go application?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The Go binary must be compiled with CGO enabled",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The binary must be statically compiled (CGO_ENABLED=0)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "You must add a shell to the image",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It only works on Windows containers",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Scratch has no C library; a static binary is required. Go binaries with `CGO_ENABLED=0` are statically linked.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Choose the Right Base for the Job\n- **Development**: use full or slim images for easy debugging.\n- **Production**: Alpine for size, Distroless for security, Scratch for extreme minimalism."
+        }
+    ]
+}

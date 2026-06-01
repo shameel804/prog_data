@@ -1,0 +1,114 @@
+{
+    "id": "l1",
+    "chapterId": "ch_5",
+    "title": "The Dockerfile: Your Recipe for Images 📜",
+    "description": "Understand what a Dockerfile is, why it's better than committing, and its basic structure.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "From Manual to Automated 🍳",
+            "content": "# The Problem with `docker commit`\n\nRecall that `docker commit` saves a container's state as an image. But it's like cooking without a recipe – you can't easily recreate the dish.\n\n**Dockerfile** solves this: it's a **text file with instructions** to assemble an image automatically. It's your **recipe**.\n\n- ✅ Version‑controlled (Git)\n- ✅ Reproducible (anyone can build the same image)\n- ✅ Transparent (every layer is documented)\n- ✅ Automatable (CI/CD pipelines)"
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "What is a Dockerfile? 📝",
+            "content": "# A Blueprint for Images\n\nA Dockerfile is a plain‑text file named **`Dockerfile`** (no extension) that contains a series of instructions.\n\nEach instruction creates a **new layer** on top of the previous one. The final stack of layers forms the image.\n\n**Basic syntax:**\n```\nINSTRUCTION arguments\n```\n\nCommon instructions:\n- `FROM` – base image\n- `RUN` – execute commands during build\n- `COPY` / `ADD` – add files from host\n- `CMD` / `ENTRYPOINT` – what to run when container starts\n- `WORKDIR` – set working directory\n- `ENV` – environment variables\n- `EXPOSE` – document ports"
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Dockerfile vs Commit 🤔",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What is the main advantage of using a Dockerfile over `docker commit`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Dockerfiles produce smaller images",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Dockerfiles are reproducible and version‑controllable",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Dockerfiles require no build step",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Dockerfiles are only for Linux containers",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A Dockerfile is a script that can be shared and run by anyone, producing identical results. `docker commit` is opaque and manual.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "code",
+            "title": "A Minimal Dockerfile 📄",
+            "content": "Let's look at the simplest possible Dockerfile:",
+            "codeSnippet": "# A minimal Dockerfile\nFROM alpine:3.18\nCMD [\"echo\", \"Hello from my first image!\"]",
+            "codeLanguage": "dockerfile",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_5",
+            "type": "text",
+            "title": "How to Build an Image from a Dockerfile 🔨",
+            "content": "# `docker build`\n\n```bash\ndocker build [OPTIONS] PATH | URL | -\n```\n\n- The `PATH` is the **build context** – the directory containing the Dockerfile and any files to copy.\n- Use `-t` to tag the image: `-t name:tag`.\n- Docker sends the context to the daemon, executes instructions, and produces an image.\n\n**Example:**\n```bash\ndocker build -t my-echo:1.0 .\n```\nThe dot (`.`) means \"current directory\"."
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "Build Context 🧱",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "What does the `.` (dot) represent in `docker build -t myapp .`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The Dockerfile itself",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The build context (current directory)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The registry to push to",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The container name",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The dot sends the entire current directory to the Docker daemon as the build context, which is used for COPY/ADD and Dockerfile instructions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Always Use a Dockerfile\nEven for quick experiments, a Dockerfile is better than `docker commit`. You can later reconstruct or tweak it, and it serves as documentation."
+        }
+    ]
+}

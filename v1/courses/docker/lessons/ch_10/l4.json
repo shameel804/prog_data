@@ -1,0 +1,117 @@
+{
+    "id": "l4",
+    "chapterId": "ch_10",
+    "title": "Swarm Networking, Secrets & Configs 🔐",
+    "description": "Leverage overlay networks, manage secrets and configs securely across your Swarm.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Overlay Networks in Swarm 🕸️",
+            "content": "# Multi‑Host Networking\n\nSwarm uses **overlay networks** to connect containers across different hosts. Containers on the same overlay can communicate as if they were on the same machine.\n\n- Created automatically when you create a service with `--network` or via Compose stack.\n- Encrypted by default (AES‑GCM).\n- `ingress` overlay handles the routing mesh.\n\nCreate your own overlay:\n```bash\ndocker network create --driver overlay my-overlay\n```\n\n> No manual port mapping between containers on the same overlay; they can reach each other directly."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Secrets Management 🤫",
+            "content": "# Protect Sensitive Data\n\nSwarm provides a native **secrets** store. Secrets are encrypted during transit and at rest, and mounted as files in containers.\n\nCreate a secret:\n```bash\necho \"MyDBSecurePass\" | docker secret create db_password -\n```\n\nIn a service:\n```bash\ndocker service create --name db --secret db_password postgres\n```\n\nInside the container, the secret appears at `/run/secrets/db_password`.\n\nIn a stack Compose file:\n```yaml\nsecrets:\n  db_password:\n    external: true\n\nservices:\n  db:\n    secrets:\n      - db_password\n```\n\n> Secrets are immutable; update by creating a new secret and updating the service."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Secrets Location 🔐",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Where is a Docker Swarm secret mounted inside a container by default?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "/etc/secrets/",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "/run/secrets/",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "/opt/secrets/",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "As an environment variable",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Secrets are mounted as files under `/run/secrets/<secret_name>`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Configs – Non‑Secret Configuration ⚙️",
+            "content": "# Similar to Secrets, but for Plain‑Text\n\nConfigs hold configuration files that are not sensitive but need to be distributed.\n\n```bash\ndocker config create nginx_conf ./nginx.conf\n```\n\nIn a service:\n```bash\ndocker service create --name nginx --config src=nginx_conf,target=/etc/nginx/nginx.conf nginx\n```\n\nStack Compose:\n```yaml\nconfigs:\n  nginx_conf:\n    file: ./nginx.conf\n\nservices:\n  nginx:\n    configs:\n      - source: nginx_conf\n        target: /etc/nginx/nginx.conf\n```\n\n> Configs are also immutable; update by creating a new config version."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Secrets vs Configs ⚖️",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What is the difference between a secret and a config in Docker Swarm?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "No difference",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Secrets are encrypted at rest and in transit; configs are plain‑text",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Configs can only be used with stacks",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Secrets are stored in the container’s environment",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Secrets are designed for sensitive data (passwords, keys). Configs are for non‑sensitive files like nginx.conf.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Draining Nodes & Maintenance 🔧",
+            "content": "# Node Availability\n\n- `active`: node can accept tasks.\n- `pause`: no new tasks, existing tasks continue.\n- `drain`: no new tasks, existing tasks are moved to other nodes.\n\n```bash\ndocker node update --availability drain node2\n```\n\nUse `drain` to gracefully take a node offline for maintenance. Swarm reschedules its tasks elsewhere.\n\n> After maintenance, return to `active` to allow new tasks."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Monitoring the Swarm 📊",
+            "content": "# Commands for Visibility\n\n- `docker node ls` – list nodes and status.\n- `docker node inspect <node>` – detailed info.\n- `docker service ps <service>` – tasks per service.\n- `docker stack ps <stack>` – tasks for a stack.\n- `docker system info` – shows if swarm is active.\n\n> Use `docker service logs` and `docker node ps <node>` (the latter is new in 24.0+)."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Rolling Update + Healthcheck\nCombine `HEALTHCHECK` in your image with `update_config.order=start-first` to ensure new replicas are healthy before stopping old ones."
+        }
+    ]
+}

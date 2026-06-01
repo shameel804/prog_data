@@ -1,0 +1,14 @@
+{
+    "id": "task1",
+    "chapterId": "ch_11",
+    "title": "Hardened Container Deployment",
+    "description": "Run Nginx with read‑only root filesystem, limited capabilities, and no-new-privileges.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Objective\nApply multiple security options to lock down a web server container.\n\n### Steps\n1. Create a custom `index.html` file (or use default) to verify the server works.\n2. Start an Nginx container with the following hardening options:\n   - `--read-only`\n   - `--tmpfs /var/cache/nginx`\n   - `--tmpfs /var/run`\n   - `--cap-drop ALL --cap-add NET_BIND_SERVICE`\n   - `--security-opt no-new-privileges`\n   - Map host port 8080 to container port 80.\n3. Verify the web page is accessible.\n4. Try to write a file inside the container (should fail because of read‑only root).\n   ```bash\n   docker exec <container> touch /test.txt\n   ```\n5. Check that the container does not have unnecessary capabilities. Run `docker inspect <container>` and look at `CapAdd` and `CapDrop`.\n6. Bonus: Create a custom seccomp profile (you can use an example from Docker docs) that further restricts syscalls and apply it with `--security-opt seccomp=profile.json`.\n7. Stop and remove the container.\n\n### Deliverable\nOutput showing that `touch /test.txt` fails (read-only filesystem) and the `docker inspect` snippet showing capabilities.",
+    "hints": [
+        "If Nginx fails to start, check that the tmpfs mounts provide the necessary writable directories (like /var/run for PID file).",
+        "You can use `--name web-hardened` for easy reference."
+    ],
+    "expectedOutput": "Web page accessible, `touch` fails with 'Read-only file system', and inspect shows 'CapAdd: [NET_BIND_SERVICE]' and 'CapDrop: [ALL]'.",
+    "solutionCode": "docker run -d --name web-hardened \\\n  --read-only \\\n  --tmpfs /var/cache/nginx \\\n  --tmpfs /var/run \\\n  --cap-drop ALL \\\n  --cap-add NET_BIND_SERVICE \\\n  --security-opt no-new-privileges \\\n  -p 8080:80 \\\n  nginx:alpine\n\ncurl localhost:8080\ndocker exec web-hardened touch /test.txt   # fails\ndocker inspect web-hardened | grep -A5 \"CapAdd\"\ndocker stop web-hardened\ndocker rm web-hardened"
+}

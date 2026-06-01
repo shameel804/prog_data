@@ -1,0 +1,85 @@
+{
+    "id": "l2",
+    "chapterId": "ch_6",
+    "title": "BuildKit Secrets & SSH Forwarding 🤫",
+    "description": "Securely pass secrets during build time without leaving them in image layers.",
+    "xpReward": 35,
+    "estimatedMinutes": 8,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Problem with Build‑Time Secrets 🔐",
+            "content": "# Never Hardcode Secrets in Dockerfiles\n\nIf you `COPY` a private key or `ENV API_KEY=...`, that secret becomes a permanent part of the image layer. Anyone with access to the image can extract it.\n\nEven `ARG` is dangerous because `ARG` values persist in image history (`docker history`).\n\n**Solution:** Docker BuildKit provides **secret mounts** and **SSH agent forwarding** to safely inject secrets only during the build."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Enabling BuildKit 🏗️",
+            "content": "# BuildKit is the Modern Builder\n\nBuildKit is a new builder backend with many features. It’s enabled by default in Docker Desktop, but on Linux you may need to set:\n\n```bash\nexport DOCKER_BUILDKIT=1\n```\nor in `/etc/docker/daemon.json`:\n```json\n{ \"features\": { \"buildkit\": true } }\n```\n\nCheck with:\n```bash\ndocker buildx version\n```\nWe'll use `docker build` which automatically uses BuildKit if enabled."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "`--secret` Mount: Injecting a Secret File 📁",
+            "content": "# How to Use a Secret During Build\n\n1. Create a secret file on the host (e.g., `token.txt`).\n2. In the Dockerfile, mount it temporarily:\n   ```dockerfile\n   RUN --mount=type=secret,id=mysecret cat /run/secrets/mysecret\n   ```\n3. At build time, pass the secret:\n   ```bash\n   docker build --secret id=mysecret,src=token.txt -t myimage .\n   ```\n\nThe secret is only available in that single `RUN` command and is **not** stored in the final image.\n\n**Example Dockerfile snippet:**\n```dockerfile\nRUN --mount=type=secret,id=aws_creds \\\n    AWS_SHARED_CREDENTIALS_FILE=/run/secrets/aws_creds \\\n    aws s3 cp s3://mybucket/data ./\n```"
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Secret Safety 🤫",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What happens to a BuildKit secret after the RUN command finishes?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It is embedded in the image layer",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It is removed and not present in the final image",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It is stored in /run/secrets/ permanently",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It is printed to stdout",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "BuildKit mounts the secret only for the duration of the RUN command and discards it afterward. No trace remains in the image.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "SSH Agent Forwarding 🔑",
+            "content": "# Access Private Repos Without Copying Keys\n\nUse case: `git clone` private repositories during build.\n\nDockerfile:\n```dockerfile\nRUN --mount=type=ssh git clone git@github.com:myorg/private-repo.git\n```\n\nBuild command:\n```bash\ndocker build --ssh default -t myimage .\n```\n\nThis forwards the host’s SSH agent socket into the build container temporarily. No SSH keys are baked into the image.\n\n> Requires that the host has `ssh-agent` running and keys added."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "code",
+            "title": "SSH Build Example 🚀",
+            "content": "A complete example with SSH:",
+            "codeSnippet": "# Dockerfile\nFROM alpine\nRUN apk add --no-cache git openssh\nRUN mkdir -p -m 0700 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts\nRUN --mount=type=ssh git clone git@github.com:myuser/private-config.git /config\n\n# Build\neval $(ssh-agent -s)\nssh-add ~/.ssh/id_rsa\ndocker build --ssh default -t with-config .",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## No More ARG Secrets\nAlways prefer `--secret` or `--ssh` over passing secrets via `ARG`. ARG values are visible in `docker history`."
+        }
+    ]
+}

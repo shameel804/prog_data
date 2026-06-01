@@ -1,0 +1,155 @@
+{
+    "id": "l1",
+    "chapterId": "ch_3",
+    "title": "Inside the Container: `docker exec` & Interactive Mode 🎮",
+    "description": "Learn to run commands inside a running container and open interactive shells.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Why Enter a Running Container? 🚪",
+            "content": "# Containers Are Like Apartments\n\nYou can look at them from the outside (`docker ps`, `docker logs`), but sometimes you need to **go inside** to:\n\n- Debug a running application.\n- Check file contents or environment variables.\n- Run diagnostic commands (e.g., `ps`, `ls`, `curl`).\n- Install temporary tools (not recommended for production, but useful in development).\n\nDocker gives you two main ways: **`docker exec`** (the right way) and `docker attach` (the old way)."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "`docker exec` – Run Any Command 🏃",
+            "content": "# Syntax\n\n```bash\ndocker exec [OPTIONS] CONTAINER COMMAND [ARG...]\n```\n\nThis runs a **new process** inside the container’s namespace. The container must be running.\n\n**Examples:**\n```bash\ndocker exec my-nginx ls /usr/share/nginx/html\ndocker exec database psql -U postgres -c \"SELECT 1\"\n```\n\nThe command runs and the output appears in your terminal."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "exec Basics 🧐",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What must be true for `docker exec` to work?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The container must be stopped.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The container must be running.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The container must have SSH installed.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The container must be named.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`docker exec` launches a new process in a running container. If the container is stopped, it can’t execute anything.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "Interactive Shell: `-it` 🤖",
+            "content": "# Getting a Shell Inside a Container\n\nCombining flags `-i` (interactive) and `-t` (allocate a pseudo‑TTY) gives you a full terminal experience.\n\n```bash\ndocker exec -it my-container bash\n```\n\n- `-i` keeps STDIN open.\n- `-t` provides a terminal driver (so you can use `clear`, get coloured output, etc.).\n\nIf the image doesn’t have `bash`, try `sh`:\n```bash\ndocker exec -it my-container sh\n```\n\nNow you’re “inside” the container. Run commands like you would on a normal Linux machine. Type `exit` to leave."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "Live Demo 🎬",
+            "content": "Start a container and get inside:",
+            "codeSnippet": "# Start a long‑lived container\ndocker run -d --name sandbox alpine sleep 3600\n\n# Open an interactive shell\ndocker exec -it sandbox sh\n\n# Inside the container\nls -l\necho $PATH\nps aux\nexit  # go back to host",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "`-it` Decoded 🔠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "What is the purpose of the `-t` flag in `docker exec -it`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It keeps STDIN open.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It allocates a pseudo‑TTY for a proper terminal interface.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It runs the command as root.",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It terminates the container after the command finishes.",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`-t` stands for TTY. Without it, many interactive programs would misbehave. Combine with `-i` for a full shell.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_7",
+            "type": "warning",
+            "title": "Which Shell to Use? ⚠️",
+            "content": "## Not all images have bash!\n\n- **Alpine** images use `sh` (busybox ash).\n- **Ubuntu/Debian** usually have `bash`.\n- **Minimal images** may have no shell at all!\n\nAlways check the image documentation. Try `sh` if `bash` fails."
+        },
+        {
+            "id": "s_l1_8",
+            "type": "text",
+            "title": "Running Commands as Another User 👤",
+            "content": "# `--user` Flag\n\nBy default, `docker exec` runs commands as the container’s default user (often `root`). You can change it:\n\n```bash\ndocker exec -u www-data my-nginx whoami\n```\n\nThis is critical for security – avoid running as root inside containers when unnecessary."
+        },
+        {
+            "id": "s_l1_9",
+            "type": "quiz",
+            "title": "User Switch 🧑‍💻",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_3",
+                "type": "multiple_choice",
+                "question": "How do you run a command inside a container as the user `nobody`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "docker exec nobody myapp",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "docker exec -u nobody myapp",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "docker exec --user=nobody myapp",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Both b and c are correct",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Both `-u` and `--user` work, but `-u nobody` is the short form. The option expects a username or UID.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

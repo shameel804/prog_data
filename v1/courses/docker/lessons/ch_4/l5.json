@@ -1,0 +1,110 @@
+{
+    "id": "l5",
+    "chapterId": "ch_4",
+    "title": "Searching, Pruning & Managing Image Bloat 🧹",
+    "description": "Find images on registries, clean up old images, and keep your system lean.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Finding Images: `docker search` 🔎",
+            "content": "# Search Docker Hub from the CLI\n\n```bash\ndocker search TERM\n```\n\nFinds public images on Docker Hub matching your term.\n\n**Example:**\n```bash\ndocker search python\n```\n\nResults include:\n- **NAME**: image name\n- **DESCRIPTION**: short description\n- **STARS**: popularity\n- **OFFICIAL**: `[OK]` if it’s an official image\n- **AUTOMATED**: `[OK]` if auto‑built from a source repo (now deprecated)\n\n> You can also search visually on [hub.docker.com](https://hub.docker.com) with better filters."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Search Scope 🔍",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Does `docker search` search private registries by default?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Yes, it searches all registries configured",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "No, it searches only Docker Hub (and can be pointed to other registries with --limit or --filter)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It only searches the local image cache",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It searches any public registry, but not private ones",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`docker search` queries the Docker Hub by default. It does not search private registries unless you specify one with `--registry` (but this isn’t fully supported; better use the registry's own API/UI).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Cleaning Up Unused Images 🧹",
+            "content": "# `docker image prune`\n\nRemoves **dangling** images (those with `<none>` tag, often leftover from new builds).\n\n```bash\ndocker image prune\n```\n\nAdd `-a` to remove **all** images not currently referenced by any container:\n```bash\ndocker image prune -a\n```\n\nAdd `--filter` to target specific labels or timestamps:\n```bash\ndocker image prune --filter \"until=24h\"\n```\n\n> Use with caution — `-a` will delete images you might want to keep."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Disk Space Deep Dive 📉",
+            "content": "# `docker system df`\n\nShows disk usage breakdown:\n\n```bash\ndocker system df\n```\n\nOutput:\n- **Images**: total size, active, size reclaimable.\n- **Containers**: similar.\n- **Local Volumes**: size and reclaimable.\n- **Build Cache**: size.\n\nAdd `-v` for verbose listing of each object.\n\nTo aggressively free up space:\n```bash\ndocker system prune -a --volumes\n```\n\nThis removes all stopped containers, unused networks, dangling images, build cache, and even unused volumes."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "System Cleanup Demo 🧹",
+            "content": "Check disk usage, then prune:",
+            "codeSnippet": "# See current usage\ndocker system df\n\n# Remove dangling images\ndocker image prune\n\n# Remove ALL unused images\ndocker image prune -a\n\n# Aggressive cleanup (all stopped containers, unused networks, images, build cache)\ndocker system prune -a\n\n# Also remove unused volumes\ndocker system prune -a --volumes",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Prune Impact 💥",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "true_false",
+                "question": "`docker image prune -a` will delete images that are currently used by stopped containers.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "It only removes images not referenced by any container (running or stopped). If a stopped container still references an image, that image won’t be removed.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_7",
+            "type": "warning",
+            "title": "Prune Danger ⚠️",
+            "content": "## `-a` Deletes All Unused\n\nIf you run `docker image prune -a`, you might delete images you’ll need later. Always double‑check with `docker images` first. Consider using `--filter` to limit scope."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Automate Cleanup with Cron\n\nOn build servers, schedule `docker system prune -f --filter \"until=72h\"` to clean images older than 3 days. This prevents disk from filling up."
+        }
+    ]
+}

@@ -1,0 +1,98 @@
+{
+    "id": "l3",
+    "chapterId": "ch_7",
+    "title": "Custom Bridge Networks & DNS Magic 🪄",
+    "description": "Create isolated networks and let containers discover each other by name.",
+    "xpReward": 35,
+    "estimatedMinutes": 8,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Creating a Custom Bridge Network 🛠️",
+            "content": "# `docker network create`\n\n```bash\ndocker network create --driver bridge my-net\n```\n\n- `--driver bridge` is the default; you can omit it.\n- You can also specify `--subnet`, `--gateway`, `--ip-range`, etc.\n\n**Example:**\n```bash\ndocker network create --subnet=10.0.0.0/24 my-app-net\n```\n\nThis creates an isolated virtual network separate from the default bridge."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "DNS – Service Discovery by Name 🏷️",
+            "content": "# Automatic Name Resolution\n\nOn a custom bridge network, Docker embeds a DNS server (at `127.0.0.11`) that resolves container **names** to their IP addresses.\n\n- Start containers on the same network using `--network`.\n- Assign them names (`--name`).\n- Now they can ping each other by **name**!\n\n```bash\ndocker run -d --name web --network my-net nginx\ndocker run -d --name db --network my-net postgres\ndocker exec web ping -c 2 db\n```\n\n> No more hardcoding IPs! This is a game‑changer for microservices."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "DNS on Custom Networks 📡",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What makes custom bridge networks superior to the default bridge for container‑to‑container communication?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They are faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They provide automatic DNS resolution by container name",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They allow containers to share the host network",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They require no port mapping",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Custom bridge networks include a built‑in DNS server, so containers can find each other by name.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Full DNS Demo 🧪",
+            "content": "Create a network and two containers that talk by name:",
+            "codeSnippet": "# Create network\ndocker network create demo-net\n\n# Start a web server and a database container\ndocker run -d --name web --network demo-net nginx:alpine\ndocker run -d --name db --network demo-net alpine sleep 3600\n\n# Ping db from web by name\ndocker exec web ping -c 2 db\n\n# Also works from db to web\ndocker exec db ping -c 2 web",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Network Isolation 🧱",
+            "content": "# Separate Stacks, Separate Networks\n\nContainers on different custom networks **cannot** communicate directly (unless you connect them).\n\nThis provides built‑in segmentation for security and clarity.\n\nExample:\n- `front-tier` network for web and API.\n- `back-tier` network for API and database.\n\nPlace the API container on both networks to bridge them."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Isolation Check 🔒",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "true_false",
+                "question": "A container on `net1` can ping a container on `net2` by name without extra configuration.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "By default, different Docker networks are isolated. You need to connect a container to both networks to route traffic.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

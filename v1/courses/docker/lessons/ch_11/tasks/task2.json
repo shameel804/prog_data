@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_11",
+    "title": "Enable Rootless Docker (Linux) and Run a Container",
+    "description": "Install rootless Docker, start the daemon as a normal user, and run a container.",
+    "estimatedMinutes": 30,
+    "problemStatement": "## Objective\nSet up rootless Docker on a Linux machine and experience running containers without root.\n\n### Prerequisites\n- A Linux system (VM or physical) with a non‑root user account.\n- Internet access to download the installer.\n- Remove any existing rootful Docker installation (optional, but recommended to avoid conflicts).\n\n### Steps\n1. Install `uidmap` package:\n   ```bash\n   sudo apt update && sudo apt install -y uidmap\n   ```\n2. Run the rootless Docker installer:\n   ```bash\n   curl -fsSL https://get.docker.com/rootless | sh\n   ```\n   This will install Docker binaries and configure systemd user service.\n3. Add the following to your `~/.bashrc` (if not done automatically):\n   ```bash\n   export PATH=/home/$USER/bin:$PATH\n   export DOCKER_HOST=unix:///run/user/$(id -u)/docker.sock\n   ```\n   Then reload: `source ~/.bashrc`.\n4. Start the Docker daemon:\n   ```bash\n   systemctl --user start docker\n   ```\n   Check status: `systemctl --user status docker`.\n5. Verify the daemon is running as your user:\n   ```bash\n   ps aux | grep dockerd\n   ```\n   (it should show your username, not root).\n6. Run a test container:\n   ```bash\n   docker run --rm hello-world\n   ```\n7. Run Nginx on a high port (since low ports are not allowed without configuration):\n   ```bash\n   docker run -d --name web-rootless -p 8080:80 nginx:alpine\n   curl localhost:8080\n   ```\n8. Clean up:\n   ```bash\n   docker stop web-rootless\n   docker rm web-rootless\n   systemctl --user stop docker\n   ```\n\n### Deliverable\nShow the output of `ps aux | grep dockerd` (non‑root user) and the successful `hello-world` output.",
+    "hints": [
+        "If `systemctl --user` doesn't work, you may need to enable lingering: `sudo loginctl enable-linger $USER`.",
+        "If the installer complains about `newuidmap` or `newgidmap`, ensure the `/etc/subuid` and `/etc/subgid` files have entries for your user (the script usually handles this)."
+    ],
+    "expectedOutput": "`ps aux | grep dockerd` shows the daemon running under your username. `docker run hello-world` prints the hello message.",
+    "solutionCode": "sudo apt install -y uidmap\ncurl -fsSL https://get.docker.com/rootless | sh\nexport PATH=/home/$USER/bin:$PATH\nexport DOCKER_HOST=unix:///run/user/$(id -u)/docker.sock\nsystemctl --user start docker\nps aux | grep dockerd\ndocker run --rm hello-world\ndocker run -d --name web-rootless -p 8080:80 nginx:alpine\ncurl localhost:8080\ndocker stop web-rootless\ndocker rm web-rootless\nsystemctl --user stop docker"
+}

@@ -1,0 +1,73 @@
+{
+    "id": "l5",
+    "chapterId": "ch_3",
+    "title": "Copying Files: `docker cp` 📁",
+    "description": "Move files between your host machine and containers with ease.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "The Data Bridge 🌉",
+            "content": "# `docker cp`\n\nSometimes you need to get a file **into** a container (config files, certificates) or **out of** it (logs, generated data) without setting up volumes.\n\n```bash\ndocker cp [OPTIONS] SRC_PATH DEST_PATH\n```\n\nOne of the paths must be a container reference (e.g., `my-container:/path`).\n\n- **Host to container:** `docker cp ./config.txt my-container:/app/config.txt`\n- **Container to host:** `docker cp my-container:/var/log/app.log ./app.log`"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Copy Examples 📤📥",
+            "content": "Let’s copy a file into and out of a container:",
+            "codeSnippet": "# Create a dummy file on host\necho \"Hello Docker\" > greet.txt\n\n# Start a container\ndocker run -d --name storage alpine sleep 600\n\n# Copy file into container\ndocker cp greet.txt storage:/tmp/greet.txt\n\n# Verify inside container\ndocker exec storage cat /tmp/greet.txt\n\n# Copy file out of container (simulate log export)\ndocker exec storage sh -c 'echo log entry > /var/log/app.log'\ndocker cp storage:/var/log/app.log ./app.log\n\n# Cleanup\ndocker rm -f storage",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "cp Direction 🔄",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which command copies a local file `data.csv` into a container named `db` at `/opt/data.csv`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "docker cp db:/opt/data.csv data.csv",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "docker cp data.csv db:/opt/data.csv",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "docker cp db:data.csv /opt/",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "docker cp --from db data.csv /opt/",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The syntax is `SOURCE DEST`. To copy from host to container, the host path comes first.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "tip",
+            "title": "cp Only Works with Containers 🚫",
+            "content": "## Not for Images\n\n`docker cp` works on **containers** (running or stopped). You cannot copy files to/from an image directly. If you need that, use Dockerfile `COPY` or `ADD`."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Permissions & Ownership 👮",
+            "content": "# Gotchas\n\n- The copied file inherits the user and group of the process that runs `docker cp` on the host side (unless the destination path already exists with different ownership).\n- Inside the container, files are owned by the user executing the `cp` command (host’s `docker` client).\n- For containers, you can use `--archive` (`-a`) to preserve ownership and timestamps (only from container to host, not both ways).\n\n```bash\ndocker cp -a my-container:/etc/hosts ./\n```"
+        }
+    ]
+}

@@ -1,0 +1,104 @@
+{
+    "id": "l3",
+    "chapterId": "ch_8",
+    "title": "Bind Mounts & Tmpfs Mounts 🔗",
+    "description": "Share directories between host and container and create in‑memory temporary filesystems.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Bind Mounts – A Window to the Host 🪟",
+            "content": "# Mount Any Host Directory\n\nUnlike volumes, bind mounts map an arbitrary host directory (or file) into the container.\n\n```bash\ndocker run -v /host/path:/container/path IMAGE\n```\n\n- Changes in the container are instantly visible on the host, and vice versa.\n- The host path must exist (otherwise it’s created as a directory by Docker on Linux, but may behave differently on other OS).\n- No Docker management – you control the directory.\n\n**Ideal for:**\n- Development with live code reloading.\n- Sharing configuration files.\n- Providing large datasets from the host."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Bind Mount in Action ⚡",
+            "content": "Live code reload for a Node.js app:",
+            "codeSnippet": "# Your source code is in /home/user/project\n# The container expects code in /app\n\ndocker run -v /home/user/project:/app -p 3000:3000 node:18-alpine node /app/server.js\n\n# Any changes in /home/user/project immediately affect the container",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Bind Mount vs Volume 🆚",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which statement is true about bind mounts?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They are managed by Docker and stored in /var/lib/docker/volumes/",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They map a specific host path into the container",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They cannot be used in production",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They persist after the container is removed, managed by Docker",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Bind mounts directly use an existing host directory. Volumes are managed by Docker.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Permissions & Portability Concerns ⚠️",
+            "content": "# Beware of Bind Mount Pitfalls\n\n- **File ownership**: UID/GID inside the container may not match the host, causing permission errors.\n- **Portability**: The Dockerfile now depends on host paths; it won’t run on another machine without those paths.\n- **Security**: The container can modify host files (unless mounted `ro`).\n\n> In production, prefer named volumes for application data. Bind mounts are great for development and config injection."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Tmpfs Mounts – In‑Memory Storage 🧠",
+            "content": "# For Transient Sensitive Data\n\nA tmpfs mount stores data in the host’s RAM (or swap), not on disk.\n\n```bash\ndocker run --tmpfs /app/tmp alpine\n# or with --mount:\ndocker run --mount type=tmpfs,destination=/app/tmp alpine\n```\n\n- Data is wiped when the container stops.\n- Cannot be shared between containers.\n- Useful for temporary files, caches, or secrets you don’t want on disk.\n\n> No --read-only required; tmpfs is inherently volatile."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Tmpfs Volatility 💨",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "true_false",
+                "question": "Data in a tmpfs mount persists across container restarts.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Tmpfs is temporary; it lives in memory and is destroyed when the container stops.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## The `--mount` vs `-v` for tmpfs\nUse `--mount type=tmpfs,destination=/tmp,tmpfs-size=64m` to limit memory usage. The shorthand `--tmpfs` doesn't support size options directly (use `--tmpfs /tmp:rw,size=64m`)."
+        }
+    ]
+}

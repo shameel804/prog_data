@@ -1,0 +1,110 @@
+{
+    "id": "l3",
+    "chapterId": "ch_11",
+    "title": "Hardening Containers: Cap‑Drop, Read‑Only & More 🛡️",
+    "description": "Use runtime flags and security options to lock down containers and follow the principle of least privilege.",
+    "xpReward": 35,
+    "estimatedMinutes": 8,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Docker Run Security Flags 🛡️",
+            "content": "# Your Container Hardening Toolkit\n\nWhen starting a container, you can add security constraints:\n\n- `--read-only`: mounts the container’s root filesystem as read‑only.\n- `--tmpfs /tmp`: provides a writable temporary filesystem for specific directories.\n- `--cap-drop ALL --cap-add <CAP>`: drops all capabilities, then adds back only needed ones.\n- `--security-opt no-new-privileges`: prevents the container from gaining additional privileges (e.g., via setuid binaries).\n- `--security-opt seccomp=<profile>`: applies a custom seccomp profile.\n- `--security-opt apparmor=<profile>`: applies AppArmor profile.\n\nCombining these dramatically reduces the attack surface."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Example: Hardened Nginx Container 🧱",
+            "content": "Run Nginx with minimal privileges:",
+            "codeSnippet": "docker run -d \\\n  --read-only \\\n  --tmpfs /var/cache/nginx \\\n  --tmpfs /var/run \\\n  --cap-drop ALL \\\n  --cap-add NET_BIND_SERVICE \\\n  --security-opt no-new-privileges \\\n  -p 80:80 \\\n  nginx:alpine\n\n# Nginx needs /var/cache/nginx and /var/run to be writable, so we mount tmpfs there.",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Read‑Only Root 🛑",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What does the `--read-only` flag do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Prevents the container from writing to any file, including volumes",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Mounts the container’s root filesystem as read‑only; only mounted volumes and tmpfs are writable",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Makes the container's image immutable",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Stops the container from reading files",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The root filesystem becomes read‑only. Any directories that need writes must be mounted as volumes or tmpfs.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "`no-new-privileges` – Block Escalation 🚫",
+            "content": "# Prevent Setuid Tricks\n\n```bash\ndocker run --security-opt no-new-privileges …\n```\n\nThis ensures that even if the container runs a setuid binary, it won’t gain additional capabilities. It’s a kernel feature that prevents privilege escalation.\n\n> Recommended for **every** container that doesn’t need to change UID/GID."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Custom Seccomp Profiles 📜",
+            "content": "# Restrict Syscalls\n\nDocker’s default seccomp profile blocks ~44 dangerous syscalls. You can create an even stricter profile.\n\nExample: `deny-all.json` to block all syscalls except a whitelist.\n\n```bash\ndocker run --security-opt seccomp=/path/to/custom.json …\n```\n\nWriting seccomp profiles is advanced, but many tools (like Podman’s `seccomp.json`) provide templates.\n\n> Most containers work fine with the default profile. Custom profiles are for high‑security environments."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Seccomp Benefit 🔐",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "true_false",
+                "question": "The default Docker seccomp profile allows all system calls.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "The default profile blocks around 44 syscalls (like `reboot`, `kexec_load`) to reduce attack surface.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "AppArmor & SELinux Profiles 🛡️",
+            "content": "# Mandatory Access Control\n\nIf your Linux distribution has AppArmor or SELinux enabled, Docker can apply profiles to containers.\n\n- AppArmor:\n  ```bash\n  docker run --security-opt apparmor=docker-nginx …\n  ```\n- SELinux:\n  ```bash\n  docker run --security-opt label=type:container_t …\n  ```\n\nThese policies restrict what files, capabilities, and network a container can access.\n\n> Docker’s default AppArmor profile (`docker-default`) is applied automatically on supported systems."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Combine for Maximum Security\nUse `--read-only` + `--cap-drop ALL --cap-add NET_BIND_SERVICE` + `--security-opt no-new-privileges` as a baseline for stateless web apps. Only relax as needed."
+        }
+    ]
+}

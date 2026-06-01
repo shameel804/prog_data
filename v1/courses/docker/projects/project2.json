@@ -1,0 +1,22 @@
+{
+    "id": "project2",
+    "title": "Secure CI/CD Pipeline for Docker Images 🔁",
+    "description": "Create a local CI/CD pipeline script that builds a multi‑stage image, runs tests, scans for vulnerabilities, and pushes to Docker Hub – all automated.",
+    "difficulty": "Intermediate",
+    "estimatedHours": "2-3",
+    "problemStatement": "## Goal\nDesign and implement a Bash script that simulates a CI/CD pipeline for a Dockerized Node.js application.\n\nYou are given a simple Express application (with a couple of tests). The task:\n- Write a **multi‑stage Dockerfile** that builds the app and produces a lean production image.\n- Create a pipeline script that:\n  1. Lints the Dockerfile with Hadolint (optional, but recommended).\n  2. Builds the image with `docker build` using `--cache-from` to speed up rebuilds.\n  3. Runs unit tests inside a container (use a test stage or run separately).\n  4. Scans the built image with **Trivy** for HIGH/CRITICAL vulnerabilities (fail on critical).\n  5. Logs into Docker Hub and pushes the image tagged with the commit SHA and `latest`.\n- The script must exit with a non‑zero code if any step fails.\n- (Bonus) Add a deployment step that updates a local Swarm service or Compose environment.\n\nYou will test the pipeline by running the script locally after making a change to the app.",
+    "requirements": [
+        "Dockerfile must use multi‑stage: build stage with dev dependencies, production stage with only production modules.",
+        "Pipeline script must be executable and work on a Linux/macOS shell.",
+        "Vulnerability scan must use Trivy (can run as a Docker container).",
+        "Image push must use environment variables for Docker Hub credentials (never hardcoded).",
+        "Script must print success/failure messages for each stage."
+    ],
+    "hints": [
+        "Leverage `set -e` at the top of the script to exit immediately on errors.",
+        "For `--cache-from`, pull the previous `latest` image first (if exists).",
+        "Trivy can be run via `docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ...`.",
+        "Store Docker Hub username and token in environment variables `DOCKER_USER` and `DOCKER_TOKEN`."
+    ],
+    "expectedOutput": "Successful pipeline run prints stage messages and pushes the image. A failed scan (if critical vulnerabilities found) exits with code 1 and prints error."
+}

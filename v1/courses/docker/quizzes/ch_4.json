@@ -1,0 +1,246 @@
+{
+    "id": "quiz_ch_4",
+    "chapterId": "ch_4",
+    "title": "Chapter 4 Quiz",
+    "description": "Test your knowledge of image tagging, pushing to registries, layers, saving/loading, and cleanup!",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the default registry if you don’t specify one in an image name?",
+            "options": [
+                "github.com",
+                "docker.io (Docker Hub)",
+                "registry.docker.com",
+                "quay.io"
+            ],
+            "correctAnswer": 1,
+            "explanation": "If no registry is provided, Docker defaults to `docker.io`, which is Docker Hub."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "What does the `latest` tag guarantee?",
+            "options": [
+                "It is always the most recent version of the image",
+                "It is the most stable version",
+                "It is the default tag when none is specified",
+                "It is the smallest image size"
+            ],
+            "correctAnswer": 2,
+            "explanation": "`latest` is simply the default tag. It does not imply any special status like newest or most stable."
+        },
+        {
+            "id": "q3",
+            "type": "true_false",
+            "question": "`docker tag` creates a copy of the image with a new name, doubling disk usage.",
+            "correctAnswer": false,
+            "explanation": "Tagging just creates a new reference to the same image ID; no extra disk space is used."
+        },
+        {
+            "id": "q4",
+            "type": "fill_blank",
+            "question": "To push an image to your personal Docker Hub account, you must tag it as `_______/myrepo:mytag`.",
+            "options": [
+                "library",
+                "docker",
+                "your-username",
+                "registry"
+            ],
+            "correctAnswer": "your-username",
+            "explanation": "You can only push to repositories under your own Docker Hub username (namespace)."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "What command authenticates your Docker client with a registry?",
+            "options": [
+                "docker auth",
+                "docker login",
+                "docker connect",
+                "docker signin"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker login` stores your credentials for pushing/pulling private images."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "Why would `docker push alpine:latest` fail for a normal user?",
+            "options": [
+                "Alpine is too big",
+                "You don’t own the `library/alpine` repository",
+                "Alpine is deprecated",
+                "You haven’t logged in"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The official `alpine` image lives in the `library` namespace, which only Docker maintainers can push to."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "What information does `docker history` provide?",
+            "options": [
+                "A list of all containers that used the image",
+                "The commands (layers) used to build the image and their sizes",
+                "The network traffic of the image",
+                "The Docker version used to build the image"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker history` shows each layer’s creation command, size, and time."
+        },
+        {
+            "id": "q8",
+            "type": "true_false",
+            "question": "If two images both use `alpine:3.18` as a base, the alpine layers are stored twice on disk.",
+            "correctAnswer": false,
+            "explanation": "Docker shares layers by their content hash. Identical layers are stored only once."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "Which command exports an image to a tar file?",
+            "options": [
+                "docker export",
+                "docker save",
+                "docker commit",
+                "docker backup"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker save` exports images preserving layers. `docker export` works on containers and flattens them."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "What command loads an image from a tar file into Docker?",
+            "options": [
+                "docker import",
+                "docker load",
+                "docker restore",
+                "docker pull --from-tar"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker load` reads a tar stream (from `docker save`) and loads the image."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "How can you transfer an image directly to a remote Docker host over SSH without an intermediate file?",
+            "options": [
+                "docker push remote-host",
+                "docker save myimage | ssh host 'docker load'",
+                "docker cp myimage remote-host:/var/lib/docker",
+                "docker transfer myimage remote-host"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Piping `docker save` to `ssh` is a clever one‑liner to move images across machines."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "What does `docker image prune` remove by default?",
+            "options": [
+                "All unused images",
+                "Dangling images (those with <none> tag)",
+                "All stopped containers and images",
+                "Only images older than 24 hours"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Without `-a`, `prune` only removes dangling images — those not tagged and not referenced by any container."
+        },
+        {
+            "id": "q13",
+            "type": "true_false",
+            "question": "`docker image prune -a` deletes all images not currently used by any container.",
+            "correctAnswer": true,
+            "explanation": "The `-a` flag expands the prune scope to all unused images, even tagged ones, as long as no container references them."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "Which command shows disk usage of Docker objects?",
+            "options": [
+                "docker df",
+                "docker system df",
+                "docker space",
+                "docker du"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`docker system df` gives a summary of disk usage by images, containers, volumes, and build cache."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "What is the effect of `docker system prune -a --volumes`?",
+            "options": [
+                "Removes all Docker data, including running containers",
+                "Removes stopped containers, unused networks, dangling & unused images, build cache, and unused volumes",
+                "Only removes volumes",
+                "Resets Docker to factory settings"
+            ],
+            "correctAnswer": 1,
+            "explanation": "This aggressive command cleans up everything that isn’t being used by running containers, including volumes."
+        },
+        {
+            "id": "q16",
+            "type": "fill_blank",
+            "question": "To search Docker Hub for images containing the word 'mysql', use `docker _____ mysql`.",
+            "options": [
+                "find",
+                "search",
+                "list",
+                "hub"
+            ],
+            "correctAnswer": "search",
+            "explanation": "`docker search` queries Docker Hub for public images matching the search term."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "In the image reference `registry.example.com:5000/team/app:v2`, what is the registry?",
+            "options": [
+                "registry.example.com",
+                "registry.example.com:5000",
+                "team",
+                "app"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The registry includes the host and port. Here it’s `registry.example.com:5000`."
+        },
+        {
+            "id": "q18",
+            "type": "true_false",
+            "question": "You can push an image to Docker Hub without logging in if the repository is public.",
+            "correctAnswer": false,
+            "explanation": "You must authenticate to push, regardless of the repository’s visibility."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "What is the main advantage of the layered image architecture?",
+            "options": [
+                "It makes images smaller by compressing each layer individually",
+                "Layers are shared across images, saving disk and transfer time",
+                "It allows multiple containers to write to the same layer",
+                "It improves network speed by using multicast"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Layer sharing is the key — identical base layers are stored once and reused, reducing pull and storage overhead."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "What does the `--filter \"until=24h\"` option do in `docker image prune`?",
+            "options": [
+                "Removes images created within the last 24 hours",
+                "Removes images older than 24 hours",
+                "Removes all images except those created in the last 24 hours",
+                "Prunes containers that have been stopped for 24 hours"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The `until` filter targets images created before the given duration (or timestamp). So `24h` means older than 24 hours."
+        }
+    ]
+}

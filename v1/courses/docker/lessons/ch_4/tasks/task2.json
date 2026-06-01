@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_4",
+    "title": "Image Archaeology and Cleanup",
+    "description": "Use docker history, save/load, and prune to manage image layers and disk space.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Objective\nExplore image layers with `docker history`, transfer images with `save` and `load`, and clean up your system.\n\n### Steps\n1. Pull a couple of images: `nginx:alpine` and `redis:alpine`.\n2. Inspect the history of `nginx:alpine`:\n   ```bash\n   docker history nginx:alpine\n   ```\n   Note the base layers and the CMD instruction.\n3. Save the `nginx:alpine` image to a tar file:\n   ```bash\n   docker save -o nginx-alpine.tar nginx:alpine\n   ```\n4. Delete the local `nginx:alpine` image:\n   ```bash\n   docker rmi nginx:alpine\n   ```\n5. Load it back from the tar:\n   ```bash\n   docker load -i nginx-alpine.tar\n   ```\n   Verify it appears in `docker images`.\n6. Check current Docker disk usage:\n   ```bash\n   docker system df\n   ```\n7. List dangling images (if any) with:\n   ```bash\n   docker images -f dangling=true\n   ```\n8. Run `docker image prune` and observe if it removes anything.\n9. (Careful!) Delete the `redis:alpine` container if running, then remove the image, and then run:\n   ```bash\n   docker image prune -a\n   ```\n   This should remove any unused images.\n10. Finally, run `docker system df` again to see the reclaimed space.\n\n### Deliverable\nTerminal output of `docker history nginx:alpine` (first few lines), and output of `docker system df` before and after cleanup.",
+    "hints": [
+        "If you get an error removing `nginx:alpine` because it’s used by a container, stop and remove that container first.",
+        "The `-a` flag in `docker image prune -a` removes all unused images, not just dangling ones. Use with care."
+    ],
+    "expectedOutput": "`docker history` shows multiple layers including ADD, CMD. `docker system df` shows decreased image size after cleanup.",
+    "solutionCode": "docker pull nginx:alpine\ndocker pull redis:alpine\ndocker history nginx:alpine\ndocker save -o nginx-alpine.tar nginx:alpine\ndocker rmi nginx:alpine\ndocker load -i nginx-alpine.tar\ndocker images\ndocker system df\ndocker images -f dangling=true\ndocker image prune\ndocker rmi redis:alpine  # first ensure no container uses it\ndocker image prune -a\ndocker system df"
+}

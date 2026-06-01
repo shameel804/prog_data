@@ -1,0 +1,114 @@
+{
+    "id": "l6",
+    "chapterId": "ch_5",
+    "title": "Multi‑Stage Builds & Best Practices 🏆",
+    "description": "Create lean production images by separating build and runtime environments.",
+    "xpReward": 35,
+    "estimatedMinutes": 8,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "The Problem with Single‑Stage Builds 🏋️",
+            "content": "# Build Tools Bloat the Image\n\nIf you install compilers, SDKs, or dev dependencies in your Dockerfile and then copy the final app, those tools remain in the image – taking up space and posing security risks.\n\n**Example:** Building a Go binary requires Go compiler. After compiling, the compiler is useless but still in the image.\n\nMulti‑stage builds solve this by using **multiple FROM statements**. You can copy artifacts from one stage to another and discard the build environment."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "How Multi‑Stage Works 🔀",
+            "content": "# Stages\n\n```dockerfile\n# Stage 1: Build\nFROM golang:1.21 AS builder\nWORKDIR /app\nCOPY main.go .\nRUN go build -o myapp .\n\n# Stage 2: Runtime\nFROM alpine:3.18\nCOPY --from=builder /app/myapp /usr/local/bin/myapp\nCMD [\"myapp\"]\n```\n\n- `AS builder` names the first stage.\n- `COPY --from=builder` copies from that stage into the second.\n- The final image contains only the Alpine base and the compiled binary – no Go compiler!\n\n> You can also copy from external images: `COPY --from=nginx:alpine /etc/nginx/nginx.conf /nginx.conf`"
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "Multi‑Stage Advantage 📉",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What is the main benefit of a multi‑stage build?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It makes the Dockerfile shorter",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It produces a smaller final image by excluding build‑time dependencies",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It allows multiple containers to be built at once",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It speeds up the build by running stages in parallel",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "By separating build and runtime, you only keep what's necessary to run the app, drastically reducing image size.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "code",
+            "title": "Real‑World Example: Node.js App 📦",
+            "content": "Separate `devDependencies` from production:",
+            "codeSnippet": "# Stage 1: install ALL dependencies (including dev) and build\nFROM node:18-alpine AS build\nWORKDIR /app\nCOPY package*.json ./\nRUN npm ci\nCOPY . .\nRUN npm run build\n\n# Stage 2: only production dependencies and build output\nFROM node:18-alpine\nWORKDIR /app\nCOPY --from=build /app/dist ./dist\nCOPY --from=build /app/node_modules ./node_modules\nCOPY package*.json ./\nENV NODE_ENV production\nEXPOSE 3000\nCMD [\"node\", \"dist/server.js\"]",
+            "codeLanguage": "dockerfile",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_5",
+            "type": "text",
+            "title": "Dockerfile Best Practices 🧼",
+            "content": "# 10 Golden Rules\n\n1. **Use specific base image tags** – avoid `latest`.\n2. **Minimize layers** – chain RUN commands.\n3. **Order matters** – put frequently changing instructions last (e.g., COPY code).\n4. **Use `.dockerignore`** – reduce context size.\n5. **Prefer COPY over ADD** – unless you need tar extraction or URLs.\n6. **Use multi‑stage builds** – keep images slim.\n7. **Don't store secrets** – use build‑time secrets (Docker BuildKit `--secret`) or runtime injection.\n8. **Run as non‑root** – use `USER` instruction.\n9. **Use `WORKDIR` instead of `cd`**.\n10. **Leverage layer caching** – install dependencies before copying code."
+        },
+        {
+            "id": "s_l6_6",
+            "type": "quiz",
+            "title": "Best Practice Check ✅",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "multiple_choice",
+                "question": "Why should COPY of application code be placed near the end of a Dockerfile?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Because it's the most important step",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To maximize layer caching – earlier steps (like installing deps) won't be invalidated by code changes",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To keep the file easier to read",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Because Docker requires that order",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "If the code changes frequently, placing it after dependency installation means dependency layers remain cached, speeding up builds.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use BuildKit for Enhanced Features\n\nEnable Docker BuildKit for:\n- Build secrets (`--secret`)\n- SSH agent forwarding\n- Parallel builds\n- More efficient cache\n\nSet `DOCKER_BUILDKIT=1` in your environment or add `\"features\":{\"buildkit\": true}` in Docker Desktop."
+        }
+    ]
+}

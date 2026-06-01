@@ -1,0 +1,113 @@
+{
+    "id": "l3",
+    "chapterId": "ch_5",
+    "title": "Startup Commands: CMD vs ENTRYPOINT ⚔️",
+    "description": "Master the two most misunderstood instructions and learn when to use each.",
+    "xpReward": 35,
+    "estimatedMinutes": 8,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The Difference at a Glance 👀",
+            "content": "# `CMD` and `ENTRYPOINT` Define Container Startup\n\nBoth specify what command to run when the container starts, but they interact differently with `docker run` arguments.\n\n- **CMD** – provides **default arguments**; easily overridden by `docker run <image> command`.\n- **ENTRYPOINT** – sets the **main executable**; `docker run` arguments are appended to it.\n\nThink of ENTRYPOINT as the **fixed program**, and CMD as its **default parameters**."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "`CMD` – Default Command ⚙️",
+            "content": "# Three Forms\n\n**Shell form:**\n```dockerfile\nCMD echo \"Hello\"\n```\n→ runs `/bin/sh -c \"echo Hello\"`\n\n**Exec form (recommended):**\n```dockerfile\nCMD [\"echo\", \"Hello\"]\n```\n\n**Default parameters for ENTRYPOINT:**\n```dockerfile\nENTRYPOINT [\"python\"]\nCMD [\"app.py\"]\n```\nIf no arguments in `docker run`, it runs `python app.py`. If you pass `docker run myimage test.py`, it becomes `python test.py`.\n\n> The last CMD in a Dockerfile wins. Only one CMD is effective."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "CMD Override 🔄",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "If a Dockerfile has `CMD [\"node\", \"server.js\"]`, what happens when you run `docker run myimage bash`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It runs `node server.js bash`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It runs `bash` instead of `node server.js`",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It ignores `bash` and runs `node server.js`",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It produces an error",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "CMD is fully overridden by the command passed to `docker run`. So `bash` replaces `node server.js`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "`ENTRYPOINT` – Fixed Executable 🔐",
+            "content": "# The Immutable Entry\n\nExec form:\n```dockerfile\nENTRYPOINT [\"executable\", \"arg1\"]\n```\n\nShell form:\n```dockerfile\nENTRYPOINT echo \"Hello\"\n```\n\nWhen you use ENTRYPOINT, the arguments from `docker run` are **appended** to the entrypoint command, not replacing it.\n\n**Example:**\n```dockerfile\nENTRYPOINT [\"curl\"]\n```\n`docker run myimage https://example.com` → executes `curl https://example.com`\n\n> You can override ENTRYPOINT with `--entrypoint` flag in `docker run`."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Combining ENTRYPOINT & CMD 🤝",
+            "content": "A very common pattern: ENTRYPOINT is the tool, CMD gives default options.\n\n```dockerfile\nFROM alpine:3.18\nRUN apk add --no-cache curl\nENTRYPOINT [\"curl\"]\nCMD [\"--help\"]\n```\n\nNow:\n- `docker run myimage` → runs `curl --help`\n- `docker run myimage -v https://example.com` → runs `curl -v https://example.com`\n\nThe CMD arguments are appended to ENTRYPOINT. If you override CMD in `docker run`, it replaces the CMD part.",
+            "codeLanguage": "dockerfile",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Combo Meal 🍔",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Given:\n```dockerfile\nENTRYPOINT [\"ping\"]\nCMD [\"-c\", \"3\", \"localhost\"]\n```\nWhat does `docker run myimage google.com` execute?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "ping -c 3 localhost google.com",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "ping google.com",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "ping -c 3 localhost",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Error: incompatible arguments",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The CMD arguments (`-c 3 localhost`) are overridden by the `docker run` argument `google.com`, but ENTRYPOINT remains `ping`. So it becomes `ping google.com`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## When to Use Which?\n- Use **CMD** if you want users to easily override the command (e.g., `docker run -it ubuntu bash`).\n- Use **ENTRYPOINT** when your image is a single‑purpose tool and you want arguments passed as parameters."
+        }
+    ]
+}

@@ -1,0 +1,126 @@
+{
+    "id": "l4",
+    "chapterId": "ch_8",
+    "title": "Advanced Volume Management & Sharing 🔄",
+    "description": "Backup, restore, migrate volumes, and share data between multiple containers.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Sharing Data Between Containers 🤝",
+            "content": "# Multi‑Container Volumes\n\nStart a container that creates data:\n```bash\ndocker run -d --name writer -v shared-data:/data alpine sleep 3600\n```\n\nStart another container using the same volume:\n```bash\ndocker run --rm -v shared-data:/data alpine cat /data/file.txt\n```\n\nBoth containers see the same content. This is how you share state across services.\n\n> Use cases: shared uploads directory, static assets between Nginx and backend."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Volumes‑from (Legacy) 🕰️",
+            "content": "# `--volumes-from`\n\nYou can inherit all volumes from another container:\n```bash\ndocker run --rm --volumes-from writer alpine ls /data\n```\n\nThis is useful for sidecar patterns (log shippers, backups) but is less common with modern Docker Compose.\n\n> The source container does not need to be running (just existing)."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Volume Inheritance 👨‍👦",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does `--volumes-from source_container` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Copies all volumes to the new container",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Mounts the same volumes as the source container",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Deletes volumes from source",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Creates a snapshot of the volumes",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It mounts exactly the same volumes into the new container, sharing data.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Backing Up Volumes 💾",
+            "content": "# Create a Tarball of Volume Data\n\nSince volumes are directories on the host, you can back them up using a temporary container:\n\n```bash\ndocker run --rm -v mydata:/data -v $(pwd):/backup alpine \\\n    tar czf /backup/mydata-backup.tar.gz -C /data .\n```\n\nThis mounts the volume and the current directory, then creates a compressed archive of the volume’s content on the host.\n\nTo restore:\n```bash\ndocker run --rm -v mydata:/data -v $(pwd):/backup alpine \\\n    tar xzf /backup/mydata-backup.tar.gz -C /data\n```"
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Backup & Restore Demo 🔄",
+            "content": "Backup a volume and restore it to a new volume:",
+            "codeSnippet": "# Create volume with data\ndocker run --rm -v original:/data alpine sh -c 'echo important > /data/file.txt'\n\n# Backup\ndocker run --rm -v original:/data -v $(pwd):/backup alpine tar czf /backup/backup.tar.gz -C /data .\n\n# Create new volume and restore\ndocker volume create restored\ndocker run --rm -v restored:/data -v $(pwd):/backup alpine tar xzf /backup/backup.tar.gz -C /data\n\n# Verify\ndocker run --rm -v restored:/data alpine cat /data/file.txt",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Volume Drivers & Remote Storage 🌐",
+            "content": "# Plugins for Cloud Storage\n\nDocker supports third‑party volume drivers (plugins) to store volumes on remote systems:\n\n- **Azure File Storage**, **AWS EBS/EFS**, **NFS**, **CIFS**\n- **Rexray**, **Flocker** (legacy), **Portworx**\n\nExample with a driver:\n```bash\ndocker volume create --driver rexray/ebs --opt size=20 my-ebs-volume\n```\n\nThis abstracts storage location; containers see it as a regular volume.\n\n> Use `docker plugin ls` to see available plugins."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "Remote Volumes ☁️",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "How can you store a Docker volume on an NFS share?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Use a bind mount with an NFS path",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Use a volume driver plugin that supports NFS",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Docker volumes automatically support NFS",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Use `docker volume create --protocol nfs`",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "To use networked storage as a Docker volume, you need a volume driver plugin that integrates with that storage system.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_8",
+            "type": "text",
+            "title": "Cleaning Up Volumes 🧹",
+            "content": "# Remove Unused Volumes\n\n```bash\ndocker volume prune\n```\n\nThis removes all volumes not used by any container.\n\nBe careful: volumes are not deleted when a container is removed unless you use `-v` flag:\n```bash\ndocker rm -v my-container\n```\n\n> `docker system prune` does not remove volumes by default; add `--volumes` to include them."
+        },
+        {
+            "id": "s_l4_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Name Your Volumes\nAlways use named volumes (`docker volume create db-data`) rather than anonymous volumes. They are easier to manage, back up, and document."
+        }
+    ]
+}

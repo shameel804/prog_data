@@ -1,0 +1,79 @@
+{
+    "id": "l1",
+    "chapterId": "ch_7",
+    "title": "Docker Networking Overview & Drivers 🌐",
+    "description": "Understand why containers need networks and meet the built‑in network drivers.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Why Containers Need Networking 🤝",
+            "content": "# The Network Is the Backbone\n\nA container running in isolation is like a computer without a network cable. To be useful, containers need to:\n\n- **Talk to each other** (microservices).\n- **Expose services to the outside world** (web servers, APIs).\n- **Reach the internet** (download packages, call external APIs).\n\nDocker provides a full networking stack that works out‑of‑the‑box, but you can heavily customise it."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "Network Drivers – The Plumbing 🔧",
+            "content": "# Docker’s Built‑In Drivers\n\nWhen you install Docker, you get several network drivers:\n\n- **bridge** – the default private virtual network for containers on a single host.\n- **host** – the container shares the host’s network stack (no isolation).\n- **none** – completely disables networking.\n- **overlay** – connects containers across multiple Docker daemons (Swarm).\n- **macvlan** – assigns a MAC address to each container, making it appear as a physical device on the network.\n\nWe’ll focus on **bridge** (both default and custom) and briefly touch the others."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Driver Knowledge 🔌",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Which network driver is the default for Docker containers?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "host",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "overlay",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "bridge",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "none",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Unless you specify otherwise, containers run on the default bridge network.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "How Docker Networking Works 🧬",
+            "content": "# Virtual Switches & IP Assignment\n\nDocker creates a virtual switch (a bridge) on the host. Each container gets a virtual Ethernet interface attached to that bridge.\n\n- Docker’s embedded DNS server provides name resolution.\n- IP addresses are assigned from a private subnet (e.g., `172.17.0.0/16` for the default bridge).\n- Containers on the same bridge can communicate directly via IP.\n\n> Think of the bridge as a virtual network switch that Docker manages for you."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "code",
+            "title": "See Your Networks 📋",
+            "content": "List all networks on your system:",
+            "codeSnippet": "docker network ls\n\n# Output:\n# NETWORK ID     NAME      DRIVER    SCOPE\n# abc123def456   bridge    bridge    local\n# def456abc789   host      host      local\n# 789abcdef012   none      null      local",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_6",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Always Use Custom Networks\n\nDefault bridge is fine for quick tests, but custom bridge networks enable automatic DNS resolution and network isolation. We’ll create one soon!"
+        }
+    ]
+}

@@ -1,0 +1,120 @@
+{
+    "id": "l4",
+    "chapterId": "ch_11",
+    "title": "Image Trust & Vulnerability Scanning in CI 🔍",
+    "description": "Sign images with Docker Content Trust, verify signatures, and integrate vulnerability scanning into pipelines.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Can You Trust That Image? 🤔",
+            "content": "# Supply Chain Attacks\n\nIf you pull an image from Docker Hub, how do you know it hasn’t been tampered with? An attacker could replace `myapp:latest` with a malicious version.\n\n**Docker Content Trust (DCT)** uses digital signatures (based on Notary) to verify the publisher of an image.\n\nWhen DCT is enabled:\n- `docker pull` verifies that the image is signed by a trusted publisher.\n- `docker push` requires you to sign the image with your key.\n\n> DCT adds integrity and provenance to images."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Enabling Docker Content Trust 🔏",
+            "content": "# Setting the Environment Variable\n\n```bash\nexport DOCKER_CONTENT_TRUST=1\n```\n\nNow when you pull an image, Docker will verify signatures. If the image is unsigned or the signature is invalid, the pull is refused.\n\nTo push signed images, you need to set signing keys:\n```bash\ndocker trust key generate myname\n```\n\nThen use `docker trust sign` or `docker push` (with DCT enabled).\n\n> DCT works per‑repository; you can manage signers and keys."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Content Trust 🔐",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does enabling Docker Content Trust (`DOCKER_CONTENT_TRUST=1`) do when pulling an image?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It encrypts the image layers",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It verifies that the image has been signed by a trusted publisher",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It scans for vulnerabilities",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It limits the image to a specific size",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Content Trust checks digital signatures to ensure the image hasn’t been tampered with.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Vulnerability Scanning in CI/CD 🔄",
+            "content": "# Shift Left Security\n\nWe previously saw tools like Trivy and Docker Scout. Integrate them into your CI pipeline:\n\n1. Build the image.\n2. Scan it for vulnerabilities (`trivy image myimage`).\n3. Fail the build if critical CVEs exist.\n4. Only then push to registry.\n\nExample GitHub Actions step:\n```yaml\n- name: Scan image\n  uses: aquasecurity/trivy-action@master\n  with:\n    image-ref: 'myimage:latest'\n    format: 'table'\n    exit-code: '1'\n    severity: 'CRITICAL,HIGH'\n```\n\n> Regular scanning keeps your base images up‑to‑date and catches newly disclosed vulnerabilities."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Trivy in a Script 📜",
+            "content": "Simple bash example for CI:",
+            "codeSnippet": "#!/bin/bash\nIMAGE=myapp:$CI_COMMIT_SHA\ndocker build -t $IMAGE .\ntrivy image --severity HIGH,CRITICAL --exit-code 1 $IMAGE\nif [ $? -ne 0 ]; then\n  echo \"Security vulnerabilities found!\"\n  exit 1\nfi\ndocker push $IMAGE",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "CI Scanning 🚦",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Why is it important to scan images in CI rather than only after deployment?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Because scanning after deployment is slower",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To catch vulnerabilities before the image reaches production and block the release",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "CI scanning tools are free",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Docker Hub requires it"
+                    }
+                ],
+                "correctAnswer": 1,
+                "explanation": "Early detection prevents vulnerable images from being deployed.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Bonus: Docker Scout & SBOMs 📋",
+            "content": "# Software Bill of Materials\n\nDocker Scout provides an SBOM (Software Bill of Materials) for your images, listing all packages and dependencies.\n\n```bash\ndocker scout sbom myimage\n```\n\nThis helps track exactly what’s inside an image for vulnerability management and compliance.\n\n> Combine with policies in Docker Hub to block images with certain vulnerabilities."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Automate Everything\nSet up DCT for your private registry, enforce signed images in your cluster (using admission controllers), and make scanning a mandatory gate in CI."
+        }
+    ]
+}

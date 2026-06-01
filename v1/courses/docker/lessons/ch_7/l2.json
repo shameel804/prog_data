@@ -1,0 +1,63 @@
+{
+    "id": "l2",
+    "chapterId": "ch_7",
+    "title": "The Default Bridge Network 🌉",
+    "description": "Explore how Docker connects containers out‑of‑the‑box and its limitations.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The `bridge` Network (Default) 🏗️",
+            "content": "# What You Get for Free\n\nWhen Docker starts, it creates a network called `bridge` (driver: `bridge`). All new containers attach to this network unless told otherwise.\n\n- Subnet: typically `172.17.0.0/16` (can be changed in daemon config).\n- Gateway: `172.17.0.1` (the host’s side of the bridge).\n- IPs are assigned dynamically from the subnet.\n\nContainers on the default bridge can communicate with each other via IP address, but **not by container name**."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "Experiment: Two Containers on Default Bridge 🧪",
+            "content": "Start two containers and try to ping each other by IP:",
+            "codeSnippet": "# Start two detached containers\ndocker run -d --name con1 alpine sleep 3600\ndocker run -d --name con2 alpine sleep 3600\n\n# Get their IPs\ndocker inspect -f '{{.NetworkSettings.IPAddress}}' con1\ndocker inspect -f '{{.NetworkSettings.IPAddress}}' con2\n\n# Ping con2 from con1 using IP\ndocker exec con1 ping -c 2 172.17.0.3   # use con2's IP\n\n# Try ping by name (should fail)\ndocker exec con1 ping -c 2 con2",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Default Bridge DNS 🧐",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "true_false",
+                "question": "On the default bridge network, containers can resolve each other by their container names.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "The default bridge does not provide automatic DNS resolution. You must use IP addresses. Custom bridge networks do provide DNS.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Limitations of the Default Bridge ⚠️",
+            "content": "# Why You Should Move Beyond It\n\n- **No DNS** – must use IP addresses, which change on container restart.\n- **No network isolation** – all containers on the default bridge can see each other.\n- **No custom subnet or gateway** – you’re stuck with Docker’s defaults.\n- **Less secure** – unintended communication is possible.\n\nIn production, always create **custom bridge networks** for each application stack."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Upgrade to Custom Bridges\nEven for two containers talking to each other, using a custom network gives you DNS and better control. It’s a single command: `docker network create`."
+        }
+    ]
+}

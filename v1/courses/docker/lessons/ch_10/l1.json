@@ -1,0 +1,111 @@
+{
+    "id": "l1",
+    "chapterId": "ch_10",
+    "title": "From Single Host to Swarm: What is Orchestration? 🐝",
+    "description": "Understand the need for container orchestration and meet Docker Swarm's architecture.",
+    "xpReward": 30,
+    "estimatedMinutes": 7,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The Limits of a Single Docker Host 🖥️",
+            "content": "# Beyond One Machine\n\nRunning containers on a single server works for development and small projects. But in production:\n\n- **High availability**: if the host crashes, everything goes down.\n- **Scalability**: one machine can only hold so many containers.\n- **Load balancing**: distributing traffic across multiple instances.\n- **Zero‑downtime deployments**: updating without interrupting users.\n\nWe need an **orchestrator** – a system that manages containers across multiple machines."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "Introducing Docker Swarm 🐝",
+            "content": "# Docker’s Built‑in Orchestration\n\n**Swarm mode** is native clustering for Docker. It turns a group of Docker engines into a single virtual Docker host.\n\n- **Manager nodes**: control the cluster, schedule containers, maintain desired state.\n- **Worker nodes**: run the containers.\n- Communication is secure by default (TLS).\n- You interact with the swarm through the manager; it schedules tasks to workers.\n\n> Swarm mode is built into Docker Engine – no extra installation."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "Key Concepts: Nodes, Services, Tasks 📚",
+            "content": "# Swarm Vocabulary\n\n- **Node**: a Docker engine participating in the swarm (manager or worker).\n- **Service**: the definition of a desired state (which image, how many replicas, ports).\n- **Task**: a running container that is part of a service. Swarm schedules tasks on nodes.\n- **Replica**: an instance of a service (if replicas=3, there are 3 tasks).\n\nA service is a higher‑level abstraction: you tell Swarm “I want 3 Nginx containers spread across the cluster”, and Swarm makes it happen, even if nodes fail."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "quiz",
+            "title": "Swarm Components 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "In Docker Swarm, what is a 'task'?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A Docker Compose file",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A running container that is part of a service",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A manager node",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A network overlay",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Tasks are the individual container instances scheduled by the swarm to fulfil a service's replica count.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_5",
+            "type": "text",
+            "title": "Initializing a Swarm 🚀",
+            "content": "# `docker swarm init`\n\nOn the first node (becomes manager):\n```bash\ndocker swarm init --advertise-addr <MANAGER-IP>\n```\n\nThis outputs a join token for workers. On each worker:\n```bash\ndocker swarm join --token <TOKEN> <MANAGER-IP>:2377\n```\n\nNow you have a cluster!\n\nCheck status:\n```bash\ndocker node ls\n```\n\n> To leave a swarm: `docker swarm leave --force` (manager) or `docker swarm leave` (worker)."
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "Swarm Init 🐝",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "What does `docker swarm init` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Starts a new container",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Initializes the current Docker host as a Swarm manager node",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Joins the host to an existing swarm",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Creates a new overlay network",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`docker swarm init` turns a single Docker engine into the first manager of a new swarm.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_7",
+            "type": "tip",
+            "title": "Pro Tip 💡",
+            "content": "## Play with Docker Swarm Online\nYou can experiment with Swarm without multiple machines using [Play with Docker](https://labs.play-with-docker.com/). It gives you a free multi‑node environment in your browser."
+        }
+    ]
+}
