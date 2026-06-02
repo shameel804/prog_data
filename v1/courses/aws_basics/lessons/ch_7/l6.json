@@ -1,0 +1,76 @@
+{
+    "id": "l6",
+    "chapterId": "ch_7",
+    "title": "VPC Design Best Practices 🏗️",
+    "description": "Bring it all together – tiered architecture, high availability, and future‑proofing.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Wrap‑up",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "The Three‑Tier Architecture 🏛️",
+            "content": "# Classic Web‑App‑DB\n\nA well‑designed VPC separates resources into tiers:\n- **Web tier** (public subnets): Internet‑facing load balancers and web servers.\n- **App tier** (private subnets): Application servers, no direct internet.\n- **DB tier** (private subnets, more restrictive): Databases, caches.\n\nEach tier has its own security group, and the network ACLs add extra barriers. This limits the blast radius if one layer is compromised."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "quiz",
+            "title": "Architecture Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "In a three‑tier architecture, where should databases typically be placed?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Public subnet with a public IP",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Private subnet with no direct internet access",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Same subnet as web servers",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "In the DMZ",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Databases should be in the most restricted private subnets, accessible only from app servers, never directly from the internet.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_3",
+            "type": "text",
+            "title": "High Availability VPC Design 🏗️",
+            "content": "# Never Put All Eggs in One AZ\n\n- Deploy **at least two public subnets** in different AZs for the load balancer.\n- Deploy **private subnets** in the same AZs for the app and data tiers.\n- Use **NAT Gateways per AZ** – one in each public subnet. If one AZ fails, the private subnet in the surviving AZ still has a NAT Gateway.\n- This way, an AZ outage doesn’t take down the entire application."
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Common Pitfalls & Solutions 🕳️",
+            "content": "# Avoid These Mistakes\n\n- **Overlapping CIDRs**: If you plan to use VPC Peering, VPN, or Transit Gateway, ensure VPC CIDRs don’t overlap.\n- **Single NAT Gateway**: Saves money but creates a single point of failure. Use one per AZ.\n- **Security groups too wide**: Avoid `0.0.0.0/0` for SSH/RDP – use specific IPs or a bastion host.\n- **Neglecting NACLs**: They add a subnet‑wide safety net, especially for blocking known bad IPs.\n- **Not using VPC Flow Logs**: Capture IP traffic going to/from network interfaces for auditing and troubleshooting."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "text",
+            "title": "VPC Flow Logs 🔍",
+            "content": "# Network Forensics\n\nVPC Flow Logs capture metadata about every IP flow (source/destination, port, protocol, accept/reject). You can publish them to CloudWatch Logs or S3.\n\n- Useful for diagnosing connectivity issues.\n- Security analysis: spot unusual traffic patterns.\n- Can be enabled at VPC, subnet, or ENI level.\n\nThey don’t capture packet payloads – just metadata."
+        },
+        {
+            "id": "s_l6_6",
+            "type": "tip",
+            "title": "Pro Tip: Start with a VPC Wizard 🧙",
+            "content": "## Speed Up Design\n\nThe VPC creation wizard offers templates: VPC with public and private subnets, with a NAT Gateway. It’s a great starting point that you can then customise. Use it to learn the basic layout."
+        }
+    ]
+}

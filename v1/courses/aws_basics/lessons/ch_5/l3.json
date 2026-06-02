@@ -1,0 +1,105 @@
+{
+    "id": "l3",
+    "chapterId": "ch_5",
+    "title": "S3 Security: Bucket Policies, ACLs & Encryption 🔒",
+    "description": "Master the multiple layers of S3 security to prevent data leaks.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "S3 Security",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Who Can Access Your Bucket? 🕵️",
+            "content": "# Four Ways to Control Access\n\nS3 security is multi‑layered:\n\n1. **IAM Policies**: attach to users/roles – define what actions they can perform on which buckets.\n2. **Bucket Policies**: resource‑based policies attached directly to the bucket (JSON). They can grant cross‑account access.\n3. **Access Control Lists (ACLs)**: legacy, object‑level permissions. Limited, not recommended for new use.\n4. **Block Public Access**: a global setting that prevents accidental public exposure, overriding other settings.\n\nIf both an IAM policy and a bucket policy apply, access is granted if **either** allows and neither denies."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "Policy Evaluation ⚖️",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "If an IAM policy denies `s3:GetObject` but the bucket policy allows it, what happens?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Access is allowed because bucket policy takes precedence",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Access is denied – an explicit deny in any policy overrides allows",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's a tie; access is determined by ACL",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The user is prompted to choose",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "An explicit Deny in any IAM or bucket policy overrides any Allow. This follows the same IAM policy evaluation logic.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Bucket Policies in Action 📝",
+            "content": "# JSON Statements on a Bucket\n\nA bucket policy is similar to an IAM policy, but it includes a `Principal` to specify who the policy applies to.\n\nExample: Allow public read access to all objects in `my-bucket`:\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [{\n    \"Effect\": \"Allow\",\n    \"Principal\": \"*\",\n    \"Action\": \"s3:GetObject\",\n    \"Resource\": \"arn:aws:s3:::my-bucket/*\"\n  }]\n}\n```\nThis makes the bucket a **static website** (when combined with static website hosting)."
+        },
+        {
+            "id": "s_l3_4",
+            "type": "warning",
+            "title": "⚠️ Block Public Access – Always Enable",
+            "content": "## The Ultimate Safety Net\n\nS3 Block Public Access settings can be applied at the account or bucket level. They prevent public access from **any** policy or ACL. Even if you accidentally write a bucket policy that grants public access, Block Public Access will override it.\n\nBest practice: Keep Block Public Access on for all buckets unless you have a specific need for a public bucket (e.g., static website). For those, enable it only on that bucket and monitor with IAM Access Analyzer."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Encryption: Protect Data at Rest 🛡️",
+            "content": "# Server‑Side Encryption (SSE)\n\nS3 can encrypt your objects automatically:\n- **SSE‑S3**: AWS manages the keys (AES‑256). Free and simple.\n- **SSE‑KMS**: Use AWS Key Management Service for more control, audit trail, and separate permissions.\n- **SSE‑C**: You provide your own encryption keys.\n\nYou can set a bucket policy to **deny uploads that are not encrypted**.\n\nClient‑side encryption: you encrypt before uploading; AWS never sees plaintext."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Encryption Choice 🔑",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Which S3 encryption option gives you the most control, including the ability to set key rotation and usage audit?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "SSE‑S3",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "SSE‑KMS",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "SSE‑C",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Client‑side encryption",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "SSE‑KMS integrates with AWS KMS, providing fine‑grained permissions, automatic key rotation, and CloudTrail auditing.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

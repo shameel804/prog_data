@@ -1,0 +1,76 @@
+{
+    "id": "l4",
+    "chapterId": "ch_7",
+    "title": "Security Groups & Network ACLs 🛡️",
+    "description": "Two layers of firewall: stateful instance protection and stateless subnet filtering.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Security",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Two Firewalls, Two Jobs 🔥",
+            "content": "# Security Group vs Network ACL\n\n- **Security Groups (SG)**: operate at the **instance** level (actually at the Elastic Network Interface). They are **stateful** – if inbound is allowed, outbound response is automatically allowed.\n- **Network ACLs (NACL)**: operate at the **subnet** level. They are **stateless** – both inbound and outbound rules must be explicitly defined.\n\nBoth are free, but they serve different purposes in a defense‑in‑depth strategy."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Stateful vs Stateless 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which firewall type automatically allows return traffic when an inbound request is permitted?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Network ACL",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Security Group",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Both",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Neither",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Security Groups are stateful; return traffic is allowed even without an explicit outbound rule. NACLs are stateless and require both directions to be defined.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Security Groups: Revisited & Refined 🔐",
+            "content": "# Deep Dive on Instance‑Level Protection\n\n- Default SG: all inbound denied, all outbound allowed.\n- Custom SG: you add **allow rules only** (no deny rules).\n- You can reference other security groups as sources (e.g., allow web servers SG to talk to database SG).\n- Multiple SGs can be attached to an instance; rules are aggregated.\n\n**Rule of thumb**: Use SGs to control traffic between application tiers."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Network ACLs: The Subnet Gatekeeper 🚧",
+            "content": "# Stateless Filtering\n\n- Default NACL allows all inbound and outbound traffic.\n- Custom NACL starts by denying everything; you add rules.\n- Rules are **numbered** and evaluated in order (lowest number first).\n- NACLs support both **allow** and **deny** rules.\n- Because they are stateless, you must explicitly allow ephemeral ports for return traffic (e.g., TCP 1024‑65535).\n\n**Use case**: Block a specific IP from an entire subnet (e.g., an attacker IP)."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "NACL Rule Evaluation Order 📜",
+            "content": "# Numbers Matter\n\nRules are evaluated starting from the lowest number. Once a rule matches, the action (allow or deny) is taken, and no further rules are evaluated.\n\n- Use 100‑increment numbering (100, 200, 300) so you can insert rules later.\n- The last rule is always an implicit deny (`*` rule).\n\nExample: Rule 100 allow HTTP from 10.0.0.0/16; Rule 200 deny HTTP from 10.0.1.5/32. A request from 10.0.1.5 hits rule 100 first and is allowed unless rule 200 is renumbered before 100."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Pro Tip: Defense in Depth 🏰",
+            "content": "## Use Both Together\n\nA robust security posture uses **both** SGs and NACLs:\n- NACLs act as a broad subnet‑level barrier (e.g., block malicious IPs).\n- SGs provide granular, stateful control per instance.\n\nDon't rely on only one layer."
+        }
+    ]
+}

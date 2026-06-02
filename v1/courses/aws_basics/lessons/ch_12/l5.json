@@ -1,0 +1,82 @@
+{
+    "id": "l5",
+    "chapterId": "ch_12",
+    "title": "Architecting for HA – The Big Picture 🌍",
+    "description": "Bring it all together: multi‑tier designs, DNS failover, database HA, global architectures, and chaos engineering.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Design",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "The HA Golden Architecture 🏛️",
+            "content": "# Multi‑AZ, Multi‑Tier\n\nA battle‑tested HA design:\n- **DNS Layer**: Route 53 with health checks and failover routing.\n- **CDN Layer**: CloudFront caching static content globally.\n- **Load Balancing Layer**: ALB or NLB spanning multiple AZs.\n- **Compute Layer**: ASG spread across at least 2 AZs with scaling policies.\n- **Database Layer**: RDS Multi‑AZ (primary + standby) or DynamoDB Global Tables.\n- **Storage Layer**: S3 (11 9s durability) or EFS with lifecycle policies.\n- **Monitoring**: CloudWatch, GuardDuty, and automated incident response.\n\nEvery layer is redundant. If any single component fails, another takes over."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Route 53 DNS Failover 🌐",
+            "content": "# Route Away from Failures\n\nRoute 53 can perform health checks on your endpoints and route DNS queries away from unhealthy ones.\n- **Simple routing**: single IP.\n- **Failover routing**: primary/secondary. If primary fails health check, DNS resolves to secondary.\n- **Weighted routing**: split traffic between regions (e.g., 80% us-east-1, 20% eu-west-1).\n- **Latency‑based routing**: route to region with lowest latency.\n- **Geolocation routing**: route based on user location.\n\nFor multi‑region HA: use latency routing with health checks. Users are directed to the nearest healthy region."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "DNS Failover 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which Route 53 routing policy sends traffic to an alternative endpoint only when the primary fails health checks?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Simple routing",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Failover routing",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Weighted routing",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Geolocation routing",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Failover routing requires a primary and secondary record. Route 53 monitors the primary via health check; if it fails, DNS switches to the secondary.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Database HA Patterns 🗄️",
+            "content": "# Protect Your Data\n\n- **RDS Multi‑AZ**: synchronous standby in another AZ. Automatic failover (1‑2 minutes). No application changes needed; DNS endpoint stays same.\n- **Aurora**: 6 copies of data across 3 AZs. Aurora Replicas can serve reads and act as failover targets (faster than standard Multi‑AZ).\n- **DynamoDB Global Tables**: multi‑active, read/write to any region. Last writer wins conflict resolution. Ideal for globally distributed applications.\n- **ElastiCache for Redis**: Multi‑AZ with automatic failover. Replicas in different AZs.\n\nCombine with **database connection pooling** and **circuit breakers** in your application to handle failover gracefully."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Global Architectures with CloudFront 🌎",
+            "content": "# Bring Content Closer\n\nCloudFront is a content delivery network (CDN) with 400+ edge locations worldwide. For HA:\n- **Cache static content** (images, CSS, JS) at the edge – reduces load on origin.\n- **Origin failover**: configure primary and secondary origins. If primary S3 bucket/ALB is down, CloudFront fetches from secondary.\n- **Custom error pages**: display a friendly error page instead of exposing backend failures.\n- **Geographic restriction**: block traffic from specific countries if needed.\n\nCloudFront + Route 53 + multi‑region backends = a truly global HA architecture."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Chaos Engineering: Test Your Assumptions 💥",
+            "content": "# Break Things on Purpose\n\nDon't wait for a real failure. Use fault injection to verify your HA design:\n- **AWS Fault Injection Service (FIS)** – run controlled experiments (e.g., terminate random instances, throttle network).\n- Simulate AZ failure: manually remove instances in one AZ and observe recovery.\n- **GameDays**: team exercises where you intentionally break things and practice incident response.\n\n**Netflix's Simian Army** (Chaos Monkey, Latency Monkey) pioneered this. The goal: be confident that your system survives failures, because you've already tested them."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "tip",
+            "title": "Pro Tip: Automate Everything with CloudFormation or CDK 🚀",
+            "content": "## HA as Code\n\nDefine your entire HA architecture – VPC, subnets, ASG, ALB, RDS, Route 53 – as infrastructure as code (IaC). This ensures:\n- Consistent deployments across environments.\n- Easy disaster recovery: redeploy the stack in another region.\n- Version control and peer review of architecture changes.\n\nUse AWS CloudFormation, AWS CDK, or Terraform. HA that isn't automated is HA that will drift."
+        }
+    ]
+}

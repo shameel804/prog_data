@@ -1,0 +1,105 @@
+{
+    "id": "l5",
+    "chapterId": "ch_4",
+    "title": "Security Groups – Virtual Firewalls 🛡️",
+    "description": "The first line of defence controlling inbound and outbound traffic.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Security",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "What is a Security Group? 🔥",
+            "content": "# A Virtual Firewall for Your Instance\n\nA security group acts as a stateful firewall that controls traffic to and from an EC2 instance. It operates at the **instance level**, not the subnet level.\n\nYou define **rules** that specify:\n- **Type**: protocol (TCP, UDP, ICMP).\n- **Port range**: e.g., 80 for HTTP, 22 for SSH.\n- **Source/Destination**: a CIDR block (e.g., `0.0.0.0/0` for anywhere) or another security group.\n\n**Analogy**: A security group is like a bouncer at a club. The bouncer checks your ID (IP address) and decides if you can come in through a specific door (port)."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Security Group Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Security groups are _______ firewalls.",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Stateless",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Stateful",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Physical",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "None of the above",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Security groups are stateful: if you allow inbound traffic on a port, the outbound response is automatically allowed, regardless of outbound rules.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Inbound vs Outbound Rules ↕️",
+            "content": "# Two Directions\n\n- **Inbound rules**: Control traffic coming **into** the instance. By default, **all inbound traffic is denied** unless explicitly allowed.\n- **Outbound rules**: Control traffic **leaving** the instance. By default, **all outbound traffic is allowed** (you can restrict it if desired).\n\n> Because security groups are stateful, if you allow an inbound request, the outbound reply is automatically allowed, even if you have no outbound rule for it."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Rule Components 📋",
+            "content": "# Breaking Down a Rule\n\nExample: Allow HTTP (port 80) from anywhere:\n- **Type**: HTTP (TCP, port 80)\n- **Protocol**: TCP\n- **Port range**: 80\n- **Source**: 0.0.0.0/0 (all IPv4) or ::/0 (all IPv6)\n\nExample: Allow SSH only from your office IP:\n- **Type**: SSH (TCP, port 22)\n- **Source**: 203.0.113.0/32 (your specific IP)\n\nYou can also use other security group IDs as the source – handy for allowing web servers to talk to database servers without exposing the DB to the internet."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Stateful Behaviour 🔁",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "You allow inbound SSH (port 22) from your IP. What outbound rule do you need for SSH to work?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "An outbound rule for port 22",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "An outbound rule for ephemeral ports",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "No outbound rule needed – the response is automatically allowed due to stateful tracking",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "An outbound rule allowing all traffic",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Security groups track the state of connections. If inbound is allowed, the return traffic is allowed regardless of outbound rules.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "warning",
+            "title": "⚠️ 0.0.0.0/0 Is Dangerous",
+            "content": "## Don’t Open Everything to the World\n\nAllowing `0.0.0.0/0` on ports like 22 (SSH), 3389 (RDP), or 3306 (MySQL) invites brute‑force attacks. Always restrict source IPs to trusted networks. Use a VPN or bastion host for administrative access."
+        }
+    ]
+}

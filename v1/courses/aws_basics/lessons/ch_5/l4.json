@@ -1,0 +1,105 @@
+{
+    "id": "l4",
+    "chapterId": "ch_5",
+    "title": "S3 Versioning, Lifecycle & Replication 🔄",
+    "description": "Advanced features to protect, manage, and duplicate your data automatically.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "S3 Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Versioning: Undelete Everything ♻️",
+            "content": "# Keep Every Variant\n\nEnabling versioning on a bucket means S3 keeps all versions of an object, including deleted ones (just adds a delete marker).\n\n- If you overwrite an object, the old version remains recoverable.\n- If you delete an object, you can delete the delete marker to restore it.\n- Once enabled, versioning **cannot be disabled** – only suspended.\n- You can use **MFA Delete** for extra protection against accidental deletion.\n\nUse versioning to protect against both accidental and malicious deletions."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Versioning Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "You delete an object in a versioned bucket. What happens?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The object is permanently deleted",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A delete marker is added, and the object can be restored",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The object is moved to Glacier",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Nothing – versioning prevents deletion",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A simple DELETE in a versioned bucket adds a delete marker, hiding the object. To permanently delete, you must specify the version ID.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Lifecycle Management: Move Data Automatically 🔁",
+            "content": "# Transition and Expiration Rules\n\nS3 Lifecycle policies let you automatically move objects between storage classes or delete them based on age.\n\n- **Transition actions**: e.g., move objects to S3 Standard‑IA after 30 days, then to Glacier after 90 days.\n- **Expiration actions**: delete old versions or incomplete multipart uploads.\n- You can create rules per prefix or tag.\n\nThis optimises cost: frequently accessed data stays on fast, expensive storage; old data moves to cheap archive."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "S3 Storage Classes 💰",
+            "content": "# Choose Based on Access Pattern\n\n- **S3 Standard**: frequent access, low latency, high durability.\n- **S3 Intelligent‑Tiering**: auto‑moves objects between frequent and infrequent tiers based on usage (small monitoring fee).\n- **S3 Standard‑IA (Infrequent Access)**: lower storage cost, retrieval fee.\n- **S3 One Zone‑IA**: like IA but data stored in a single AZ (less durable, cheaper).\n- **S3 Glacier Instant Retrieval**: archive with millisecond retrieval.\n- **S3 Glacier Flexible Retrieval**: minutes to hours retrieval, very cheap.\n- **S3 Glacier Deep Archive**: lowest cost, 12‑hour retrieval time.\n\nLifecycle policies leverage these classes."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Storage Class IQ 💡",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "You have log data that is rarely accessed, but when needed it must be retrieved within 5 minutes. Which storage class is appropriate?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "S3 Glacier Deep Archive",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "S3 Standard‑IA",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "S3 One Zone‑IA",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "S3 Glacier Flexible Retrieval",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Standard‑IA offers millisecond retrieval and is for infrequent access. Glacier has retrieval delays.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Cross‑Region Replication (CRR) ↔️",
+            "content": "# Disaster Recovery & Compliance\n\nYou can automatically replicate objects from one bucket to another in a different region.\n- Requires versioning enabled on both source and destination.\n- You can replicate all objects or a subset by prefix/tag.\n- Can use **Same‑Region Replication (SRR)** for log aggregation or compliance.\n- Replication is asynchronous; eventual consistency (within minutes usually).\n\nUse cases: meet compliance, reduce latency for global users, backup."
+        }
+    ]
+}

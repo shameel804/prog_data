@@ -1,0 +1,76 @@
+{
+    "id": "l4",
+    "chapterId": "ch_9",
+    "title": "AWS Config: Compliance & Inventory 📋",
+    "description": "Continuously evaluate and audit your resource configurations against desired policies.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Compliance",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "What is AWS Config? 📋",
+            "content": "# The Configuration State Recorder\n\nAWS Config continuously monitors and records your resource configurations. It captures:\n- **Resource inventory** – what resources exist.\n- **Configuration changes** – a history of every change (who changed it, when, what changed).\n- **Relationships** – how resources are connected (e.g., this EC2 instance uses that security group).\n\nIt answers questions like \"Did someone open port 22 to the world on our production security group last Tuesday?\"\n\n**Analogy**: Config is like a time‑lapse camera pointed at your infrastructure. It takes a snapshot whenever something changes, so you can rewind and see the exact state at any moment."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Config vs CloudTrail 🆚",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "How does AWS Config differ from AWS CloudTrail?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Config records API calls; CloudTrail records resource state",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Config records resource configurations and changes over time; CloudTrail records API calls",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They are the same service",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Config monitors performance; CloudTrail monitors compliance",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Config focuses on 'what is the state of my resource?' and its history. CloudTrail records 'who called what API?'.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Rules: Evaluate Compliance ✅",
+            "content": "# Automated Guardrails\n\nConfig Rules are policies that check whether resources match desired configurations. You can use:\n- **AWS Managed Rules** (e.g., `s3-bucket-public-read-prohibited`, `restricted-ssh`, `encrypted-volumes`).\n- **Custom Rules** (Lambda functions that evaluate resources programmatically).\n\nRules are evaluated when:\n- A resource is created or changed (triggered)\n- Periodically (e.g., every 24 hours)\n\nResults are marked as **COMPLIANT** or **NON_COMPLIANT** and can trigger automatic remediation."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Remediation: Auto‑Fix Drift 🔧",
+            "content": "# Self‑Healing Infrastructure\n\nConfig Rules can be paired with **automatic remediation actions** using SSM Automation documents. For example:\n- Rule: `encrypted-volumes` → if non‑compliant, automatically run SSM document to encrypt the EBS volume.\n- Rule: `s3-bucket-public-read-prohibited` → automatically apply Block Public Access.\n\nThis closes the loop from detection to resolution without human intervention."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Conformance Packs: Compliance at Scale 📦",
+            "content": "# Bundled Best Practices\n\nA conformance pack is a collection of Config Rules and remediation actions that you can deploy as a single unit. AWS provides packs aligned with industry standards (PCI DSS, HIPAA, CIS AWS Foundations Benchmark).\n\nYou can deploy a pack across your entire organization using AWS Organizations, ensuring consistent security posture."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Pro Tip: Start with CIS Benchmarks 🚀",
+            "content": "## Deploy Pre‑built Conformance Pack\n\nThe CIS AWS Foundations Benchmark conformance pack contains over 40 rules. Deploy it to instantly evaluate your account against industry best practices. It's a great baseline for any new account."
+        }
+    ]
+}

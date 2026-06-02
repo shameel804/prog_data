@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_9",
+    "title": "Analyze a CloudTrail Log",
+    "description": "Given a sample CloudTrail event, identify the user, action, and potential security issue.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Below is a simplified CloudTrail management event (JSON). Read it and answer:\n1. Who performed the action (user or role)?\n2. What specific API action was called?\n3. On which resource (ARN)?\n4. What is the source IP?\n5. Is this action potentially dangerous? Why? What could an attacker do with this permission?\n\n```json\n{\n  \"eventVersion\": \"1.08\",\n  \"userIdentity\": {\n    \"type\": \"IAMUser\",\n    \"arn\": \"arn:aws:iam::123456789012:user/john_doe\",\n    \"userName\": \"john_doe\"\n  },\n  \"eventTime\": \"2025-01-15T14:22:33Z\",\n  \"eventSource\": \"ec2.amazonaws.com\",\n  \"eventName\": \"DeleteSecurityGroup\",\n  \"sourceIPAddress\": \"203.0.113.45\",\n  \"requestParameters\": {\n    \"groupId\": \"sg-0a1b2c3d\"\n  },\n  \"responseElements\": null\n}\n```",
+    "hints": [
+        "Check `eventName` for the action.",
+        "A security group deletion could open the network if the group was critical.",
+        "The source IP is an external address – is that expected?"
+    ],
+    "expectedOutput": "Answers to all five questions with reasoning.",
+    "solutionCode": "1. User: `john_doe` (IAM user).\n2. API action: `DeleteSecurityGroup`.\n3. Resource: Security group `sg-0a1b2c3d` (group ID).\n4. Source IP: `203.0.113.45`.\n5. Yes, deleting a security group that protects production resources could remove firewall rules and expose instances. An attacker with these credentials could delete security groups to facilitate further intrusion. The source IP being external could indicate credential compromise if the user does not usually work from that IP. This is a sensitive action that should trigger an alert (e.g., via CloudWatch metric filter on CloudTrail logs)."
+}

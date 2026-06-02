@@ -1,0 +1,94 @@
+{
+    "id": "sq_aws_basics_2",
+    "title": "Core Services Grand Review",
+    "triggerChapterIndex": 5,
+    "metadata": {
+        "type": "prediction"
+    },
+    "questions": [
+        {
+            "id": "sq_aws_basics_2_q1",
+            "type": "code_output",
+            "question": "You have an RDS MySQL instance with Multi-AZ enabled. The primary instance fails. What happens to the database endpoint?",
+            "codeSnippet": "# No code, conceptual prediction",
+            "correctOutput": "The DNS endpoint remains the same, but it automatically resolves to the standby instance after failover (typically 1-2 minutes).",
+            "correctAnswer": "The DNS endpoint remains the same, but it automatically resolves to the standby instance after failover (typically 1-2 minutes).",
+            "options": [],
+            "explanation": "Multi-AZ uses DNS failover, so the endpoint does not change. The application reconnects automatically if it handles connection retries.",
+            "xpReward": 25,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_aws_basics_2_q2",
+            "type": "code_output",
+            "question": "You have a DynamoDB table with provisioned capacity of 5 RCUs and 5 WCUs. Suddenly you double the provisioned capacity. How long does it take for the change to take effect?",
+            "codeSnippet": "# No code, conceptual",
+            "correctOutput": "Immediately (a few seconds). DynamoDB adjusts capacity quickly, and you can change provisioned throughput online.",
+            "correctAnswer": "Immediately (a few seconds). DynamoDB adjusts capacity quickly, and you can change provisioned throughput online.",
+            "options": [],
+            "explanation": "Unlike some services, DynamoDB provisioned throughput changes are applied near-instantly. However, the new capacity may take a few minutes to fully distribute across partitions if the table is large.",
+            "xpReward": 25,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_aws_basics_2_q3",
+            "type": "code_output",
+            "question": "An EC2 instance has an IAM role with `AmazonS3ReadOnlyAccess` attached. You run the AWS CLI command `aws s3 cp s3://my-bucket/myfile.txt .` from the instance. What happens?",
+            "codeSnippet": "aws s3 cp s3://my-bucket/myfile.txt .",
+            "correctOutput": "The file is downloaded successfully because the role grants read access to all S3 buckets and objects.",
+            "correctAnswer": "The file is downloaded successfully because the role grants read access to all S3 buckets and objects.",
+            "options": [],
+            "explanation": "The IAM role provides the necessary permissions. The AWS CLI on the instance automatically retrieves temporary credentials from the instance metadata service.",
+            "xpReward": 25,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_aws_basics_2_q4",
+            "type": "code_output",
+            "question": "You have an S3 bucket with versioning enabled. You delete an object. What happens if you try to retrieve it using the original key?",
+            "codeSnippet": "aws s3 rm s3://my-bucket/photo.jpg\naws s3 cp s3://my-bucket/photo.jpg ./photo.jpg",
+            "correctOutput": "The second command returns 'NoSuchKey' or '404'. The object is not permanently deleted; a delete marker hides it. To restore, you must delete the delete marker using the version ID.",
+            "correctAnswer": "The second command returns 'NoSuchKey' or '404'. The object is not permanently deleted; a delete marker hides it. To restore, you must delete the delete marker using the version ID.",
+            "options": [],
+            "explanation": "With versioning, a simple delete adds a delete marker, making it appear deleted. To restore, you need to delete the specific delete marker version.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_aws_basics_2_q5",
+            "type": "code_output",
+            "question": "You have a Lambda function with an execution role allowing `dynamodb:PutItem` on table `Orders`. The function is triggered by an API Gateway endpoint. A user makes a POST request with a valid JSON body. What will the Lambda function receive in the event object?",
+            "codeSnippet": "// Lambda function handler\nexports.handler = async (event) => {\n  console.log(event);\n  // ...\n}",
+            "correctOutput": "The event object contains the full HTTP request context, including headers, query string parameters, path, and body (as a string). The body is not automatically parsed; the Lambda must parse it if JSON.",
+            "correctAnswer": "The event object contains the full HTTP request context, including headers, query string parameters, path, and body (as a string). The body is not automatically parsed; the Lambda must parse it if JSON.",
+            "options": [],
+            "explanation": "With Lambda proxy integration, API Gateway passes the entire request as the event. The body is a JSON string (if the client sent JSON) that must be parsed by the Lambda code.",
+            "xpReward": 25,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_aws_basics_2_q6",
+            "type": "code_output",
+            "question": "You have an EBS volume of 100 GB gp2 attached to an EC2 instance. You take a snapshot. Later you delete some data from the volume. If you restore the snapshot to a new volume, what happens to the deleted data?",
+            "codeSnippet": "# No code",
+            "correctOutput": "The restored volume contains the data as it was at the time of the snapshot. The deleted data reappears.",
+            "correctAnswer": "The restored volume contains the data as it was at the time of the snapshot. The deleted data reappears.",
+            "options": [],
+            "explanation": "Snapshots are point-in-time. Restoring a snapshot creates a new volume with the state at that moment.",
+            "xpReward": 25,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_aws_basics_2_q7",
+            "type": "code_output",
+            "question": "You have a VPC with a public subnet and a private subnet. The public subnet has an Internet Gateway and a NAT Gateway. A web server in the public subnet can reach the internet. An app server in the private subnet cannot. The route table for the private subnet has a route `0.0.0.0/0 -> nat-xxx`. What's likely the issue?",
+            "codeSnippet": "# No code, architecture question",
+            "correctOutput": "The security group of the app server might be blocking outbound traffic, or the NAT Gateway might not have an Elastic IP assigned, or the public subnet's route table might not have a route to IGW for the NAT Gateway. Most likely: the NAT Gateway's security group is blocking the traffic.",
+            "correctAnswer": "The security group of the app server might be blocking outbound traffic, or the NAT Gateway might not have an Elastic IP assigned, or the public subnet's route table might not have a route to IGW for the NAT Gateway. Most likely: the NAT Gateway's security group is blocking the traffic.",
+            "options": [],
+            "explanation": "NAT Gateway itself does not have a security group, but the app server does. Check the app server's outbound security group rules. Also ensure the NAT Gateway is in a public subnet with a route to IGW, and that it has an Elastic IP.",
+            "xpReward": 25,
+            "difficulty": 2
+        }
+    ]
+}

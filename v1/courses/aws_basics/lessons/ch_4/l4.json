@@ -1,0 +1,105 @@
+{
+    "id": "l4",
+    "chapterId": "ch_4",
+    "title": "Key Pairs & Connecting 🔑",
+    "description": "Understand asymmetric cryptography and how to securely log in to your EC2 instance.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Access",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Public Key Cryptography 101 🔐",
+            "content": "# Two Keys, One Lock\n\nAWS uses **key pairs** for secure login to Linux/Unix instances. A key pair consists of:\n- **Public key**: stored on the EC2 instance (in `~/.ssh/authorized_keys`).\n- **Private key**: you download once as a `.pem` file. **Never lose it.**\n\nWhen you connect via SSH, your client uses the private key to prove your identity. The server checks it against the stored public key.\n\n**Analogy**: The public key is like a padlock you leave on the server. The private key is the only key that can open it. You keep that key in your pocket."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Key Pair Logic 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What happens if you lose the private key file (.pem) for an EC2 instance?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "AWS can reset it for you",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "You can regenerate it from the public key",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "You cannot SSH into the instance; you must stop it, detach the root volume, modify it, and relaunch",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It doesn't matter, you can use any key",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "AWS does not store private keys. To recover access, you must mount the root volume to another instance and inject a new public key into authorized_keys.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Creating a Key Pair 🛠️",
+            "content": "# In the Console\n\nWhen launching an instance, you can:\n- **Create a new key pair**: AWS generates it and lets you download the `.pem` file. Download immediately – you can’t get it again.\n- **Choose an existing key pair**: reuse one you already have.\n\nThe key pair is region‑specific. If you have instances in multiple regions, you need a key pair in each region (or copy the public key manually)."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Connecting from Your Machine 💻",
+            "content": "# SSH on Linux/macOS, PuTTY on Windows\n\n**Linux/macOS**:\n```bash\nchmod 400 my-key.pem  # Set correct permissions\nssh -i my-key.pem ec2-user@<public-ip>\n```\n\n**Windows**: Use PuTTY. You must convert `.pem` to `.ppk` using PuTTYgen.\n\nThe default username depends on the AMI:\n- Amazon Linux 2023 / Amazon Linux 2: `ec2-user`\n- Ubuntu: `ubuntu`\n- RHEL / CentOS: `ec2-user` or `root`\n- Debian: `admin`"
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "SSH Default User 🐧",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What is the default SSH username for Amazon Linux 2023 AMI?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "root",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "admin",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "ec2-user",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "awsuser",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Amazon Linux uses `ec2-user` as the default login. Other distributions have different defaults.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Pro Tip: EC2 Instance Connect 🚀",
+            "content": "## Browser‑based SSH\n\nAWS provides **EC2 Instance Connect** – a one‑click SSH experience right from the console. It uses temporary keys and eliminates the need to manage .pem files. Great for quick troubleshooting (works with Amazon Linux 2/2023 and Ubuntu)."
+        }
+    ]
+}

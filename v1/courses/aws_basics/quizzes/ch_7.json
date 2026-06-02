@@ -1,0 +1,323 @@
+{
+    "id": "quiz_ch_7",
+    "chapterId": "ch_7",
+    "title": "Chapter 7 Quiz",
+    "description": "Test your mastery of VPC, subnets, routing, security, peering, and endpoints.",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "A VPC is a ______ service.",
+            "options": [
+                "Global",
+                "Regional",
+                "Availability Zone‑specific",
+                "Edge‑based"
+            ],
+            "correctAnswer": 1,
+            "explanation": "A VPC resides in a single AWS region but spans all AZs in that region."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "What is the default VPC's CIDR block?",
+            "options": [
+                "10.0.0.0/16",
+                "172.31.0.0/16",
+                "192.168.0.0/16",
+                "172.16.0.0/12"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The default VPC in each region uses 172.31.0.0/16. Custom VPCs can use other private ranges."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "What makes a subnet public?",
+            "options": [
+                "It has a public IP assigned to all instances",
+                "Its route table has a route to an Internet Gateway",
+                "It uses the default VPC",
+                "It is placed in the first AZ"
+            ],
+            "correctAnswer": 1,
+            "explanation": "A subnet is public if its associated route table has a route `0.0.0.0/0 → Internet Gateway`."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "How many IP addresses does AWS reserve in every subnet?",
+            "options": [
+                "2",
+                "3",
+                "5",
+                "10"
+            ],
+            "correctAnswer": 2,
+            "explanation": "AWS reserves the first 4 addresses (network, router, DNS, future) and the last (broadcast) – total 5."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "A /24 subnet provides how many usable IPv4 addresses after AWS reservation?",
+            "options": [
+                "256",
+                "251",
+                "250",
+                "255"
+            ],
+            "correctAnswer": 1,
+            "explanation": "256 total – 5 reserved = 251 usable addresses."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "Which component allows instances in private subnets to initiate outbound internet traffic?",
+            "options": [
+                "Internet Gateway",
+                "NAT Gateway",
+                "VPC Peering",
+                "VPC Endpoint"
+            ],
+            "correctAnswer": 1,
+            "explanation": "A NAT Gateway, deployed in a public subnet, provides source NAT for private instances."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "To achieve high availability with NAT Gateway, you should:",
+            "options": [
+                "Deploy one NAT Gateway in a public subnet",
+                "Deploy one NAT Gateway per Availability Zone",
+                "Use a NAT instance instead",
+                "NAT Gateway is inherently multi‑AZ"
+            ],
+            "correctAnswer": 1,
+            "explanation": "NAT Gateways are AZ‑redundant within the AZ but not across. For HA, deploy one per AZ and route traffic accordingly."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "Security Groups are:",
+            "options": [
+                "Stateless and operate at the subnet level",
+                "Stateful and operate at the instance level",
+                "Stateless and operate at the instance level",
+                "Stateful and operate at the VPC level"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Security Groups are stateful and attached to Elastic Network Interfaces (instance level)."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "Network ACLs are:",
+            "options": [
+                "Stateful and operate at the subnet level",
+                "Stateless and operate at the instance level",
+                "Stateless and operate at the subnet level",
+                "Stateful and operate at the VPC level"
+            ],
+            "correctAnswer": 2,
+            "explanation": "NACLs are stateless and associated with subnets. They require explicit inbound and outbound rules."
+        },
+        {
+            "id": "q10",
+            "type": "true_false",
+            "question": "A security group can have deny rules to block specific IP addresses.",
+            "correctAnswer": false,
+            "explanation": "False. Security Groups support only allow rules. To block IPs, use Network ACLs."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "Which statement about NACL rule evaluation is true?",
+            "options": [
+                "All rules are evaluated in parallel",
+                "Rules are evaluated in order of lowest number to highest; the first match applies",
+                "The most restrictive rule always wins",
+                "Allow rules always take precedence over deny rules"
+            ],
+            "correctAnswer": 1,
+            "explanation": "NACL rules are evaluated by rule number, ascending. The first matching rule's action is taken."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "VPC Peering is:",
+            "options": [
+                "Transitive – traffic can flow through peered VPCs",
+                "Non‑transitive – only directly peered VPCs can communicate",
+                "Limited to 5 VPCs total",
+                "Only supported in the same region"
+            ],
+            "correctAnswer": 1,
+            "explanation": "VPC Peering is a one‑to‑one connection. Traffic does not transit through a peered VPC to another."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "Which AWS services support Gateway VPC Endpoints?",
+            "options": [
+                "S3 and DynamoDB",
+                "S3 and Lambda",
+                "EC2 and S3",
+                "All AWS services"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Only S3 and DynamoDB offer Gateway Endpoints. Other services use Interface Endpoints."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "An Interface VPC Endpoint creates what in your subnet?",
+            "options": [
+                "A new subnet",
+                "An Elastic Network Interface (ENI) with a private IP",
+                "A virtual private gateway",
+                "A new route table entry only"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Interface endpoints create an ENI in the subnet that serves as the entry point for the service."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "Which VPC feature allows you to offer your own service privately to other AWS accounts?",
+            "options": [
+                "VPC Peering",
+                "AWS PrivateLink",
+                "Transit Gateway",
+                "Internet Gateway"
+            ],
+            "correctAnswer": 1,
+            "explanation": "AWS PrivateLink allows you to publish a service endpoint that consumers in other VPCs/accounts can access via an Interface Endpoint."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "What is the recommended CIDR block size for a new VPC to allow for future growth?",
+            "options": [
+                "/28",
+                "/24",
+                "/16",
+                "/32"
+            ],
+            "correctAnswer": 2,
+            "explanation": "A /16 provides 65,536 addresses, giving plenty of room for subnets and future expansion."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "In a three‑tier architecture, where should the application servers be placed?",
+            "options": [
+                "Public subnets with the web servers",
+                "Private subnets, accessible only by web servers",
+                "In a separate VPC",
+                "In the DMZ"
+            ],
+            "correctAnswer": 1,
+            "explanation": "App servers typically sit in private subnets, receiving traffic from the web tier via a load balancer."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "VPC Flow Logs capture:",
+            "options": [
+                "The packet payload",
+                "Metadata about IP traffic (source, destination, port, action)",
+                "A copy of every packet",
+                "Only denied traffic"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Flow Logs capture metadata, not actual data payloads. They are used for monitoring and troubleshooting."
+        },
+        {
+            "id": "q19",
+            "type": "true_false",
+            "question": "You can attach multiple Internet Gateways to a single VPC.",
+            "correctAnswer": false,
+            "explanation": "False. Each VPC can have only one Internet Gateway attached at a time."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "An instance in a private subnet needs to access S3 privately. Which solution is correct?",
+            "options": [
+                "Assign a public IP to the instance",
+                "Use a NAT Gateway",
+                "Create a VPC Gateway Endpoint for S3",
+                "Place the S3 bucket in the VPC"
+            ],
+            "correctAnswer": 2,
+            "explanation": "A Gateway Endpoint for S3 adds a route in the private subnet's route table, enabling private access to S3 without internet or NAT."
+        },
+        {
+            "id": "q21",
+            "type": "mcq",
+            "question": "What is a bastion host used for?",
+            "options": [
+                "To cache data",
+                "To provide secure SSH/RDP access to instances in private subnets",
+                "To act as a load balancer",
+                "To replace NAT Gateway"
+            ],
+            "correctAnswer": 1,
+            "explanation": "A bastion host sits in a public subnet and provides a single, hardened entry point to administer private instances."
+        },
+        {
+            "id": "q22",
+            "type": "mcq",
+            "question": "When you create a custom VPC, does it automatically get an Internet Gateway?",
+            "options": [
+                "Yes",
+                "No, you must create and attach one",
+                "Only if you choose the correct CIDR",
+                "Only for accounts created after 2020"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Custom VPCs do not come with an Internet Gateway. You must create and attach one manually."
+        },
+        {
+            "id": "q23",
+            "type": "mcq",
+            "question": "Which of the following is a valid private IP address range for a VPC?",
+            "options": [
+                "8.8.8.0/24",
+                "10.0.0.0/16",
+                "203.0.113.0/24",
+                "54.239.0.0/16"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Private IP ranges per RFC 1918: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16."
+        },
+        {
+            "id": "q24",
+            "type": "mcq",
+            "question": "To enable IPv6 in a VPC, you must:",
+            "options": [
+                "Create a new VPC",
+                "Associate an IPv6 CIDR block with the VPC and enable it on subnets",
+                "Migrate all resources to IPv6-only",
+                "It's automatically enabled"
+            ],
+            "correctAnswer": 1,
+            "explanation": "You can add an IPv6 CIDR block to an existing VPC and assign it to subnets. IPv6 is not automatic."
+        },
+        {
+            "id": "q25",
+            "type": "mcq",
+            "question": "Which AWS service can act as a central hub for connecting multiple VPCs and on‑premises networks?",
+            "options": [
+                "VPC Peering",
+                "Internet Gateway",
+                "AWS Transit Gateway",
+                "VPC Endpoint"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Transit Gateway simplifies network architecture by acting as a hub that connects VPCs, VPNs, and Direct Connect."
+        }
+    ]
+}

@@ -1,0 +1,76 @@
+{
+    "id": "l6",
+    "chapterId": "ch_8",
+    "title": "Serverless Ecosystem & Best Practices 🌐",
+    "description": "Explore the broader serverless world and patterns to build production‑ready applications.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Wrap‑up",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Beyond Simple Functions 🧬",
+            "content": "# Composing Serverless Apps\n\nLambda functions are Lego bricks. Real applications use multiple functions orchestrated together:\n- **S3 + Lambda** – image resizing, video transcoding, log processing.\n- **API Gateway + Lambda + DynamoDB** – a complete REST API backend.\n- **CloudWatch Events/EventBridge + Lambda** – scheduled tasks (cron).\n- **SNS + Lambda** – fan‑out messaging, notifications.\n- **SQS + Lambda** – decoupled processing, handling spikes via queue.\n- **DynamoDB Streams + Lambda** – real‑time reactivity to database changes."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "AWS Step Functions: Workflow Orchestration 🔗",
+            "content": "# State Machines for Complex Logic\n\nStep Functions let you coordinate multiple Lambda functions into a state machine. Perfect for long‑running, multi‑step processes:\n- Order processing (validate, charge, ship, notify).\n- ETL jobs (extract, transform, load).\n- Approval workflows with human intervention.\n\nYou define the workflow in JSON (Amazon States Language). Step Functions handles retries, error handling, and parallel execution."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "Orchestration Choice 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "You need to process a payment that involves calling three Lambda functions sequentially, with error handling. Which service is best?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "SQS",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Step Functions",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "SNS",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Single Lambda with all logic",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Step Functions excels at orchestrating multi‑step workflows with built‑in error handling, retries, and visibility.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Serverless Application Model (SAM) & Frameworks 🛠️",
+            "content": "# Infrastructure as Code\n\nManually creating Lambdas, APIs, and tables in the console doesn't scale. Use:\n- **AWS SAM** – YAML/JSON templates that describe serverless resources; deploys via CloudFormation.\n- **Serverless Framework** – open‑source, multi‑cloud, plugin ecosystem.\n- **Terraform** – infrastructure as code for any AWS resource.\n\nThese tools let you define your entire serverless stack in code, version it, and deploy consistently."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "text",
+            "title": "Serverless Best Practices 🏆",
+            "content": "# Production Readiness\n\n- **Keep functions focused**: single responsibility. If it gets too big, split into multiple functions.\n- **Use environment variables for config**, not hard‑coded values.\n- **Implement error handling**: use Lambda destinations (on success/failure) to route failed events.\n- **Monitor with CloudWatch**: set up alarms for error rate, duration, throttles.\n- **Enable tracing**: AWS X‑Ray gives end‑to‑end visibility.\n- **Concurrency management**: set reserved concurrency to prevent one function from starving others.\n- **VPC‑enabled functions**: if your Lambda needs to access RDS/ElastiCache inside a VPC, configure it accordingly (cold starts may increase).\n- **Optimise code size**: smaller packages reduce cold start time."
+        },
+        {
+            "id": "s_l6_6",
+            "type": "tip",
+            "title": "Pro Tip: Lambda Power Tuning 🔧",
+            "content": "## Right‑size Memory\n\nLambda memory (128 MB – 10,240 MB) also proportionally allocates CPU. More memory = faster execution (usually) and potentially lower cost if it reduces time. Use the open‑source **AWS Lambda Power Tuning** tool to find the optimal setting."
+        }
+    ]
+}

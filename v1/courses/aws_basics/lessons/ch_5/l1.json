@@ -1,0 +1,105 @@
+{
+    "id": "l1",
+    "chapterId": "ch_5",
+    "title": "AWS Storage Landscape 🌐",
+    "description": "Understand the three fundamental types of cloud storage and where S3 and EBS shine.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Overview",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Block, File, Object – The Storage Trinity 🧩",
+            "content": "# Different Strokes for Different Data\n\nCloud storage comes in three flavours:\n\n- **Block Storage** – raw disk volumes attached to a single instance (like a hard drive). Example: EBS.\n- **File Storage** – shared file system accessible by multiple instances via NFS/SMB. Example: EFS (Elastic File System).\n- **Object Storage** – stores data as objects with metadata, accessible via API over HTTP. Example: S3.\n\n**Analogy**: Block storage is a USB stick you plug into one computer. File storage is a network drive everyone in the office mounts. Object storage is like a giant warehouse where you drop off and retrieve items using a ticket number – no folder hierarchy, just an ID."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Storage Type Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Which storage type is most similar to a traditional external hard drive attached to a single server?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Object storage",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "File storage",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Block storage",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Archive storage",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Block storage (EBS) provides raw volumes that appear as a physical disk to the OS. It's meant for a single instance.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "Object Storage: Amazon S3 🌍",
+            "content": "# Simple Storage Service\n\nS3 is **object storage** – designed for massive scalability, durability, and accessibility over the web.\n- Data is stored as **objects** (files) inside **buckets** (root containers).\n- Objects can be up to 5 TB each; you can store unlimited total data.\n- Each object has a unique key (name), metadata, and data.\n- Accessible via REST API, CLI, SDK, or console.\n- Designed for **99.999999999% (11 9's) durability** – practically no data loss."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "Block Storage: Amazon EBS 💾",
+            "content": "# Elastic Block Store\n\nEBS provides **persistent block-level storage volumes** for use with EC2 instances.\n- Think of it as a virtual hard drive you attach to one EC2 instance.\n- Volumes persist independently from the instance life – you can detach and reattach them.\n- One volume is locked to a single Availability Zone (AZ).\n- Supports snapshots (incremental backups to S3) for durability.\n- Different volume types for different performance needs (SSD, HDD)."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "quiz",
+            "title": "EBS Snapshot Storage 🔍",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "Where are EBS snapshots stored?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "On the EBS volume itself",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "In Amazon S3 (but not visible in your S3 buckets)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "In EC2 instance store",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "On a separate EFS file system",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "EBS snapshots are stored in S3 behind the scenes, but you don't see them in your S3 console. They are managed by EBS.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_6",
+            "type": "tip",
+            "title": "Pro Tip: S3 vs EBS – The TL;DR 🚀",
+            "content": "## When to Use Which\n\n- **S3**: Static assets (images, videos, backups), big data analytics, data lakes, static website hosting, log storage.\n- **EBS**: Boot volumes for EC2, databases requiring low latency, transactional applications, file systems.\n\nYou'll often use both together: an EC2 instance with an EBS root volume, writing application logs to S3."
+        }
+    ]
+}

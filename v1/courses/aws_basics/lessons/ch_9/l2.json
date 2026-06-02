@@ -1,0 +1,117 @@
+{
+    "id": "l2",
+    "chapterId": "ch_9",
+    "title": "CloudWatch Logs & Alarms 🚨",
+    "description": "Centralize logs, create metric filters, and set up alarms that trigger automated actions.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "CloudWatch Deep Dive",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "CloudWatch Logs: A Single Pane for Logs 📝",
+            "content": "# Aggregate Everything\n\nCloudWatch Logs lets you store, monitor, and access log files from:\n- EC2 instances (via CloudWatch agent)\n- Lambda functions (automatically)\n- RDS databases\n- VPC Flow Logs\n- CloudTrail\n- Any application using the PutLogEvents API\n\n**Log groups** are containers for log streams. A **log stream** is a sequence of log events from the same source (e.g., one Lambda function, one EC2 instance)."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Logs Structure 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "In CloudWatch Logs, what is the relationship between log groups and log streams?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A log group contains one log stream",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A log stream contains multiple log groups",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A log group can contain many log streams, each representing a source",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They are unrelated",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Think of a log group as a folder, and log streams as files inside that folder. Each stream holds events from a specific source (e.g., instance i-123).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Metric Filters: Turn Logs into Metrics 🔍",
+            "content": "# Extract Meaning from Text\n\nYou can create **metric filters** on log groups to search for specific patterns (e.g., \"ERROR\", \"404\") and increment a custom metric each time it appears.\n\n**Example**: Your application logs \"Payment failed\" messages. Create a metric filter for that string, and a CloudWatch metric `Payments/Failures` will track how many times it occurs. Then you can set an alarm on that metric!\n\nThis transforms qualitative log data into actionable quantitative data."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "CloudWatch Alarms: The Watchdog 🐕",
+            "content": "# Act Before It's Too Late\n\nAn **alarm** monitors a metric over a time period and performs one or more actions when the threshold is breached.\n\n- Choose a metric (e.g., `CPUUtilization`).\n- Set a condition (e.g., greater than 80% for 5 consecutive minutes).\n- Define actions: send an SNS notification, auto‑scale an EC2 instance, stop/terminate an instance, trigger a Lambda function.\n\nAlarm states: **OK** (metric within threshold), **ALARM** (threshold breached), **INSUFFICIENT_DATA** (not enough data to judge)."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "quiz",
+            "title": "Alarm Action Trigger 🎯",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Which AWS service is commonly used to send an email when a CloudWatch alarm is triggered?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Amazon SQS",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Amazon SNS",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "AWS Lambda",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Amazon SES",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "SNS (Simple Notification Service) topics are the standard way to fan out notifications, including to email and SMS.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Composite Alarms: Combine Signals 🧩",
+            "content": "# Reduce Noise\n\nA composite alarm watches multiple other alarms using a boolean expression (AND/OR). You might have:\n- Alarm A: CPU > 80%\n- Alarm B: Memory > 90%\n- Composite: A AND B → triggers only when both are in alarm.\n\nThis avoids alert fatigue. Only fire when the situation is truly critical."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "Dashboards: The Visual Command Center 📊",
+            "content": "# Single Pane of Glass\n\nCloudWatch Dashboards let you create custom, real‑time visualisations of your metrics. You can add:\n- Line graphs, stacked area, number widgets\n- Metrics from multiple regions and accounts (cross‑account)\n- Log query results\n\nDashboards are perfect for NOC screens, team status pages, or quick health checks. They auto‑refresh and can be shared."
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "Pro Tip: Anomaly Detection 🚀",
+            "content": "## Smart Alarms\n\nCloudWatch supports anomaly detection on metrics. Instead of static thresholds, it learns the normal pattern and alarms when the metric deviates significantly. Ideal for seasonal traffic."
+        }
+    ]
+}

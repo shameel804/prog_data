@@ -1,0 +1,105 @@
+{
+    "id": "l5",
+    "chapterId": "ch_7",
+    "title": "VPC Peering & Private Endpoints 🔗",
+    "description": "Connect VPCs together and access AWS services without internet exposure.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "VPC Peering ↔️",
+            "content": "# Direct VPC‑to‑VPC Connection\n\n**VPC Peering** connects two VPCs privately using the AWS backbone. Instances in different VPCs can communicate as if they’re in the same network.\n\n- Can be within the same region or **cross‑region**.\n- Can be between different AWS accounts.\n- Peering is not transitive: if VPC A peers with B and B peers with C, A cannot talk to C through B.\n- No overlapping CIDR blocks allowed.\n\n**Use cases**: Shared services VPC (logging, authentication) connecting to application VPCs."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Peering Transitivity 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "VPC A is peered with VPC B. VPC B is peered with VPC C. Can an instance in A talk to an instance in C?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Yes, automatically",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "No, peering is not transitive",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only if both are in the same region",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only if CIDR blocks match",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "VPC Peering is a one‑to‑one relationship. For hub‑and‑spoke, use AWS Transit Gateway.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "VPC Endpoints: Private Access to AWS Services 🛡️",
+            "content": "# No Internet Needed\n\nMany AWS services (S3, DynamoDB, SNS, etc.) are public by default – they live on the internet. To access them privately from your VPC, use a **VPC Endpoint**.\n\nTwo types:\n- **Gateway Endpoint**: S3 and DynamoDB only. Adds a route to your route table; traffic goes through the endpoint.\n- **Interface Endpoint**: All other services (via AWS PrivateLink). Creates an Elastic Network Interface (ENI) in your subnet with a private IP.\n\nTraffic never leaves the AWS network, improving security and reducing data transfer costs."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Gateway vs Interface Endpoint 🆚",
+            "content": "# Which One?\n\n- **Gateway Endpoint**: Free. Supports S3 and DynamoDB. Configured via route table entry.\n- **Interface Endpoint**: Hourly cost + data processing fee. Supports most AWS services (KMS, SSM, SQS, etc.). Uses DNS to resolve to private IP.\n\n**Example**: An EC2 instance in a private subnet can download patches from S3 via a Gateway Endpoint, without a NAT Gateway."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Endpoint Use Case 🎯",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "Which VPC endpoint type is required for accessing AWS Systems Manager (SSM) privately?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Gateway Endpoint",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Interface Endpoint",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Both are supported",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "SSM does not support VPC endpoints",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "SSM uses an Interface Endpoint (PrivateLink). Only S3 and DynamoDB support Gateway Endpoints.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "AWS PrivateLink 🔗",
+            "content": "# Share Your Own Services Privately\n\n**AWS PrivateLink** lets you expose a service (e.g., your own application) as an endpoint in another VPC or to other AWS accounts.\n\n- You create a **Network Load Balancer** in your VPC, then a PrivateLink endpoint service.\n- Consumers create an Interface Endpoint to connect.\n- Traffic stays within AWS, avoiding the internet.\n\nThis is how SaaS providers on AWS deliver services to their customers securely."
+        }
+    ]
+}

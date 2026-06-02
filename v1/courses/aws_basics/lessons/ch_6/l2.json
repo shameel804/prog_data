@@ -1,0 +1,105 @@
+{
+    "id": "l2",
+    "chapterId": "ch_6",
+    "title": "Amazon RDS Deep Dive 🐬",
+    "description": "Explore the Relational Database Service – engine choices, high availability, and scaling read performance.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "RDS Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "What is RDS? 🤖",
+            "content": "# Relational Database Service\n\nRDS is a managed service that makes it easy to set up, operate, and scale a relational database in the cloud. It supports several database engines:\n- **Amazon Aurora** (MySQL and PostgreSQL‑compatible, 5x throughput of standard MySQL).\n- **MySQL**\n- **PostgreSQL**\n- **MariaDB**\n- **Oracle**\n- **SQL Server**\n\nYou choose an engine, instance type (similar to EC2 families), and storage. AWS handles the rest."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "RDS Engines 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which of the following is NOT a supported RDS engine?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "PostgreSQL",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "MySQL",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "MongoDB",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Oracle",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "MongoDB is a NoSQL document store. RDS focuses on traditional SQL engines. For MongoDB, consider Amazon DocumentDB.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Multi‑AZ Deployment for High Availability 🛡️",
+            "content": "# Automatic Failover\n\nWhen you enable **Multi‑AZ**, RDS maintains a synchronous standby replica in a different Availability Zone. If the primary fails (instance failure, AZ outage), RDS automatically fails over to the standby.\n- Failover is transparent – the DNS endpoint remains the same.\n- No manual intervention needed.\n- Used for **disaster recovery**, not scaling performance (standby isn't accessible for reads).\n\n**Analogy**: Multi‑AZ is like having a twin who knows your job perfectly and instantly takes over if you’re sick."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Read Replicas for Performance 📖",
+            "content": "# Scale Read‑Heavy Workloads\n\nRead Replicas are asynchronous copies of your database that handle read traffic. You can have up to 5 replicas per source database.\n- Replicas can be in the same region (same AZ or cross‑AZ) or cross‑region.\n- You connect to a replica using its own DNS endpoint.\n- Replicas can be promoted to standalone databases.\n\n**Key difference from Multi‑AZ**: Read replicas are for scaling reads; Multi‑AZ is for durability."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "quiz",
+            "title": "Multi‑AZ vs Read Replica ⚖️",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Which statement about Multi‑AZ and Read Replicas is correct?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Multi‑AZ improves read performance",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Read Replicas provide automatic failover",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Multi‑AZ uses synchronous replication; Read Replicas use asynchronous replication",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Both use asynchronous replication",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Multi‑AZ replicates synchronously to the standby for zero data loss on failover. Read replicas use async replication, which may have a small lag.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Amazon Aurora: Next‑Gen RDS 🌟",
+            "content": "# Cloud‑Native Relational Database\n\nAurora is AWS’s own database engine, compatible with MySQL and PostgreSQL, but with a cloud‑optimised storage layer:\n- 5x throughput of standard MySQL, 3x of PostgreSQL.\n- Storage automatically scales up to 128 TB.\n- 6 copies of data across 3 AZs for high durability.\n- Aurora Serverless for on‑demand auto‑scaling (great for variable loads).\n- Supports up to 15 read replicas with low latency (Aurora Replicas).\n\nAurora is often the best choice for new applications on AWS."
+        }
+    ]
+}

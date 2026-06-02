@@ -1,0 +1,105 @@
+{
+    "id": "l4",
+    "chapterId": "ch_6",
+    "title": "Amazon DynamoDB Core Concepts ⚡",
+    "description": "Explore the fully managed NoSQL database – single‑digit millisecond latency at any scale.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "DynamoDB Core",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "What is DynamoDB? 🧬",
+            "content": "# Serverless NoSQL\n\nDynamoDB is a fully managed, serverless NoSQL database that delivers single‑digit millisecond performance at any scale. Key characteristics:\n- **Key‑value** and **document** data models.\n- **Schema‑less** – each item can have different attributes.\n- **Auto‑scaling** storage and throughput.\n- **Built‑in security**, backup, and in‑memory caching (DAX).\n- **Global tables** for multi‑region, multi‑active replication.\n\n**Analogy**: DynamoDB is a massive, super‑fast filing system where you access every file by its exact ID. No searching through folders – just instant retrieval by key."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "DynamoDB Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "DynamoDB is classified as which type of database?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Relational SQL",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "NoSQL key‑value and document",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Graph database",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "In‑memory cache",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "DynamoDB is a NoSQL database that supports both key‑value and document (JSON) data models.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Tables, Items, and Attributes 📋",
+            "content": "# Core Data Structure\n\n- **Table**: a collection of items (no schema).\n- **Item**: a group of attributes that is uniquely identifiable. Similar to a row in SQL but can vary in structure.\n- **Attribute**: a data element (name‑value pair). Supports types like string, number, binary, list, map, etc.\n\nEvery table must have a **Primary Key** that uniquely identifies each item:\n- **Partition Key** (simple key): single attribute.\n- **Partition Key + Sort Key** (composite key): combination of two attributes."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Primary Keys & Query Efficiency 🔑",
+            "content": "# Designing Your Key\n\nThe partition key determines how data is distributed across physical partitions. Choose a key with high cardinality (many distinct values) to avoid hot partitions.\n\nWith a composite key, you can efficiently query all items with the same partition key, optionally filtering by sort key range.\n\n**Example**: Table `Orders` with partition key `CustomerId` and sort key `OrderDate`. You can quickly fetch all orders for a customer in a date range."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Secondary Indexes 🔍",
+            "content": "# Querying Beyond the Primary Key\n\nIf you need to query by a different attribute, create a **secondary index**:\n- **Global Secondary Index (GSI)**: can have a different partition key and sort key. Eventually consistent by default.\n- **Local Secondary Index (LSI)**: same partition key as the table, different sort key. Strongly consistent optional. Must be created at table creation.\n\nIndexes are automatically updated when data changes, but they consume additional storage and write capacity."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Index Choices 📊",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "You need to query a DynamoDB table by an attribute that is not the partition key. What do you create?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "A Read Replica",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A Secondary Index (GSI or LSI)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "A new table with a different key",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A filter expression on Scan",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Secondary indexes allow queries on non‑key attributes. A Scan with filter would be inefficient and costly.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

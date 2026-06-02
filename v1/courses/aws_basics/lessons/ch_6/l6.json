@@ -1,0 +1,70 @@
+{
+    "id": "l6",
+    "chapterId": "ch_6",
+    "title": "RDS vs DynamoDB – Making the Choice 🎯",
+    "description": "Practical decision tree, cost comparisons, and real‑world use cases to pick the perfect database.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Wrap‑up",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "The Big Decision Tree 🌳",
+            "content": "# Ask These Questions\n\n1. Do you need **complex joins, aggregations, and transactions**? → RDS (SQL engines).\n2. Is your **schema well‑defined and stable**? → RDS (or Aurora).\n3. Do you have **massive, unpredictable scale** with simple key‑based access patterns? → DynamoDB.\n4. Do you need **sub‑millisecond latency** at any scale? → DynamoDB + DAX.\n5. Do you need **global multi‑region writes**? → DynamoDB Global Tables.\n6. Are you dealing with **semi‑structured JSON documents** that vary per item? → DynamoDB.\n\nMost modern applications use **both**: RDS for transactional records (orders), DynamoDB for high‑velocity user session data or product catalogs."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "Cost Comparison 💵",
+            "content": "# Paying for What You Use\n\n- **RDS**: pay for instance hours, storage (GB/month), data transfer. Multi‑AZ doubles instance cost. Reserved instances save up to 60%.\n- **DynamoDB**: pay per RCU/WCU (provisioned) or per request (on‑demand), plus storage. Auto‑scaling helps manage costs.\n- **Aurora Serverless v2**: pay per ACU (Aurora Capacity Unit) consumed per second – scales to zero.\n\nAlways use the AWS Pricing Calculator to estimate."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "Which Database? 🎯",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "A startup needs a database for a rapidly growing chat app with unpredictable message volume and simple key lookups. Which service is the best fit?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Amazon RDS MySQL with Multi‑AZ",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Amazon Aurora",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Amazon DynamoDB with On‑Demand capacity",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Amazon Redshift",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "DynamoDB handles variable loads effortlessly, and the simple key‑based access pattern (message by chat ID) fits perfectly.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Hybrid Architectures Are Common 🔗",
+            "content": "# Use the Best of Both\n\nExample: an e‑commerce platform\n- **RDS (Aurora)** for inventory, order processing, and payment records (transactions, joins).\n- **DynamoDB** for shopping cart (high velocity, simple key‑value).\n- **ElastiCache (Redis)** for session caching and real‑time leaderboards.\n- **S3** for product images.\n\nDon’t force a single database to solve every problem. Polyglot persistence is the cloud‑native way."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "tip",
+            "title": "Pro Tip: Start Simple 🏁",
+            "content": "## Don’t Over‑Engineer\n\nFor a new project, if you’re unsure, start with DynamoDB if your access pattern is simple, or Aurora Serverless if you need SQL but want to scale automatically. Avoid over‑provisioning RDS instances before you understand your traffic."
+        }
+    ]
+}

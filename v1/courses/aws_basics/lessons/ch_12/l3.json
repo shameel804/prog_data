@@ -1,0 +1,76 @@
+{
+    "id": "l3",
+    "chapterId": "ch_12",
+    "title": "Auto Scaling Groups (ASG) 🚀",
+    "description": "Automatically maintain a healthy fleet of EC2 instances – replace failures and scale with demand.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "What is an Auto Scaling Group? 🏗️",
+            "content": "# Self‑Healing and Elastic Compute\n\nAn Auto Scaling Group (ASG) manages a collection of EC2 instances that share similar characteristics. Its two superpowers:\n- **Health management**: automatically terminates and replaces unhealthy instances.\n- **Dynamic scaling**: increases or decreases the number of instances based on demand or schedule.\n\nASG works with **Launch Templates** (or Launch Configurations – legacy) that define the instance blueprint: AMI, instance type, key pair, security groups, user data.\n\n**Analogy**: An ASG is like a thermostat connected to a heating system. You set the desired temperature (desired capacity), and the thermostat turns heaters on/off (launches/terminates instances) to maintain it."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "ASG Purpose 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "If an EC2 instance in an ASG fails health checks, what happens?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Nothing – you must manually replace it",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The ASG automatically terminates it and launches a new one",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It sends an email alert",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It stops the instance but keeps it in the group",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "ASG continuously monitors health (EC2 status checks + optional ELB health checks). Unhealthy instances are terminated and replaced automatically.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Launch Templates: The Instance Blueprint 📋",
+            "content": "# Version‑Controlled Instance Definitions\n\nA Launch Template specifies everything needed to launch an instance:\n- AMI ID\n- Instance type\n- Key pair\n- Security groups\n- User data script\n- Block device mappings\n- IAM instance profile\n\nLaunch Templates support **versioning** – you can create new versions (e.g., update AMI) and ASG can reference a specific version or `$Latest`.\n\n**Launch Configurations** are older, immutable, and will eventually be deprecated. Always use Launch Templates."
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "ASG Capacity Settings ⚙️",
+            "content": "# Desired, Minimum, Maximum\n\n- **Desired Capacity**: how many instances the ASG aims to run right now.\n- **Minimum Capacity**: floor – ASG will never go below this.\n- **Maximum Capacity**: ceiling – ASG will never exceed this.\n\nExample: min=2, desired=2, max=10. Under normal conditions, 2 instances run. If a scaling policy triggers (CPU > 70%), ASG adds instances up to 10. If an instance fails, ASG replaces it to maintain at least 2.\n\n**Cost control**: set max to a safe limit. If an attacker triggers a scaling event, you won't launch 1,000 expensive instances."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Lifecycle Hooks: Run Code at Launch/Terminate 🪝",
+            "content": "# Custom Actions on Instance Transitions\n\nLifecycle hooks let you pause instances during launch or termination to perform custom actions:\n- **Launching**: before the instance is put into service, run a script to install monitoring agent, or register with a configuration management tool. ASG waits for a signal to `CONTINUE`.\n- **Terminating**: before the instance is terminated, gracefully drain connections, flush logs, or notify the monitoring system.\n\nLifecycle hooks integrate with SNS, SQS, Lambda, and SSM. They are essential for graceful shutdowns in stateful applications."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "ASG Health Checks: EC2 vs ELB 🩺",
+            "content": "# Two Layers of Detection\n\n- **EC2 Health Check**: based on the instance's status checks (system and instance). Detects hardware issues or crashed OS.\n- **ELB Health Check**: if the ASG is behind a load balancer, you can enable ELB health checks. Detects application‑level failures (e.g., web server running but returning 500).\n\nUse both: EC2 checks catch infrastructure failures; ELB checks catch application failures. This is called **graceful degradation**."
+        }
+    ]
+}

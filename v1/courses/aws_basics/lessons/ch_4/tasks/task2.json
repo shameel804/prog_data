@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_4",
+    "title": "Design a Security Group",
+    "description": "Write the inbound rules for a classic 3‑tier web application.",
+    "estimatedMinutes": 15,
+    "problemStatement": "You have three layers:\n- Web tier (public‑facing Apache servers)\n- App tier (Tomcat application servers)\n- DB tier (MySQL databases)\n\nDefine the security groups and rules so that:\n- Web servers accept HTTP (80) and HTTPS (443) from anywhere.\n- App servers accept traffic only on port 8080 from the web servers.\n- Database servers accept traffic only on port 3306 from the app servers.\n- SSH (22) is allowed from a bastion host’s security group (sg-bastion) to all layers.\n\nList the security groups and their inbound rules as a table.",
+    "hints": [
+        "Use security group IDs as sources to allow traffic between tiers.",
+        "Web SG source: 0.0.0.0/0 for HTTP/HTTPS.",
+        "SSH source: sg-bastion (not an IP)."
+    ],
+    "expectedOutput": "A structured set of rules for three security groups.",
+    "solutionCode": "Security group: sg-web\n- Inbound: HTTP (80) from 0.0.0.0/0\n- Inbound: HTTPS (443) from 0.0.0.0/0\n- Inbound: SSH (22) from sg-bastion\n\nSecurity group: sg-app\n- Inbound: Custom TCP 8080 from sg-web\n- Inbound: SSH (22) from sg-bastion\n\nSecurity group: sg-db\n- Inbound: MySQL (3306) from sg-app\n- Inbound: SSH (22) from sg-bastion"
+}

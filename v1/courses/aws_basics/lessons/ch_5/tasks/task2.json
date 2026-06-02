@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_5",
+    "title": "Design a Lifecycle Policy",
+    "description": "Create a lifecycle configuration to minimise storage costs for a log archive.",
+    "estimatedMinutes": 15,
+    "problemStatement": "You manage an S3 bucket `app-logs-archive` that receives daily application logs. The logs are rarely accessed after 30 days, and after 90 days they are only needed for compliance and must be retrievable within 24 hours if requested. After 365 days, logs can be deleted.\n\nDefine a lifecycle rule that:\n- Moves objects to Standard‑IA after 30 days.\n- Moves objects to Glacier Flexible Retrieval after 90 days.\n- Permanently deletes objects after 365 days.\n\nWrite the rule in plain English (or pseudo‑JSON) as you would configure it in the console. Include the prefix if logs are stored under `logs/`.",
+    "hints": [
+        "Use transition actions to change storage class.",
+        "Use expiration action to delete.",
+        "Standard‑IA has a minimum storage duration of 30 days; moving at 30 days is fine."
+    ],
+    "expectedOutput": "A description of the lifecycle rule.",
+    "solutionCode": "Lifecycle rule name: LogArchiveRule\nScope: Apply to all objects in bucket (or prefix 'logs/')\n\n1. Transition actions:\n   - Transition to Standard‑IA after 30 days from creation.\n   - Transition to Glacier Flexible Retrieval after 90 days from creation.\n2. Expiration action:\n   - Permanently delete after 365 days from creation.\n\nThis setup ensures logs are on fast storage for the first month, move to cheaper infrequent access, then to archive, and finally deleted after a year."
+}

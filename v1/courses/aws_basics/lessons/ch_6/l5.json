@@ -1,0 +1,76 @@
+{
+    "id": "l5",
+    "chapterId": "ch_6",
+    "title": "DynamoDB Advanced Features 🔄",
+    "description": "Streams, Global Tables, DAX caching, and fine‑grained access control.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "DynamoDB Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Capacity Modes: Provisioned vs On‑Demand 💰",
+            "content": "# Two Billing Models\n\n- **Provisioned Capacity**: You specify the number of **read capacity units (RCUs)** and **write capacity units (WCUs)** per second. You pay for provisioned capacity even if not used. Use for predictable workloads.\n- **On‑Demand Capacity**: Pay per request. No capacity planning. Use for variable, unknown, or spiky traffic. AWS handles scaling instantly.\n\nYou can switch between modes once per 24 hours."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "DynamoDB Streams 🔄",
+            "content": "# Capture Changes in Real Time\n\nWhen enabled, DynamoDB Streams records every item modification (create, update, delete) in order, with the before‑and‑after image.\n- Stored for 24 hours.\n- You can trigger AWS Lambda functions to react to changes (e.g., send email on new order, replicate to Elasticsearch).\n- Integrates with Kinesis Data Streams for extended retention and advanced processing.\n\nThis makes DynamoDB a perfect source for event‑driven architectures."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Global Tables 🌍",
+            "content": "# Multi‑Region, Multi‑Active\n\nDynamoDB Global Tables replicate your table automatically across chosen AWS regions. You can read and write to any replica, and changes are propagated to all regions with low latency.\n- Conflict resolution is handled by **last writer wins** (based on timestamp).\n- Ideal for globally distributed applications that need local read/write performance.\n\n**Note**: Requires DynamoDB Streams to be enabled, and you cannot disable it after creating a Global Table."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "DynamoDB Accelerator (DAX) ⚡",
+            "content": "# In‑Memory Cache\n\nDAX is a fully managed, highly available in‑memory cache that sits in front of DynamoDB. It reduces read latency from milliseconds to **microseconds**.\n- Compatible with existing DynamoDB API calls – no code changes except endpoint.\n- Best for read‑heavy, latency‑sensitive workloads (gaming leaderboards, real‑time bidding).\n- Not a replacement for ElastiCache; it’s tightly coupled to DynamoDB.\n\nCached data has a default TTL of 5 minutes."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "DAX Use Case 💨",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "When should you consider using DAX?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "When you need relational joins",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "When your DynamoDB reads need microsecond latency and high throughput",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "When you want a data warehouse",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "When you need to encrypt data at rest",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "DAX is an in‑memory cache specifically designed to accelerate DynamoDB reads, reducing latency to microseconds.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Security & Fine‑Grained Access 🔒",
+            "content": "# Beyond IAM\n\nDynamoDB integrates with IAM for table‑level permissions, but also supports:\n- **Fine‑grained access control**: restrict access to specific items or attributes based on IAM policy conditions (e.g., a user can only see their own shopping cart).\n- **VPC Endpoints**: keep all traffic within the AWS network.\n- **Encryption at rest** (enabled by default with AWS‑owned key, can use KMS).\n- **Point‑in‑time recovery** (PITR) for continuous backups with per‑second granularity."
+        }
+    ]
+}

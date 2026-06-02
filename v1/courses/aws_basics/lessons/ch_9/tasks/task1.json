@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_9",
+    "title": "Create a CPU Alarm & Notification",
+    "description": "Design a CloudWatch alarm that triggers when EC2 CPU exceeds 80% and sends an email.",
+    "estimatedMinutes": 15,
+    "problemStatement": "You have a production EC2 instance that must never exceed 80% CPU utilisation for more than 5 minutes, otherwise the ops team needs to be alerted. Design the CloudWatch alarm configuration.\n\nInclude:\n- The metric namespace and metric name.\n- Statistic (Average, Sum, etc.) and period.\n- Threshold condition and number of evaluation periods.\n- The action to take when the alarm state is reached (service and resource needed).\n- How to ensure the alarm can send an email to `ops@example.com`.\n\nWrite your answer as a step‑by‑step guide.",
+    "hints": [
+        "Use `AWS/EC2` namespace and `CPUUtilization` metric.",
+        "For 'more than 5 minutes', a period of 1 minute with 5 evaluation periods works, or 5‑minute period with 1 out of 1 datapoints.",
+        "Alarm action: SNS topic with email subscription."
+    ],
+    "expectedOutput": "Detailed steps and configuration settings.",
+    "solutionCode": "1. In CloudWatch console, go to Alarms → Create Alarm.\n2. Select metric: EC2 → Per‑Instance Metrics, choose `CPUUtilization` for the instance.\n3. Statistic: Average, Period: 1 minute (if detailed monitoring enabled) or 5 minutes (basic). With basic, set period 5 min and evaluation periods 1 out of 1 (trigger immediately). For detailed, period 1 min, consecutive 5 periods.\n4. Condition: Threshold type Static, `CPUUtilization` > 80.\n5. Click Next.\n6. Alarm state trigger: In ALARM state. Select an existing SNS topic or create new topic `EC2-CPU-Alerts`.\n   - Create topic, enter email `ops@example.com`. After creation, check email and confirm subscription.\n7. Click Next, give alarm name `HighCPU-alert`, Next, Create.\n\nNow if CPU > 80% for the defined time, an email is sent to ops@example.com."
+}

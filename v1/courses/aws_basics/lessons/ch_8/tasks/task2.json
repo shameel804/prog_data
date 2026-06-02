@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_8",
+    "title": "Grant S3 Read Permission to a Lambda",
+    "description": "Write an IAM policy and attach it to the Lambda role so the function can read a specific S3 bucket.",
+    "estimatedMinutes": 15,
+    "problemStatement": "A Lambda function named `DataProcessor` needs to read objects from an S3 bucket named `my-data-bucket` in the same account. It should be able to list the bucket and get objects, but not delete or write anything. Write the IAM policy (JSON) to be added to the Lambda's execution role. Also explain where in the IAM console you would attach this policy (managed vs inline) and why you might prefer one over the other.",
+    "hints": [
+        "The bucket ARN: `arn:aws:s3:::my-data-bucket` and objects: `arn:aws:s3:::my-data-bucket/*`.",
+        "Actions: `s3:ListBucket`, `s3:GetObject`.",
+        "Use a customer managed policy for reusability."
+    ],
+    "expectedOutput": "IAM policy JSON and explanation of attachment method.",
+    "solutionCode": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": [\"s3:ListBucket\"],\n      \"Resource\": \"arn:aws:s3:::my-data-bucket\"\n    },\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": [\"s3:GetObject\"],\n      \"Resource\": \"arn:aws:s3:::my-data-bucket/*\"\n    }\n  ]\n}\n\nAttach as a customer managed policy: go to IAM → Policies → Create policy, paste JSON, name it 'S3ReadMyDataBucket'. Then go to Roles → find the Lambda's execution role → Attach policies → select the new policy.\n\nUsing a customer managed policy allows you to reuse it across multiple functions and version it. Inline policies are embedded directly in a single role and can be harder to track."
+}

@@ -1,0 +1,16 @@
+{
+    "id": "task2",
+    "chapterId": "ch_12",
+    "title": "Configure an Auto Scaling Policy",
+    "description": "Define a target tracking scaling policy for a web server ASG and explain warm‑up and cooldown settings.",
+    "estimatedMinutes": 15,
+    "problemStatement": "You have an ASG of web servers behind an ALB. You want to maintain an average request count per target of 1000. The application takes about 60 seconds to fully initialise after launch. You want to prevent rapid scale‑in/scale‑out oscillations.\n\nDesign the scaling policy:\n- Type of policy.\n- Metric and target value.\n- Instance warm‑up setting and why.\n- Cooldown period and why.\n- How you would verify the policy is working.\n\nWrite your answer as a configuration guide.",
+    "hints": [
+        "Use target tracking with ALB's RequestCountPerTarget metric.",
+        "Warm‑up should be at least 60 seconds to allow initialisation.",
+        "Default cooldown is 300 seconds; for web apps, start with 300 and tune based on observation.",
+        "Verify by using CloudWatch metrics and simulating load."
+    ],
+    "expectedOutput": "Detailed policy configuration and explanation.",
+    "solutionCode": "Scaling Policy Configuration:\n- Type: Target Tracking.\n- Metric: ALB RequestCountPerTarget (average).\n- Target value: 1000.\n- Instance warm‑up: 120 seconds (double the initialisation time to ensure metrics are stable before the ASG considers the instance as contributing fully).\n- Cooldown: 300 seconds (default). This prevents the ASG from taking another scaling action before the previous one takes full effect.\n- Disable scale‑in to prevent aggressive termination: leave enabled, but monitor; if oscillations occur, increase cooldown or use step scaling.\n\nVerification:\n- Use a load testing tool (e.g., Apache JMeter, Locust) to generate traffic.\n- Watch CloudWatch metrics: ALB RequestCountPerTarget, ASG GroupDesiredCapacity.\n- Confirm that as request count exceeds 1000, ASG adds instances. As it drops below, ASG removes instances after cooldown.\n- Check that new instances serve traffic only after the warm‑up period."
+}

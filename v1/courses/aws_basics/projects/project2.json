@@ -1,0 +1,29 @@
+{
+    "id": "project2",
+    "title": "Serverless Task Manager API",
+    "description": "Build a complete REST API for a to‑do application using AWS Lambda, API Gateway, and DynamoDB, with authentication and a frontend hosted on S3.",
+    "difficulty": "Intermediate",
+    "estimatedHours": "4-6",
+    "problemStatement": "# Project: Serverless Task Manager\n\nIn this project, you will build the backend for a task (to‑do) management application entirely using serverless services. Users will be able to create, read, update, and delete tasks through a REST API. You will also implement simple authentication using API keys or a Cognito User Pool, and host the frontend on S3.\n\n## What You'll Build\n- A REST API with endpoints: `POST /tasks`, `GET /tasks/{id}`, `GET /tasks`, `PUT /tasks/{id}`, `DELETE /tasks/{id}`.\n- A DynamoDB table to store tasks with a partition key `userId` and sort key `taskId`.\n- AWS Lambda functions (one per endpoint, or a single monolith) that perform the CRUD operations.\n- API Gateway configured with Lambda proxy integration and appropriate stages (e.g., `dev`).\n- An S3 bucket hosting a simple HTML/JavaScript frontend that calls the API (fetch with API key).\n- Proper IAM roles with least privilege.\n- (Bonus) Amazon Cognito User Pool for user sign‑up and authentication, securing the API Gateway.\n\n## Why This Matters\nThe combination of API Gateway, Lambda, and DynamoDB forms the classic serverless three‑tier architecture. Mastering it allows you to build scalable, cost‑efficient backends for mobile and web apps without managing servers.\n\nYou will apply concepts from:\n- **Chapter 8 (Serverless & Lambda)**: Lambda functions, event objects, API Gateway, serverless patterns.\n- **Chapter 6 (DynamoDB)**: table design, primary keys, query operations, capacity modes.\n- **Chapter 5 (S3)**: static website hosting (for frontend).\n- **Chapter 10 (Security)**: IAM execution roles, least privilege, API keys/Cognito for auth.\n- **Chapter 11 (Cost)**: DynamoDB on‑demand or provisioned capacity, Lambda pricing.",
+    "requirements": [
+        "Design a DynamoDB table named `Tasks` with `userId` (String) as partition key and `taskId` (String) as sort key.",
+        "Write a Lambda function (Python or Node.js) that handles CRUD operations based on the HTTP method and path parameters. Use environment variables for the table name.",
+        "Create an IAM execution role for the Lambda that allows `dynamodb:PutItem`, `GetItem`, `Query`, `UpdateItem`, `DeleteItem` on the `Tasks` table and `logs:CreateLogGroup`, `CreateLogStream`, `PutLogEvents`.",
+        "Set up an API Gateway REST API with a resource `/tasks` and methods `GET`, `POST`; a resource `/tasks/{id}` with methods `GET`, `PUT`, `DELETE`. All methods use Lambda proxy integration.",
+        "Deploy the API to a stage named `dev`. Note the invoke URL.",
+        "Create an S3 bucket for the frontend, enable static website hosting, and upload an `index.html` that uses JavaScript to interact with the API. The frontend should display a list of tasks and a form to add new ones.",
+        "(Bonus) Create an API key and usage plan in API Gateway, and require the key for all methods. The frontend must include the key in the `x-api-key` header.",
+        "(Bonus) Set up an Amazon Cognito User Pool and an authorizer in API Gateway so that only authenticated users can call the API.",
+        "Test all endpoints with curl or Postman, and verify the frontend works end‑to‑end."
+    ],
+    "hints": [
+        "For the Lambda, use a single function and check `event.httpMethod` to route to different operations. Keep the code modular.",
+        "When returning from Lambda proxy integration, remember to include `statusCode`, `headers`, and `body` as a string.",
+        "For DynamoDB `Query` to get all tasks for a user, use `KeyConditionExpression: 'userId = :uid'` with `ExpressionAttributeValues`.",
+        "To generate `taskId`, use `uuid` module (Python: `import uuid; str(uuid.uuid4())`).",
+        "When enabling CORS for the API, use the 'Enable CORS' option on the resource and method, or manually set `Access-Control-Allow-Origin` headers.",
+        "For the frontend, fetch API with `mode: 'cors'` and include the API key header if required.",
+        "The S3 bucket must have a bucket policy allowing public read for the frontend files (or you can use CloudFront with OAI similar to Project 1)."
+    ],
+    "expectedOutput": "A fully functional serverless API where you can create, read, update, and delete tasks via HTTP requests. A working frontend hosted on S3 that communicates with the API. Optionally, secure with an API key or Cognito authentication."
+}

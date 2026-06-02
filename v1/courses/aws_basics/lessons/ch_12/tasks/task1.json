@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_12",
+    "title": "Design a Multi‑AZ Web Application Architecture",
+    "description": "Draw (or describe) a highly available architecture using ALB, ASG, and RDS Multi‑AZ spread across two AZs.",
+    "estimatedMinutes": 20,
+    "problemStatement": "You need to deploy a stateless web application that must remain available even if an entire Availability Zone fails. The application uses a MySQL database and serves web traffic. Design the architecture:\n\n- Include an Application Load Balancer.\n- Include an Auto Scaling Group with web servers spread across two AZs.\n- Include RDS MySQL with Multi‑AZ enabled.\n- Show how traffic flows from the internet to the database.\n- Indicate which components reside in public vs private subnets.\n- Explain how the system survives an AZ failure.\n\nProvide a written description (or a structured list) of the components and their configuration.",
+    "hints": [
+        "ALB should be in public subnets, cross‑AZ.",
+        "Web server ASG spans two AZs in private subnets (or public if using ALB – but private is more secure; ALB is in public subnets).",
+        "RDS should be in private subnets with Multi‑AZ.",
+        "Security groups: ALB allows 443 from internet; web servers allow 80/443 from ALB; database allows 3306 from web servers' security group."
+    ],
+    "expectedOutput": "A structured architecture description.",
+    "solutionCode": "Architecture:\n- VPC with CIDR 10.0.0.0/16, two AZs (AZ‑a, AZ‑b).\n- Public subnets: one per AZ (10.0.1.0/24, 10.0.2.0/24).\n- Private app subnets: one per AZ (10.0.11.0/24, 10.0.12.0/24).\n- Private DB subnets: one per AZ (10.0.21.0/24, 10.0.22.0/24).\n\nComponents:\n- Internet Gateway attached to VPC.\n- ALB deployed in both public subnets, security group sg‑alb allows HTTPS (443) from 0.0.0.0/0.\n- Web server ASG spans AZ‑a and AZ‑b app subnets. Launch Template: Amazon Linux 2, t3.medium, user data installs web server. ASG desired=2, min=2, max=6. Security group sg‑web allows HTTP(80) from sg‑alb.\n- RDS MySQL Multi‑AZ in DB subnets (primary in AZ‑a, standby in AZ‑b). Security group sg‑db allows MySQL (3306) from sg‑web.\n- Route Tables: public subnets route 0.0.0.0/0 → IGW. App subnets route 0.0.0.0/0 → NAT Gateway (one per AZ for HA). DB subnets have no internet route.\n\nTraffic flow: Client → Route 53 → ALB (public) → ASG instances (private) → RDS primary (private).\n\nAZ failure survival: If AZ‑a fails, ALB stops routing to unhealthy instances in that AZ; ASG launches replacements in AZ‑b (subject to max). RDS automatically fails over to standby in AZ‑b (1‑2 minute interruption). NAT Gateway in AZ‑b continues serving app subnets in AZ‑b. Users may experience brief interruption during failover, but the application recovers."
+}

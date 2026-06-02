@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_10",
+    "title": "Create a Root Login Alarm",
+    "description": "Design a CloudWatch alarm that triggers when the root account logs in.",
+    "estimatedMinutes": 15,
+    "problemStatement": "You need to ensure that any use of the AWS root account is immediately flagged. Describe the steps to create a CloudWatch alarm that sends an email to `secops@example.com` whenever the root user performs a console login.\n\nInclude:\n- How to get the CloudTrail logs into CloudWatch Logs.\n- The metric filter pattern to detect root logins.\n- The alarm configuration.\n- The notification setup.\n\nWrite the steps in order.",
+    "hints": [
+        "Create a CloudTrail trail that sends logs to CloudWatch Logs (or use the default trail event history with a trail).",
+        "Metric filter pattern: `{ $.userIdentity.type = \"Root\" && $.eventName = \"ConsoleLogin\" }`.",
+        "Alarm on metric sum >= 1 for 1 minute, send to SNS topic."
+    ],
+    "expectedOutput": "Step‑by‑step guide.",
+    "solutionCode": "1. Ensure CloudTrail is enabled with a trail delivering logs to a CloudWatch Logs log group. (Create or edit a trail, enable CloudWatch Logs, choose existing or new log group).\n2. In CloudWatch Logs, select the log group, create a Metric Filter.\n   - Filter pattern: `{ $.userIdentity.type = \"Root\" && $.eventName = \"ConsoleLogin\" }`\n   - Assign metric namespace `Security`, metric name `RootLogins`, metric value 1.\n3. Create a CloudWatch alarm on the `Security/RootLogins` metric.\n   - Statistic: Sum, Period: 1 minute.\n   - Condition: Sum >= 1 for 1 datapoint.\n4. Alarm action: send to SNS topic `RootLoginAlert`. Create the topic, subscribe `secops@example.com` (confirm subscription).\n5. Test by generating a root login event (use an IAM user with alarm permissions to simulate if needed)."
+}

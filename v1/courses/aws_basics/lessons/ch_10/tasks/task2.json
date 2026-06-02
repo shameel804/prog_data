@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_10",
+    "title": "Enforce SSL for an S3 Bucket",
+    "description": "Write a bucket policy that denies any request not using HTTPS.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Write an S3 bucket policy (JSON) that explicitly denies any `s3:GetObject` or `s3:PutObject` request that is not transmitted over SSL (HTTPS). The bucket name is `confidential-data`.\n\nInclude an explicit deny statement with a condition using `aws:SecureTransport`. Explain what happens if a user tries to access the bucket via HTTP.\n\nAlso, what additional step would you take to enforce encryption at rest on this bucket?",
+    "hints": [
+        "Use `\"Effect\": \"Deny\"` and `\"Condition\": { \"Bool\": { \"aws:SecureTransport\": \"false\" } }`.",
+        "Resource should be bucket and objects.",
+        "To enforce encryption at rest, add another deny for uploads without `s3:x-amz-server-side-encryption` header or enable default encryption."
+    ],
+    "expectedOutput": "Bucket policy JSON and explanation.",
+    "solutionCode": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"DenyHTTP\",\n      \"Effect\": \"Deny\",\n      \"Principal\": \"*\",\n      \"Action\": [\"s3:GetObject\", \"s3:PutObject\"],\n      \"Resource\": [\n        \"arn:aws:s3:::confidential-data\",\n        \"arn:aws:s3:::confidential-data/*\"\n      ],\n      \"Condition\": {\n        \"Bool\": {\n          \"aws:SecureTransport\": \"false\"\n        }\n      }\n    }\n  ]\n}\n\nIf a user sends an HTTP request, the condition evaluates to true, and the explicit deny kicks in, returning a 403 Forbidden. For encryption at rest, enable default encryption on the bucket (SSE‑S3 or SSE‑KMS) and optionally add a deny statement for `s3:PutObject` where `s3:x-amz-server-side-encryption` header is absent."
+}

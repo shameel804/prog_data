@@ -1,0 +1,82 @@
+{
+    "id": "l4",
+    "chapterId": "ch_12",
+    "title": "Scaling Policies Deep Dive 📈",
+    "description": "Master the four types of scaling policies – target tracking, step, scheduled, and predictive.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Why Scale? And How? 📊",
+            "content": "# Match Capacity to Demand\n\nScaling ensures you have just enough resources – not too few (performance degrades), not too many (waste money).\n\nAWS ASG supports multiple scaling policy types:\n- **Target Tracking** – 'Keep CPU at 50%'\n- **Step Scaling** – 'Add 2 instances if CPU > 70%, add 4 if > 85%'\n- **Scheduled Scaling** – 'Scale to 10 at 9 AM, back to 2 at 6 PM'\n- **Predictive Scaling** – machine learning forecasts demand and scales ahead of time.\n\nMultiple policies can be combined; the most aggressive one wins (highest scale‑out takes precedence)."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Target Tracking: The Set‑and‑Forget Policy 🎯",
+            "content": "# Keep Metric at Target\n\nTarget tracking policies maintain a specified metric at a target value.\n\n- **Metric examples**: Average CPU Utilization, Average Network In/Out, Request Count Per Target (ALB).\n- **How it works**: ASG continuously monitors the metric and adjusts capacity to keep it near the target. No step definitions needed.\n- **Best for**: stable, predictable workloads.\n\nExample: 'Keep average CPU at 50%'. If CPU rises to 60%, ASG adds instances; if it drops to 30%, it removes instances.\n\n> Always set a **cooldown period** (default 300 seconds) to prevent rapid oscillations. After a scaling action, ASG waits before taking another action."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Target Tracking 🎯",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "You configure a target tracking policy to keep average CPU at 50%. What happens when CPU drops to 20% for 5 minutes?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Nothing – ASG only scales up",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "ASG may terminate instances (scale in) to bring CPU closer to 50%, subject to cooldown and min capacity",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "All instances are terminated",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The policy will wait for manual approval",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Target tracking can scale in as well as scale out. It will reduce instance count to align with the target metric, respecting minimum capacity.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Step Scaling: Granular Control 🪜",
+            "content": "# Respond to Changing Intensity\n\nStep scaling policies let you define different responses based on the magnitude of the breach.\n\n- Define CloudWatch alarms at different thresholds.\n- Each breach step triggers a specific adjustment (e.g., add 1 instance, add 3 instances, remove 1 instance).\n- You can use **metric intervals** (lower bound, upper bound) or simple breach.\n\nExample steps for CPU:\n- 60‑70%: add 1 instance\n- 70‑85%: add 2 instances\n- 85%+: add 4 instances\n\nMore complex to configure than target tracking, but gives you precise control."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Scheduled Scaling: Time‑Based 📅",
+            "content": "# Know Your Peaks\n\nIf your traffic follows a predictable pattern (e.g., e‑commerce site peak hours 9‑5), use scheduled scaling.\n\n- Set the desired capacity at specific times (cron expressions).\n- Can specify min/max/desired individually per schedule.\n- Best combined with dynamic scaling for the unexpected surges within the scheduled window.\n\nExample: 'At 9 AM weekdays, set desired=10, min=5, max=20. At 6 PM, set desired=2, min=1, max=5.'"
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Predictive Scaling: AI‑Driven 🤖",
+            "content": "# Scale Before the Spike\n\nPredictive Scaling uses machine learning to analyse historical load and forecast future demand. It proactively scales capacity ahead of anticipated spikes.\n\n- Works with target tracking policy (forecast only).\n- Only scales out (not in), works on daily/weekly patterns.\n- Requires at least 24 hours of historical data.\n\nBest for applications with repeating patterns (workday mornings, Black Friday). Combined with dynamic scaling, it can pre‑warm capacity so you never hit a cold start delay."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Cooldown, Warm‑Up & Instance Scale‑In Protection 🛡️",
+            "content": "# Fine‑Tune Timing\n\n- **Cooldown Period** (default 300s): after a scaling action, ASG waits before evaluating metrics again. Prevents thrashing.\n- **Instance Warm‑Up**: when a new instance launches, it may need time to initialise (download packages, warm caches). ASG ignores metrics from that instance until warm‑up completes.\n- **Scale‑In Protection**: you can protect specific instances from termination (e.g., a long‑running batch job). The ASG won't terminate protected instances during scale‑in.\n- **Termination Policy**: determines which instances are terminated first when scaling in (oldest launch template, closest to next billing hour, etc.)."
+        }
+    ]
+}

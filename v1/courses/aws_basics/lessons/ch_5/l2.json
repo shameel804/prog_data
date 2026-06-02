@@ -1,0 +1,79 @@
+{
+    "id": "l2",
+    "chapterId": "ch_5",
+    "title": "S3 Buckets & Objects Deep Dive 🪣",
+    "description": "Understand the structure of S3 – buckets, objects, keys, prefixes, and performance considerations.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "S3 Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Buckets: The Top‑Level Container 🪣",
+            "content": "# Your Data's Home\n\nEverything in S3 lives inside a **bucket**. Buckets are created within a specific AWS Region, but bucket names must be **globally unique** across all AWS accounts.\n\nNaming rules:\n- 3–63 characters long.\n- Lowercase letters, numbers, dots, and hyphens.\n- Must start and end with a letter or number.\n- Must not look like an IP address (e.g., 192.168.5.4).\n\nOnce created, you can't rename a bucket. Delete and recreate if needed."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Bucket Names 🌐",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which of the following is a valid S3 bucket name?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "MyBucket",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "my-bucket-2025",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "192.168.1.1",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "My_Bucket",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Bucket names must be all lowercase, cannot contain underscores, and cannot look like an IP address.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Objects: Files + Metadata 📄",
+            "content": "# The Basic Unit of Storage\n\nAn object consists of:\n- **Key**: the full path within the bucket (e.g., `images/2025/photo.jpg`).\n- **Value**: the data itself (up to 5 TB).\n- **Version ID** (if versioning enabled).\n- **Metadata**: key‑value pairs describing the object.\n- **Sub‑resources**: Access Control Lists (ACLs), tags.\n\nThere's no true folder structure – the key simulates folders using `/` delimiters. S3 is a flat key‑value store; the console shows a folder tree for convenience."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Key Naming Best Practices 🏷️",
+            "content": "# Prefixes and Performance\n\nAlthough S3 can handle massive request rates, using a **randomised prefix** at the start of keys improves performance for high request loads.\n\n- Avoid sequential prefixes like `timestamp_0001`, `timestamp_0002`...\n- Use a hashed or random prefix, e.g., `a7d2/`.\n\nThis is because S3 partitions keys lexicographically; a diverse prefix spreads load across partitions."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Accessing Objects via S3 URI",
+            "content": "Every object gets a unique URL:\n\n`s3://bucket-name/key-name` (S3 URI) or `https://bucket-name.s3.region.amazonaws.com/key-name` (virtual hosted‑style URL).",
+            "codeSnippet": "aws s3 ls s3://my-data-bucket/projects/2025/\n# Upload a file\naws s3 cp report.pdf s3://my-data-bucket/reports/report.pdf",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "tip",
+            "title": "Pro Tip: S3 Select 🚀",
+            "content": "## Query Inside Objects\n\nS3 Select lets you run SQL‑like queries on CSV, JSON, or Parquet objects and retrieve only the needed bytes. It drastically reduces data transfer and cost for analytics."
+        }
+    ]
+}

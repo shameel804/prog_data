@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_8",
+    "title": "Build a Simple Lambda & API Gateway",
+    "description": "Create a Lambda function that handles a GET request and returns a personalised greeting, exposed via API Gateway.",
+    "estimatedMinutes": 20,
+    "problemStatement": "You need to build a simple REST API endpoint `/greet` that accepts a query parameter `?name=Alice` and returns a JSON object `{\"greeting\": \"Hello, Alice!\"}`. Write the Lambda function code (Python or Node.js) and describe the steps to configure API Gateway with Lambda proxy integration. The function should also handle the case where `name` is missing and default to 'World'. Include the response format expected by API Gateway for proxy integration.",
+    "hints": [
+        "Lambda proxy integration requires the response to have `statusCode`, `headers`, and `body` (string).",
+        "Use `event['queryStringParameters']` to extract the name.",
+        "Deploy API to a stage and test the endpoint."
+    ],
+    "expectedOutput": "Lambda function code (Python or Node.js) and step‑by‑step API Gateway configuration description.",
+    "solutionCode": "Python Lambda code:\n```python\nimport json\n\ndef lambda_handler(event, context):\n    # Extract name from query string, default 'World'\n    params = event.get('queryStringParameters') or {}\n    name = params.get('name', 'World')\n    message = f\"Hello, {name}!\"\n    \n    return {\n        'statusCode': 200,\n        'headers': {'Content-Type': 'application/json'},\n        'body': json.dumps({'greeting': message})\n    }\n```\n\nAPI Gateway configuration:\n1. Create a REST API, choose 'New API', name 'GreetAPI'.\n2. Create a resource '/greet'.\n3. Create a GET method, integration type Lambda, select the function, enable Lambda proxy integration.\n4. Deploy API to a stage 'dev'.\n5. Invoke URL: https://<api-id>.execute-api.<region>.amazonaws.com/dev/greet?name=Progly\n\nTest with different names; verify response."
+}

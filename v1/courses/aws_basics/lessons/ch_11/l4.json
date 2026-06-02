@@ -1,0 +1,70 @@
+{
+    "id": "l4",
+    "chapterId": "ch_11",
+    "title": "Cost Allocation Tags & Consolidated Billing 🏷️",
+    "description": "Organise your spending with tags, enable chargebacks, and manage multiple accounts under one bill.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Governance",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Cost Allocation Tags: Who Spent What? 🏷️",
+            "content": "# Labels That Track Spending\n\nTags are key‑value pairs you attach to AWS resources. **Cost allocation tags** are a specific type used to track costs in your billing reports.\n\n- **AWS generated tags**: automatically created (e.g., `createdBy`).\n- **User‑defined tags**: you define (e.g., `Environment=Production`, `Team=Payments`, `Project=Alpha`).\n\nAfter you activate a tag for cost allocation (in Billing console), it appears in Cost Explorer and AWS Cost and Usage Reports. It takes up to 24 hours for tags to appear.\n\n**Analogy**: Tags are like categories in a personal finance app. Without them, all your AWS spend is one big lump. With them, you can see exactly how much the \"Dev\" environment cost vs \"Prod\"."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Tag Power 🏷️",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "After creating a user‑defined tag, what must you do to see it in Cost Explorer?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Nothing; it appears automatically",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Activate the tag for cost allocation in the Billing console",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Apply the tag to the root account",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Enable CloudTrail logging",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Tags must be activated in the Cost Allocation Tags section before they are included in billing reports.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "AWS Organizations & Consolidated Billing 🏢",
+            "content": "# One Bill, Many Accounts\n\nWith AWS Organizations, you can consolidate billing across multiple accounts:\n- One **management account** pays for all member accounts.\n- Volume discounts apply across all accounts (e.g., S3 storage tiering).\n- Easier to track costs per account (each account is a separate cost dimension).\n- Can use **Service Control Policies (SCPs)** to enforce cost‑related restrictions (e.g., deny EC2 usage in expensive regions).\n\n**Best practice**: Create separate accounts for dev, test, prod, and security. Consolidate billing under a single management account."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Chargebacks and Showbacks 💳",
+            "content": "# Who Pays?\n\nUsing cost allocation tags and consolidated billing, you can implement:\n- **Showback**: show teams their costs without actually billing them (drives accountability).\n- **Chargeback**: actually bill internal teams based on their AWS usage.\n\nTools:\n- AWS Cost Explorer with tags and accounts.\n- AWS Cost and Usage Report (CUR) – detailed, hourly/daily CSV in S3. Can be ingested into BI tools like QuickSight.\n- Third‑party tools (CloudHealth, Apptio) for advanced chargeback workflows."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "AWS Cost and Usage Report (CUR) 📄",
+            "content": "# The Deepest Dive\n\nThe CUR is the most detailed billing dataset. Configured in the Billing console, it delivers a CSV (or Parquet) file to an S3 bucket daily or hourly. Contains:\n- Every line item (resource ID, usage amount, cost).\n- Tags and account IDs.\n- Pricing details (On‑Demand, Reserved, Spot).\n\nUse CUR to:\n- Build custom dashboards in QuickSight.\n- Analyse with Athena (SQL directly on S3).\n- Feed into third‑party cost management tools.\n\nEnabling CUR does not incur additional cost (except S3 storage/Athena queries)."
+        }
+    ]
+}

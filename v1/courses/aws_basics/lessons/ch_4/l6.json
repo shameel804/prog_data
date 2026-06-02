@@ -1,0 +1,82 @@
+{
+    "id": "l6",
+    "chapterId": "ch_4",
+    "title": "Launching Your First EC2 Instance 🚀",
+    "description": "Hands‑on walkthrough from console click to a live web server.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Hands‑on",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Step 1: Choose an AMI 🖼️",
+            "content": "# Let’s Launch!\n\nGo to EC2 Dashboard → **Launch Instance** → **Launch instance**.\n\n1. **Name**: Give your instance a tag, e.g., `My-First-WebServer`.\n2. **Application and OS Images**: Select **Amazon Linux 2023 AMI** (Free Tier eligible). It’s the first option, marked 'Free tier eligible'.\n3. Leave architecture as **64-bit (x86)**."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "Step 2: Instance Type & Key Pair 🔑",
+            "content": "# Pick Hardware & Login\n\n4. **Instance type**: Choose **t2.micro** (Free Tier).\n5. **Key pair**: Create new or select existing. If new, give it a name, download the `.pem` file. Store it safely.\n\n> Without a key pair you won’t be able to SSH. Don’t skip this step."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "text",
+            "title": "Step 3: Network Settings 🌐",
+            "content": "# Firewall Configuration\n\n6. Click **Edit** in Network settings.\n7. **VPC**: select the default VPC.\n8. **Subnet**: any AZ (leave default).\n9. **Auto‑assign public IP**: Enable (so you can reach it).\n10. **Firewall (security groups)**: Choose **Create security group**.\n    - Add a rule for **SSH** (port 22) – restrict source to 'My IP' for safety.\n    - Add a rule for **HTTP** (port 80) – source 'Anywhere' (0.0.0.0/0) so the web server is reachable.\n11. Leave storage as default (30 GB gp2, Free Tier eligible)."
+        },
+        {
+            "id": "s_l6_4",
+            "type": "quiz",
+            "title": "Security Group Rules 🛡️",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Why should the SSH source be restricted to 'My IP'?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Because SSH doesn’t work from other IPs",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To prevent attackers from brute‑forcing your instance",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It’s required by AWS policy",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To reduce data transfer costs",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Restricting SSH to your IP prevents the entire internet from attempting to log in, drastically reducing security risk.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_5",
+            "type": "text",
+            "title": "Step 4: Launch & Connect 📡",
+            "content": "# Start the Instance\n\n12. Review and click **Launch instance**.\n13. Wait until the instance state is 'Running' and 'Status check' passes.\n14. Select the instance, find its **Public IPv4 address** in the details tab.\n15. Open a terminal (or use EC2 Instance Connect) and SSH:\n```bash\nssh -i your-key.pem ec2-user@<public-ip>\n```"
+        },
+        {
+            "id": "s_l6_6",
+            "type": "text",
+            "title": "Step 5: Install a Web Server 🌐",
+            "content": "# Your First Live Site\n\nOnce logged in, run these commands to install Apache:\n```bash\nsudo yum update -y\nsudo yum install -y httpd\nsudo systemctl start httpd\nsudo systemctl enable httpd\necho '<h1>Hello from EC2!</h1>' | sudo tee /var/www/html/index.html\n```\n\nNow visit your instance’s public IP in a browser. You should see 'Hello from EC2!'. 🎉"
+        },
+        {
+            "id": "s_l6_7",
+            "type": "tip",
+            "title": "Pro Tip: User Data 🚀",
+            "content": "## Automate at Launch\n\nYou can paste a shell script into **User data** during launch (under Advanced details). The script runs once at first boot. Put the Apache install commands there, and your web server is ready right after launch – no manual SSH needed for setup."
+        }
+    ]
+}

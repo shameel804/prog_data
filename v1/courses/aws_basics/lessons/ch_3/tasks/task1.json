@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_3",
+    "title": "Design an IAM Structure",
+    "description": "Propose groups and policies for a small startup team.",
+    "estimatedMinutes": 15,
+    "problemStatement": "You’re the cloud architect for a 6‑person startup. They need:\n- 2 Developers who can manage EC2, S3, and CloudWatch (but not IAM or billing).\n- 1 DevOps engineer who can do everything the developers can, plus create IAM roles.\n- 1 Finance person who can view billing and cost reports only.\n- The CEO, who wants read‑only access to everything for visibility.\n\nDesign the IAM groups and assign AWS managed or customer managed policies to each group. Explain your reasoning. Remember the principle of least privilege.",
+    "hints": [
+        "Look at AWS managed policies: `PowerUserAccess`, `Billing`, `ReadOnlyAccess`.",
+        "DevOps needs IAM permissions for roles – maybe `IAMFullAccess` or a custom policy limited to role management.",
+        "Always assign users to groups rather than attaching policies directly."
+    ],
+    "expectedOutput": "A list of groups with attached policies and justification.",
+    "solutionCode": "Group: Developers\n- Policies: `PowerUserAccess` (allows most AWS services but not IAM management).\n- Reasoning: They need broad service access for building, but shouldn't modify users/roles.\n\nGroup: DevOps\n- Policies: `PowerUserAccess` + custom policy `ManageRolesOnly` that allows `iam:CreateRole`, `iam:DeleteRole`, etc., but not user management.\n- Reasoning: They need to set up roles for services, but not full IAM admin.\n\nGroup: Finance\n- Policies: `AWSBillingReadOnlyAccess` (or `Billing` with read‑only).\n- Reasoning: Only needs to view billing and cost explorer.\n\nGroup: Management\n- Policies: `ReadOnlyAccess`.\n- Reasoning: CEO needs visibility across all services without accidental changes.\n\nAll users are placed in their respective groups. No direct user policies."
+}

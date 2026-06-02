@@ -1,0 +1,105 @@
+{
+    "id": "l4",
+    "chapterId": "ch_10",
+    "title": "Encryption in Transit: TLS, VPNs & Network Security 🌐",
+    "description": "Secure data as it moves – from HTTPS on API Gateway to IPSec VPN tunnels.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Network Security",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Why Encrypt in Transit? 🛡️",
+            "content": "# Protect the Wire\n\nData moving over networks can be intercepted (man‑in‑the‑middle attacks). Encryption in transit ensures confidentiality and integrity.\n\nAWS services and tools that support encryption in transit:\n- **TLS/SSL** for web traffic (API Gateway, CloudFront, ALB).\n- **TLS** for database connections (RDS, ElastiCache, DynamoDB).\n- **IPsec VPN** between on‑premises and VPC.\n- **AWS PrivateLink** – traffic stays within AWS backbone, but you should still encrypt at the application layer.\n\n**Analogy**: Sending a postcard (unencrypted) vs a sealed envelope (encrypted). Anyone can read a postcard along the route. An envelope protects the contents."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "In Transit Encryption 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which AWS service provides managed SSL/TLS certificates for free?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "AWS KMS",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "AWS Certificate Manager (ACM)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "AWS WAF",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Amazon CloudFront",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "ACM provisions, manages, and deploys public and private SSL/TLS certificates for use with AWS services. The certificates themselves are free.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "TLS Everywhere 🛡️",
+            "content": "# Secure Your Endpoints\n\n- **Application Load Balancer & CloudFront**: use ACM certificates to terminate TLS. You can enforce HTTPS by redirecting HTTP.\n- **API Gateway**: custom domains with TLS; mutual TLS (mTLS) for client authentication.\n- **RDS & Aurora**: force SSL connections by setting the parameter group flag `rds.force_ssl` or using `GRANT` with `REQUIRE SSL`.\n- **ElastiCache (Redis)**: can be configured with in‑transit encryption (and Redis AUTH).\n- **S3**: access via `https://` endpoints; enforce `aws:SecureTransport` in bucket policy to deny HTTP requests.\n\nAlways use the latest TLS version (1.2 minimum, 1.3 preferred)."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Site‑to‑Site VPN & Client VPN 🔗",
+            "content": "# Connect Privately\n\n- **AWS Site‑to‑Site VPN**: creates an encrypted IPsec tunnel between your on‑premises network and your VPC. Redundant tunnels for high availability.\n- **AWS Client VPN**: managed OpenVPN service for remote workers to access AWS and on‑premises resources.\n- Both use encryption in transit to protect data crossing the public internet."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "S3 Encryption Policy 💡",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Which condition key in an S3 bucket policy can deny unencrypted (HTTP) requests?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "s3:x-amz-server-side-encryption",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "aws:SecureTransport",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "s3:RequestObjectTag",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "aws:SourceIp",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `aws:SecureTransport` condition key is `true` for HTTPS requests. Use it with a deny policy to block HTTP.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Pro Tip: Use VPC Endpoints for Service Access 🚀",
+            "content": "## Keep Traffic Off the Internet\n\nInterface and Gateway endpoints allow you to access AWS services like S3, DynamoDB, and KMS without traversing the public internet. Combine with encryption in transit for defense in depth."
+        }
+    ]
+}

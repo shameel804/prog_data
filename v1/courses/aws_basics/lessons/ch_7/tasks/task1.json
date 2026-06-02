@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_7",
+    "title": "Design a VPC for a 3‑Tier App",
+    "description": "Plan CIDR blocks, subnets, and route tables for a scalable web application.",
+    "estimatedMinutes": 20,
+    "problemStatement": "Design a VPC for a production web application requiring high availability and security. The VPC must span two Availability Zones (us-east-1a and us-east-1b) and contain:\n- Public subnets for a load balancer and bastion host.\n- Private subnets for application servers.\n- Isolated private subnets for RDS databases (no internet access even via NAT).\n\nProvide:\n1. VPC CIDR block.\n2. Subnet CIDRs for each tier in each AZ (total 6 subnets).\n3. Route tables for each tier, specifying the necessary gateways and routes.\n4. Explanation of how instances in the app tier can access the internet (if needed) and how the DB tier stays completely isolated.",
+    "hints": [
+        "Use a /16 CIDR for the VPC to have ample space.",
+        "Divide into /24 subnets for easy sizing.",
+        "Public subnets need a route to IGW; app subnets need NAT Gateway; DB subnets need no default route.",
+        "Consider deploying NAT Gateways in the public subnets."
+    ],
+    "expectedOutput": "CIDR assignments, route table details, and explanation.",
+    "solutionCode": "VPC CIDR: 10.0.0.0/16\n\nSubnets:\n- Public AZ-a: 10.0.1.0/24\n- Public AZ-b: 10.0.2.0/24\n- App AZ-a: 10.0.11.0/24\n- App AZ-b: 10.0.12.0/24\n- DB AZ-a: 10.0.21.0/24\n- DB AZ-b: 10.0.22.0/24\n\nRoute Tables:\n- Public RT: 0.0.0.0/0 → Internet Gateway (attached). Associated with public subnets.\n- App RT (per AZ): 0.0.0.0/0 → NAT Gateway in the same AZ's public subnet. Associated with app subnets. Also can include routes to VPC CIDR (local) automatically.\n- DB RT: No default route to internet. Only local VPC routes. Associated with DB subnets.\n\nExplanation: App servers can download updates via NAT Gateway. DB subnets have no route to the internet, so they are fully isolated. For administration, a bastion host in the public subnet is used to SSH into app or DB instances."
+}

@@ -1,0 +1,79 @@
+{
+    "id": "l2",
+    "chapterId": "ch_3",
+    "title": "IAM Users & Groups 👥",
+    "description": "Create identities for people and organise them logically.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Core Concepts",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "IAM User: A Named Identity 🧑",
+            "content": "# One Person, One User\n\nAn IAM user represents a single person or a system (like a CI/CD pipeline). Each user has:\n- A friendly name (like `alice`).\n- An optional password for console access.\n- Optional access keys (access key ID + secret access key) for programmatic access (CLI, SDK).\n- Permissions (attached policies or group membership).\n\n**Best practice**: Create one IAM user per human. Never share credentials."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "code",
+            "title": "See it: Creating a User (Console vs CLI)",
+            "content": "# Console and CLI Methods\n\nIn the console, you can create a user with a few clicks. Using the AWS CLI, you’d run:",
+            "codeSnippet": "aws iam create-user --user-name alice\naws iam create-login-profile --user-name alice --password 'TempP@ss123' --password-reset-required",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "IAM Groups: Organise Users 📁",
+            "content": "# Apply Permissions to Many Users at Once\n\nInstead of attaching policies to individual users, you can create **groups** and add users to them.\n- Group `Developers` might have access to EC2 and S3.\n- Group `Admins` gets full access (but still not root).\n\nA user can belong to multiple groups. Permissions from all groups are **cumulative** (the union of all policies).\n\n**Note**: Groups are not a true identity – you can’t be logged in “as a group”. They’re purely permission containers."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Group Benefits 🧑‍🤝‍🧑",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Why are IAM groups recommended over attaching policies directly to each user?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Groups are cheaper",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It’s easier to manage permissions at scale",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Users can’t have policies directly attached",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Groups provide an extra layer of encryption",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Groups let you update permissions for many users at once, following the principle of least privilege without repetitive work.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "How Permissions Are Evaluated ⚖️",
+            "content": "# The Union Logic\n\nWhen a user tries to do something, AWS evaluates **all** policies attached to:\n- The user directly\n- Any group the user belongs to\n- (Later) Any role the user assumes\n\nIf **any** policy allows the action, and **no** explicit deny blocks it, it’s allowed. An explicit deny in any policy overrides all allows.\n\nThis is the **default deny → explicit allow** model."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "warning",
+            "title": "⚠️ Beware of Over‑permission",
+            "content": "## Don’t Give * Wildcard\n\nIt’s tempting to attach `AdministratorAccess` to everyone. That defeats the purpose. Start with minimum permissions (least privilege) and add only what’s needed."
+        }
+    ]
+}

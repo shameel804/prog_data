@@ -1,0 +1,105 @@
+{
+    "id": "l2",
+    "chapterId": "ch_8",
+    "title": "AWS Lambda Basics 🧩",
+    "description": "Dive into functions, triggers, runtimes, and the anatomy of an invocation.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Lambda Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "What is a Lambda Function? ⚡",
+            "content": "# A Piece of Code in the Cloud\n\nA Lambda function is the fundamental unit of serverless compute. It's a short, single‑purpose piece of code that runs when triggered by an event.\n\n- Written in a supported runtime (Python, Node.js, Java, Go, .NET, Ruby, custom via container images).\n- Receives an **event** (JSON) and a **context** object.\n- Runs inside a managed environment (called a **Lambda execution environment**).\n- Can run from a few milliseconds up to 15 minutes.\n- Stateless – any persistent data must be stored elsewhere.\n\n**Analogy**: A Lambda function is like a vending machine. You press a button (trigger), it processes your selection (event), gives you the result, and then goes back to sleep."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Lambda Limits 🕒",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the maximum execution timeout for a single Lambda invocation?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "5 minutes",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "10 minutes",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "15 minutes",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "30 minutes",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Lambda functions can run for up to 900 seconds (15 minutes). For longer‑running tasks, consider Step Functions or break the work into smaller chunks.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Triggers: Who Calls the Function? 📞",
+            "content": "# Event Sources\n\nLambda can be invoked by many AWS services (triggers) or directly via SDK/CLI. Common triggers:\n- **HTTP requests** via API Gateway or Application Load Balancer.\n- **Object uploads** to S3 (e.g., image processing).\n- **Database changes** in DynamoDB Streams.\n- **Messages** in SQS or SNS.\n- **Scheduled events** via CloudWatch Events / EventBridge (cron jobs).\n- **Custom triggers** via AWS SDK `invoke` call.\n\nThe function's event object contains data specific to the triggering service."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Runtimes: The Language Playground 🐍",
+            "content": "# Choose Your Weapon\n\nLambda natively supports several languages:\n- Node.js (JavaScript/TypeScript)\n- Python\n- Java\n- Go\n- .NET (C# / F#)\n- Ruby\n- Custom runtimes (e.g., Rust, PHP) via Runtime API\n- Container images (any Linux‑compatible runtime)\n\nWhen you create a function, you select the runtime and the handler (the entry point function within your code)."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "quiz",
+            "title": "Trigger Identification 🎯",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Which AWS service can trigger a Lambda function when an image file is uploaded to a bucket?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Amazon SNS",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Amazon S3",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Amazon RDS",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "AWS CloudFormation",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "S3 bucket notifications can trigger Lambda on events like `s3:ObjectCreated:*`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_6",
+            "type": "tip",
+            "title": "Pro Tip: Environment Variables & Secrets 📦",
+            "content": "## Don't Hard‑code Config\n\nLambda supports environment variables (key‑value pairs) that you can configure per function. For sensitive values (API keys, DB passwords), use **AWS Secrets Manager** or **SSM Parameter Store** and retrieve them at runtime. Never store secrets in code."
+        }
+    ]
+}

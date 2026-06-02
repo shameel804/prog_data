@@ -1,0 +1,17 @@
+{
+    "id": "task3",
+    "chapterId": "ch_12",
+    "title": "Design a Multi‑Region Disaster Recovery Plan",
+    "description": "Propose a DR strategy using Route 53 failover, S3 cross‑region replication, and Aurora Global Database.",
+    "estimatedMinutes": 20,
+    "problemStatement": "Your company's critical application is currently deployed in us-east-1. The board requires a disaster recovery plan that can recover in another region within 15 minutes (RTO) with at most 5 minutes of data loss (RPO). The application consists of:\n- A web frontend served by CloudFront and an ALB.\n- Static assets in an S3 bucket.\n- A PostgreSQL database (Aurora).\n- User session data in DynamoDB.\n\nDesign a DR strategy:\n- Which services will you replicate to eu-west-1, and how?\n- How will you route traffic in a disaster?\n- How will you achieve the RTO and RPO targets?\n- What steps are manual vs automatic?\n\nNote: You don't need to write code; describe the services and configurations.",
+    "hints": [
+        "S3 Cross‑Region Replication for static assets.",
+        "Aurora Global Database for near‑synchronous cross‑region replication (RPO ~1 second, RTO <1 minute).",
+        "DynamoDB Global Tables for multi‑active session data.",
+        "Route 53 failover with health checks, pointing primary to us-east-1 ALB, secondary to eu-west-1 ALB.",
+        "CloudFront origin group with primary (us-east-1) and secondary (eu-west-1) origins."
+    ],
+    "expectedOutput": "A DR plan describing replication, failover, and RTO/RPO justification.",
+    "solutionCode": "Replication setup:\n1. Aurora Global Database: primary cluster in us-east-1, secondary cluster in eu-west-1. Replication lag typically <1 second (RPO near zero).\n2. S3 Cross‑Region Replication: source bucket in us-east-1, destination bucket in eu-west-1. Ensures static assets are available in secondary region.\n3. DynamoDB Global Tables: replicate session table to eu-west-1. Multi‑active, no failover needed for writes.\n\nFailover mechanism:\n- CloudFront origin group: primary origin = ALB in us-east-1, secondary origin = ALB in eu-west-1. If primary returns 5xx, CloudFront automatically fails over to secondary.\n- Route 53: create health check on us-east-1 ALB endpoint (e.g., /health). Configure failover routing policy: primary record points to us-east-1 ALB, secondary record points to eu-west-1 ALB. If health check fails, DNS resolves to secondary.\n\nRTO/RPO:\n- RTO <15 minutes: Route 53 TTL set to 60 seconds; DNS failover happens within TTL + health check interval (max 2 minutes). Application in eu-west-1 is already deployed (warm standby) – just need to promote Aurora global cluster secondary to primary (manual or via Lambda).\n- RPO ~1 second: Aurora Global Database replication is near‑synchronous; DynamoDB Global Tables replicate within milliseconds.\n\nManual steps: promote Aurora cluster (can be automated via Lambda triggered by health check failure). Everything else is automatic. The application code should be pre‑deployed via CloudFormation in eu-west-1 (warm standby)."
+}

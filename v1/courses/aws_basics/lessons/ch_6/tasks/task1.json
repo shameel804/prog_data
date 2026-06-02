@@ -1,0 +1,16 @@
+{
+    "id": "task1",
+    "chapterId": "ch_6",
+    "title": "Design an RDS Deployment",
+    "description": "Plan a highly available, secure RDS setup for a web app.",
+    "estimatedMinutes": 20,
+    "problemStatement": "Your team is deploying a customer‑facing web application on EC2 instances. The backend uses a PostgreSQL database. Design an RDS deployment that meets these requirements:\n- The database must survive an Availability Zone failure automatically.\n- Read‑heavy workloads must be offloaded to improve performance.\n- Data must be encrypted at rest and in transit.\n- You need point‑in‑time recovery for the last 14 days.\n- The database must not be accessible from the internet.\n\nDescribe:\n- The RDS instance engine and configuration (Multi‑AZ, Read Replicas).\n- Security group settings.\n- Backup and encryption settings.\n- How the application servers will connect.",
+    "hints": [
+        "Multi‑AZ for high availability, Read Replicas for read scaling.",
+        "Security groups: only allow inbound from the app servers’ security group on port 5432 (PostgreSQL).",
+        "Enable encryption at creation; use SSL for connections.",
+        "Automated backups with 14‑day retention."
+    ],
+    "expectedOutput": "A detailed design description.",
+    "solutionCode": "Engine: PostgreSQL (latest supported version).\nInstance class: db.r5.large (or appropriate size).\nMulti‑AZ: Enabled – synchronous standby in another AZ for automatic failover.\nRead Replica: One Read Replica in the same region (can be in another AZ) to handle reporting queries; the application directs read‑only operations to the replica endpoint.\n\nSecurity:\n- Place the RDS instance in private subnets (no public IP).\n- Security group `sg‑rds` allows inbound TCP 5432 from `sg‑web‑app` (the application servers’ security group). No inbound from 0.0.0.0/0.\n- Enable SSL for database connections; the application uses the RDS CA certificate.\n\nEncryption: Enable encryption at creation with a KMS key. This encrypts storage, backups, snapshots, and replicas.\n\nBackup: Enable automated backups with 14‑day retention, allowing point‑in‑time recovery to any 5‑minute window. Take manual snapshots before major changes.\n\nConnection: The application uses the RDS endpoint (DNS name), which resolves to the primary instance. For reads, it uses the Read Replica endpoint."
+}

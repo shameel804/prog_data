@@ -1,0 +1,88 @@
+{
+    "id": "l5",
+    "chapterId": "ch_11",
+    "title": "Cost Optimization Pillar: Spend Less, Get More 💡",
+    "description": "Practical techniques to reduce your AWS bill without compromising performance – the FinOps mindset.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Optimization",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Cost Optimization is a Continuous Process 🔁",
+            "content": "# It's Not a One‑Time Fix\n\nCost optimization is one of the six pillars of the AWS Well‑Architected Framework. It involves:\n- Understanding and controlling where money is being spent.\n- Selecting the most appropriate and right‑sized resources.\n- Analysing spending over time and scaling to meet needs without overspending.\n\n**Mindset**: It's not about being cheap; it's about maximising business value from every dollar."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Right‑Sizing: Match Resources to Workloads 📏",
+            "content": "# Don't Over‑Provision\n\nMany organisations run instances at low utilisation (e.g., 10% CPU). Right‑sizing means selecting the optimal instance type and size for your workload.\n\nTools:\n- **AWS Cost Explorer Rightsizing Recommendations** – identifies idle and under‑utilised EC2 instances.\n- **AWS Compute Optimizer** – uses ML to recommend optimal instance types based on CPU, memory, network.\n- **AWS Trusted Advisor** – flags under‑utilised EBS volumes, idle load balancers.\n\nAfter identifying, stop, resize, or migrate to a smaller instance type or a different family (e.g., from m5 to t3 if bursting)."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Rightsizing Tools 🛠️",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which AWS service uses machine learning to recommend optimal EC2 instance types for your workloads?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "AWS Cost Explorer",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "AWS Compute Optimizer",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "AWS Budgets",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "AWS Config",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Compute Optimizer analyses configuration and utilisation metrics to provide rightsizing recommendations.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Leverage Reserved & Savings Plans 📅",
+            "content": "# Commit for Long‑Term Savings\n\nWe covered the models earlier. For cost optimization:\n- Review your On‑Demand usage in Cost Explorer.\n- Purchase **Savings Plans** for the consistent baseline. AWS provides **recommendations** based on your past usage.\n- For RIs, consider **Convertible RIs** if you expect technology changes.\n- Regularly review RI/SP **utilisation reports** – if a reservation isn't being used, modify or exchange it (if convertible)."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Storage Lifecycle Management 🗄️",
+            "content": "# Move Data to Cheaper Tiers\n\nS3 Lifecycle policies (Chapter 5) are a massive cost lever. Automatically transition objects from Standard → Standard‑IA → Glacier → Deep Archive. Also:\n- **Delete old EBS snapshots** and AMIs.\n- **Use EFS Infrequent Access** lifecycle to move files not accessed after 30 days to a cheaper tier.\n- **Enable S3 Intelligent‑Tiering** to automatically move objects without manual rules.\n\nStorage costs often creep up because people forget to delete old data."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Auto Scaling: Match Capacity to Demand ⚖️",
+            "content": "# Don't Pay for Idle\n\n- **EC2 Auto Scaling**: scale in during low traffic periods (e.g., evenings, weekends). Use scheduled scaling for predictable patterns.\n- **Aurora Serverless / DynamoDB On‑Demand**: scale to zero when not in use.\n- **Application Auto Scaling**: applies to many services (ECS, DynamoDB, Lambda provisioned concurrency).\n\nSet minimum and desired capacity appropriately. Monitor and tune scaling policies to avoid premature scaling."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Clean Up Unused Resources 🧹",
+            "content": "# The Cost of 'Zombie' Infrastructure\n\n- **Orphaned Elastic IPs** – charge per hour when not attached.\n- **Unattached EBS volumes** – still incur storage cost.\n- **Idle Load Balancers** – ALB/NLB charge per hour even with no targets.\n- **Old RDS snapshots** – accumulate over time.\n- **Stopped instances** – no compute charge, but EBS volumes still cost.\n\nSchedule a regular (monthly) cleanup using scripts or AWS Config rules to detect unused resources."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "tip",
+            "title": "Pro Tip: Enable AWS Organizations SCPs to Restrict Expensive Services 🚫",
+            "content": "## Prevent Unintentional Spend\n\nUse Service Control Policies to deny access to expensive services or instance types in non‑production accounts. For example, deny launching `*.16xlarge` instances or deny Redshift in dev accounts. This is a hard guardrail that prevents accidental or malicious overspend."
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_6",
+    "title": "Model a DynamoDB Table",
+    "description": "Define primary keys, indexes, and capacity for a music library app.",
+    "estimatedMinutes": 15,
+    "problemStatement": "You’re building a music library app where users can browse artists and their songs. Common queries:\n- Get all songs by a specific artist, sorted by release date.\n- Find an artist by name.\n- Look up a song by its unique ID (combination of artist + song title).\n\nDesign a single DynamoDB table with appropriate primary key (partition key and sort key) and a Global Secondary Index if needed. Explain your choices. Assume provisioned capacity with moderate read/write.",
+    "hints": [
+        "For querying all songs by artist sorted by date, a composite key with artist as PK and release date as SK works.",
+        "To find an artist by name, you might need a GSI if the name isn’t the PK.",
+        "A unique song can be identified by artist + title."
+    ],
+    "expectedOutput": "Table design with key schema and index, plus explanation.",
+    "solutionCode": "Table: MusicLibrary\nPrimary Key: Partition Key = Artist (String), Sort Key = SongTitle (String)\n\nThis allows fetching all songs by an artist (query by Artist) and retrieving a specific song by Artist + SongTitle.\n\nGlobal Secondary Index: ArtistNameIndex\n- Partition Key = ArtistName (String) – a normalized version of the artist name for search.\n- Sort Key = ReleaseDate (String, ISO format).\nThis GSI supports queries like \"get all artists starting with 'The'\" using begins_with on ArtistName, and returns their songs sorted by release date.\n\nAlternatively, we could use a single table with a GSI that flips the keys: GSI1 with PK = ArtistName, SK = SongTitle, but the requirement for sorting by release date suggests making ReleaseDate the sort key. So we use ArtistName as PK and ReleaseDate as SK for the GSI. Then we can get all songs for an artist name sorted by date.\n\nCapacity: Provisioned with 5 RCUs and 5 WCUs (initial), auto‑scaling enabled."
+}

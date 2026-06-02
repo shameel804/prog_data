@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_9",
+    "title": "Configure AWS CLI and Query EC2",
+    "description": "Install CLI, configure a profile, and run a query to list running instances with tags.",
+    "estimatedMinutes": 20,
+    "problemStatement": "You need to set up the AWS CLI on a fresh Linux machine and query all running EC2 instances in the `us-east-1` region, displaying their Instance ID, state, and the value of a tag `Name`. Write the exact commands.\n\nInclude:\n1. The command to install the CLI (assume Python pip is available).\n2. The configuration command to set up a profile named `prod` with access keys, region, and output format json.\n3. The final `aws` command to list instances using JMESPath query to output a table with columns: InstanceId, State, Name tag.\n\nHint: The Name tag is accessed via `Tags[?Key=='Name'].Value | [0]`.",
+    "hints": [
+        "Install: `pip install awscli`.",
+        "Configure: `aws configure --profile prod`.",
+        "Query: `aws ec2 describe-instances --region us-east-1 --filters Name=instance-state-name,Values=running --query 'Reservations[*].Instances[*].[InstanceId,State.Name,Tags[?Key==`Name`].Value|[0]]' --output table --profile prod`"
+    ],
+    "expectedOutput": "Three commands with explanations.",
+    "solutionCode": "1. Install: `pip install awscli`\n2. Configure profile: `aws configure --profile prod`\n   (prompts for Access Key, Secret Key, region `us-east-1`, output `json`)\n3. Query running instances with Name tag:\n```\naws ec2 describe-instances \\\n  --region us-east-1 \\\n  --filters \"Name=instance-state-name,Values=running\" \\\n  --query 'Reservations[*].Instances[*].[InstanceId,State.Name,Tags[?Key==`Name`].Value | [0]]' \\\n  --output table \\\n  --profile prod\n```\nThis returns a table with Instance ID, State (running), and the Name tag value (or None if missing)."
+}

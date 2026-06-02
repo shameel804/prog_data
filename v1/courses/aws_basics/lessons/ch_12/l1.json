@@ -1,0 +1,111 @@
+{
+    "id": "l1",
+    "chapterId": "ch_12",
+    "title": "High Availability Fundamentals 🛡️",
+    "description": "Learn what high availability really means, how to measure it, and the strategies to eliminate single points of failure.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Concepts",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "What is High Availability (HA)? 🔄",
+            "content": "# Keeping Your Application Running\n\n**High Availability** means designing systems that remain operational and accessible even when components fail. It's not about preventing failures – it's about surviving them.\n\nHA is measured by **uptime** (e.g., 99.9% = ~8.76 hours downtime/year, 99.99% = ~52 minutes/year). Each additional '9' requires exponentially more engineering effort.\n\n**Analogy**: HA is like having spare tyres, a backup generator, and multiple roads to your destination. A single flat tyre shouldn't stop your journey."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "HA Nines 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What does 'five nines' (99.999%) availability translate to in allowed downtime per year?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "About 5 minutes",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "About 1 hour",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "About 8 hours",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "About 1 day",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "99.999% allows roughly 5.26 minutes of downtime per year. Achieving this requires significant investment in redundant components and automation.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "RTO and RPO: The Twin Pillars of Disaster Recovery ⏱️",
+            "content": "# How Fast and How Much?\n\nWhen failure occurs, two metrics define your recovery strategy:\n- **RTO (Recovery Time Objective)**: maximum acceptable time to restore service. A low RTO means you need hot standbys or auto‑failover.\n- **RPO (Recovery Point Objective)**: maximum acceptable data loss measured in time. A low RPO means frequent backups or synchronous replication.\n\n**Analogy**: RTO is how long you can survive without a car; RPO is how much fuel you can afford to lose from the tank. If you need the car back in 5 minutes (low RTO), keep a second car idling. If you can't lose any fuel (RPO=0), use a sealed, continuously refilled tank."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "Single Points of Failure (SPOF) ⚠️",
+            "content": "# Find Them and Eliminate Them\n\nA SPOF is any component whose failure would bring down the entire system. Common culprits:\n- A single EC2 instance hosting the entire app.\n- A single Availability Zone.\n- A single database instance (no Multi‑AZ).\n- A single NAT Gateway for private subnets.\n- Hard‑coded IP addresses instead of DNS.\n\nEliminate SPOFs by introducing **redundancy** at every layer: compute, network, storage, database, and DNS."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "quiz",
+            "title": "SPOF Spotting 🔍",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "Which of the following creates a single point of failure in a VPC?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Two NAT Gateways in two public subnets",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A single NAT Gateway serving all private subnets",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "An Internet Gateway in each VPC",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Multiple route tables",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A single NAT Gateway is a SPOF for private subnets. If the AZ with the NAT Gateway fails, all private instances lose internet access. Deploy one NAT Gateway per AZ.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_6",
+            "type": "text",
+            "title": "Multi‑AZ vs Multi‑Region – The Spectrum 🌍",
+            "content": "# How Far Do You Go?\n\n- **Multi‑AZ** (within one region): protects against data centre failure (power, cooling, network). Latency is low (~1‑2ms). Use for most HA needs.\n- **Multi‑Region**: protects against a whole region going down (rare, but possible). Higher latency, higher cost, more complex data replication.\n\n**Rule of thumb**: Start with multi‑AZ. Add multi‑region only for disaster recovery (DR) or global user base.\n\nAWS services that support multi‑AZ: EC2 (via ASG), RDS (Multi‑AZ deployment), ElastiCache, ALB, NAT Gateway (one per AZ)."
+        },
+        {
+            "id": "s_l1_7",
+            "type": "tip",
+            "title": "Pro Tip: HA is Not Just Infrastructure 🧠",
+            "content": "## Application Design Matters\n\nEven if your infrastructure is redundant, a bug in application code can still cause an outage. HA requires:\n- Graceful degradation (when a dependency fails, serve stale data instead of crashing).\n- Idempotent operations (retries are safe).\n- Circuit breakers and timeouts.\n- Automated recovery scripts.\n\nCloud infrastructure gives you the tools; your application must use them correctly."
+        }
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "id": "task3",
+    "chapterId": "ch_3",
+    "title": "Secure an EC2 Instance with a Role",
+    "description": "Describe how to assign a role to an EC2 instance and why it’s safer than access keys.",
+    "estimatedMinutes": 15,
+    "problemStatement": "You have an EC2 instance that runs an application that needs to read from an S3 bucket and put metrics to CloudWatch. Write a short guide (step‑by‑step) explaining how to securely grant these permissions using an IAM role. Also explain why using a role is better than storing access keys on the instance. Include the concept of instance profile.",
+    "hints": [
+        "Create an IAM role for EC2 with the necessary policies.",
+        "Attach the role via an instance profile.",
+        "The application uses the AWS SDK to automatically retrieve credentials from metadata.",
+        "Security advantage: no long‑term keys on disk, automatic rotation."
+    ],
+    "expectedOutput": "A clear step‑by‑step explanation.",
+    "solutionCode": "1. In IAM, create a role with the trust policy allowing EC2 service (Principal: ec2.amazonaws.com).\n2. Attach policies to the role: AmazonS3ReadOnlyAccess (or custom) and CloudWatchAgentServerPolicy.\n3. When launching an EC2 instance, in the 'IAM role' dropdown, select this role. This attaches the instance profile automatically.\n4. Inside the instance, the application uses the AWS SDK which fetches temporary credentials from the instance metadata endpoint (169.254.169.254). No keys hard‑coded.\n\nWhy it’s safer: Temporary credentials rotate automatically, reducing risk of exposure. If the instance is compromised, the attacker only gets short‑lived credentials that can’t be used after expiry. Access keys stored on disk never expire and can be stolen."
+}

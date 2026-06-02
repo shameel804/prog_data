@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_4",
+    "title": "Launch and Harden an EC2 Instance",
+    "description": "Draft a user data script and security group setup for a public web server.",
+    "estimatedMinutes": 20,
+    "problemStatement": "Write a user data script (bash) that:\n- Updates all installed packages.\n- Installs the Apache web server (httpd).\n- Starts the service and enables it on boot.\n- Creates a simple index.html that displays the instance ID (retrieved from metadata) and the current date.\n\nThen describe the security group rules you would apply to this web server for maximum security while still serving public web traffic. Assume you will manage the server via SSH from your home IP (203.0.113.25).",
+    "hints": [
+        "The instance metadata service is at http://169.254.169.254/latest/meta-data/.",
+        "For security, SSH must be restricted to your IP. HTTP/HTTPS can be public.",
+        "Consider restricting outbound traffic as well (though not strictly necessary)."
+    ],
+    "expectedOutput": "A bash script and a description of security group rules.",
+    "solutionCode": "User data script:\n```bash\n#!/bin/bash\nyum update -y\nyum install -y httpd\nsystemctl start httpd\nsystemctl enable httpd\nINSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)\necho \"<h1>Instance ID: $INSTANCE_ID</h1><p>Deployed on: $(date)</p>\" > /var/www/html/index.html\n```\n\nSecurity group rules:\n- Inbound: HTTP (80) source 0.0.0.0/0\n- Inbound: HTTPS (443) source 0.0.0.0/0 (if you later configure SSL)\n- Inbound: SSH (22) source 203.0.113.25/32\n- Outbound: all traffic allowed (default) – or restrict to specific services (e.g., 80/443 for updates) if extremely paranoid."
+}

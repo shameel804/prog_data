@@ -1,0 +1,34 @@
+{
+    "id": "project3",
+    "title": "Highly Available WordPress on AWS",
+    "description": "Architect and deploy a scalable, secure, and fault‑tolerant WordPress site using EC2 Auto Scaling, RDS Multi‑AZ, EFS, and a load balancer – the enterprise‑grade way.",
+    "difficulty": "Advanced",
+    "estimatedHours": "6-10",
+    "problemStatement": "# Project: Enterprise‑Grade WordPress Hosting\n\nIn this capstone project, you will design and implement a highly available, scalable WordPress deployment that can survive the failure of an entire Availability Zone. You will use a multi‑tier VPC, an Auto Scaling Group of web servers, an Application Load Balancer, a shared EFS file system for WordPress content, and a MySQL RDS database with Multi‑AZ enabled.\n\n## What You'll Build\n- A custom VPC with public, private application, and private database subnets across two Availability Zones.\n- An Application Load Balancer distributing traffic to an Auto Scaling group of EC2 instances (Apache + PHP + WordPress).\n- Amazon EFS for shared WordPress files (wp‑content/uploads) so all instances see the same content.\n- An RDS MySQL Multi‑AZ instance for the WordPress database.\n- A bastion host in a public subnet for SSH administrative access.\n- Security groups and Network ACLs to enforce least privilege.\n- CloudWatch alarms and a basic monitoring dashboard.\n- (Bonus) Route 53 failover to another region, or CloudFront for static asset caching.\n\n## Why This Matters\nThis project represents a real‑world enterprise architecture. It combines almost every core AWS service you’ve learned. By completing it, you’ll understand how to design for fault tolerance, security, and scalability – the pillars of the AWS Well‑Architected Framework.\n\nYou will apply concepts from:\n- **Chapter 7 (VPC & Networking)**: subnets, route tables, Internet Gateway, NAT Gateway, NACLs.\n- **Chapter 4 (EC2)**: instances, AMIs, key pairs, security groups, user data.\n- **Chapter 5 (Storage)**: EBS root volumes, EFS shared file system, S3 for backups.\n- **Chapter 6 (Databases)**: RDS MySQL with Multi‑AZ, backups, security groups.\n- **Chapter 12 (HA & Auto Scaling)**: ALB, Auto Scaling Group, launch templates, scaling policies.\n- **Chapter 9 (Monitoring)**: CloudWatch metrics, alarms, dashboards.\n- **Chapter 10 (Security)**: IAM roles, least privilege, encryption, security groups, NACLs.\n- **Chapter 11 (Cost)**: right‑sizing, reserved instances, cost allocation tags.",
+    "requirements": [
+        "Create a VPC with CIDR `10.0.0.0/16`, two AZs, and the following subnets:\n   - 2 public subnets for the ALB and bastion host.\n   - 2 private subnets for the WordPress web servers.\n   - 2 private subnets for the RDS database.\n   - Attach an Internet Gateway and deploy one NAT Gateway per AZ in the public subnets.\n   - Configure route tables appropriately.",
+        "Create an EFS file system with mount targets in each private application subnet. Configure security group to allow NFS from the web server security group.",
+        "Create an RDS MySQL Multi‑AZ instance in the database subnets. Enable automated backups (7 days) and encryption. Set `rds.force_ssl=1`.",
+        "Create a launch template for an EC2 instance using Amazon Linux 2023. The user data script should:\n   - Install Apache, PHP, and required PHP extensions.\n   - Download WordPress core.\n   - Configure `wp-config.php` to use RDS credentials (stored in Secrets Manager or SSM Parameter Store).\n   - Mount the EFS file system to `/var/www/html/wp-content/uploads`.\n   - Start Apache and enable on boot.",
+        "Create an Auto Scaling Group using the launch template, spanning the two private application subnets. Desired capacity 2, min 2, max 4. Enable ELB health checks.",
+        "Create an Application Load Balancer in the public subnets, listening on HTTP (80) and HTTPS (443) (you can use a self‑signed certificate for testing). Configure a target group pointing to the ASG with health check path `/wp-admin/install.php` (or `/readme.html`). Enable sticky sessions (optional but recommended for WordPress).",
+        "Configure security groups:\n   - ALB SG: allow 80/443 from 0.0.0.0/0.\n   - Web SG: allow 80 from ALB SG, allow 22 from bastion host SG.\n   - EFS SG: allow NFS (2049) from Web SG.\n   - RDS SG: allow 3306 from Web SG.\n   - Bastion SG: allow 22 from your IP.",
+        "Create a bastion host in a public subnet to SSH into web servers for debugging. Do not assign a public IP to the web servers.",
+        "Set up CloudWatch alarms for the ASG (CPU > 80%, target group healthy host count < 2). Create a basic dashboard showing CPU and network.",
+        "Tag all resources with `Project=WordPressHA`, `Environment=Production`.",
+        "Complete the WordPress installation by accessing the ALB DNS name. The site should be operational.",
+        "(Bonus) Implement Route 53 health checks and failover to a secondary region (could be a simplified version with just a static maintenance page).",
+        "(Bonus) Encrypt EFS using KMS and enable S3 bucket for storing WordPress backups via a plugin."
+    ],
+    "hints": [
+        "For the user data script, store RDS credentials in AWS Secrets Manager and grant the EC2 instance role permission to read the secret. Retrieve it using `aws secretsmanager get-secret-value`.",
+        "To mount EFS in user data: `sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport fs-xxxx.efs.us-east-1.amazonaws.com:/ /var/www/html/wp-content/uploads`.",
+        "WordPress `wp-config.php` needs `define('DB_HOST', 'your-rds-endpoint');` and credentials.",
+        "For the ASG, set a cooldown of 300s and enable detailed CloudWatch monitoring.",
+        "Use EC2 Instance Connect for the bastion host instead of managing SSH keys.",
+        "If you get permission denied on EFS mount, check the EFS security group allows inbound NFS from the web server security group, and that the mount target is in the same AZ as the instance.",
+        "For SSL, you can use AWS Certificate Manager to generate a public certificate (requires a domain). For testing, create a self‑signed certificate on the ALB by importing it into ACM.",
+        "Ensure the ALB target group health check path returns 200; the default WordPress `readme.html` or `/wp-admin/install.php` can serve as a health check until installation completes."
+    ],
+    "expectedOutput": "A publicly accessible WordPress site via the ALB DNS name. The site remains available if you terminate one web server instance (ASG replaces it) or if one AZ fails (assuming you configure multi‑AZ correctly). The architecture diagram should show all components: VPC, subnets, IGW, NAT GW, ALB, ASG, EFS, RDS, bastion."
+}

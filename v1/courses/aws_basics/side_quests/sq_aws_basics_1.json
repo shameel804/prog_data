@@ -1,0 +1,70 @@
+{
+    "id": "sq_aws_basics_1",
+    "title": "Cloud Foundations Checkpoint",
+    "triggerChapterIndex": 2,
+    "metadata": {
+        "type": "debug"
+    },
+    "questions": [
+        {
+            "id": "sq_aws_basics_1_q1",
+            "type": "multiple_choice",
+            "question": "You are reviewing an IAM policy for a new developer. The policy below is intended to allow the user to list all S3 buckets and read objects from a single bucket named `app-data`. However, the user reports they cannot list buckets. Find the bug.\n\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": \"s3:ListAllMyBuckets\",\n      \"Resource\": \"arn:aws:s3:::app-data\"\n    },\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": \"s3:GetObject\",\n      \"Resource\": \"arn:aws:s3:::app-data/*\"\n    }\n  ]\n}\n```",
+            "codeSnippet": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": \"s3:ListAllMyBuckets\",\n      \"Resource\": \"arn:aws:s3:::app-data\"\n    },\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": \"s3:GetObject\",\n      \"Resource\": \"arn:aws:s3:::app-data/*\"\n    }\n  ]\n}",
+            "bugLineIndex": 0,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The action `s3:ListAllMyBuckets` is a service-level action that does not apply to a specific bucket resource. It must be specified with `Resource` set to `\"*\"`. By restricting the resource to a specific bucket ARN, the permission is invalid. The fix is to change the Resource to `\"*\"` for that statement, or better, use `s3:ListBucket` with the bucket ARN (which is the correct action for listing objects in a bucket, not listing all buckets).",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_aws_basics_1_q2",
+            "type": "multiple_choice",
+            "question": "A user tries to launch an EC2 instance in the `us-west-1` region using an IAM role created in `us-east-1`. The instance fails to obtain credentials. What is the issue?",
+            "codeSnippet": "User: \"I can't get the instance profile to work\"\nAdmin: \"I created the role in IAM (global), what's the problem?\"",
+            "bugLineIndex": 0,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "IAM roles are global, but instance profiles are region-specific. The instance profile must be created in the same region as the EC2 instance. The admin likely created the role globally, but the EC2 instance is in a different region and cannot see the instance profile. The bug is assuming that a global IAM role automatically creates an instance profile in every region.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_aws_basics_1_q3",
+            "type": "multiple_choice",
+            "question": "A security group has an inbound rule allowing SSH (port 22) from `10.0.1.5/32`, but the user cannot connect. The instance is in a public subnet with a public IP. The route table has a route `0.0.0.0/0` to Internet Gateway. The instance's OS firewall is disabled. Where is the bug?",
+            "codeSnippet": "Security group inbound rule:\nType: SSH, Port: 22, Source: 10.0.1.5/32\n\nRoute table:\n0.0.0.0/0 -> igw-xxxxxx\n\nInstance has public IP 54.1.2.3, user's home IP is 203.0.113.10.",
+            "bugLineIndex": 0,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The source IP `10.0.1.5` is a private IP address. The user is connecting from their home with public IP `203.0.113.10`. The security group rule should use the public IP or a CIDR that matches the user's public IP, not a private address (unless the user is within the VPC or behind a VPN). The bug is using a private IP as the source for an internet-based SSH connection.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_aws_basics_1_q4",
+            "type": "multiple_choice",
+            "question": "A developer wrote this bucket policy to make an S3 bucket public for read-only access. It doesn't work. Find the bug.\n\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": \"*\",\n      \"Action\": \"s3:GetObject\",\n      \"Resource\": \"arn:aws:s3:::my-bucket\"\n    }\n  ]\n}\n```",
+            "codeSnippet": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Principal\": \"*\",\n      \"Action\": \"s3:GetObject\",\n      \"Resource\": \"arn:aws:s3:::my-bucket\"\n    }\n  ]\n}",
+            "bugLineIndex": 0,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The `Resource` ARN points to the bucket itself, not the objects within it. `s3:GetObject` operates on objects, so the resource should be `arn:aws:s3:::my-bucket/*`. For the bucket-level action (like listing), you'd use the bucket ARN. But `GetObject` requires the object wildcard.",
+            "xpReward": 20,
+            "difficulty": 3
+        },
+        {
+            "id": "sq_aws_basics_1_q5",
+            "type": "multiple_choice",
+            "question": "An EC2 instance in a private subnet needs to download security updates from the internet. The subnet's route table has a route `0.0.0.0/0` pointing to a NAT Gateway in a public subnet. The public subnet has a route `0.0.0.0/0` to Internet Gateway. Yet the instance cannot reach the internet. What could be wrong?",
+            "codeSnippet": "Private subnet route table:\nDestination: 0.0.0.0/0, Target: nat-0a1b2c3d\n\nPublic subnet route table:\nDestination: 0.0.0.0/0, Target: igw-xxxxxx\n\nNAT Gateway is in public subnet with Elastic IP.",
+            "bugLineIndex": 0,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The security group attached to the EC2 instance might be blocking outbound traffic. By default, security groups allow all outbound, but if the user modified it, they may have removed the outbound rule. Also, the NAT Gateway security group might not allow the traffic. Check outbound rules and NAT Gateway network ACLs.",
+            "xpReward": 20,
+            "difficulty": 2
+        }
+    ]
+}

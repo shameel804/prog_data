@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_7",
+    "title": "Connect VPCs with Peering",
+    "description": "Configure VPC Peering between two VPCs and update route tables.",
+    "estimatedMinutes": 15,
+    "problemStatement": "You have two VPCs: VPC A (CIDR 10.1.0.0/16) and VPC B (CIDR 10.2.0.0/16). Both have resources that need to communicate privately. \n\nWrite the steps to create a VPC peering connection between them (same region, same account). Then describe how you would update the route tables in both VPCs to route traffic between them. Include the specific routes you would add.",
+    "hints": [
+        "Peering is created from one VPC to another, then accepted.",
+        "Route tables need entries pointing to the peering connection for the peer VPC CIDR.",
+        "Remember that VPC peering is not transitive."
+    ],
+    "expectedOutput": "Step‑by‑step instructions and route table updates.",
+    "solutionCode": "1. In VPC Dashboard, go to Peering Connections → Create Peering Connection.\n2. Name it, select VPC A as requester, VPC B as accepter (both in same account).\n3. Create. Then go to the pending peering connection, Actions → Accept.\n4. In VPC A’s route table(s) for relevant subnets, add route: Destination 10.2.0.0/16, Target the peering connection ID (pcx-xxx).\n5. In VPC B’s route table(s), add route: Destination 10.1.0.0/16, Target the same peering connection ID.\n6. Ensure security groups allow traffic from the peer VPC CIDR.\n\nNow resources in both VPCs can communicate using their private IP addresses over the AWS backbone."
+}

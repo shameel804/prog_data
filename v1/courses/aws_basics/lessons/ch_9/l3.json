@@ -1,0 +1,105 @@
+{
+    "id": "l3",
+    "chapterId": "ch_9",
+    "title": "AWS CloudTrail: Audit Everything 🔍",
+    "description": "Track every API call in your account – who did what, when, and from where.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Auditing",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "What is CloudTrail? 🕵️",
+            "content": "# The CCTV of Your AWS Account\n\nAWS CloudTrail records all API calls made in your account (via console, CLI, SDK, or other AWS services) as events. It provides a history of:\n- **Who** made the request (user, role, service)\n- **When** it was made (timestamp)\n- **What** was requested (API action, parameters)\n- **Where** from (source IP)\n- **Result** (success, error)\n\nIt's essential for security auditing, compliance, and troubleshooting.\n\n**Analogy**: CloudTrail is the security camera footage of everything that happens in your AWS building. If something breaks or a breach occurs, you rewind the tape to see exactly what happened."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "CloudTrail Purpose 🎯",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which question can CloudTrail answer?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Why is my EC2 instance running slow?",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Who terminated this EC2 instance and when?",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "How much storage does my S3 bucket use?",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "What is the CPU utilisation of my database?",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "CloudTrail records API calls. It's for auditing actions, not performance metrics (that's CloudWatch).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Management Events vs Data Events 🔢",
+            "content": "# Two Flavours of Audit\n\n- **Management Events** (default, always logged): actions that create/modify resources (e.g., `RunInstances`, `CreateBucket`, `AttachRolePolicy`). These are free and retained for 90 days in the console.\n- **Data Events** (opt‑in, paid): actions on data within a resource (e.g., `s3:GetObject`, `s3:PutObject`, `Lambda:Invoke`). These are often high‑volume and not logged by default to control cost.\n\nFor complete auditing, enable data events for sensitive S3 buckets and Lambda functions."
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Creating a Trail: Long‑Term Storage 🗄️",
+            "content": "# Beyond 90 Days\n\nBy default, you can view the last 90 days of management events in the CloudTrail console. To retain events longer, create a **Trail**.\n- A trail delivers log files to an S3 bucket.\n- Optionally, send logs to CloudWatch Logs for real‑time monitoring and alarming.\n- Enable **log file integrity validation** – CloudTrail creates a digest of log files; you can verify they haven't been tampered with.\n- You can have one trail that applies to all regions (multi‑region trail)."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "quiz",
+            "title": "Trail Configuration 🌐",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "To receive CloudTrail events in real‑time and trigger alarms on specific API calls, you should:",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Download the S3 log files periodically",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Send CloudTrail logs to CloudWatch Logs and set up metric filters/alarms",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Watch the CloudTrail console",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Use AWS X‑Ray",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Sending trail logs to CloudWatch Logs allows you to create metric filters and alarms on specific API actions, e.g., alarm on `DeleteSecurityGroup`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_6",
+            "type": "tip",
+            "title": "Pro Tip: CloudTrail Lake – SQL on Your Events 🧪",
+            "content": "## Query History with Familiar Syntax\n\nCloudTrail Lake creates a searchable data store of your events. You can run SQL queries to analyze patterns, find anomalies, or generate compliance reports – without needing to parse raw JSON in S3."
+        }
+    ]
+}

@@ -1,0 +1,82 @@
+{
+    "id": "l6",
+    "chapterId": "ch_5",
+    "title": "EBS Performance Tuning & Snapshots ⚡",
+    "description": "Maximise throughput and IOPS, automate backups, and understand snapshot cost.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "EBS Advanced",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "IOPS, Throughput, and Latency 📈",
+            "content": "# Performance Metrics\n\n- **IOPS (Input/Output Operations Per Second)**: measures how many reads/writes per second. Important for random small I/O (databases).\n- **Throughput**: data volume transferred per second (MB/s). Important for sequential large I/O (big data).\n- **Latency**: time for a single I/O operation. gp3 and io2 provide single‑digit millisecond latency.\n\nEBS volume performance depends on:\n- Volume type and size.\n- Instance's EBS‑optimised bandwidth (larger instances have more dedicated EBS bandwidth).\n- Workload pattern."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "gp3: The New Default 👑",
+            "content": "# No More Performance Scaling with Size\n\nEarlier gp2 volumes tied IOPS to volume size: 3 IOPS per GB, up to 16,000 IOPS. gp3 breaks that link:\n- Baseline 3,000 IOPS and 125 MB/s throughput, regardless of size.\n- You can provision up to 16,000 IOPS and 1,000 MB/s for an additional cost.\n- Smaller volumes get much higher performance.\n\n**Always choose gp3** for new general‑purpose volumes unless you have a specific reason."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "gp3 vs gp2 🤔",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "A 50 GB gp2 volume provides what baseline IOPS?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "150 IOPS",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "3,000 IOPS",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "500 IOPS",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "50 IOPS",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "gp2 formula: 3 IOPS per GB. 50 GB × 3 = 150 IOPS. gp3 gives 3,000 IOPS baseline regardless of size.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "EBS Snapshots: Incremental Backups 📸",
+            "content": "# Point‑in‑Time Copies\n\nSnapshots capture the state of a volume at a specific moment. They are:\n- **Incremental**: only changed blocks are stored after the first full snapshot.\n- **Stored in S3** (AWS‑managed, not visible).\n- Can be used to create new volumes or copy volumes across AZs/regions.\n- Can be automated with **Amazon Data Lifecycle Manager (DLM)**.\n\nWhen you delete a snapshot, only the data unique to that snapshot is removed."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "text",
+            "title": "Creating a Snapshot Lifecycle Policy ⏰",
+            "content": "# Automate with DLM\n\nAmazon Data Lifecycle Manager lets you create policies that automatically:\n- Take snapshots every X hours/days.\n- Retain the last N snapshots (rolling backup).\n- Apply tags to snapshots.\n\nExample: daily snapshot at 2 AM, retain 7 days, all instances tagged `Backup=true`."
+        },
+        {
+            "id": "s_l6_6",
+            "type": "text",
+            "title": "EBS Encryption 🔐",
+            "content": "# At Rest and In Transit\n\nEBS volumes can be encrypted using KMS. Encryption is:\n- Transparent: you don't change your application.\n- Encrypts data at rest, in flight between instance and volume, and all snapshots.\n- Minimal impact on latency.\n- Can be enabled by default for all new volumes in a region.\n\nYou can't encrypt an existing unencrypted volume directly; you snapshot it, copy the snapshot with encryption, then create a new volume."
+        },
+        {
+            "id": "s_l6_7",
+            "type": "tip",
+            "title": "Pro Tip: RAID on EBS for Extreme Performance 🚀",
+            "content": "## Combine Volumes\n\nFor workloads needing more than 16,000 IOPS or >1,000 MB/s, you can RAID multiple EBS volumes inside the OS:\n- **RAID 0**: stripes data; increases IOPS and throughput, no redundancy.\n- **RAID 1**: mirrors; increases durability, no performance boost.\n\nThis is advanced but demonstrates the flexibility of block storage."
+        }
+    ]
+}

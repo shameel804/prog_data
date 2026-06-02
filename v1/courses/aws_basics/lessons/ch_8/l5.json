@@ -1,0 +1,105 @@
+{
+    "id": "l5",
+    "chapterId": "ch_8",
+    "title": "API Gateway: Build a REST API 🚪",
+    "description": "Expose your Lambda function over HTTP and create a fully managed RESTful endpoint.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Integration",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "What is API Gateway? 🌐",
+            "content": "# Managed API Front Door\n\nAmazon API Gateway is a fully managed service that lets you create, publish, and secure APIs at any scale. It integrates seamlessly with Lambda (and other backends).\n\n- Accepts HTTP requests from clients.\n- Routes them to backend integrations (Lambda, HTTP endpoints, AWS services).\n- Handles request validation, transformation, throttling, and authentication.\n- Provides **stages** (e.g., dev, test, prod) for environment promotion.\n- Pay only per API call + data transfer.\n\n**Analogy**: API Gateway is like a receptionist who screens visitors, verifies their badges, and sends them to the right department (Lambda function)."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "API Gateway Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which AWS service provides managed REST and HTTP APIs that can trigger Lambda?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Application Load Balancer",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Amazon API Gateway",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "AWS Direct Connect",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Amazon CloudFront",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "API Gateway is purpose‑built for creating and managing APIs. ALB can also route to Lambda, but API Gateway is the primary managed API service.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Creating a REST API (Console) 🛠️",
+            "content": "# Step‑by‑Step\n\n1. Go to **API Gateway** → **REST API** → **Build**.\n2. Choose **New API**, name it `MyLambdaAPI`, endpoint type Regional.\n3. Create a **Resource** (e.g., `/hello`).\n4. Create a **Method** (e.g., `GET`).\n5. Integration type: **Lambda Function**, select your function, region.\n6. Deploy the API to a **Stage** (e.g., `dev`).\n7. You get an **Invoke URL** like `https://abc123.execute-api.us-east-1.amazonaws.com/dev/hello`.\n\nNow call that URL; it will invoke your Lambda and return the response!"
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Request/Response Transformation 🔄",
+            "content": "# Mapping Templates & Proxy Integration\n\nWhen using **Lambda Proxy Integration** (recommended), API Gateway passes the entire HTTP request as the Lambda event, and expects a specific response format. This gives you full control.\n\n- The event includes headers, query string parameters, path parameters, and body.\n- Your Lambda must return a response object with `statusCode`, `headers`, and `body`.\n- API Gateway transforms that into the HTTP response the client receives.\n\nNon‑proxy integration allows you to define mapping templates using Velocity Template Language (VTL). Simpler to use proxy."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Integration Type 🎯",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "With Lambda Proxy Integration, what does the Lambda event contain?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Only the body",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The full HTTP request including headers, path, query string, and body",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Just the query parameters",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The API stage name",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Proxy integration passes the entire request context, allowing your Lambda to make decisions based on any part of the request.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "tip",
+            "title": "Pro Tip: Enable CORS 🚀",
+            "content": "## For Browser‑based Apps\n\nIf your API is called from a web page (different domain), you need to enable CORS. API Gateway can auto‑generate the OPTIONS method and headers. Simply select your resource → Actions → Enable CORS."
+        }
+    ]
+}

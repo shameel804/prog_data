@@ -1,0 +1,79 @@
+{
+    "id": "l3",
+    "chapterId": "ch_8",
+    "title": "Writing Your First Lambda Function ✍️",
+    "description": "Create and test a simple Node.js/Python Lambda from the AWS Console.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Hands‑on",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Creating a Lambda Function (Console) 🖱️",
+            "content": "# Step‑by‑Step\n\n1. Go to **AWS Lambda** → **Create function**.\n2. Choose **Author from scratch**.\n3. **Function name**: `HelloWorldFunction`.\n4. **Runtime**: Node.js 20.x (or Python 3.12).\n5. **Architecture**: x86_64 (or arm64 for better price/performance).\n6. **Permissions**: Lambda will create a basic execution role (more in Lesson 4).\n7. Click **Create function**.\n\nYou'll see a code editor (inline editor) with a sample `index.js` or `lambda_function.py`."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Anatomy of a Lambda Function (Python)",
+            "content": "The `lambda_handler` is the entry point. It receives two arguments: `event` and `context`.",
+            "codeSnippet": "import json\n\ndef lambda_handler(event, context):\n    # Extract name from event, default 'World'\n    name = event.get('name', 'World')\n    message = f'Hello, {name}!'\n    \n    # Log to CloudWatch\n    print(f\"Message generated: {message}\")\n    \n    # Return a JSON response\n    return {\n        'statusCode': 200,\n        'body': json.dumps({'message': message})\n    }",
+            "codeLanguage": "python",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Handler Entry Point 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the role of the handler in a Lambda function?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It configures the IAM role",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It's the main function that AWS invokes when the Lambda runs",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It stores environment variables",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It defines the memory limit",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The handler is the starting point of your code. AWS calls it with the event and context objects.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Testing Your Function 🧪",
+            "content": "# Invoke with a Test Event\n\nIn the Lambda console, click **Test** → Create a new test event. Give it a name and a JSON body:\n```json\n{\n  \"name\": \"Progly Learner\"\n}\n```\nClick **Test** again. You'll see:\n- **Execution result**: the returned JSON.\n- **Log output**: any `print`/`console.log` output.\n- **Duration**, **memory used**, and **billed duration**.\n\nIf the function errors, Lambda shows the stack trace."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Return Values & Invocation Types 🔁",
+            "content": "# Sync vs Async\n\nLambda can be invoked in two main ways:\n- **Synchronous (RequestResponse)**: the caller waits for the response. Used by API Gateway.\n- **Asynchronous (Event)**: the caller gets back a 202, and the function runs in the background. Used by S3, SNS.\n\nFor synchronous invocations, the return value (or error) is returned to the caller. For async, the return is discarded; errors are retried automatically twice."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "tip",
+            "title": "Pro Tip: Cold Starts & Performance ❄️",
+            "content": "## First Invocation is Slower\n\nWhen a Lambda function is invoked for the first time (or after idle), AWS needs to set up the execution environment – a 'cold start'. This can add hundreds of milliseconds. To reduce cold starts:\n- Use smaller code packages.\n- Prefer interpreted languages (Node.js, Python).\n- Consider provisioned concurrency for latency‑sensitive apps (extra cost)."
+        }
+    ]
+}

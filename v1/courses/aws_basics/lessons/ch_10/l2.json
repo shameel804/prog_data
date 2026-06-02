@@ -1,0 +1,105 @@
+{
+    "id": "l2",
+    "chapterId": "ch_10",
+    "title": "IAM Best Practices: Least Privilege & MFA 🔐",
+    "description": "Hardening your identity foundation with minimal permissions, strong authentication, and regular audits.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Identity & Access",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Principle of Least Privilege (PoLP) 🏆",
+            "content": "# Start with Nothing, Add Only What's Needed\n\nThe golden rule of IAM: grant only the permissions required to perform a task, and nothing more.\n\n- **New users start with zero permissions** – they can't even list buckets.\n- **Attach policies that scope to specific resources**, not wildcards (`*`).\n- **Use IAM Access Analyzer** to identify permissions granted to external entities.\n- **Review IAM Access Advisor** – see which services a user actually uses, and remove unused permissions.\n\n**Analogy**: Would you give every employee a master key to the entire office? No – you give them keys only to the rooms they need. IAM policies are those keys."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Least Privilege Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which IAM tool helps you identify permissions that a user has but doesn't actually use?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "IAM Policy Simulator",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "IAM Access Advisor",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "IAM Credential Report",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "AWS Config",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Access Advisor shows service‑level permissions that a user has used over time, making it easy to trim unused permissions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Enforce MFA Everywhere 🔐",
+            "content": "# Two‑Factor Authentication is Non‑Negotiable\n\n- **Enable MFA on the root account** – virtual, hardware, or U2F key. This alone blocks most account takeovers.\n- **Enable MFA for all IAM users with console access**.\n- **Use IAM policy conditions** to require MFA for sensitive actions (e.g., `sts:AssumeRole`, terminating instances).\n\nExample condition to require MFA:\n```json\n\"Condition\": {\n  \"BoolIfExists\": {\n    \"aws:MultiFactorAuthPresent\": \"true\"\n  }\n}\n```\nEven if credentials are leaked, an attacker without the MFA device is blocked."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Password Policies & Credential Rotation 🔄",
+            "content": "# Automate Strong Authentication\n\n- Set a **strong password policy** in IAM: minimum length 14 characters, require uppercase, lowercase, numbers, symbols, and prevent reuse.\n- **Rotate access keys** every 90 days or less. The IAM credential report flags old keys.\n- **Delete unused IAM users and keys** – they are attack vectors.\n- **Use AWS Secrets Manager** to automatically rotate database credentials and API keys."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "quiz",
+            "title": "Access Key Safety 🗝️",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Where should you NEVER store AWS access keys?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "In environment variables",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "In source code or public repositories",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "In AWS Secrets Manager",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "In the ~/.aws/credentials file (with strict permissions)",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Access keys in source code can be scraped by bots within seconds. Use roles, secrets manager, or environment variables instead.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_6",
+            "type": "tip",
+            "title": "Pro Tip: Use AWS Organizations SCPs 🏢",
+            "content": "## Guardrails Across Accounts\n\nService Control Policies (SCPs) set permission boundaries across your entire organization. You can restrict whole services or actions (e.g., deny deletion of CloudTrail trails) so even local admins can't bypass them."
+        }
+    ]
+}

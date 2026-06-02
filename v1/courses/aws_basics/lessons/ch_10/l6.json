@@ -1,0 +1,76 @@
+{
+    "id": "l6",
+    "chapterId": "ch_10",
+    "title": "Incident Response & Account Hardening 🚨",
+    "description": "Prepare for and respond to security events – from root account lockdown to automated forensics.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Operational Security",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Hardening the Root Account 🛡️",
+            "content": "# The First Thing an Attacker Wants\n\nRoot account security is paramount. Minimum steps:\n- **Lock the root password**: use a long, complex password stored in a password manager.\n- **Enable MFA** on the root account – physical U2F key is best.\n- **Delete root access keys** (if any exist).\n- **Use AWS Organizations SCP** to deny root actions in member accounts.\n- **Monitor root usage**: create a CloudWatch alarm that triggers on any root login (CloudTrail event `ConsoleLogin` with `userIdentity.type = Root`).\n\nRoot should never be used for day‑to‑day operations."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "CloudTrail Forensics 🔍",
+            "content": "# Reconstructing an Attack\n\nWhen a security incident occurs, CloudTrail is your first stop:\n- Look for unusual API calls (e.g., `DeleteTrail`, `DisableEbsEncryptionByDefault`, `CreateUser`).\n- Check the source IP and user agent. If an IP is from a country you don't operate in, it's a red flag.\n- Export CloudTrail logs to CloudWatch Logs to set up real‑time metric filters and alarms on sensitive API actions.\n- Use **CloudTrail Lake** to run SQL queries on events for pattern analysis.\n\nAlways have a trail enabled in all regions; store logs in a separate, locked‑down security account (using S3 bucket policy to prevent deletion)."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "text",
+            "title": "Automated Response with Lambda & Step Functions ⚡",
+            "content": "# Self‑Healing Security\n\nCombine GuardDuty findings or CloudTrail alarms with automated remediation:\n- GuardDuty finding → EventBridge rule → Lambda function that isolates a compromised EC2 instance (changes security group, revokes IAM role).\n- CloudTrail alarm `CreateAccessKey` on a non‑admin user → Lambda that deletes the key and notifies the security team.\n- Config rule non‑compliant → SSM Automation runbook that corrects the setting.\n\nPre‑script your responses and test them with simulated events."
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Account Structure Best Practices 🏢",
+            "content": "# Isolate and Conquer\n\n- Use **multiple AWS accounts** under an AWS Organization: separate accounts for production, staging, security (log archive), and billing.\n- Apply **SCPs** to lock down sensitive capabilities across all accounts.\n- Use **AWS Control Tower** to set up a well‑architected multi‑account environment quickly.\n- Centralise CloudTrail and Config data in a security account.\n\nThis blast‑radius limitation is one of the most effective security controls."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "quiz",
+            "title": "Incident Response Plan 🧯",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Which action should be automated in response to a GuardDuty finding of 'UnauthorizedAccess:EC2/MaliciousIPCaller'?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Do nothing – GuardDuty handles it",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Trigger a Lambda function to isolate the instance (restrict security group, revoke IAM role)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Send an email to the user who launched the instance",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Reboot the instance",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Isolating the instance prevents further damage. Sending an email is fine, but automation stops the bleeding fast.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_6",
+            "type": "tip",
+            "title": "Pro Tip: Run Security Incident Response Simulations 🎯",
+            "content": "## Practice Like You Play\n\nAWS provides a game‑day scenario called **AWS Security Incident Response Workshop**. Run it with your team to practice detecting and responding to simulated attacks in a safe environment."
+        }
+    ]
+}

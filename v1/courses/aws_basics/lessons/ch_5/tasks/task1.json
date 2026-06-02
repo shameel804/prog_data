@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_5",
+    "title": "Secure an S3 Bucket",
+    "description": "Write a bucket policy and configure encryption for a corporate data repository.",
+    "estimatedMinutes": 20,
+    "problemStatement": "Your company wants to store sensitive financial reports in an S3 bucket named `fin-reports-2025`. Write a bucket policy (JSON) that:\n- Allows the IAM role `FinanceAppRole` to upload and read objects.\n- Denies any public access (explicit deny for `s3:GetObject` with `Principal: *`).\n- Forces all objects to be encrypted with SSE‑KMS using a specific KMS key ARN `arn:aws:kms:us-east-1:123456789012:key/abcd-1234` (via a `Deny` for non‑encrypted uploads).\n\nAdditionally, describe the steps to enable default encryption on the bucket to AES‑256 (SSE‑S3) as a fallback.",
+    "hints": [
+        "Use an explicit deny to block public access (this is separate from Block Public Access).",
+        "The force‑encryption condition uses `s3:x-amz-server-side-encryption` header check.",
+        "Default encryption is set in bucket properties."
+    ],
+    "expectedOutput": "A bucket policy JSON and a short description.",
+    "solutionCode": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"AllowFinanceRole\",\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"AWS\": \"arn:aws:iam::123456789012:role/FinanceAppRole\"\n      },\n      \"Action\": [\"s3:PutObject\", \"s3:GetObject\", \"s3:ListBucket\"],\n      \"Resource\": [\n        \"arn:aws:s3:::fin-reports-2025\",\n        \"arn:aws:s3:::fin-reports-2025/*\"\n      ]\n    },\n    {\n      \"Sid\": \"ExplicitDenyPublic\",\n      \"Effect\": \"Deny\",\n      \"Principal\": \"*\",\n      \"Action\": \"s3:GetObject\",\n      \"Resource\": \"arn:aws:s3:::fin-reports-2025/*\",\n      \"Condition\": {\n        \"StringNotEquals\": {\n          \"aws:PrincipalArn\": \"arn:aws:iam::123456789012:role/FinanceAppRole\"\n        }\n      }\n    },\n    {\n      \"Sid\": \"DenyUnencryptedUpload\",\n      \"Effect\": \"Deny\",\n      \"Principal\": \"*\",\n      \"Action\": \"s3:PutObject\",\n      \"Resource\": \"arn:aws:s3:::fin-reports-2025/*\",\n      \"Condition\": {\n        \"StringNotEquals\": {\n          \"s3:x-amz-server-side-encryption\": \"aws:kms\"\n        },\n        \"Null\": {\n          \"s3:x-amz-server-side-encryption\": \"true\"\n        }\n      }\n    }\n  ]\n}\n\nTo enable default encryption: Go to bucket properties, default encryption, select SSE‑S3 (AES‑256). This ensures objects uploaded without explicit encryption headers are still encrypted with SSE‑S3."
+}

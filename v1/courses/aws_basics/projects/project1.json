@@ -1,0 +1,26 @@
+{
+    "id": "project1",
+    "title": "Static Website on Amazon S3",
+    "description": "Host a personal portfolio website using Amazon S3 static website hosting, CloudFront CDN, and a custom domain with Route 53 – all while keeping security best practices.",
+    "difficulty": "Beginner",
+    "estimatedHours": "2-3",
+    "problemStatement": "# Project: Host Your Portfolio on AWS\n\nIn this project, you will create a personal static website (HTML, CSS, JavaScript) and deploy it on AWS using S3 static website hosting. You’ll learn how to make your site fast and secure by adding a CloudFront CDN and optionally your own domain name via Route 53.\n\n## What You'll Build\n- A publicly accessible website that loads quickly anywhere in the world.\n- A secure S3 bucket configuration that blocks public access at the bucket level (except for CloudFront).\n- An Origin Access Identity (OAI) so that CloudFront can read the bucket while keeping it private.\n- (Optional) A custom domain name with HTTPS using AWS Certificate Manager.\n\n## Why This Matters\nStatic websites on S3 are one of the most cost‑effective and scalable ways to host content. Adding CloudFront improves performance globally and protects against DDoS attacks. Understanding this serverless hosting pattern is fundamental to cloud architecture.\n\nYou will apply concepts from:\n- **Chapter 5 (S3)**: buckets, static website hosting, bucket policies, Block Public Access.\n- **Chapter 12 (HA/Scaling)**: CloudFront CDN and Route 53 routing (basic).\n- **Chapter 10 (Security)**: IAM roles for OAI, bucket policies to restrict access.\n- **Chapter 11 (Cost)**: cost‑optimised storage and data transfer.",
+    "requirements": [
+        "Create an S3 bucket with a unique name and enable static website hosting.",
+        "Upload an `index.html` and an `error.html` file (simple HTML pages).",
+        "Block all public access at the S3 bucket level.",
+        "Create a CloudFront distribution with the S3 bucket as origin, using an Origin Access Identity (OAI) to securely read the bucket.",
+        "Update the S3 bucket policy to allow CloudFront (via OAI) to read objects.",
+        "(Optional) Register a domain in Route 53 and use ACM to provision an SSL certificate, then attach it to CloudFront.",
+        "The website must be accessible via the CloudFront distribution domain name (or custom domain) using HTTPS.",
+        "The S3 bucket must not be directly accessible via its website endpoint."
+    ],
+    "hints": [
+        "When creating the CloudFront distribution, choose 'Origin Domain' as the S3 bucket's static website hosting endpoint, not the bucket REST API endpoint.",
+        "For the Origin Access Identity, you must create a new one and then update the bucket policy to grant `s3:GetObject` to that OAI's canonical user ID.",
+        "If you use a custom domain, make sure to create the ACM certificate in the `us-east-1` region (required for CloudFront).",
+        "Check the CloudFront 'Error Pages' tab to serve `error.html` for 403/404 errors.",
+        "After making changes, wait for CloudFront deployments to complete (status 'Deployed')."
+    ],
+    "expectedOutput": "A CloudFront domain name (e.g., `d123.cloudfront.net`) that displays your HTML pages. The S3 bucket's website endpoint should return a 403 Forbidden error if accessed directly. Optionally, a custom domain with a valid SSL certificate pointing to the same content."
+}

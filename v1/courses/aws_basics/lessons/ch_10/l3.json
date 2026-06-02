@@ -1,0 +1,76 @@
+{
+    "id": "l3",
+    "chapterId": "ch_10",
+    "title": "Encryption at Rest: KMS & Managed Services 🔑",
+    "description": "How to protect stored data using AWS Key Management Service and integrated service encryption.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Data Protection",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Why Encrypt at Rest? 🛌",
+            "content": "# Protect Data Where It Lives\n\nEncryption at rest ensures that if someone gains physical access to a disk or a snapshot, the data is unreadable without the key. AWS makes it easy:\n- **EBS volumes** can be encrypted with KMS.\n- **S3 objects** can use SSE‑S3, SSE‑KMS, or client‑side encryption.\n- **RDS and DynamoDB** encrypt data automatically using KMS.\n- **EFS** and **FSx** support encryption at rest.\n\nIn many cases, encryption can be enabled with a single checkbox. No application changes required."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "AWS Key Management Service (KMS) 🔐",
+            "content": "# The Encryption Backbone\n\nKMS lets you create and manage cryptographic keys (symmetric and asymmetric). Key features:\n- **Customer Master Keys (CMKs)**: either AWS managed (free, service‑specific) or customer managed (you control, charges apply).\n- **Automatic key rotation** every year for customer managed keys (optional).\n- **Fine‑grained permissions**: key policies control who can use the key for encrypt/decrypt.\n- **CloudTrail integration**: every key usage is logged.\n\n**Analogy**: KMS is a highly secure vault that stores your keys. When you need to encrypt or decrypt data, you ask the vault to do the operation – the key never leaves the vault."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "KMS Concepts 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which type of KMS key has a key policy that you can edit?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "AWS managed keys",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Customer managed keys",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "AWS owned keys (used by default services)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "All of the above",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Customer managed CMKs give you full control over the key policy, rotation, and lifecycle. AWS managed keys are read‑only for you.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Encryption in S3 🔒",
+            "content": "# Multiple Options\n\n- **SSE‑S3** – AWS manages the key. Each object is encrypted with a unique key, itself encrypted with a master key. Free.\n- **SSE‑KMS** – you control the KMS key, with audit trail and separate permissions. Additional cost.\n- **SSE‑C** – you provide the encryption key with each request; AWS doesn't store it.\n- **Client‑side encryption** – you encrypt before uploading; AWS never sees plaintext.\n\nBest practice: enable default encryption on every bucket (either SSE‑S3 or SSE‑KMS) and enforce via bucket policy that only encrypted uploads are accepted."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "EBS Encryption: Transparent & Powerful 💾",
+            "content": "# Set It and Forget It\n\n- Encryption uses KMS (AWS managed `aws/ebs` key or a customer managed key).\n- When you encrypt a volume, all data at rest, data in flight between instance and volume, snapshots, and volumes created from those snapshots are encrypted.\n- You can enable **encryption by default** in each region – all new volumes will be encrypted automatically.\n- To encrypt an existing unencrypted volume: snapshot → copy with encryption → create new volume. No direct in‑place conversion."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "tip",
+            "title": "Pro Tip: Use Key Policies for Separation of Duties 👥",
+            "content": "## Crypto‑Officer vs User\n\nWith KMS, you can separate the person who manages the key (crypto‑officer) from the person who uses it. This prevents a rogue admin from both modifying the key and decrypting data."
+        }
+    ]
+}

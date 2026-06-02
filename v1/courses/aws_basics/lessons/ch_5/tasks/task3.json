@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_5",
+    "title": "Choose EBS Volumes for a Database",
+    "description": "Select the optimal EBS setup for a high‑performance MySQL server and justify.",
+    "estimatedMinutes": 15,
+    "problemStatement": "You are deploying a production MySQL database on an EC2 instance (`c5.2xlarge`). The workload requires:\n- 16,000 IOPS sustained, mostly random reads/writes.\n- 500 GB storage.\n- High durability; must survive an AZ failure.\n\nDesign the EBS configuration:\n- Which volume type and size?\n- How will you handle backup and disaster recovery across AZs?\n- Mention encryption.\n\nExplain why you chose this setup and any trade‑offs.",
+    "hints": [
+        "Provisioned IOPS io2 or io1? io2 is newer, cheaper, and more durable.",
+        "Snapshots can be used to restore in another AZ if the original AZ fails.",
+        "Consider automated snapshots with DLM."
+    ],
+    "expectedOutput": "A detailed configuration description.",
+    "solutionCode": "Volume configuration:\n- Root volume: 20 GB gp3 (operating system only).\n- Data volume: 500 GB io2 Block Express (or io2) with 16,000 provisioned IOPS. io2 provides high durability (99.999% durability) and sub‑millisecond latency.\n- Encryption: Enable encryption at rest using a KMS key.\n\nBackup and DR:\n- Use Data Lifecycle Manager to take daily snapshots of the data volume, retain for 7 days.\n- In case of AZ failure, create a new volume from the latest snapshot in another AZ and attach it to a standby instance.\n- Optionally, use MySQL native replication to a multi‑AZ setup for faster recovery.\n\nWhy io2: It supports multi‑attach (if needed for clustering) and gives consistent high IOPS without bursting. Trade‑off: higher cost per GB and per provisioned IOPS compared to gp3. But for a production database, the performance and durability are worth it."
+}

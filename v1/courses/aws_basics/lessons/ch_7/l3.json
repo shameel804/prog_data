@@ -1,0 +1,105 @@
+{
+    "id": "l3",
+    "chapterId": "ch_7",
+    "title": "Route Tables & Internet Connectivity 🌐",
+    "description": "Understand how traffic flows inside and outside your VPC using route tables, IGW, and NAT.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Routing",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Route Tables: The Traffic Director 🧭",
+            "content": "# Where Packets Go\n\nA **route table** contains rules (routes) that determine where network traffic is directed.\n\nEach subnet must be associated with a route table. If not, it uses the VPC’s **main route table**.\n\nRoutes consist of:\n- **Destination** (CIDR) – where traffic is trying to go.\n- **Target** – where to send it (IGW, NAT Gateway, VPC Peering, etc.).\n\n**Analogy**: A route table is like a GPS that tells cars (packets) which road to take to reach a destination. Some roads lead to the highway (IGW), others to an internal tunnel (peering)."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "Route Table Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What determines whether a subnet is public or private?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The CIDR block range",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The route table – whether it has a route to an Internet Gateway",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The number of IP addresses",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The security group attached",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A subnet is public if its route table has a route `0.0.0.0/0` (all internet) pointing to an Internet Gateway.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Internet Gateway (IGW) 🚪",
+            "content": "# The Door to the Internet\n\nAn **Internet Gateway** is a horizontally scaled, redundant VPC component that enables communication between your VPC and the internet.\n\n- Attach one IGW per VPC.\n- It’s not a single physical device – it’s managed by AWS and highly available.\n- To make a subnet public, add a route: `0.0.0.0/0 → IGW` in the route table.\n- Resources also need a **public IP** to be reachable.\n\n**Analogy**: The IGW is the main gate of your fenced plot. If you build a road from a neighbourhood to the gate, that neighbourhood becomes public."
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "NAT Gateway: Internet for Private Subnets 🔒",
+            "content": "# Outbound‑Only Internet\n\nA **NAT (Network Address Translation) Gateway** allows instances in a private subnet to access the internet (for updates, patches) without allowing inbound connections.\n\n- It’s deployed in a **public subnet** (needs its own route to IGW).\n- Then a route in the private subnet’s route table points `0.0.0.0/0` to the NAT Gateway.\n- The NAT Gateway translates the private IP to its own public IP for outbound traffic, and forwards the response back.\n\n**Analogy**: A NAT Gateway is like a post office box. You can send mail out (get updates), but strangers can’t find your house address to knock on your door."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "quiz",
+            "title": "IGW vs NAT ⚖️",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Which statement about NAT Gateway is correct?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It allows both inbound and outbound internet traffic",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It must be placed in a private subnet",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It allows instances in private subnets to initiate outbound internet traffic",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It replaces the Internet Gateway",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "NAT Gateway enables outbound‑only internet access for private instances. Inbound traffic is not allowed unless you set up port forwarding (not typical).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "NAT Instance vs NAT Gateway 🆚",
+            "content": "# Old vs New\n\nThere’s also a **NAT Instance** – a self‑managed EC2 instance that does NAT. It’s cheaper but:\n- You manage it (patching, scaling).\n- It can be a bottleneck if not sized properly.\n- No high availability out of the box.\n\nFor most cases, use **NAT Gateway** – it’s fully managed, scales automatically, and is highly available within an AZ.\n\n> For multi‑AZ high availability, deploy one NAT Gateway per AZ."
+        }
+    ]
+}

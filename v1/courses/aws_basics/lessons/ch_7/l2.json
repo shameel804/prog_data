@@ -1,0 +1,76 @@
+{
+    "id": "l2",
+    "chapterId": "ch_7",
+    "title": "Subnets, CIDR & IP Addressing 📊",
+    "description": "Carve your VPC into subnets, understand CIDR notation, and design public/private layers.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Addressing",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "What is a Subnet? 🧩",
+            "content": "# A Segment of Your VPC\n\nA **subnet** is a range of IP addresses within your VPC. It’s tied to a single Availability Zone.\n\n- You can have many subnets in a VPC, each in a different AZ.\n- Subnets can be **public** (has a route to the internet) or **private** (no direct internet access).\n- Resources launched in a subnet inherit its network characteristics.\n\n**Analogy**: A VPC is a city; subnets are neighbourhoods. Some neighbourhoods have direct highway access (public), others are gated communities with only internal roads (private)."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "CIDR Notation: Defining IP Ranges 🔢",
+            "content": "# Classless Inter‑Domain Routing\n\nCIDR specifies an IP range like `10.0.0.0/16`. The `/16` means the first 16 bits are fixed; the remaining 16 bits are available for hosts.\n\n- `/16` → 65,536 addresses (e.g., VPC).\n- `/24` → 256 addresses (common subnet size).\n- `/28` → 16 addresses.\n\nAWS reserves 5 IP addresses in every subnet (first 4 and last 1). So a `/24` subnet gives 251 usable addresses.\n\n**Common VPC CIDR blocks**: `10.0.0.0/16`, `172.16.0.0/12`, `192.168.0.0/16` – all private IP ranges."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "CIDR Math 🧮",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "How many usable IP addresses are in a /24 subnet after AWS reservation?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "256",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "251",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "255",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "250",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A /24 has 256 addresses. AWS reserves 5 (first 4 for networking and the last for broadcast), leaving 251 usable.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Public vs Private Subnets 🚪",
+            "content": "# It’s All About the Route Table\n\nThe difference between public and private is the **route table** attached to the subnet.\n\n- **Public subnet**: Route table has a route to an **Internet Gateway** (IGW). Resources can be directly reachable from the internet if they have a public IP.\n- **Private subnet**: No route to an IGW. Resources cannot initiate outbound internet traffic (unless NAT is used) and are not directly reachable from the internet.\n\nExample: Web servers in public subnets, databases in private subnets."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Multi‑AZ Subnet Design 🗺️",
+            "content": "# High Availability Starts Here\n\nIt’s best practice to create subnets in **multiple Availability Zones** for fault tolerance.\n- At least two public subnets (one per AZ) for your load balancer.\n- At least two private subnets for your application and database layers.\n- This way, if an AZ fails, you still have resources in another AZ.\n\nA typical VPC layout: 2 AZs × 2 tiers = 4 subnets (2 public, 2 private)."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "tip",
+            "title": "Pro Tip: Plan Your CIDR for Growth 🌱",
+            "content": "## Don’t Paint Yourself into a Corner\n\nChoose a VPC CIDR large enough for future growth (e.g., `/16`). Avoid overlapping with on‑premises networks if you’ll ever set up a VPN or Direct Connect."
+        }
+    ]
+}

@@ -1,0 +1,76 @@
+{
+    "id": "l4",
+    "chapterId": "ch_3",
+    "title": "IAM Roles & Temporary Credentials 🎭",
+    "description": "Let AWS services or external identities assume permissions securely.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "What is an IAM Role? 🎭",
+            "content": "# An Identity You Assume, Not Own\n\nUnlike a user, a **role** doesn’t have permanent credentials (no password or access keys). Instead, you **assume** the role to get temporary security credentials.\n\nRoles are used by:\n- **AWS Services**: EC2 needs permissions to read from S3 – you assign a role to the instance.\n- **Cross‑account access**: Another AWS account can assume a role in your account.\n- **Federated users**: Corporate credentials (SAML, OpenID) can assume a role, avoiding creation of IAM users.\n\n**Analogy**: A role is like an actor’s costume. The actor (user/service) puts on the costume and temporarily gains the costume’s permissions."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Role vs User 🎭 vs 🧑",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is the key difference between an IAM user and an IAM role?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Users are free, roles cost money",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Users have permanent credentials; roles provide temporary credentials when assumed",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Roles can only be used for EC2",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "There is no difference",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Roles don’t have long‑term keys or passwords. They issue short‑lived credentials via AWS STS when assumed.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Trust Policy: Who Can Assume the Role 🤝",
+            "content": "# The Key to the Role\n\nEvery role has a **trust policy** (a JSON document) that specifies **who** is allowed to assume it. It looks similar to a regular policy but defines the `Principal` (the entity that can assume the role).\n\nExample: Allow EC2 service to assume this role:\n```json\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [{\n    \"Effect\": \"Allow\",\n    \"Principal\": { \"Service\": \"ec2.amazonaws.com\" },\n    \"Action\": \"sts:AssumeRole\"\n  }]\n}\n```"
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "EC2 Instance Profile 🖥️",
+            "content": "# Giving EC2 Permissions\n\nYou can’t directly attach a role to an EC2 instance. You create an **instance profile** – a container for the role – and attach that to the instance.\n\nThe AWS CLI and SDKs on the instance automatically retrieve temporary credentials from the instance metadata service. No hard‑coded keys needed!\n\n> This is a major security win: never store AWS credentials on an EC2 instance."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "warning",
+            "title": "⚠️ Credential Expiry",
+            "content": "## Temporary Credentials Rotate\n\nThe credentials obtained by assuming a role are short‑lived (1‑12 hours). Applications must handle refreshing them. The AWS SDKs do this automatically."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Pro Tip: Cross‑Account Roles Are Gold 🌉",
+            "content": "## Avoid Creating IAM Users for Partners\n\nIf another AWS account needs access to your resources, create a role with a trust policy allowing their account. They can assume it without you managing their passwords. Much safer."
+        }
+    ]
+}

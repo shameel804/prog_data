@@ -1,0 +1,76 @@
+{
+    "id": "l4",
+    "chapterId": "ch_8",
+    "title": "Lambda Execution Role & Permissions 🔐",
+    "description": "Understand how IAM roles grant Lambda the power to access other AWS resources.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Security",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Execution Role 🎭",
+            "content": "# Lambda Needs an Identity\n\nEvery Lambda function must be associated with an **IAM role** – the function's execution role. This role defines what AWS resources the function can access.\n\n- When you create a function, Lambda can auto‑generate a basic role with permissions to write logs to CloudWatch.\n- You can attach additional policies to grant access to S3, DynamoDB, SNS, etc.\n- The role follows **least privilege** – only grant what the function strictly needs.\n\n**Analogy**: The execution role is like an ID badge for your function. It decides which rooms (services) it can enter."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Execution Role Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What basic permission does the auto‑created Lambda execution role grant?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Full access to S3",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Write logs to Amazon CloudWatch Logs",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Create new Lambda functions",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Access all DynamoDB tables",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "By default, the role includes a policy that allows `logs:CreateLogGroup`, `logs:CreateLogStream`, and `logs:PutLogEvents`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Adding Permissions to the Role ➕",
+            "content": "# Attach Managed or Inline Policies\n\nLet's say your function needs to read from an S3 bucket:\n1. Go to IAM → Roles → find your Lambda's role.\n2. Attach a policy: either the AWS managed `AmazonS3ReadOnlyAccess` (too broad) or a custom policy that allows `s3:GetObject` on the specific bucket ARN.\n3. After attaching, the function can immediately (within seconds) call `s3.getObject()`.\n\n> The role trusts the Lambda service (`lambda.amazonaws.com`) to assume it, which is established in the trust policy automatically."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Resource‑Based Policies on Lambda 🛡️",
+            "content": "# Who Can Invoke the Function?\n\nLambda also supports **resource‑based policies** that control who can invoke the function.\n- When you add an API Gateway trigger, Lambda automatically adds a permission allowing that API Gateway to call `lambda:InvokeFunction`.\n- You can manually allow cross‑account access.\n\nThis is separate from the execution role; it's about who can call the function, not what the function can do."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "warning",
+            "title": "⚠️ Avoid Over‑permission",
+            "content": "## Don't Use `*` Permissions\n\nNever attach `AdministratorAccess` to a Lambda role. If the function is compromised, the attacker has full account access. Always scope policies to specific resources and actions."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Pro Tip: Use the AWS SDK Inside Lambda 📦",
+            "content": "## Built‑in SDK\n\nThe Lambda execution environment includes the AWS SDK for the chosen runtime. You don't need to bundle it. Just write `import boto3` (Python) or `const AWS = require('aws-sdk')` (older Node.js). For newer Node.js 18+ runtimes, AWS SDK v3 is pre‑installed."
+        }
+    ]
+}

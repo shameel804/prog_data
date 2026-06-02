@@ -1,0 +1,70 @@
+{
+    "id": "l5",
+    "chapterId": "ch_5",
+    "title": "Elastic Block Store (EBS) Fundamentals 💾",
+    "description": "Persistent volumes for EC2 – creation, attachment, and initial snapshots.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "EBS Core",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "EBS Volumes: Your Virtual Hard Disk 🖴",
+            "content": "# Network‑Attached Block Storage\n\nAn EBS volume is a **durable, block‑level storage device** you attach to one EC2 instance (like a physical disk). Key facts:\n- It is **locked to an Availability Zone (AZ)** – must be in the same AZ as the instance.\n- It is **persistent** – data survives instance stop/terminate (if not set to delete on termination).\n- It can be detached and reattached to another instance in the same AZ.\n- Backed by **snapshots** (incremental, stored in S3).\n- You can increase size or change type on the fly (with a brief pause)."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "EBS Zone Lock 🗺️",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "You have an EC2 instance in us-east-1a and an EBS volume in us-east-1b. Can you attach the volume to the instance?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Yes, EBS is region‑wide",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "No, EBS volumes are AZ‑locked",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only if you use a placement group",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Yes, but you need to create a snapshot first",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "An EBS volume must be in the same Availability Zone as the instance. You can snapshot it and restore the snapshot in another AZ.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Volume Types: SSD and HDD 📊",
+            "content": "# Choose Based on Performance Needs\n\n- **General Purpose SSD (gp3/gp2)**: balance of price and performance. gp3 lets you independently tune IOPS and throughput.\n- **Provisioned IOPS SSD (io2/io1)**: high‑performance databases, consistent IOPS. io2 Block Express offers sub‑millisecond latency.\n- **Throughput Optimised HDD (st1)**: big data, streaming, large sequential I/O. Cannot be boot volume.\n- **Cold HDD (sc1)**: lowest cost, infrequent access, file servers. Cannot be boot volume.\n\nBoot volumes must be SSD (gp3, gp2, io2, io1)."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Creating and Attaching a Volume 🔧",
+            "content": "# Console Steps\n\n1. Go to EC2 → Volumes → Create Volume.\n2. Choose type, size, IOPS (for io1/io2), AZ (must match instance).\n3. Optionally encrypt (using KMS).\n4. After creation, select volume → Actions → Attach Volume → pick instance.\n5. Inside the instance, the volume appears as a new block device (e.g., `/dev/xvdf` on Linux). You must format and mount it manually (except with certain AMIs)."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "tip",
+            "title": "Pro Tip: Delete on Termination ✅",
+            "content": "## Root Volumes and Data Volumes\n\nBy default, the root volume is set to **Delete on Termination** – it's deleted when the instance terminates. Data (non‑root) volumes are not deleted by default. You can change this in the launch wizard or after launch."
+        }
+    ]
+}

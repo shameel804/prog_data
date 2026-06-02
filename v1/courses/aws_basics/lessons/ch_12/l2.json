@@ -1,0 +1,117 @@
+{
+    "id": "l2",
+    "chapterId": "ch_12",
+    "title": "Elastic Load Balancing ⚖️",
+    "description": "Master Application, Network, and Gateway Load Balancers – the entry point to high‑availability architectures.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Why a Load Balancer? 🤹",
+            "content": "# Distribute Traffic, Hide Failures\n\nAn Elastic Load Balancer (ELB) sits in front of your EC2 instances (or containers, Lambdas) and distributes incoming traffic across multiple targets. It:\n- **Improves availability**: if one target fails, ELB routes traffic to healthy ones.\n- **Scales horizontally**: add more targets, ELB spreads the load.\n- **Offloads SSL/TLS**: terminate HTTPS at the ELB, reducing backend CPU.\n- **Provides a single DNS endpoint**: clients talk to the ELB, not individual instances.\n\n**Analogy**: A load balancer is like a restaurant host who seats guests at available tables. If a table becomes messy (instance fails), the host stops seating people there until it's cleaned up."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "ELB Purpose 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is a primary benefit of using a load balancer instead of pointing DNS directly at an EC2 instance?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's cheaper",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It automatically handles instance failures by routing traffic to healthy instances",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It eliminates the need for security groups",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's faster than direct connections",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "ELB continuously performs health checks and only sends traffic to healthy targets, enabling transparent failover.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Types of Load Balancers 🏷️",
+            "content": "# Three Products, Different Layers\n\n- **Application Load Balancer (ALB)** – Layer 7 (HTTP/HTTPS). Routes based on URL path, host headers, query strings. Supports WebSockets, gRPC. Ideal for microservices and web applications.\n- **Network Load Balancer (NLB)** – Layer 4 (TCP/UDP/TLS). Ultra‑high performance, low latency, static IPs. Handles millions of requests per second. Best for gaming, IoT, and TCP‑based apps.\n- **Gateway Load Balancer (GWLB)** – Layer 3/4. Transparently inserts virtual appliances (firewalls, intrusion detection) into the network path. Uses GENEVE protocol."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "ALB Deep Dive 🕵️",
+            "content": "# The Swiss Army Knife\n\nALB features:\n- **Listeners**: define protocol and port (e.g., HTTPS:443).\n- **Rules**: route requests to target groups based on conditions (path `/api/*` → API servers, host `admin.example.com` → admin servers).\n- **Target Groups**: collections of EC2 instances, IPs, Lambda functions, or containers.\n- **Health Checks**: configurable checks (HTTP 200 on `/health`) to detect unhealthy targets.\n- **Sticky Sessions (Session Affinity)**: keep a user on the same target via cookie.\n- **SSL/TLS Termination**: integrate with ACM for free certificates.\n\nALB is the default choice for web applications."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Health Checks: The Heartbeat ❤️",
+            "content": "# Are You Alive?\n\nThe ELB periodically pings each target. If a target fails the health check (e.g., returns non‑200, times out), the ELB stops sending traffic to it.\n\n- **Healthy threshold**: number of consecutive successes to mark as healthy.\n- **Unhealthy threshold**: consecutive failures to mark as unhealthy.\n- **Interval**: how often to check (e.g., every 30 seconds).\n- **Timeout**: how long to wait for a response.\n\nAlways implement a dedicated health check endpoint (`/health`) that tests database connectivity and other dependencies – not just a static 200 OK."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Health Check Logic 💊",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Why should a health check endpoint verify database connectivity and not just return a static 200?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Because static 200 is slower",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Because the application may be running but unable to serve real requests if the database is down",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Because the load balancer requires JSON responses",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Because it's a security requirement",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A 'shallow' health check masks downstream failures. A deep check ensures the entire dependency chain is functioning, preventing traffic from being sent to a crippled instance.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "NLB: Speed and Static IPs ⚡",
+            "content": "# Layer 4 Power\n\nNLB operates at the transport layer:\n- Handles millions of requests per second while maintaining ultra‑low latency.\n- Provides a **static IP** per AZ (or use Elastic IPs). Ideal for whitelisting in firewalls.\n- Preserves source IP (not proxy).\n- Supports TLS termination.\n- Use for non‑HTTP workloads, extreme scale, or when you need a fixed IP."
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "Pro Tip: Use Multiple Listeners for HTTP → HTTPS Redirect 🚀",
+            "content": "## Security Best Practice\n\nOn ALB, create two listeners:\n- Port 80: default action `Redirect to HTTPS`.\n- Port 443: forward to target group.\n\nThis ensures all traffic is encrypted without modifying your application."
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_8",
+    "title": "Design a Serverless Workflow",
+    "description": "Sketch a serverless application that processes uploaded images: S3 trigger → Lambda → DynamoDB.",
+    "estimatedMinutes": 15,
+    "problemStatement": "Users upload images to an S3 bucket `incoming-images`. You need to automatically generate a thumbnail and store metadata in a DynamoDB table `ImageMetadata` (key: imageId, attributes: originalKey, thumbnailKey, size, timestamp).\n\nDescribe the architecture:\n- Which services trigger what?\n- What IAM permissions does the Lambda function need?\n- How would you handle errors (e.g., thumbnail generation fails)?\n- Sketch the flow with a diagram in words.\n\nYou don't need to write code; focus on the serverless components and their interactions.",
+    "hints": [
+        "S3 can trigger Lambda on `s3:ObjectCreated:*` events.",
+        "Lambda needs permissions to read the original image from S3, write the thumbnail to another bucket/prefix, and put item in DynamoDB.",
+        "Use a dead‑letter queue (SQS) or Lambda Destinations for failed events."
+    ],
+    "expectedOutput": "Architecture description with services and permissions.",
+    "solutionCode": "Architecture:\n1. S3 bucket `incoming-images` configured to send `s3:ObjectCreated:*` events to a Lambda function `ImageProcessor`.\n2. Lambda `ImageProcessor` is triggered; its event contains the S3 object key.\n3. Lambda downloads the image from S3, generates a thumbnail (using Pillow or similar), uploads thumbnail to `thumbnail-images` bucket (under same key), and writes metadata item to DynamoDB `ImageMetadata` with partition key `imageId` (UUID or original key).\n4. Lambda execution role needs policies:\n   - `s3:GetObject` on `incoming-images` bucket.\n   - `s3:PutObject` on `thumbnail-images` bucket.\n   - `dynamodb:PutItem` on `ImageMetadata` table.\n   - CloudWatch Logs (standard).\n5. Error handling: Configure Lambda Destinations – on failure, send the event to an SQS dead‑letter queue for manual inspection. Alternatively, configure an asynchronous S3 notification to an SNS topic that triggers retries.\n\nThis is a classic event‑driven serverless pipeline: upload triggers processing, result stored in another service, all scalable and pay‑per‑use."
+}

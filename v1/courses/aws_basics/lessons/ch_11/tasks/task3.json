@@ -1,0 +1,17 @@
+{
+    "id": "task3",
+    "chapterId": "ch_11",
+    "title": "Optimize a Monthly AWS Bill",
+    "description": "Analyze a hypothetical bill and suggest specific cost‑saving actions covering compute, storage, and networking.",
+    "estimatedMinutes": 20,
+    "problemStatement": "You receive a monthly AWS bill with the following summary:\n- EC2: $800 (four m5.large instances running 24/7, average CPU 15%)\n- EBS: $120 (six 500 GB gp2 volumes, only 2 attached to running instances; the rest are unattached)\n- S3: $90 (30 TB stored in Standard class, many objects older than 90 days never accessed)\n- Data transfer: $200 (large amount of cross‑region outbound traffic)\n- Elastic IP: $30 (3 unattached IPs)\n- RDS: $350 (db.r5.xlarge Multi‑AZ, but Read Replica barely used)\n\nPropose at least five specific cost‑saving actions. For each, explain what you would do and estimate the potential saving category (e.g., compute, storage).",
+    "hints": [
+        "Rightsizing: change instance types or use Savings Plans.",
+        "Storage: delete unattached volumes, move S3 to cheaper classes.",
+        "Data transfer: reduce cross‑region traffic, use CloudFront.",
+        "Elastic IPs: release unattached.",
+        "RDS: rightsizing, remove unnecessary Read Replica."
+    ],
+    "expectedOutput": "Five or more cost‑saving actions with justifications.",
+    "solutionCode": "1. **Rightsize EC2 instances** (compute): Four m5.large at 15% CPU. Evaluate with Compute Optimizer; likely downgrade to m5.large or switch to t3.large (burstable). Also, purchase a 1‑year Compute Savings Plan for the baseline. Potential saving: 30‑50% on EC2.\n2. **Delete unattached EBS volumes** (storage): 4 of 6 volumes unattached. Delete them after snapshotting if needed. Immediate saving of 4 × 500 GB = 2 TB gp2 cost (approx $200/month).\n3. **S3 lifecycle policy** (storage): Move objects older than 90 days to Standard‑IA or Glacier Flexible Retrieval. Standard is ~$0.023/GB; IA is ~$0.0125/GB. Could reduce S3 cost by ~40%.\n4. **Reduce cross‑region data transfer** (network): Identify the source of cross‑region traffic. Use CloudFront CDN to serve content from edge locations, reducing origin data transfer. Also, move services closer to users or use VPC endpoints to avoid internet egress.\n5. **Release unattached Elastic IPs** (compute/network): 3 IPs × ~$3.60/month = ~$10.80/month saving. Small but easy.\n6. **Rightsize RDS** (database): db.r5.xlarge Multi‑AZ is expensive. Evaluate if a smaller instance (r5.large) and a single AZ (if dev/test) or use Aurora Serverless. Also, remove the Read Replica if not used. Potential saving: 40‑60% on RDS.\n\nTotal estimated savings: >$500/month (over 30% of bill)."
+}

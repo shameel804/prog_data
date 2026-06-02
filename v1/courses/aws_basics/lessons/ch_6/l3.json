@@ -1,0 +1,76 @@
+{
+    "id": "l3",
+    "chapterId": "ch_6",
+    "title": "RDS Security, Backup & Maintenance 🔧",
+    "description": "Protect data, automate recovery, and keep your engine patched without downtime.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "RDS Advanced",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Backup and Restore 💾",
+            "content": "# Automatic Backups & Snapshots\n\nRDS provides two backup mechanisms:\n- **Automated Backups**: daily full snapshot + transaction logs every 5 minutes. You can restore to any point in time within the retention period (1–35 days). Enabled by default.\n- **Manual DB Snapshots**: user‑initiated, retained indefinitely (until you delete them).\n\nBoth are stored in S3 and are incremental after the first full backup. Restoring creates a new database instance."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "Point‑in‑Time Recovery 🔄",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "With automated backups enabled and a 7‑day retention, you can restore a database to:",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Any second within the last 7 days",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Any 5‑minute increment within the retention period",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only the time of the last daily snapshot",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The start of the retention period only",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "With transaction logs captured every 5 minutes, you can do a point‑in‑time restore to any 5‑minute window within the retention period.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Encryption 🔐",
+            "content": "# At Rest and In Transit\n\n- **At rest**: Enable encryption at creation time (using KMS). This encrypts the underlying storage, automated backups, read replicas, and snapshots.\n- **In transit**: Use SSL/TLS connections from your application. RDS certificates are provided by AWS.\n\nYou cannot encrypt an existing unencrypted database instance directly. You must snapshot it, copy the snapshot with encryption, and restore."
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Maintenance & Patching ⚙️",
+            "content": "# Stay Up to Date\n\nAWS automatically applies OS patches and minor engine upgrades during a **weekly maintenance window** you define. You can also apply them manually.\n\nFor Multi‑AZ deployments, patching occurs on the standby first, then failover to minimise downtime (typically 60–120 seconds).\n\nMajor engine version upgrades require manual action (e.g., MySQL 5.7 → 8.0), but AWS guides you with a wizard."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Security Groups & Network Isolation 🛡️",
+            "content": "# Database‑Level Firewall\n\nRDS instances run inside your VPC and are protected by **security groups**. You should only allow inbound traffic from the application servers' security group on the database port (e.g., 3306 for MySQL).\n\nNever expose a database directly to the internet. Place it in private subnets."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "tip",
+            "title": "Pro Tip: Enable Deletion Protection 🚫",
+            "content": "## A Simple Checkbox Saves Lives\n\nIn the RDS console, enable **Deletion Protection** for production databases. It prevents accidental deletion via console or CLI until you explicitly disable the protection."
+        }
+    ]
+}

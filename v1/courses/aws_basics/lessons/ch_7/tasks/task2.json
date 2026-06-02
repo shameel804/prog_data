@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_7",
+    "title": "Secure Subnets with NACLs",
+    "description": "Write a set of network ACL rules to protect a database subnet.",
+    "estimatedMinutes": 15,
+    "problemStatement": "You have a database subnet (10.0.21.0/24) that should only accept MySQL traffic (port 3306) from the application subnet (10.0.11.0/24). The database also needs to send responses back to the app servers, but no other outbound traffic should be allowed. Additionally, block all SSH (port 22) from any source.\n\nWrite the Network ACL rules (inbound and outbound) with appropriate rule numbers. Remember NACLs are stateless; both directions must be specified. Use a start rule number of 100 for allows, and include an explicit deny for SSH.",
+    "hints": [
+        "Inbound: allow MySQL from app subnet, deny SSH from anywhere, then deny all else.",
+        "Outbound: allow responses on ephemeral ports (1024-65535) to app subnet, deny all else.",
+        "Use rule numbers with gaps for later insertions."
+    ],
+    "expectedOutput": "A table or list of NACL rules.",
+    "solutionCode": "Inbound rules:\n100 – Allow TCP port 3306 from 10.0.11.0/24\n200 – Deny TCP port 22 from 0.0.0.0/0\n* – Deny all other traffic (implicit)\n\nOutbound rules:\n100 – Allow TCP ports 1024-65535 to 10.0.11.0/24 (ephemeral responses)\n200 – Deny TCP port 22 to 0.0.0.0/0 (block outbound SSH)\n* – Deny all other traffic (implicit)\n\nThis ensures the DB subnet only talks back to app servers on ephemeral ports, and all other traffic (including SSH) is blocked both ways."
+}

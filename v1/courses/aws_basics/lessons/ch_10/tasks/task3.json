@@ -1,0 +1,16 @@
+{
+    "id": "task3",
+    "chapterId": "ch_10",
+    "title": "Automate Isolation of a Compromised EC2 Instance",
+    "description": "Sketch a Lambda function and EventBridge rule to isolate an instance based on a GuardDuty finding.",
+    "estimatedMinutes": 20,
+    "problemStatement": "GuardDuty has detected a finding type `UnauthorizedAccess:EC2/MaliciousIPCaller` on an EC2 instance. You need to automatically isolate the instance to prevent further compromise.\n\nDescribe:\n- The EventBridge rule to capture this finding.\n- The Lambda function's logic (in pseudocode or Python) to isolate the instance (change its security group to a restrictive one and revoke the instance's IAM profile).\n- The IAM permissions the Lambda role needs.\n\nExplain the isolation steps and why they are effective.",
+    "hints": [
+        "EventBridge rule: event source `aws.guardduty`, detail‑type `GuardDuty Finding`, filter on `detail.type` for the specific finding.",
+        "Lambda: parse the instance ID from the finding, call `ec2:ModifyInstanceAttribute` to change security groups to a pre‑defined 'quarantine' group, and `ec2:DisassociateIamInstanceProfile` to remove the role.",
+        "Quarantine security group should have no inbound or outbound rules (or only a specific forensic network).",
+        "Permissions: `ec2:ModifyInstanceAttribute`, `ec2:DisassociateIamInstanceProfile`, `iam:RemoveRoleFromInstanceProfile`, plus CloudWatch logs."
+    ],
+    "expectedOutput": "EventBridge rule description, Lambda pseudocode, and IAM policy.",
+    "solutionCode": "EventBridge rule:\n- Event source: AWS services → GuardDuty.\n- Detail‑type: `GuardDuty Finding`.\n- Detail: `{ \"detail.type\": [\"UnauthorizedAccess:EC2/MaliciousIPCaller\"] }`.\n- Target: Lambda function `IsolateCompromisedInstance`.\n\nLambda pseudocode (Python/boto3):\n```python\nimport boto3\nec2 = boto3.client('ec2')\nQUARANTINE_SG = 'sg-quarantine'\n\ndef lambda_handler(event, context):\n    instance_id = event['detail']['resource']['instanceDetails']['instanceId']\n    # Change security groups to quarantine SG\n    ec2.modify_instance_attribute(\n        InstanceId=instance_id,\n        Groups=[QUARANTINE_SG]\n    )\n    # Disassociate IAM instance profile\n    ec2.disassociate_iam_instance_profile(\n        AssociationId=get_association_id(instance_id)  # need to describe first\n    )\n    print(f\"Isolated instance {instance_id}\")\n```\n\nIAM permissions for Lambda role:\n- `ec2:ModifyInstanceAttribute`\n- `ec2:DescribeInstances`\n- `ec2:DisassociateIamInstanceProfile`\n- `iam:RemoveRoleFromInstanceProfile` (if needed)\n- `logs:CreateLogStream`, `logs:PutLogEvents`\n\nEffectiveness: Changing the security group blocks all network traffic except to/from the quarantine group (which might have a forensic analysis instance). Revoking the IAM profile prevents the instance from making AWS API calls using its role, limiting data exfiltration. Combined, it stops both network‑based and API‑based malicious activity."
+}
