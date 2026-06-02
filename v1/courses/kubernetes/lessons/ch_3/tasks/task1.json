@@ -1,0 +1,14 @@
+{
+    "id": "task1",
+    "chapterId": "ch_3",
+    "title": "Deploy an App with a Manifest",
+    "description": "Write a Deployment YAML from scratch and deploy it to your cluster.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## 🎯 Goal\nCreate a Deployment named `web-app` that runs the `nginx:1.25` image with 2 replicas.\n\n### Steps\n1. Create a file `web-deploy.yaml`.\n2. Set `apiVersion: apps/v1`, `kind: Deployment`.\n3. Set metadata name: `web-app`.\n4. Spec: `replicas: 2`, selector matching `app: web`.\n5. Template labels `app: web` and container `nginx` image `nginx:1.25` with `containerPort: 80`.\n6. Apply the manifest: `kubectl apply -f web-deploy.yaml`.\n7. Verify:\n   - `kubectl get deployments`\n   - `kubectl get pods -l app=web` (should show 2)\n   - `kubectl get replicasets` (should show one ReplicaSet)\n8. Describe the Deployment and note the events.",
+    "hints": [
+        "If you forget the YAML structure, use `kubectl create deployment web-app --image=nginx:1.25 --replicas=2 --dry-run=client -o yaml > web-deploy.yaml` as a starting point.",
+        "Make sure the selector in the Deployment matches the labels in the template exactly."
+    ],
+    "expectedOutput": "Two Pods running, one ReplicaSet, and the Deployment status shows '2/2 ready'.",
+    "solutionCode": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: web-app\nspec:\n  replicas: 2\n  selector:\n    matchLabels:\n      app: web\n  template:\n    metadata:\n      labels:\n        app: web\n    spec:\n      containers:\n      - name: nginx\n        image: nginx:1.25\n        ports:\n        - containerPort: 80"
+}

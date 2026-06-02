@@ -1,0 +1,161 @@
+{
+    "id": "l3",
+    "chapterId": "ch_5",
+    "title": "Using ConfigMaps in Pods 🧩",
+    "description": "Consume ConfigMap data as environment variables, command arguments, and volume mounts.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Hands-on",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Three Ways to Use ConfigMaps 🛠️",
+            "content": "# Flexible consumption\n\n1. **Environment variables** – inject specific keys or all keys.\n2. **Command‑line arguments** – reference ConfigMap values in `args`.\n3. **Files in a volume** – mount the ConfigMap as a directory; each key becomes a file.\n\nAll methods keep your config separate from the image."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "1. As Environment Variables 🌱",
+            "content": "## Using `valueFrom.configMapKeyRef`\n\n```yaml\nenv:\n- name: APP_COLOR\n  valueFrom:\n    configMapKeyRef:\n      name: app-config\n      key: APP_COLOR\n```\n\nThis maps the key `APP_COLOR` from ConfigMap `app-config` to the env var `APP_COLOR`.\n\nTo import all keys as env vars:\n```yaml\nenvFrom:\n- configMapRef:\n    name: app-config\n```\nThis creates env vars for every key in the ConfigMap."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Env Var from ConfigMap 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What does `envFrom` with a ConfigMapRef do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Mounts the ConfigMap as a volume",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Creates environment variables for each key in the ConfigMap",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Creates a Service",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Deletes the ConfigMap",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`envFrom` populates the container's environment with all keys from the referenced ConfigMap.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "2. Command‑line Arguments 💻",
+            "content": "## Using $(VAR_NAME) syntax\n\nYou can reference ConfigMap env vars in the `command` or `args` fields:\n\n```yaml\nenv:\n- name: MESSAGE\n  valueFrom:\n    configMapKeyRef:\n      name: app-config\n      key: greeting\ncommand: [\"sh\", \"-c\"]\nargs: [\"echo $(MESSAGE)\"]\n```\n\nThis expands the variable at runtime."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Example: Args from ConfigMap",
+            "content": "Full Pod YAML snippet:",
+            "codeSnippet": "spec:\n  containers:\n  - name: busybox\n    image: busybox\n    command: [\"sh\", \"-c\"]\n    args: [\"echo The color is $(COLOR)\"]\n    env:\n    - name: COLOR\n      valueFrom:\n        configMapKeyRef:\n          name: app-config\n          key: APP_COLOR",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "3. ConfigMap as a Volume 📂",
+            "content": "## Mount configuration files directly\n\nEach key in a ConfigMap becomes a file in the mounted directory. Great for:\n- Nginx/Apache config files\n- Application properties files\n- JSON configuration\n\n```yaml\nvolumes:\n- name: config-volume\n  configMap:\n    name: nginx-conf\ncontainers:\n- name: nginx\n  image: nginx\n  volumeMounts:\n  - name: config-volume\n    mountPath: /etc/nginx/conf.d\n```\n\nIf the ConfigMap changes, the file is updated on the node (but the container may not reload automatically)."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "quiz",
+            "title": "Volume Mount 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "What happens to files when a ConfigMap mounted as a volume is updated?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The Pod restarts automatically",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The files on the node are updated, but the app may need a reload",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The old files remain until the Pod is deleted",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The update fails because the volume is immutable",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Kubelet syncs ConfigMap updates to the volume, but the application must react to file changes.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_8",
+            "type": "text",
+            "title": "Selecting Specific Keys with Volumes 🗂️",
+            "content": "## Using `items` to project only some keys\n\n```yaml\nvolumes:\n- name: config-volume\n  configMap:\n    name: game-config\n    items:\n    - key: game.properties\n      path: game.properties\n```\n\nThis mounts only `game.properties` into the volume. Without `items`, all keys become files."
+        },
+        {
+            "id": "s_l3_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Combine with immutable ConfigMaps\n\nFor production stability, mark ConfigMaps as `immutable: true` when you don't need hot‑reload. This prevents accidental updates and improves kubelet performance."
+        },
+        {
+            "id": "s_l3_10",
+            "type": "quiz",
+            "title": "ConfigMap Volume Options 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_3",
+                "type": "multiple_choice",
+                "question": "Which field restricts which keys from a ConfigMap appear in a volume?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "selector",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "items",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "keys",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "volumeKeys",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `items` array under `configMap` lets you pick specific keys and rename them.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

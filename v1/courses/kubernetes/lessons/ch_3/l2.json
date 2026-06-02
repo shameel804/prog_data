@@ -1,0 +1,135 @@
+{
+    "id": "l2",
+    "chapterId": "ch_3",
+    "title": "ReplicaSets – The Engine Under the Hood 🚗",
+    "description": "Discover the controller that counts and maintains Pod replicas.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Middle Manager 🧑‍💼",
+            "content": "# Deployment → ReplicaSet → Pod\n\nA Deployment does not directly create Pods. Instead:\n1. Deployment creates a **ReplicaSet**.\n2. ReplicaSet ensures the right number of Pods match its selector.\n3. If a Pod disappears, the ReplicaSet creates a replacement.\n\nWhen you update a Deployment (e.g., change the image), a **new ReplicaSet** is created for the new version, while the old one is scaled down."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Chain of Command 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the correct hierarchy?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Pod → ReplicaSet → Deployment",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Deployment → Pod → ReplicaSet",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Deployment → ReplicaSet → Pod",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "ReplicaSet → Deployment → Pod",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Deployment manages ReplicaSets; ReplicaSets manage Pods.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "ReplicaSet Anatomy 🔍",
+            "content": "## Three parts of a ReplicaSet\n\n```yaml\napiVersion: apps/v1\nkind: ReplicaSet\nmetadata:\n  name: my-rs\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: my-app\n  template:\n    metadata:\n      labels:\n        app: my-app\n    spec:\n      containers:\n        - name: nginx\n          image: nginx:1.25\n```\n\n- `replicas`: how many Pods to keep\n- `selector`: which Pods to count (must match template labels)\n- `template`: the Pod spec for new Pods"
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Labels and Selectors – The Glue 🏷️",
+            "content": "## How ReplicaSets find their Pods\n\nThe ReplicaSet’s `selector.matchLabels` must exactly match the labels in the Pod template. If a Pod with those labels already exists (and isn't owned by another controller), the ReplicaSet will adopt it.\n\nThis means you could accidentally “steal” a Pod by creating a ReplicaSet with a matching selector – but Deployments handle this safely via ownership references."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "quiz",
+            "title": "Selector Matching 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "true_false",
+                "question": "True or False: A ReplicaSet can adopt existing Pods that match its selector, even if they were created manually.",
+                "options": [],
+                "correctAnswer": true,
+                "explanation": "ReplicaSets acquire any Pods matching the selector, but Deployments use ownership references to avoid conflicts.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Self‑healing in Action 💓",
+            "content": "## The reconciliation loop\n\n1. ReplicaSet counts Pods with its label selector.\n2. Compares current count to `replicas`.\n3. If too few, creates new Pods using the template.\n4. If too many, deletes the excess.\n\nThis loop runs continuously, ensuring the desired state even if a node fails or a Pod is manually deleted."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "code",
+            "title": "See ReplicaSets in a Deployment",
+            "content": "After creating a Deployment, list its ReplicaSets:",
+            "codeSnippet": "kubectl get replicasets",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## You rarely create ReplicaSets directly\n\nDeployments provide the update mechanisms (rolling updates, rollback) that ReplicaSets lack. Always use Deployments unless you need custom update logic."
+        },
+        {
+            "id": "s_l2_9",
+            "type": "quiz",
+            "title": "ReplicaSet Function 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_3",
+                "type": "multiple_choice",
+                "question": "What action does a ReplicaSet take when too many Pods match its selector?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It adds labels to the extra Pods",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It deletes the excess Pods",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It scales up the Deployment",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It ignores them",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "To maintain the exact replica count, it terminates extra Pods.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

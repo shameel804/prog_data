@@ -1,0 +1,141 @@
+{
+    "id": "l4",
+    "chapterId": "ch_8",
+    "title": "Network Policies 🔒",
+    "description": "Control which Pods can talk to each other using a Kubernetes firewall.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Security",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "By Default, All Pods Can Communicate 🌐",
+            "content": "# No isolation out of the box\n\nIn Kubernetes, any Pod can talk to any other Pod across namespaces. That’s convenient but insecure. A compromised frontend Pod could directly access the database.\n\n**Network Policies** are firewall rules that restrict ingress (incoming) and egress (outgoing) traffic at the Pod level. They are implemented by the CNI plugin (Calico, Cilium, Weave, etc.). Not all CNIs support them – check your network plugin."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Default Behavior 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "true_false",
+                "question": "True or False: Without NetworkPolicies, Pods are isolated from each other by default.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "All Pods can communicate freely; NetworkPolicies add restrictions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "NetworkPolicy Structure 📐",
+            "content": "## YAML example\n\n```yaml\napiVersion: networking.k8s.io/v1\nkind: NetworkPolicy\nmetadata:\n  name: deny-all-ingress\n  namespace: secure\nspec:\n  podSelector: {}           # selects all Pods in the namespace\n  policyTypes:\n  - Ingress\n  ingress: []               # empty rule = deny all ingress\n```\n\nThis blocks ALL incoming traffic to all Pods in the `secure` namespace. You then add policies to allow specific traffic."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Selectors: PodSelector, NamespaceSelector, ipBlock 🎯",
+            "content": "## Who can talk?\n\n- **podSelector** – select Pods by labels in the same namespace.\n- **namespaceSelector** – allow traffic from specific namespaces (by label).\n- **ipBlock** – allow a CIDR range (e.g., office IP).\n\nExample – allow ingress from Pods with label `app: frontend`:\n```yaml\ningress:\n- from:\n  - podSelector:\n      matchLabels:\n        app: frontend\n  ports:\n  - port: 80\n    protocol: TCP\n```"
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Selector Combinations 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What happens if you define multiple `from` selectors in one ingress rule?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "All must match (AND)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Any can match (OR)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only the first one is used",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They are ignored",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Multiple `from` selectors are OR’ed; traffic allowed if any matches.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Egress Policies 📤",
+            "content": "## Control outgoing traffic\n\nBy default, all egress is allowed. You can restrict a Pod from calling external APIs:\n```yaml\negress:\n- to:\n  - podSelector:\n      matchLabels:\n        app: payment\n  ports:\n  - port: 443\n```\n\nThis allows outgoing connections only to payment Pods on port 443."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "code",
+            "title": "Apply a NetworkPolicy",
+            "content": "",
+            "codeSnippet": "kubectl apply -f deny-all.yaml\n# Test: exec into a Pod and try to access another service",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_8",
+            "type": "text",
+            "title": "Default Deny + Selective Allow 🛡️",
+            "content": "## Best practice\n\n1. Deny all ingress with a catch‑all policy.\n2. Add specific allow policies for necessary communications.\n\nFor example, a three‑tier app:\n- Frontend → Backend (allow ingress from frontend to backend on port 8080)\n- Backend → Database (allow ingress from backend to DB on port 5432)\n- Database denies everything else"
+        },
+        {
+            "id": "s_l4_9",
+            "type": "quiz",
+            "title": "Network Policy Best Practice 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_3",
+                "type": "multiple_choice",
+                "question": "What is the recommended approach for network security?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Allow all, then deny specific",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Deny all, then allow specific",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Use only namespace isolation",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Disable the CNI plugin",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Zero‑trust: default deny, then add minimal allow rules.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Not all CNIs support NetworkPolicies\n\nCalico, Cilium, Weave Net, and Antrea provide full support. Flannel does not. Check your provider."
+        }
+    ]
+}

@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_3",
+    "title": "Scale and Rollback",
+    "description": "Practice dynamic scaling, image update, and rollback.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## 🎯 Goal\nWith the Deployment `web-app` from Task 1 (or recreate it), perform the following operations:\n\n1. **Scale up** to 4 replicas: `kubectl scale deployment web-app --replicas=4`. Verify with `kubectl get pods`.\n2. **Scale down** to 1 replica.\n3. **Update the image** to `nginx:1.26` using `kubectl set image deployment/web-app nginx=nginx:1.26`.\n4. Watch the rollout with `kubectl rollout status deployment/web-app`.\n5. Check the rollout history: `kubectl rollout history deployment/web-app`.\n6. **Rollback** to the previous version: `kubectl rollout undo deployment/web-app`.\n7. Confirm the image reverted: `kubectl describe deployment web-app | grep Image`.\n8. Finally, delete the Deployment: `kubectl delete deployment web-app`.",
+    "hints": [
+        "If the image update fails (e.g., image not found), the rollout will stop and old Pods will remain. You can then `undo` to recover.",
+        "You can also edit the Deployment YAML directly and apply again for declarative scaling."
+    ],
+    "expectedOutput": "After each step, the number of Pods matches the replica count. After rollback, the image reverts to nginx:1.25.",
+    "solutionCode": "kubectl scale deployment web-app --replicas=4\nkubectl get pods\nkubectl scale deployment web-app --replicas=1\nkubectl set image deployment/web-app nginx=nginx:1.26\nkubectl rollout status deployment/web-app\nkubectl rollout history deployment/web-app\nkubectl rollout undo deployment/web-app\nkubectl describe deployment web-app | grep Image\nkubectl delete deployment web-app"
+}

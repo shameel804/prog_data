@@ -1,0 +1,126 @@
+{
+    "id": "l3",
+    "chapterId": "ch_11",
+    "title": "Prometheus – The Monitoring King 👑",
+    "description": "Dive into Prometheus architecture, deploy it with Helm, and write basic queries.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Monitoring",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Why Prometheus? 🔥",
+            "content": "# The industry standard for Kubernetes monitoring\n\nPrometheus is a time‑series database and monitoring system, purpose‑built for cloud‑native environments. It:\n- Pulls metrics from targets (Pods, nodes) via HTTP.\n- Stores data efficiently on disk.\n- Provides a powerful query language: **PromQL**.\n- Triggers alerts via Alertmanager.\n- Is natively integrated with Grafana.\n\nIt’s the heart of the modern observability stack."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Prometheus Architecture 🏗️",
+            "content": "## Key components\n\n- **Prometheus Server** – scrapes and stores metrics.\n- **Service Discovery** – automatically finds scrape targets via Kubernetes API.\n- **Alertmanager** – handles alerts, deduplication, routing.\n- **Pushgateway** – for short‑lived jobs to push metrics.\n- **Exporters** – sidecars that expose metrics from apps (e.g., node_exporter for host metrics).\n\nIn Kubernetes, Prometheus discovers Pods and Services with annotations."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Pull vs Push 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "How does Prometheus collect metrics by default?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Agents push metrics to it",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It pulls/scrapes HTTP endpoints",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It reads logs from files",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It queries the Kubernetes API directly",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Prometheus scrapes (pulls) metrics from targets over HTTP at regular intervals.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Deploying Prometheus with Helm 📦",
+            "content": "## Using the prometheus‑community chart\n\n```bash\nhelm repo add prometheus-community https://prometheus-community.github.io/helm-charts\nhelm repo update\nhelm install prometheus prometheus-community/kube-prometheus-stack -n monitoring --create-namespace\n```\n\nThis installs:\n- Prometheus server\n- Alertmanager\n- Grafana (pre‑configured)\n- Node exporters\n- kube‑state‑metrics\n\nAll in one command!"
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Access Prometheus UI",
+            "content": "Forward the Prometheus service port:",
+            "codeSnippet": "kubectl port-forward svc/prometheus-kube-prometheus-prometheus -n monitoring 9090:9090\n# Open http://localhost:9090",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "PromQL Basics 📊",
+            "content": "## Querying metrics\n\n- `up` – 1 if the target is up, 0 if down.\n- `rate(http_requests_total[5m])` – per‑second rate of HTTP requests over 5 minutes.\n- `container_memory_usage_bytes` – memory usage per container.\n- `sum(rate(container_cpu_usage_seconds_total[5m])) by (pod)` – total CPU per Pod.\n\nPromQL functions like `rate()`, `avg()`, `histogram_quantile()` make it extremely powerful."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "quiz",
+            "title": "PromQL Rate 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "What does `rate(http_requests_total[5m])` return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Total number of requests in the last 5 minutes",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Per‑second average rate of requests over the last 5 minutes",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Total requests since the server started",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The maximum request rate ever seen",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "rate() calculates the per‑second rate of increase, smoothed over the time window.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_8",
+            "type": "text",
+            "title": "Service Discovery in Kubernetes 🔍",
+            "content": "## Automatic target finding\n\nPrometheus uses Kubernetes API to discover Pods. You annotate your Pods:\n```yaml\nannotations:\n  prometheus.io/scrape: \"true\"\n  prometheus.io/port: \"8080\"\n  prometheus.io/path: \"/metrics\"\n```\n\nPrometheus will automatically scrape those Pods without manual configuration. The kube‑prometheus‑stack already configures discovery rules."
+        },
+        {
+            "id": "s_l3_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Combine Prometheus with Grafana (next lesson) for dashboards\n\nPrometheus UI is great for ad‑hoc queries, but Grafana gives you beautiful, shareable dashboards."
+        }
+    ]
+}

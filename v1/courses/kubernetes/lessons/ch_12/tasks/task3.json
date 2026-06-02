@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_12",
+    "title": "Drain a Node and Restore",
+    "description": "Practice node maintenance by cordoning, draining, and uncordoning a worker node.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## 🎯 Goal\nPerform a simulated node maintenance by safely moving Pods off a node, then bringing it back.\n\n### Prerequisites\n- A multi‑node cluster (or at least one worker node). For minikube, you can add a node: `minikube node add`.\n- Some Pods running on that node (a Deployment with replicas).\n\n### Steps\n1. Deploy a sample Deployment `nginx` with 2 replicas (they might spread). `kubectl create deployment nginx --image=nginx --replicas=2`.\n2. Identify a worker node: `kubectl get nodes`. Choose one.\n3. Check which Pods are on that node: `kubectl get pods -o wide`.\n4. Cordon the node: `kubectl cordon <node-name>`. This marks it as unschedulable.\n5. Verify that no new Pods can be scheduled there by trying to scale up a deployment (optional).\n6. Drain the node: `kubectl drain <node-name> --ignore-daemonsets --delete-emptydir-data`. Observe the eviction of Pods.\n   - If you have a PDB, ensure it's not violated; otherwise use `--force` (not recommended).\n7. After the drain, check that the Pods are now running on other nodes: `kubectl get pods -o wide`.\n8. (Simulate maintenance) Now uncordon the node: `kubectl uncordon <node-name>`.\n9. The node is again available for scheduling, but existing Pods won't move back automatically.\n10. Clean up: delete the Deployment.",
+    "hints": [
+        "If your cluster only has one node, you can't drain it completely because DaemonSets and some controllers need a place. For practice, use a second node or accept that some Pods can't be evicted.",
+        "Adding a node to minikube: `minikube node add`.",
+        "The `--force` flag should be used with caution; it can violate PDBs."
+    ],
+    "expectedOutput": "After draining, Pods from the target node are rescheduled elsewhere; after uncordon, the node returns to Ready,SchedulingDisabled state? Actually drain removes cordon, so it becomes Ready,SchedulingEnabled. Use `kubectl get nodes` to see.",
+    "solutionCode": "kubectl create deployment nginx --image=nginx --replicas=2\n# identify a node\nkubectl cordon worker-node-1\nkubectl drain worker-node-1 --ignore-daemonsets --delete-emptydir-data\n# check pods\nkubectl get pods -o wide\nkubectl uncordon worker-node-1\nkubectl delete deployment nginx"
+}

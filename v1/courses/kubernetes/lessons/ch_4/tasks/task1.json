@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_4",
+    "title": "Create and Test a ClusterIP Service",
+    "description": "Deploy a simple app and access it internally via a Service.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## 🎯 Goal\nDeploy an nginx Pod (via Deployment) and create a ClusterIP Service to access it from another Pod.\n\n### Steps\n1. Create a file `nginx-deploy.yaml` for a Deployment with name `nginx-svc-demo`, 1 replica, image `nginx:1.25`, label `app: nginx`.\n2. Apply it: `kubectl apply -f nginx-deploy.yaml`.\n3. Create a Service file `nginx-clusterip.yaml`:\n   - type: ClusterIP\n   - selector: `app: nginx`\n   - port: 80, targetPort: 80\n   - name: `nginx-svc`\n4. Apply the Service: `kubectl apply -f nginx-clusterip.yaml`.\n5. Verify the Service: `kubectl get svc nginx-svc`. Note the ClusterIP.\n6. Run a temporary debug Pod: `kubectl run -it --rm debug --image=busybox --restart=Never -- sh`.\n7. Inside the debug Pod, run `wget -O- http://nginx-svc` or `wget -O- http://<ClusterIP>`. You should see the nginx welcome page.\n8. Exit and the debug Pod is deleted automatically.",
+    "hints": [
+        "Use `kubectl get pods -l app=nginx -o wide` to see the Pod IP; compare with the Service endpoints (`kubectl get endpoints nginx-svc`).",
+        "If `wget` is not available in busybox, use `nslookup nginx-svc` to at least verify DNS resolution.",
+        "You can also use `curl` if you use an image like `curlimages/curl`."
+    ],
+    "expectedOutput": "The debug Pod can fetch the nginx page via the Service name or ClusterIP.",
+    "solutionCode": "# nginx-deploy.yaml\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: nginx-svc-demo\nspec:\n  replicas: 1\n  selector:\n    matchLabels:\n      app: nginx\n  template:\n    metadata:\n      labels:\n        app: nginx\n    spec:\n      containers:\n      - name: nginx\n        image: nginx:1.25\n        ports:\n        - containerPort: 80\n---\n# nginx-clusterip.yaml\napiVersion: v1\nkind: Service\nmetadata:\n  name: nginx-svc\nspec:\n  selector:\n    app: nginx\n  ports:\n    - port: 80\n      targetPort: 80\n  type: ClusterIP"
+}

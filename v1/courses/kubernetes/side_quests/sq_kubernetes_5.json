@@ -1,0 +1,82 @@
+{
+    "id": "sq_kubernetes_5",
+    "title": "Helm & Security Showdown 🔐",
+    "triggerChapterIndex": 9,
+    "metadata": {
+        "type": "prediction"
+    },
+    "questions": [
+        {
+            "id": "sq_kubernetes_5_q1",
+            "type": "code_output",
+            "question": "What will this Helm command produce?",
+            "codeSnippet": "helm install my-app bitnami/nginx --dry-run --debug",
+            "correctOutput": "YAML output of all Kubernetes resources that would be created, along with debug info",
+            "correctAnswer": "YAML output of all resources with debug information",
+            "options": [],
+            "explanation": "`--dry-run --debug` renders the templates and prints the manifests without applying them, plus debug logs.",
+            "xpReward": 25,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_kubernetes_5_q2",
+            "type": "code_output",
+            "question": "Given this Role and RoleBinding, what can the ServiceAccount 'reader' do?",
+            "codeSnippet": "apiVersion: rbac.authorization.k8s.io/v1\nkind: Role\nmetadata:\n  name: pod-reader\n  namespace: default\nrules:\n- apiGroups: [\"\"]\n  resources: [\"pods\"]\n  verbs: [\"get\", \"list\"]\n---\napiVersion: rbac.authorization.k8s.io/v1\nkind: RoleBinding\nmetadata:\n  name: read-pods\n  namespace: default\nsubjects:\n- kind: ServiceAccount\n  name: reader\n  namespace: default\nroleRef:\n  kind: Role\n  name: pod-reader\n  apiGroup: rbac.authorization.k8s.io",
+            "correctOutput": "Get and list Pods in the default namespace",
+            "correctAnswer": "Get and list Pods in the default namespace",
+            "options": [],
+            "explanation": "The Role allows get and list on pods, and the RoleBinding binds it to the 'reader' ServiceAccount in the same namespace.",
+            "xpReward": 25,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_kubernetes_5_q3",
+            "type": "code_output",
+            "question": "What will happen if you apply this SecurityContext?",
+            "codeSnippet": "securityContext:\n  runAsUser: 0\n  runAsNonRoot: true",
+            "correctOutput": "The Pod will fail to start because runAsNonRoot conflicts with root user (UID 0)",
+            "correctAnswer": "Pod creation fails due to conflicting settings",
+            "options": [],
+            "explanation": "runAsNonRoot=true requires the user not to be 0, but runAsUser sets 0. The API server will reject the Pod.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_kubernetes_5_q4",
+            "type": "code_output",
+            "question": "What is the output of this Helm command?",
+            "codeSnippet": "helm get values my-release",
+            "correctOutput": "USER-SUPPLIED VALUES:\nnull",
+            "correctAnswer": "The user‑supplied values (or null if none were overridden)",
+            "options": [],
+            "explanation": "`helm get values` shows the values that were passed during installation or upgrade. If no custom values, it prints `null` or an empty set.",
+            "xpReward": 25,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_kubernetes_5_q5",
+            "type": "code_output",
+            "question": "After running this command, what will the cluster state be?",
+            "codeSnippet": "helm upgrade my-release bitnami/nginx --set replicaCount=5 --atomic",
+            "correctOutput": "The release is upgraded to 5 replicas. If the upgrade fails, it's rolled back automatically.",
+            "correctAnswer": "The release is upgraded with 5 replicas; automatic rollback on failure",
+            "options": [],
+            "explanation": "`--atomic` ensures that if the upgrade fails, it rolls back to the previous successful version.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_kubernetes_5_q6",
+            "type": "code_output",
+            "question": "What is the effect of this ClusterRole?",
+            "codeSnippet": "apiVersion: rbac.authorization.k8s.io/v1\nkind: ClusterRole\nmetadata:\n  name: node-viewer\nrules:\n- apiGroups: [\"\"]\n  resources: [\"nodes\"]\n  verbs: [\"get\", \"list\", \"watch\"]",
+            "correctOutput": "Allows reading (get, list, watch) of node resources across the entire cluster",
+            "correctAnswer": "Allows reading node information cluster‑wide",
+            "options": [],
+            "explanation": "Nodes are cluster‑scoped, so a ClusterRole is needed. This role grants read‑only access to all nodes.",
+            "xpReward": 25,
+            "difficulty": 2
+        }
+    ]
+}

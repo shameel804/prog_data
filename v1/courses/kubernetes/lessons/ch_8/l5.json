@@ -1,0 +1,129 @@
+{
+    "id": "l5",
+    "chapterId": "ch_8",
+    "title": "Advanced Ingress & Network Policy Patterns ⚙️",
+    "description": "Canary releases, URL rewrites, and combining policies for zero‑trust.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Canary Deployments with Ingress 🐤",
+            "content": "# Gradual traffic shifting\n\nYou can release a new version to a small percentage of users using Ingress annotations (nginx‑specific):\n\n```yaml\napiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: app-canary\n  annotations:\n    nginx.ingress.kubernetes.io/canary: \"true\"\n    nginx.ingress.kubernetes.io/canary-weight: \"10\"\nspec:\n  rules:\n  - host: app.example.com\n    http:\n      paths:\n      - path: /\n        pathType: Prefix\n        backend:\n          service:\n            name: app-v2\n            port:\n              number: 80\n```\n\n10% of traffic goes to `app-v2`, the rest to the main Ingress (without canary)."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Canary Example Setup",
+            "content": "You need two Ingresses sharing the same host: one main, one canary.",
+            "codeSnippet": "# Main Ingress (no canary annotation)\nkubectl apply -f app-main.yaml\n# Canary Ingress (with annotation)\nkubectl apply -f app-canary.yaml",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Canary Weight 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which annotation enables canary traffic splitting in NGINX Ingress?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "nginx.ingress.kubernetes.io/canary: \"true\"",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "nginx.ingress.kubernetes.io/rewrite-target",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "traefik.ingress.kubernetes.io/canary",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "service.alpha.kubernetes.io/canary",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The canary annotation is specific to the NGINX controller.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "URL Rewrites and Redirects ↩️",
+            "content": "## Modify paths before hitting the backend\n\nUsing NGINX annotations:\n- `rewrite-target`: rewrite the request URI before sending to backend.\n- `ssl-redirect`: force HTTPS.\n\n```yaml\nannotations:\n  nginx.ingress.kubernetes.io/rewrite-target: /$2\nspec:\n  rules:\n  - host: app.example.com\n    http:\n      paths:\n      - path: /old-api(/|$)(.*)\n        pathType: Prefix\n        backend:\n          service:\n            name: new-api-svc\n            port:\n              number: 80\n```\n\nRequests to `/old-api/users` become `/users` to the backend."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "NetworkPolicy with Namespace Selectors 🏢",
+            "content": "## Cross‑namespace communication control\n\n```yaml\napiVersion: networking.k8s.io/v1\nkind: NetworkPolicy\nmetadata:\n  name: allow-from-monitoring\n  namespace: prod\nspec:\n  podSelector:\n    matchLabels:\n      app: backend\n  policyTypes:\n  - Ingress\n  ingress:\n  - from:\n    - namespaceSelector:\n        matchLabels:\n          purpose: monitoring\n    ports:\n    - port: 9090\n```\n\nAllows pods in namespaces labeled `purpose=monitoring` to access port 9090 on backend Pods."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "code",
+            "title": "Label a Namespace for NetworkPolicy",
+            "content": "",
+            "codeSnippet": "kubectl label namespace monitoring purpose=monitoring\nkubectl apply -f np-allow-monitoring.yaml",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Combining Ingress and NetworkPolicy 🧱",
+            "content": "## Defense in depth\n\nUse Ingress for L7 routing (host/path) and NetworkPolicy for L3/L4 restrictions. For example:\n- Ingress: route `api.example.com` to `api-svc`.\n- NetworkPolicy: allow traffic to `api-svc` only from the Ingress controller’s namespace.\n\nThis ensures even if an attacker compromises a Pod in another namespace, they cannot bypass the Ingress controller."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "quiz",
+            "title": "Defense in Depth 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "Why would you restrict ingress to a backend Service to only the Ingress controller’s namespace?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To improve Ingress performance",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To force all external traffic through the Ingress controller (no direct Pod access)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To enable TLS",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To reduce memory usage",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It enforces that only the Ingress controller can route to the backend, preventing bypass.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use Cilium for eBPF‑based policies\n\nCilium provides fine‑grained L7 policies (HTTP method, API path) beyond standard NetworkPolicies. It also offers deep observability."
+        }
+    ]
+}

@@ -1,0 +1,170 @@
+{
+    "id": "l5",
+    "chapterId": "ch_10",
+    "title": "Securing Pods with SecurityContexts 🧤",
+    "description": "Restrict what containers can do at runtime with security contexts and Pod security standards.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Containers Are Powerful by Default 💪",
+            "content": "# Root access, all capabilities\n\nBy default, containers can:\n- Run as root (UID 0)\n- Use all Linux capabilities\n- Write to the filesystem\n- Access host network and devices\n\nA compromised container can escape to the host. **SecurityContext** lets you lock this down."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "SecurityContext Levels 🎛️",
+            "content": "## Pod‑level and container‑level\n\nYou can set a `securityContext`:\n- **At Pod level** – applies to all containers in the Pod (e.g., `runAsUser`, `fsGroup`).\n- **At container level** – overrides/adds settings for a specific container.\n\nContainer settings take precedence over Pod settings."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "SecurityContext YAML Example",
+            "content": "A Pod running as non‑root with read‑only filesystem:",
+            "codeSnippet": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: secure-pod\nspec:\n  securityContext:\n    runAsUser: 1000\n    runAsGroup: 3000\n    fsGroup: 2000\n  containers:\n  - name: app\n    image: nginx\n    securityContext:\n      allowPrivilegeEscalation: false\n      readOnlyRootFilesystem: true\n      capabilities:\n        drop: [\"ALL\"]\n        add: [\"NET_BIND_SERVICE\"]",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Container vs Pod 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "If both Pod and container set `runAsUser`, which one applies?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Pod always wins",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Container overrides Pod",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They merge",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It’s invalid to set both",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Container‑level settings take precedence for that container.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Key SecurityContext Fields 🔑",
+            "content": "## The essential ones\n\n- **runAsNonRoot** – if true, container must not run as UID 0; the kubelet will refuse to start it.\n- **runAsUser** – UID to run the container process.\n- **readOnlyRootFilesystem** – mounts the root filesystem as read‑only (forces writable dirs to be volumes).\n- **allowPrivilegeEscalation** – if false, prevents the process from gaining more privileges (e.g., via setuid).\n- **capabilities** – Linux capabilities to drop or add. Drop `ALL` and add only what’s needed.\n- **seccompProfile** – restrict syscalls with a seccomp profile (`RuntimeDefault` is a good start)."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Dropping Capabilities ✂️",
+            "content": "## Least privilege for system calls\n\nBy default, containers have many Linux capabilities. You can drop all and add back only essentials:\n```yaml\nsecurityContext:\n  capabilities:\n    drop: [\"ALL\"]\n    add: [\"NET_BIND_SERVICE\"]\n```\n\n`NET_BIND_SERVICE` allows binding to ports <1024 (like port 80). Without it, a non‑root user can’t start an HTTP server on a privileged port."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Capability Best Practice 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What is the recommended capability strategy?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Keep all defaults",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Drop ALL and add back only required capabilities",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Add SYS_ADMIN to everything",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Capabilities don’t matter",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Principle of least privilege: drop everything, then add what’s truly needed.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_8",
+            "type": "text",
+            "title": "Pod Security Admission (PSA) 🛡️",
+            "content": "## Enforcing security at the namespace level\n\nKubernetes 1.25+ replaced PodSecurityPolicy (PSP) with a built‑in **Pod Security Admission** controller. It lets you label namespaces with a **Pod Security Standard**:\n- **privileged** – unrestricted.\n- **baseline** – prevents known privilege escalations.\n- **restricted** – follows Pod hardening best practices (run as non‑root, drop capabilities, etc.).\n\nExample label:\n```bash\nkubectl label ns my-ns pod-security.kubernetes.io/enforce=restricted\n```\n\nThis will reject any Pod that doesn’t meet the restricted profile."
+        },
+        {
+            "id": "s_l5_9",
+            "type": "code",
+            "title": "Label a Namespace for Security",
+            "content": "",
+            "codeSnippet": "kubectl label ns my-ns pod-security.kubernetes.io/enforce=baseline\nkubectl label ns my-ns pod-security.kubernetes.io/warn=restricted",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_10",
+            "type": "quiz",
+            "title": "Pod Security 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_3",
+                "type": "multiple_choice",
+                "question": "What does the 'restricted' Pod Security Standard require?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "All containers must run as root",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Pods must run as non‑root, drop all capabilities, use read‑only root filesystem, etc.",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "No network access allowed",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Must use a ServiceAccount",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The restricted level enforces strong security defaults for Pods.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_11",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Combine SecurityContext with NetworkPolicies\n\nSecurityContext restricts what a container can do *inside*; NetworkPolicies restrict who it can talk to. Defense in depth!"
+        }
+    ]
+}

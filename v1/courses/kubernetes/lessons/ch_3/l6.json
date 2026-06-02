@@ -1,0 +1,150 @@
+{
+    "id": "l6",
+    "chapterId": "ch_3",
+    "title": "Deployment Strategies & Tuning ⚙️",
+    "description": "Fine‑tune the rollout process with maxSurge, maxUnavailable, and other strategies.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Deployment Strategies 🗺️",
+            "content": "# Two built‑in strategies\n\n1. **RollingUpdate** (default) – replace Pods gradually.\n2. **Recreate** – kill all existing Pods before creating new ones (causes downtime).\n\nYou set it in the spec:\n```yaml\nspec:\n  strategy:\n    type: RollingUpdate\n```\n\nWe’ll focus on RollingUpdate because it’s the production standard."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "Tuning RollingUpdate Parameters 🎛️",
+            "content": "## maxSurge and maxUnavailable\n\nThese control the pace of the rollout:\n- **maxSurge**: how many Pods can be created above the desired number during an update. Can be an integer or percentage (default 25%).\n- **maxUnavailable**: how many Pods can be unavailable during the update. Also default 25%.\n\n```yaml\nspec:\n  strategy:\n    type: RollingUpdate\n    rollingUpdate:\n      maxSurge: 1\n      maxUnavailable: 0\n```\nThis example ensures no downtime (maxUnavailable=0) and allows at most one extra Pod."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "RollingUpdate Parameters 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "If replicas=10, maxSurge=25% and maxUnavailable=25%, how many Pods can be created above the desired count?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "2 (rounded down)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "3 (rounded up)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "25",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "0",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "25% of 10 is 2.5; Kubernetes rounds up to 3.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Zero‑Downtime Deployments ✅",
+            "content": "## The magic formula\n\nTo ensure no request is dropped, set:\n- `maxUnavailable: 0` – no old Pod is killed until a new one is Ready.\n- `maxSurge: 1` (or more) – allow an extra Pod to be created so there’s always one available.\n\nAlso ensure your Pods have readiness probes, so they don't receive traffic until truly ready."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "code",
+            "title": "Example: Zero‑Downtime Spec",
+            "content": "Part of a Deployment YAML:",
+            "codeSnippet": "spec:\n  replicas: 3\n  strategy:\n    type: RollingUpdate\n    rollingUpdate:\n      maxSurge: 1\n      maxUnavailable: 0\n  template:\n    spec:\n      containers:\n      - name: app\n        image: myapp:v2\n        readinessProbe:\n          httpGet:\n            path: /health\n            port: 8080\n          initialDelaySeconds: 5\n          periodSeconds: 5",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_6",
+            "type": "quiz",
+            "title": "Zero‑Downtime 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "true_false",
+                "question": "True or False: Setting maxUnavailable to 0 alone guarantees zero downtime.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "You also need readiness probes so new Pods aren't considered available until they can serve traffic.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_7",
+            "type": "text",
+            "title": "Recreate Strategy 💣",
+            "content": "## When you need a clean start\n\nRecreate kills all old Pods before creating new ones. Use it when:\n- Your app cannot handle two versions running concurrently (e.g., database schema changes).\n- You want a quick, clean cutover.\n\n```yaml\nspec:\n  strategy:\n    type: Recreate\n```\n\nDownside: downtime proportional to Pod startup time."
+        },
+        {
+            "id": "s_l6_8",
+            "type": "text",
+            "title": "Pausing and Resuming Rollouts ⏯️",
+            "content": "## Fine‑grained control\n\nYou can pause a rolling update midway:\n```bash\nkubectl rollout pause deployment/nginx-deploy\n```\nKubernetes will stop creating/killing Pods. You can then resume:\n```bash\nkubectl rollout resume deployment/nginx-deploy\n```\n\nUseful for canary deployments (manually verify a few new Pods before proceeding)."
+        },
+        {
+            "id": "s_l6_9",
+            "type": "code",
+            "title": "Pause/Resume Example",
+            "content": "",
+            "codeSnippet": "kubectl set image deployment/nginx-deploy nginx=nginx:1.26\nkubectl rollout pause deployment/nginx-deploy\n# Wait, check some new Pods\nkubectl rollout resume deployment/nginx-deploy",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_10",
+            "type": "quiz",
+            "title": "Rollout Pause 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_3",
+                "type": "multiple_choice",
+                "question": "What happens when you pause a rolling update?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The Deployment is deleted",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "New Pods stop being created, old Pods stop being killed",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "All Pods are reverted to the old version",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The update speed increases",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Pausing freezes the current state of the rollout; you can inspect and then resume.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_11",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Check rollout history details\nUse `kubectl rollout history deployment/<name> --revision=N` to see the Pod template of a specific revision. Very handy for debugging."
+        }
+    ]
+}

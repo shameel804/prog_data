@@ -1,0 +1,170 @@
+{
+    "id": "l5",
+    "chapterId": "ch_3",
+    "title": "Rolling Updates & Rollbacks 🔄",
+    "description": "Update your application image without downtime and undo bad changes.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Operations",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "The Need for Zero‑Downtime Updates 🚦",
+            "content": "# Users hate downtime\n\nIf you delete all Pods and then create new ones, your app is unavailable. A **rolling update** replaces Pods gradually, ensuring some instances are always serving traffic.\n\nKubernetes Deployments offer this by default."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Triggering a Rolling Update 🎬",
+            "content": "## Change the image\n\nThe easiest trigger is updating the container image. You can do it imperatively:\n```bash\nkubectl set image deployment/nginx-deploy nginx=nginx:1.26\n```\nOr declaratively: edit `deploy.yaml` and apply.\n\nKubernetes creates a new ReplicaSet, starts new Pods, and terminates old ones."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Update Trigger 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which command updates the image of a Deployment named 'api'?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "kubectl upgrade deployment api --image=api:v2",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "kubectl set image deployment/api api=api:v2",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "kubectl patch deployment api -p 'image: api:v2'",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "kubectl apply image api:v2",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`kubectl set image` is the dedicated subcommand for updating images.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "The Rolling Update Process 🎢",
+            "content": "## Step by step\n\n1. A new ReplicaSet is created with the updated Pod template.\n2. New Pods are started (up to `maxSurge` extra Pods).\n3. Once new Pods are Ready, some old Pods are terminated (up to `maxUnavailable`).\n4. Repeat until the desired replicas are all new Pods.\n5. The old ReplicaSet is scaled down to 0.\n\nYou can watch the rollout with:\n```bash\nkubectl rollout status deployment/nginx-deploy\n```"
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Watch a Rollout",
+            "content": "After updating, track progress:",
+            "codeSnippet": "kubectl rollout status deployment/nginx-deploy\n# Also see history:\nkubectl rollout history deployment/nginx-deploy",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Rollout Status 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "How do you check if a rolling update is complete?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "kubectl get deployments -w",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "kubectl describe deployment",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "kubectl rollout status deployment/<name>",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "kubectl logs deployment/<name>",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`rollout status` blocks until the rollout is complete or fails.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Rolling Back a Bad Update ⏪",
+            "content": "## Undo the mistake\n\nIf the new version has a bug, you can rollback to the previous revision:\n```bash\nkubectl rollout undo deployment/nginx-deploy\n```\nThis goes back to the previous ReplicaSet.\n\nTo rollback to a specific revision:\n```bash\nkubectl rollout undo deployment/nginx-deploy --to-revision=2\n```\nYou can see available revisions with `kubectl rollout history deployment/nginx-deploy`."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "code",
+            "title": "Rollback Example",
+            "content": "If the latest update breaks things, instantly revert:",
+            "codeSnippet": "kubectl rollout undo deployment/nginx-deploy\n# Wait for it:\nkubectl rollout status deployment/nginx-deploy",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_9",
+            "type": "quiz",
+            "title": "Rollback Command 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_3",
+                "type": "multiple_choice",
+                "question": "Which command reverts a Deployment to the previous revision?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "kubectl rollback deployment/...",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "kubectl rollout undo deployment/...",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "kubectl revert deployment/...",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "kubectl undo deployment/...",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`kubectl rollout undo` is the correct subcommand.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_10",
+            "type": "text",
+            "title": "Revision Limits 📚",
+            "content": "## How many old ReplicaSets are kept?\n\nBy default, Kubernetes keeps the 10 most recent ReplicaSets (controlled by `spec.revisionHistoryLimit`). Older ones are deleted. Adjust this if you need a longer audit trail.\n\n```yaml\nspec:\n  revisionHistoryLimit: 5\n```"
+        },
+        {
+            "id": "s_l5_11",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `--record` (deprecated but useful)\n\nIn older versions, `kubectl apply --record` recorded the command in the revision history. Now, the Deployment records the change automatically in its annotations."
+        }
+    ]
+}

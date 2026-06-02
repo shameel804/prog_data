@@ -1,0 +1,149 @@
+{
+    "id": "l1",
+    "chapterId": "ch_3",
+    "title": "Why Deployments? 🤷‍♂️",
+    "description": "Understand the limitations of standalone Pods and why you need a higher‑level controller.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Motivation",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The Fragile Pod 🥚",
+            "content": "# Pods are ephemeral\n\nA Pod created directly (like we did in Chapter 2) has a problem: if it dies, **nobody brings it back**. The node could crash, the container could fail, or a manual delete removes it forever.\n\nWe need something that:\n- Ensures a specified number of replicas are always running\n- Handles node failures gracefully\n- Enables updates without downtime\n- Manages rollback if an update goes wrong\n\nThat’s exactly what a **Deployment** does."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What happens when a bare Pod is deleted?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Kubernetes automatically recreates it",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It is gone forever unless another controller manages it",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It goes into a Pending state until manually restored",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The node is restarted",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Bare Pods have no self‑healing; you need a Deployment or ReplicaSet for that.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "Enter the Deployment 🦸",
+            "content": "## A controller that watches over your Pods\n\nA Deployment is a Kubernetes object that manages a set of Pods. It defines:\n- **Replicas** – how many identical Pods to run\n- **Selector** – how to identify which Pods belong to it\n- **Template** – the Pod spec (container images, ports, etc.)\n\nBehind the scenes, it creates and manages a **ReplicaSet**, which in turn creates the Pods."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "What You Get for Free 🎁",
+            "content": "## Out‑of‑the‑box superpowers\n\n- **Self‑healing**: if a Pod dies, a new one is started automatically\n- **Scaling**: change replicas with a command or a YAML edit\n- **Rolling updates**: replace Pods one by one with a new version\n- **Rollback**: undo a bad update with a single command\n- **Versioning**: each change creates a new revision you can track\n\nAll of this without writing a line of custom orchestration code."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "quiz",
+            "title": "Deployment Benefits 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "Which feature is NOT provided by a Deployment?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Self‑healing of failed Pods",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Automated storage provisioning",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Rolling updates",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Rollback to a previous version",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Storage is handled by PersistentVolumes, not directly by Deployments.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_6",
+            "type": "text",
+            "title": "Deployment vs. Pod – The Analogy 🎭",
+            "content": "## Think of a manager and workers\n\n- A bare Pod is a freelance worker – if they don’t show up, nobody notices.\n- A Deployment is a staffing agency that guarantees a certain number of workers on the job at all times. If one calls in sick, a replacement is sent immediately.\n\nYou tell the agency **what** you need (image, ports, replica count) and they make it happen."
+        },
+        {
+            "id": "s_l1_7",
+            "type": "code",
+            "title": "Imperative Deployment Creation",
+            "content": "You can create a Deployment with one command (for quick tests):",
+            "codeSnippet": "kubectl create deployment my-app --image=nginx:1.25 --replicas=3",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_8",
+            "type": "quiz",
+            "title": "Quick Syntax 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_3",
+                "type": "multiple_choice",
+                "question": "Which flag sets the number of replicas in the imperative command?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "--port",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "--image",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "--replicas",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "--count",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`--replicas` (or `--replicas=3`) defines how many Pods to create.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

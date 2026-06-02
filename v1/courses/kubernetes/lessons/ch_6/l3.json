@@ -1,0 +1,141 @@
+{
+    "id": "l3",
+    "chapterId": "ch_6",
+    "title": "PersistentVolumes & PersistentVolumeClaims 🧾",
+    "description": "Decouple storage from Pods using PV and PVC abstractions.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The Problem with Hard‑Coded Volumes 🎯",
+            "content": "# Pod specs shouldn’t know about storage details\n\nA developer shouldn’t need to know the EBS volume ID or NFS server IP. Kubernetes introduces two API objects:\n- **PersistentVolume (PV)** – a piece of storage in the cluster (provisioned by admin or dynamically).\n- **PersistentVolumeClaim (PVC)** – a request for storage by a user.\n\nPods reference PVCs, not specific PVs. This is similar to how a Pod requests CPU/memory without knowing the node."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "PersistentVolume (PV) 🗄️",
+            "content": "## Cluster‑wide storage resource\n\n```yaml\napiVersion: v1\nkind: PersistentVolume\nmetadata:\n  name: pv-aws\nspec:\n  capacity:\n    storage: 20Gi\n  accessModes:\n    - ReadWriteOnce\n  awsElasticBlockStore:\n    volumeID: vol-0a1b2c3d\n    fsType: ext4\n```\n\n- PV is a cluster resource (not namespaced).\n- It has a lifecycle independent of any Pod.\n- It can be statically created or dynamically provisioned."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Access Modes 🔑",
+            "content": "## How PVs can be mounted\n\n- **ReadWriteOnce (RWO)** – read/write by a single node (common for block storage).\n- **ReadOnlyMany (ROX)** – read‑only by many nodes.\n- **ReadWriteMany (RWX)** – read/write by many nodes (requires shared filesystem like NFS, CephFS).\n\nNot all storage backends support all modes."
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "Access Modes 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which access mode allows a volume to be written from multiple nodes simultaneously?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "ReadWriteOnce",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "ReadOnlyMany",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "ReadWriteMany",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "WriteOnceReadMany",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "RWX volumes support concurrent read‑write from multiple nodes.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "PersistentVolumeClaim (PVC) 📋",
+            "content": "## A user’s request for storage\n\n```yaml\napiVersion: v1\nkind: PersistentVolumeClaim\nmetadata:\n  name: my-pvc\nspec:\n  accessModes:\n    - ReadWriteOnce\n  resources:\n    requests:\n      storage: 10Gi\n```\n\n- PVC is namespaced.\n- Kubernetes finds a matching PV (size >= request, matching access modes).\n- If no PV matches, the PVC stays Pending until one is available (or dynamic provisioning kicks in)."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "code",
+            "title": "Create PVC",
+            "content": "Apply and check status:",
+            "codeSnippet": "kubectl apply -f pvc.yaml\nkubectl get pvc",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Using PVC in a Pod 🔌",
+            "content": "## Finally, mount it!\n\n```yaml\nspec:\n  volumes:\n  - name: app-storage\n    persistentVolumeClaim:\n      claimName: my-pvc\n  containers:\n  - name: app\n    image: nginx\n    volumeMounts:\n    - name: app-storage\n      mountPath: /var/data\n```\n\nThe Pod doesn’t know anything about the underlying storage – just the PVC name."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "quiz",
+            "title": "PVC Binding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "What happens if a PVC requests 5Gi and no PV has that capacity?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The Pod using it starts anyway",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The PVC stays Pending until a matching PV appears or dynamic provisioning creates one",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Kubernetes automatically creates a 5Gi emptyDir",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The PVC is rejected",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "PVC waits for a suitable PV; with dynamic provisioning, a StorageClass can auto‑create it.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_9",
+            "type": "text",
+            "title": "Reclaim Policy ♻️",
+            "content": "## What happens when PVC is deleted?\n\n- **Retain** – PV is released but not deleted; admin must manually clean up the data.\n- **Delete** – both PV and the associated storage asset (e.g., cloud disk) are deleted.\n- **Recycle** – deprecated; basic scrub (`rm -rf /`) and make available again.\n\nSet in the PV’s `persistentVolumeReclaimPolicy`."
+        },
+        {
+            "id": "s_l3_10",
+            "type": "quiz",
+            "title": "Reclaim Policy 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_3",
+                "type": "true_false",
+                "question": "True or False: The 'Delete' reclaim policy automatically removes the cloud disk when the PVC is deleted.",
+                "options": [],
+                "correctAnswer": true,
+                "explanation": "With 'Delete', the underlying storage asset is deleted along with the PV.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

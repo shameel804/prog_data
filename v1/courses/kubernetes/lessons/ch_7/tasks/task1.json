@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_7",
+    "title": "Set Resource Limits and Observe QoS",
+    "description": "Deploy Pods with different resource settings and check their QoS classes.",
+    "estimatedMinutes": 10,
+    "problemStatement": "## 🎯 Goal\nUnderstand the three QoS classes by creating Pods with different resource configurations.\n\n### Steps\n1. Create a Pod YAML `guaranteed-pod.yaml` with one container that has equal requests and limits for CPU and memory (e.g., `cpu: 100m, memory: 128Mi` both in requests and limits).\n2. Create a Pod YAML `burstable-pod.yaml` with requests lower than limits, e.g., `requests: cpu: 100m, memory: 128Mi`, `limits: cpu: 200m, memory: 256Mi`.\n3. Create a Pod YAML `besteffort-pod.yaml` with no resources specified at all.\n4. Apply all three Pods.\n5. For each, run `kubectl describe pod <name> | grep QoS` and note the class (Guaranteed, Burstable, BestEffort).\n6. Clean up by deleting all three Pods.",
+    "hints": [
+        "Guaranteed requires every container to have both CPU and memory requests and limits, and they must be equal.",
+        "Burstable: at least one container has a request or limit, but not all are equal.",
+        "BestEffort: no resources section at all."
+    ],
+    "expectedOutput": "Each Pod shows its respective QoS Class in the describe output.",
+    "solutionCode": "# guaranteed-pod.yaml\napiVersion: v1\nkind: Pod\nmetadata:\n  name: guaranteed-pod\nspec:\n  containers:\n  - name: app\n    image: nginx\n    resources:\n      requests:\n        cpu: \"100m\"\n        memory: \"128Mi\"\n      limits:\n        cpu: \"100m\"\n        memory: \"128Mi\"\n---\n# burstable-pod.yaml\napiVersion: v1\nkind: Pod\nmetadata:\n  name: burstable-pod\nspec:\n  containers:\n  - name: app\n    image: nginx\n    resources:\n      requests:\n        cpu: \"100m\"\n        memory: \"128Mi\"\n      limits:\n        cpu: \"200m\"\n        memory: \"256Mi\"\n---\n# besteffort-pod.yaml\napiVersion: v1\nkind: Pod\nmetadata:\n  name: besteffort-pod\nspec:\n  containers:\n  - name: app\n    image: nginx"
+}

@@ -1,0 +1,155 @@
+{
+    "id": "l1",
+    "chapterId": "ch_5",
+    "title": "Environment Variables in Pods 🌱",
+    "description": "Learn to pass configuration to your containers using environment variables.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Why Environment Variables? 🧐",
+            "content": "# The simplest config injection\n\nApplications need configuration: database URLs, feature flags, API keys. Hard‑coding them inside the container image is bad practice – it makes images environment‑specific and insecure.\n\nEnvironment variables let you pass config at runtime without rebuilding images. Kubernetes makes it easy to define them directly in the Pod spec."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "Defining Env Vars in YAML 📝",
+            "content": "## Directly in the container spec\n\n```yaml\nspec:\n  containers:\n  - name: app\n    image: myapp:1.0\n    env:\n    - name: DATABASE_HOST\n      value: \"mysql.prod.svc.cluster.local\"\n    - name: LOG_LEVEL\n      value: \"info\"\n```\n\n- `name`: the environment variable name (uppercase by convention)\n- `value`: the static value\n\nThat’s it – the variable is available inside the container."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "code",
+            "title": "Test Env Vars",
+            "content": "Create a Pod that prints its environment:",
+            "codeSnippet": "kubectl run env-test --image=busybox --restart=Never --env=\"MY_VAR=hello\" --command -- /bin/sh -c 'env | grep MY_VAR'\n# Check logs:\nkubectl logs env-test",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Where should you define environment variables in a Pod YAML?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Under metadata",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "In the container's env field",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "In the volumes section",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "In the Service selector",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Environment variables go inside each container's spec under 'env'.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_5",
+            "type": "text",
+            "title": "Referencing Other Resources 🔗",
+            "content": "## Using field references\n\nYou can also set env vars from other Kubernetes objects:\n- `valueFrom.fieldRef` – get Pod metadata (name, namespace, IP)\n- `valueFrom.resourceFieldRef` – get resource limits/requests\n\nExample:\n```yaml\nenv:\n- name: MY_POD_IP\n  valueFrom:\n    fieldRef:\n      fieldPath: status.podIP\n```\n\nThis is powerful for making apps cluster‑aware."
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "Field References 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "Which `fieldRef` fieldPath gives the Pod's namespace?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "status.podIP",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "metadata.namespace",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "spec.nodeName",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "status.hostIP",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`metadata.namespace` exposes the Pod's namespace as an env var.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_7",
+            "type": "text",
+            "title": "Limitations of Direct Env Vars ⚠️",
+            "content": "## Things to watch out for\n\n- **Static**: values are hard‑coded in the manifest; changing them requires updating and redeploying.\n- **Duplicate**: if many Pods share the same config, duplicating env vars is error‑prone.\n- **Secret exposure**: sensitive values (passwords) appear in plain text in the YAML.\n\nThat’s why Kubernetes offers **ConfigMaps** and **Secrets** to manage configuration centrally."
+        },
+        {
+            "id": "s_l1_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `kubectl set env` for imperative updates\n\n```bash\nkubectl set env deployment/my-deploy DATABASE_HOST=newhost\n```\n\nThis updates the Pod template and triggers a rolling update. Quick for small changes!"
+        },
+        {
+            "id": "s_l1_9",
+            "type": "quiz",
+            "title": "Env Var Drawbacks 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_3",
+                "type": "multiple_choice",
+                "question": "Why are ConfigMaps preferred over hard‑coded env vars for shared config?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They are encrypted by default",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They centralise configuration and can be reused across Pods",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They allow binary data",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They are immutable",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "ConfigMaps decouple configuration from the Pod spec, making it easier to manage and share.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

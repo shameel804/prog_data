@@ -1,0 +1,155 @@
+{
+    "id": "l1",
+    "chapterId": "ch_7",
+    "title": "Resource Requests & Limits 📏",
+    "description": "Learn how to declare resource needs and constraints for your containers.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Why Resources Matter 🧐",
+            "content": "# Keep the cluster balanced\n\nEvery container consumes CPU and memory. Without telling Kubernetes how much it needs, the scheduler can’t place Pods effectively, and one Pod could starve others.\n\n**Requests** – the minimum guaranteed resources for a container. The scheduler uses this to find a suitable node.\n**Limits** – the maximum resources a container can use. Exceeding the memory limit results in OOMKill; exceeding the CPU limit causes throttling."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What does a CPU request guarantee?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The container will get exactly that much CPU",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The container is scheduled onto a node with at least that much CPU available",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The container can never use more than that",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The node’s CPU is reserved exclusively for this container",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Requests are used for scheduling. The container may burst above request if resources are available.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "CPU and Memory Units 📐",
+            "content": "## How to specify them\n\n- **CPU**: measured in **millicores** (m). `100m` = 0.1 CPU core. `1` = 1 whole core.\n- **Memory**: bytes. `Mi` (mebibytes), `Gi` (gibibytes). `512Mi` ≈ 512 megabytes.\n\nExample:\n```yaml\nresources:\n  requests:\n    cpu: \"250m\"\n    memory: \"64Mi\"\n  limits:\n    cpu: \"500m\"\n    memory: \"128Mi\"\n```"
+        },
+        {
+            "id": "s_l1_4",
+            "type": "code",
+            "title": "Full Container Spec with Resources",
+            "content": "",
+            "codeSnippet": "containers:\n- name: app\n  image: myapp:1.0\n  resources:\n    requests:\n      cpu: \"100m\"\n      memory: \"128Mi\"\n    limits:\n      cpu: \"500m\"\n      memory: \"256Mi\"",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_5",
+            "type": "text",
+            "title": "What Happens Without Requests/Limits? 🤷",
+            "content": "## The wild west\n\n- Without **requests**, the scheduler may place too many Pods on a node, causing resource starvation.\n- Without **limits**, a memory leak can consume all node memory, and the kubelet will OOMKill the container (or another container).\n- **Best practice**: always set both for production workloads."
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "Limits vs Requests 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "If a container exceeds its memory limit, what does Kubernetes do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Throttle the container",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Restart the container (OOMKill)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Evict the Pod to another node",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Allow it but log a warning",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Memory is an incompressible resource; exceeding the limit leads to an OOM kill.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_7",
+            "type": "text",
+            "title": "Quality of Service (QoS) Classes 🏅",
+            "content": "## Kubernetes prioritises Pods\n\nBased on requests and limits, Pods get a QoS class:\n- **Guaranteed** – every container has equal requests and limits (cpu+memory). Highest priority.\n- **Burstable** – at least one container has a request or limit but not all are equal.\n- **BestEffort** – no requests or limits. First to be evicted under memory pressure.\n\nUse `kubectl describe pod` to see the QoS class."
+        },
+        {
+            "id": "s_l1_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use ResourceQuotas and LimitRanges\n\nNamespaces can enforce resource policies with ResourceQuotas (limits total resources) and LimitRanges (default requests/limits for containers that don't specify them)."
+        },
+        {
+            "id": "s_l1_9",
+            "type": "quiz",
+            "title": "QoS Class 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_3",
+                "type": "multiple_choice",
+                "question": "Which QoS class gives the strongest guarantee against eviction?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "BestEffort",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Burstable",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Guaranteed",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "System",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Guaranteed Pods have the highest priority and are evicted only when absolutely necessary.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,129 @@
+{
+    "id": "l2",
+    "chapterId": "ch_4",
+    "title": "ClusterIP – The Internal Service 🏠",
+    "description": "Create a Service that provides stable internal communication between your apps.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "What is ClusterIP? 🏠",
+            "content": "# The default, internal‑only Service type\n\nClusterIP gives your Service a **virtual IP** that is only reachable **from within the cluster**. No outside traffic can access it directly.\n\nIt’s perfect for:\n- Backend APIs communicating with each other\n- Database connections between microservices\n- Any internal traffic that doesn’t need external exposure"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "ClusterIP in YAML 📝",
+            "content": "## A minimal ClusterIP Service\n\n```yaml\napiVersion: v1\nkind: Service\nmetadata:\n  name: backend-svc\nspec:\n  selector:\n    app: backend\n  ports:\n    - protocol: TCP\n      port: 80          # Service port\n      targetPort: 8080  # Container port\n  type: ClusterIP\n```\n\n- `port`: the port the Service listens on (other apps use this).\n- `targetPort`: the port on the Pod where the application listens.\n- If `type` is omitted, it defaults to ClusterIP."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Service Ports 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What does the `targetPort` field specify?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The port on the Service",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The port on the node",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The port on the container where the app listens",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The external port for load balancing",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "targetPort is the container port the Service forwards traffic to.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "How ClusterIP Works 🔄",
+            "content": "## kube‑proxy magic\n\nWhen you create a ClusterIP Service, the kube‑proxy component on every node programs **iptables (or IPVS) rules**. Traffic sent to the Service’s ClusterIP gets intercepted and load‑balanced to a random healthy Pod.\n\n- By default, session affinity is **None** (each request can go to a different Pod).\n- You can set `sessionAffinity: ClientIP` to stick a client to a specific Pod (based on client IP)."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Create and Test a ClusterIP Service",
+            "content": "Apply the YAML and check:",
+            "codeSnippet": "kubectl apply -f backend-svc.yaml\nkubectl get services\nkubectl describe service backend-svc\n# From another Pod, access:\ncurl http://backend-svc",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Reachability 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "true_false",
+                "question": "True or False: A ClusterIP Service can be accessed from your laptop outside the cluster.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "ClusterIP is internal only; you need NodePort, LoadBalancer, or port‑forward to reach it from outside.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "Multi‑Port Services 🧩",
+            "content": "## One Service, many ports\n\nA single Service can expose multiple ports (e.g., HTTP and gRPC). Each port must have a name.\n\n```yaml\nports:\n  - name: http\n    port: 80\n    targetPort: 8080\n  - name: grpc\n    port: 50051\n    targetPort: 50051\n```\n\nThis is cleaner than creating separate Services for the same set of Pods."
+        },
+        {
+            "id": "s_l2_8",
+            "type": "quiz",
+            "title": "Multi‑Port 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_3",
+                "type": "multiple_choice",
+                "question": "Why might you use a multi‑port Service?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To expose two different Pod groups",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To expose both HTTP and gRPC on the same set of Pods",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To bypass kube‑proxy",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To increase network speed",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It allows a single logical Service to handle multiple protocols on different ports.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

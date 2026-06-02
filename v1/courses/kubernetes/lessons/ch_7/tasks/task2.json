@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_7",
+    "title": "Add Probes to an Application",
+    "description": "Deploy an nginx Pod with readiness, liveness, and startup probes and observe their effect.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## 🎯 Goal\nConfigure a Pod with all three probes to understand their lifecycle.\n\n### Steps\n1. Create a Pod YAML `probes-demo.yaml` with:\n   - container: nginx:1.25\n   - startup probe: httpGet on `/` port 80, initialDelaySeconds 0, periodSeconds 5, failureThreshold 6 (30s total)\n   - readiness probe: httpGet on `/` port 80, periodSeconds 5, failureThreshold 2\n   - liveness probe: httpGet on `/health` port 80 (nginx doesn't have /health by default, so this will fail), periodSeconds 5, failureThreshold 3, initialDelaySeconds 0 (but remember startup probe gates it)\n2. Apply the Pod.\n3. Watch the Pod: `kubectl get pods -w`. The startup probe should succeed quickly (nginx serves /), so the Pod becomes Running and Ready.\n4. After a while, the liveness probe will fail because `/health` returns 404. Wait until the container restarts (`kubectl get pods` will show RESTARTS).\n5. Check logs or describe to see the restart event.\n6. (Optional) Modify the probe to point to a valid path and update.\n7. Delete the Pod.",
+    "hints": [
+        "The startup probe will succeed because nginx returns 200 on /. So liveness will start after startup succeeds.",
+        "Liveness probe failing leads to container restart after failureThreshold consecutive failures.",
+        "Use `kubectl describe pod probes-demo` to see probe failures and restarts."
+    ],
+    "expectedOutput": "The Pod initially starts; after liveness fails enough, it restarts.",
+    "solutionCode": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: probes-demo\nspec:\n  containers:\n  - name: nginx\n    image: nginx:1.25\n    startupProbe:\n      httpGet:\n        path: /\n        port: 80\n      periodSeconds: 5\n      failureThreshold: 6\n    readinessProbe:\n      httpGet:\n        path: /\n        port: 80\n      periodSeconds: 5\n      failureThreshold: 2\n    livenessProbe:\n      httpGet:\n        path: /health\n        port: 80\n      periodSeconds: 5\n      failureThreshold: 3"
+}

@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_8",
+    "title": "Secure Microservices with Network Policies",
+    "description": "Create NetworkPolicies to restrict traffic between frontend and backend Pods.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## 🎯 Goal\nIn a namespace `micro`, deploy a frontend and a backend Pod, then apply NetworkPolicies so that only the frontend can talk to the backend.\n\n### Prerequisites\n- A CNI that supports NetworkPolicy (Calico, Cilium, etc.). Minikube with `--cni=calico` or kind with Calico.\n\n### Steps\n1. Create namespace `micro`: `kubectl create ns micro`.\n2. Deploy backend: a Pod with label `app: backend`, running `hashicorp/http-echo -text=\"Backend\" -listen=:8080`. Expose via ClusterIP Service `backend-svc` on port 80.\n3. Deploy frontend: a Pod with label `app: frontend`, using `alpine/curl` image (so you can curl). (It will sleep; use `command: [\"sleep\", \"3600\"]`).\n4. Before applying any policy, exec into the frontend Pod and verify you can curl the backend: `curl backend-svc`. You should see \"Backend\".\n5. Apply a NetworkPolicy that denies all ingress to Pods with label `app: backend` (podSelector: {app: backend}, policyTypes: Ingress, ingress: []).\n6. Test again from frontend – curl should now fail (timeout).\n7. Now create a second NetworkPolicy that allows ingress to backend Pods from Pods with label `app: frontend` on port 80.\n8. Test again from frontend – curl should succeed.\n9. (Optional) Try from a different Pod (e.g., a debug Pod with label `app: attacker`) – it should be blocked.\n10. Clean up the namespace.",
+    "hints": [
+        "The `deny-all` policy uses `podSelector: {}` to select all Pods, but for this task, target only backend Pods.",
+        "Multiple NetworkPolicies are additive; the deny policy can be overridden by an allow policy that also matches.",
+        "Use `kubectl exec -it <pod> -n micro -- sh` to test."
+    ],
+    "expectedOutput": "Frontend can reach backend only after the allow policy is in place.",
+    "solutionCode": "# deny-backend-ingress.yaml\napiVersion: networking.k8s.io/v1\nkind: NetworkPolicy\nmetadata:\n  name: deny-backend-ingress\n  namespace: micro\nspec:\n  podSelector:\n    matchLabels:\n      app: backend\n  policyTypes:\n  - Ingress\n  ingress: []\n---\n# allow-frontend-to-backend.yaml\napiVersion: networking.k8s.io/v1\nkind: NetworkPolicy\nmetadata:\n  name: allow-frontend\n  namespace: micro\nspec:\n  podSelector:\n    matchLabels:\n      app: backend\n  policyTypes:\n  - Ingress\n  ingress:\n  - from:\n    - podSelector:\n        matchLabels:\n          app: frontend\n    ports:\n    - port: 80\n      protocol: TCP"
+}

@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_11",
+    "title": "Enable Metrics Server and Explore kubectl top",
+    "description": "Install the Metrics Server and use kubectl top to check node and Pod resource usage.",
+    "estimatedMinutes": 10,
+    "problemStatement": "## 🎯 Goal\nEnsure the Metrics Server is running in your cluster and become familiar with `kubectl top`.\n\n### Steps\n1. Enable Metrics Server (if minikube: `minikube addons enable metrics-server`).\n   For other clusters, apply the official YAML:\n   ```bash\n   kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml\n   ```\n2. Wait for Metrics Server to be ready: `kubectl get deployment metrics-server -n kube-system`.\n3. Check node metrics: `kubectl top nodes`.\n4. Check Pod metrics in all namespaces: `kubectl top pods -A`.\n5. Identify the Pod consuming the most memory.\n6. Launch a temporary busybox that generates some CPU load:\n   ```bash\n   kubectl run stress --image=alpine --command -- sh -c \"while true; do :; done\"\n   ```\n7. Watch its CPU usage: `kubectl top pod stress`.\n8. Delete the stress Pod.\n\n### Questions\n- Why does `kubectl top pods` show `<unknown>` for some Pods? (e.g., if Metrics Server just started)\n- What does the `m` unit mean in CPU output?",
+    "hints": [
+        "It may take a minute for metrics to appear after installing Metrics Server.",
+        "If `kubectl top` returns an error, check if the Metrics Server pods are running (`kubectl get pods -n kube-system | grep metrics`).",
+        "The `alpine` image might need `--restart=Never` to create a plain Pod."
+    ],
+    "expectedOutput": "Node and Pod CPU/memory displayed; the stress Pod shows elevated CPU usage.",
+    "solutionCode": "# Install (if needed)\nkubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml\n# Check\nkubectl top nodes\nkubectl top pods -A\n# Create load\nkubectl run stress --image=alpine --restart=Never --command -- sh -c \"while true; do :; done\"\nkubectl top pod stress\nkubectl delete pod stress"
+}

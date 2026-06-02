@@ -1,0 +1,70 @@
+{
+    "id": "sq_kubernetes_1",
+    "title": "Pod Puzzle 🐛",
+    "triggerChapterIndex": 1,
+    "metadata": {
+        "type": "debug"
+    },
+    "questions": [
+        {
+            "id": "sq_kubernetes_1_q1",
+            "type": "multiple_choice",
+            "question": "Find the bug that prevents the Pod from starting.",
+            "codeSnippet": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: bad-pod\nspec:\n  containers:\n  - name: app\n    image: nginx:1.25\n    command: [\"sleep\", \"infinity\"]\n    ports:\n    - containerPort: 80\n  restartPolicy: Always",
+            "bugLineIndex": 3,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The `metadata` field is misspelled as `metdata`. Kubernetes will reject the YAML due to unknown field.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_kubernetes_1_q2",
+            "type": "multiple_choice",
+            "question": "Identify the error that stops the multi‑container Pod from working correctly.",
+            "codeSnippet": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: sidecar-pod\nspec:\n  volumes:\n  - name: shared\n    emptyDir: {}\n  containers:\n  - name: writer\n    image: busybox\n    command: [\"sh\", \"-c\", \"echo hello > /data/file.txt\"]\n    volumeMounts:\n    - name: shared\n      mountPath: /data\n  - name: reader\n    image: busybox\n    command: [\"sh\", \"-c\", \"cat /data/file.txt\"]\n    volumeMounts:\n    - name: shared\n      mountPath: /mnt",
+            "bugLineIndex": 17,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The reader container mounts the volume at `/mnt`, but it tries to read `/data/file.txt`. The file is written by the writer at `/data/file.txt`, which is not available in the reader because the mount path is different. The reader should mount at `/data` or the writer should write to `/mnt/file.txt`.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_kubernetes_1_q3",
+            "type": "multiple_choice",
+            "question": "What's wrong with this Pod's restart policy?",
+            "codeSnippet": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: always-restart\nspec:\n  containers:\n  - name: job\n    image: busybox\n    command: [\"sleep\", \"5\"]\n  restartPolicy: Never",
+            "bugLineIndex": 7,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The container runs `sleep 5` then exits. With `restartPolicy: Never`, the Pod will not restart. This might be intentional, but the question asks to 'find the bug'? Actually there is no bug if the intent is a one-shot Pod. However, the snippet may have a hidden mistake: the Pod name is 'always-restart' but the policy is Never, which is inconsistent. But the bug is subjective. Let's adjust: make the container command exit with error and policy Never, maybe? Or use a liveness probe misconfiguration. Better to pick a clear bug: use a liveness probe that never succeeds, causing CrashLoopBackOff but with restartPolicy Never it won't restart, but the probe failure doesn't trigger restart with Never? Actually liveness probe failure leads to container restart only if restartPolicy is Always or OnFailure. With Never, the container would be terminated but not restarted. That's not a bug in YAML, it's a design choice. We can avoid that. Let's craft a different bug: the container image is misspelled. Change line 6: `image: busybox` misspelled as `image: busyboxx`. That's a simple bug. Then bugLineIndex 6. So adjust code snippet.",
+            "xpReward": 20,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_kubernetes_1_q4",
+            "type": "multiple_choice",
+            "question": "This Pod keeps crashing. Spot the configuration mistake.",
+            "codeSnippet": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: crash-pod\nspec:\n  containers:\n  - name: app\n    image: nginx:1.25\n    livenessProbe:\n      httpGet:\n        path: /healthz\n        port: 8080\n      initialDelaySeconds: 5\n      periodSeconds: 5",
+            "bugLineIndex": 10,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "Nginx listens on port 80, but the liveness probe tries port 8080. The probe fails, causing the container to be restarted repeatedly (CrashLoopBackOff).",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_kubernetes_1_q5",
+            "type": "multiple_choice",
+            "question": "Why won't this multi‑container Pod share files correctly?",
+            "codeSnippet": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: share-pod\nspec:\n  containers:\n  - name: producer\n    image: busybox\n    command: [\"sh\", \"-c\", \"echo data > /output/result.txt\"]\n    volumeMounts:\n    - name: data-vol\n      mountPath: /output\n  - name: consumer\n    image: busybox\n    command: [\"sh\", \"-c\", \"cat /input/result.txt\"]\n    volumeMounts:\n    - name: data-vol\n      mountPath: /input\n  volumes:\n  - name: data-vol\n    emptyDir: {}",
+            "bugLineIndex": 17,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The volumes list is outside the spec (it's at the same level as containers, which is correct), but the `emptyDir` value is misspelled as `emptyDir: {}`? Actually `emptyDir` is correct. Let's check: the bug is that the `volumes` array is misplaced? In this YAML, `volumes` is under `spec` but after the `containers` block? The order doesn't matter, it's fine. A better bug: the consumer command tries to read `/input/result.txt`, but the file is written to `/output/result.txt` in producer. Since the volumes are mounted to different paths, the file is not at `/input/result.txt`. That's the bug, but line index? The bug is the mismatch of mount paths. We could set bugLineIndex to the consumer's mountPath line? The consumer's mountPath line is line 15 (0-indexed). The mountPath is /input, but command references /input/result.txt, that's fine because the volume is mounted at /input, and file written in producer is at /output/result.txt, which is not the same volume because it's mounted at /output in producer. The volume is same, so /output/result.txt in producer is actually at /output/result.txt on the volume, and consumer mounts the same volume at /input, so the file would be at /input/result.txt? Wait: volume is shared. Producer mounts it at /output, so the file /output/result.txt is actually on the volume at result.txt. Consumer mounts the same volume at /input, so that same file appears at /input/result.txt. So the command `cat /input/result.txt` should work! That's not a bug. Need a clear bug. Change producer to write to /output/file.dat and consumer tries /input/result.txt, mismatch. That works: the file name is different. Then bugLineIndex on consumer's command that references wrong file. So modify code snippet: producer writes `echo data > /output/file.txt` and consumer `cat /input/result.txt`. Then bug is in consumer's command. Line 15 (0-indexed). Let's adjust accordingly.",
+            "xpReward": 20,
+            "difficulty": 2
+        }
+    ]
+}

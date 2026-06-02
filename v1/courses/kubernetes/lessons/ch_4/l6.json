@@ -1,0 +1,135 @@
+{
+    "id": "l6",
+    "chapterId": "ch_4",
+    "title": "Headless Services & Endpoints ⚙️",
+    "description": "Use headless Services for direct Pod discovery and understand the Endpoints object.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "What is a Headless Service? 🤯",
+            "content": "# No ClusterIP, direct Pod IPs\n\nA headless Service is created by setting `clusterIP: None`. Instead of a single virtual IP, DNS returns the **individual IP addresses** of all Pods matching the selector.\n\nUse cases:\n- **Stateful applications** that need peer discovery (e.g., databases)\n- **Custom load‑balancing** logic in your application\n- **Direct Pod‑to‑Pod communication** without extra hop"
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "Headless Service YAML 📝",
+            "content": "## Minimal example\n\n```yaml\napiVersion: v1\nkind: Service\nmetadata:\n  name: db-headless\nspec:\n  clusterIP: None\n  selector:\n    app: database\n  ports:\n    - port: 5432\n      targetPort: 5432\n```\n\nNow, when a Pod resolves `db-headless`, it gets all Pod IPs."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Check DNS for Headless Service",
+            "content": "From a debug Pod, use `nslookup` to see multiple IPs:",
+            "codeSnippet": "kubectl run -it --rm debug --image=busybox --restart=Never -- nslookup db-headless\n# You'll see multiple A records if there are multiple Pods.",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_4",
+            "type": "quiz",
+            "title": "Headless Behavior 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What does DNS return for a headless Service?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The ClusterIP",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The Pod IPs directly",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The node IPs",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "No DNS records",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Headless Services bypass the virtual IP and expose the Pod IPs as DNS A records.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_5",
+            "type": "text",
+            "title": "The Endpoints Object 📋",
+            "content": "## The bridge between Service and Pods\n\nEvery Service (except headless ones in some contexts) automatically creates an **Endpoints** object with the same name. It lists the IP:port of all Pods matching the Service’s selector.\n\n```bash\nkubectl get endpoints backend-svc\n```\nOutput:\n```\nNAME           ENDPOINTS                         AGE\nbackend-svc    10.244.0.5:8080,10.244.1.3:8080   1m\n```\n\nThis is what kube‑proxy uses to program iptables rules."
+        },
+        {
+            "id": "s_l6_6",
+            "type": "text",
+            "title": "Manual Endpoints (No Selector) 🛠️",
+            "content": "## Connect to external resources\n\nYou can create a Service **without a selector** and manually define an Endpoints object. This allows you to route traffic to an external database or API outside the cluster.\n\nExample:\n```yaml\n# Service with no selector\napiVersion: v1\nkind: Service\nmetadata:\n  name: external-db\nspec:\n  ports:\n    - port: 5432\n---\n# Endpoints manually created\napiVersion: v1\nkind: Endpoints\nmetadata:\n  name: external-db\nsubsets:\n  - addresses:\n      - ip: 192.168.1.100\n    ports:\n      - port: 5432\n```\n\nNow `external-db` resolves to that external IP."
+        },
+        {
+            "id": "s_l6_7",
+            "type": "quiz",
+            "title": "Manual Endpoints 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "true_false",
+                "question": "True or False: A Service without a selector cannot route traffic to any Pod.",
+                "options": [],
+                "correctAnswer": true,
+                "explanation": "Without a selector, Kubernetes doesn't auto‑populate Endpoints; you must create them manually.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_8",
+            "type": "text",
+            "title": "EndpointSlices (Newer) 🆕",
+            "content": "## A more scalable Endpoints\n\nIn large clusters, the monolithic Endpoints object can become huge, causing performance issues. Kubernetes introduced **EndpointSlices** to split endpoints by node or zone, reducing update size.\n\nMost of the time you don’t need to interact with them directly; they’re an internal implementation detail."
+        },
+        {
+            "id": "s_l6_9",
+            "type": "quiz",
+            "title": "Advanced Knowledge 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_3",
+                "type": "multiple_choice",
+                "question": "Why were EndpointSlices introduced?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To replace Services entirely",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To improve scalability by splitting endpoint data",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To support IPv6 only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To add encryption",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "EndpointSlices reduce the size of updates and improve performance in large clusters.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

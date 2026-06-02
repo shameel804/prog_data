@@ -1,0 +1,14 @@
+{
+    "id": "task3",
+    "chapterId": "ch_4",
+    "title": "Headless Service and DNS Exploration",
+    "description": "Create a headless Service and observe DNS returning individual Pod IPs.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## 🎯 Goal\nDeploy two nginx Pods (via Deployment) and create a headless Service to see Pod IPs directly.\n\n### Steps\n1. Scale the existing `nginx-svc-demo` Deployment to 2 replicas: `kubectl scale deployment nginx-svc-demo --replicas=2`.\n2. Verify Pods: `kubectl get pods -l app=nginx -o wide`. Note their IPs.\n3. Create a headless Service YAML `nginx-headless.yaml`:\n   - name: `nginx-headless`\n   - `clusterIP: None`\n   - selector: `app: nginx`\n   - port: 80\n4. Apply: `kubectl apply -f nginx-headless.yaml`.\n5. Run a debug Pod: `kubectl run -it --rm debug --image=busybox --restart=Never -- sh`.\n6. Inside, run `nslookup nginx-headless`. You should see two IP addresses (the Pod IPs).\n7. Run `wget -O- http://<one-pod-ip>` to test direct access.\n8. Compare with the regular ClusterIP Service (`nginx-svc`): `nslookup nginx-svc` returns one IP (the ClusterIP).\n9. Clean up: Delete the headless Service and scale down the Deployment.",
+    "hints": [
+        "If nslookup doesn't return multiple IPs, ensure there are two Pods running and they are Ready.",
+        "Direct Pod IP access via headless Service bypasses kube‑proxy load balancing; your app must handle that."
+    ],
+    "expectedOutput": "nslookup for headless Service shows the IPs of all matching Pods.",
+    "solutionCode": "# nginx-headless.yaml\napiVersion: v1\nkind: Service\nmetadata:\n  name: nginx-headless\nspec:\n  clusterIP: None\n  selector:\n    app: nginx\n  ports:\n    - port: 80\n      targetPort: 80"
+}

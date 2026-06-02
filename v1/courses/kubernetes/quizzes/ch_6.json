@@ -1,0 +1,252 @@
+{
+    "id": "quiz_ch_6",
+    "chapterId": "ch_6",
+    "title": "Chapter 6 Quiz",
+    "description": "Test your knowledge of Kubernetes storage: Volumes, PVs, PVCs, StorageClasses, and StatefulSets.",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "Why do containers lose data on restart?",
+            "options": [
+                "The node’s disk is encrypted",
+                "The container’s writable layer is ephemeral",
+                "Kubernetes formats the filesystem",
+                "Persistent storage is disabled by default"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Container filesystems are temporary; only volumes outlive a container restart."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "Which volume type exists as long as the Pod is on the node and is deleted when the Pod is removed?",
+            "options": [
+                "hostPath",
+                "emptyDir",
+                "PersistentVolume",
+                "ConfigMap"
+            ],
+            "correctAnswer": 1,
+            "explanation": "emptyDir is created with the Pod and deleted when the Pod is removed."
+        },
+        {
+            "id": "q3",
+            "type": "fill_blank",
+            "question": "To mount a path from the node’s filesystem into a Pod, use the _____ volume type.",
+            "options": [
+                "hostPath",
+                "nodePath",
+                "localDisk",
+                "systemVolume"
+            ],
+            "correctAnswer": "hostPath",
+            "explanation": "hostPath directly exposes the node’s filesystem."
+        },
+        {
+            "id": "q4",
+            "type": "true_false",
+            "question": "True or False: A hostPath volume can cause Pod scheduling issues if the node doesn't have the specified path.",
+            "correctAnswer": true,
+            "explanation": "Pod won’t start if the path doesn’t exist unless `type` is set to `DirectoryOrCreate`."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "What is a PersistentVolume (PV)?",
+            "options": [
+                "A request for storage by a user",
+                "A piece of storage in the cluster provisioned by an admin",
+                "A volume mounted inside a container",
+                "A temporary directory on the node"
+            ],
+            "correctAnswer": 1,
+            "explanation": "PV is a cluster resource representing a storage piece."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "What is a PersistentVolumeClaim (PVC)?",
+            "options": [
+                "A static volume definition",
+                "A request for storage by a user",
+                "A storage class definition",
+                "A volume mount path"
+            ],
+            "correctAnswer": 1,
+            "explanation": "PVC is a user’s request for storage resources."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "Which access mode allows a volume to be read‑write from multiple nodes concurrently?",
+            "options": [
+                "ReadWriteOnce",
+                "ReadOnlyMany",
+                "ReadWriteMany",
+                "ReadWriteMultiple"
+            ],
+            "correctAnswer": 2,
+            "explanation": "RWX supports multi‑node read‑write."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "What happens when a PVC is deleted with a PV that has 'Delete' reclaim policy?",
+            "options": [
+                "The PV becomes available for another claim",
+                "The PV and underlying storage are deleted",
+                "The PV is retained and requires manual cleanup",
+                "The PVC is not deleted"
+            ],
+            "correctAnswer": 1,
+            "explanation": "'Delete' removes both PV and the associated storage asset."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "What does a StorageClass define?",
+            "options": [
+                "The size of a volume",
+                "The provisioner and parameters for dynamic volume creation",
+                "The Pod that will use the volume",
+                "The namespace of the volume"
+            ],
+            "correctAnswer": 1,
+            "explanation": "StorageClass specifies how to dynamically provision PVs."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "Which StorageClass volumeBindingMode delays PV creation until a Pod that uses the PVC is scheduled?",
+            "options": [
+                "Immediate",
+                "Lazy",
+                "WaitForFirstConsumer",
+                "Deferred"
+            ],
+            "correctAnswer": 2,
+            "explanation": "WaitForFirstConsumer ensures topology‑aware provisioning."
+        },
+        {
+            "id": "q11",
+            "type": "true_false",
+            "question": "True or False: A PVC without a storageClassName will use the default StorageClass if one exists.",
+            "correctAnswer": true,
+            "explanation": "The default StorageClass is used automatically for unset class."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "What is the main purpose of a StatefulSet?",
+            "options": [
+                "Run stateless web servers",
+                "Manage Pods that require stable identities and persistent storage",
+                "Create temporary batch jobs",
+                "Expose services to the internet"
+            ],
+            "correctAnswer": 1,
+            "explanation": "StatefulSet provides stable hostnames and per‑Pod PVCs."
+        },
+        {
+            "id": "q13",
+            "type": "fill_blank",
+            "question": "In a StatefulSet named 'db' with 3 replicas, the first Pod is named _____.",
+            "options": [
+                "db-0",
+                "db-1",
+                "db-01",
+                "db-a"
+            ],
+            "correctAnswer": "db-0",
+            "explanation": "Ordinals start at 0: db-0, db-1, db-2."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "Which Service type is required for a StatefulSet’s stable network identity?",
+            "options": [
+                "LoadBalancer",
+                "NodePort",
+                "Headless (ClusterIP: None)",
+                "ExternalName"
+            ],
+            "correctAnswer": 2,
+            "explanation": "A headless Service provides individual DNS entries for each Pod."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "What is a volumeClaimTemplate?",
+            "options": [
+                "A PVC that is shared by all Pods",
+                "A template used to dynamically create a PVC for each Pod in a StatefulSet",
+                "A StorageClass definition",
+                "A volume mount path template"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Each Pod gets its own PVC based on the template."
+        },
+        {
+            "id": "q16",
+            "type": "true_false",
+            "question": "True or False: Deleting a StatefulSet automatically deletes the PVCs it created.",
+            "correctAnswer": false,
+            "explanation": "PVCs must be manually deleted; they persist for data safety."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "How does StatefulSet scaling work?",
+            "options": [
+                "Pods are created and deleted randomly",
+                "Pods are created in order (0 to N-1) and deleted in reverse order",
+                "All Pods are created simultaneously",
+                "Pods are scaled by a Deployment"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Ordered scaling ensures controlled startup/shutdown for stateful apps."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "Which reclaim policy retains the PV but requires manual cleanup after PVC deletion?",
+            "options": [
+                "Delete",
+                "Retain",
+                "Recycle",
+                "Archive"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Retain leaves the PV released; admin must manually delete and reclaim storage."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "What is the typical default access mode for block storage (like EBS)?",
+            "options": [
+                "ReadWriteMany",
+                "ReadOnlyMany",
+                "ReadWriteOnce",
+                "WriteOnce"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Block volumes usually support RWO only (single node)."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "What command would you use to watch a PVC binding?",
+            "options": [
+                "kubectl describe pvc",
+                "kubectl get pvc --watch",
+                "kubectl wait pvc --for=condition=bound",
+                "Both b and c"
+            ],
+            "correctAnswer": 3,
+            "explanation": "--watch shows live changes; `kubectl wait` blocks until a condition."
+        }
+    ]
+}

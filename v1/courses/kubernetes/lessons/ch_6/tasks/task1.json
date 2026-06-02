@@ -1,0 +1,14 @@
+{
+    "id": "task1",
+    "chapterId": "ch_6",
+    "title": "Share Data with emptyDir",
+    "description": "Create a Pod where a writer container feeds data to a reader container via a shared volume.",
+    "estimatedMinutes": 10,
+    "problemStatement": "## 🎯 Goal\nCreate a Pod named `share-demo` with two containers:\n- **writer**: uses `busybox` and writes the current date to `/logs/date.txt` every 3 seconds.\n- **reader**: uses `busybox` and continuously displays the last line of `/logs/date.txt`.\nBoth containers should mount an emptyDir volume at `/logs`.\n\n### Steps\n1. Write a YAML file `share-pod.yaml` with:\n   - volume `log-volume` of type emptyDir.\n   - container `writer` with command: `[\"sh\", \"-c\", \"while true; do date >> /logs/date.txt; sleep 3; done\"]`.\n   - container `reader` with command: `[\"sh\", \"-c\", \"tail -f /logs/date.txt\"]`.\n   - mount `log-volume` at `/logs` in both.\n2. Apply the Pod: `kubectl apply -f share-pod.yaml`.\n3. Check logs of the reader to see timestamps: `kubectl logs share-demo -c reader`.\n4. Delete the Pod: `kubectl delete pod share-demo`.",
+    "hints": [
+        "You can use `kubectl logs share-demo -c reader -f` to follow.",
+        "The emptyDir volume is shared, so the writer’s file is visible to the reader immediately."
+    ],
+    "expectedOutput": "Reader logs show lines like 'Mon Jan 1 12:00:00 UTC 2024' appearing every 3 seconds.",
+    "solutionCode": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: share-demo\nspec:\n  volumes:\n  - name: log-volume\n    emptyDir: {}\n  containers:\n  - name: writer\n    image: busybox\n    command: [\"sh\", \"-c\", \"while true; do date >> /logs/date.txt; sleep 3; done\"]\n    volumeMounts:\n    - name: log-volume\n      mountPath: /logs\n  - name: reader\n    image: busybox\n    command: [\"sh\", \"-c\", \"tail -f /logs/date.txt\"]\n    volumeMounts:\n    - name: log-volume\n      mountPath: /logs"
+}

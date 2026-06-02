@@ -1,0 +1,167 @@
+{
+    "id": "l1",
+    "chapterId": "ch_12",
+    "title": "Production Readiness Best Practices 🛡️",
+    "description": "Make your workloads production‑grade with requests, limits, PDBs, and affinity.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Foundation",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "What Does 'Production‑Ready' Mean? 🎯",
+            "content": "# It's more than just running\n\nA production‑ready workload must:\n- Be resilient to failures (node crashes, network splits)\n- Not starve other applications\n- Respect node constraints (zones, hardware)\n- Stay available during voluntary disruptions (drains, scaling)\n\nKubernetes provides several features to achieve this: **requests/limits**, **PodDisruptionBudgets**, **affinity/anti‑affinity**, **tolerations**, and **topology spread constraints**."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "Setting Resource Requests & Limits (Revisited) 📏",
+            "content": "## Non‑negotiable in production\n\nAlways set resource **requests** and **limits** for every container.\n- **requests** guarantee resources and influence scheduling.\n- **limits** prevent a runaway container from starving others.\n\nExample:\n```yaml\nresources:\n  requests:\n    cpu: \"200m\"\n    memory: \"256Mi\"\n  limits:\n    cpu: \"500m\"\n    memory: \"512Mi\"\n```\n\nWithout them, your Pod is **BestEffort** – the first to be killed under pressure."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What QoS class does a Pod get if every container has CPU and memory requests equal to limits?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Burstable",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "BestEffort",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Guaranteed",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "System",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Guaranteed QoS requires requests == limits for every container.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "PodDisruptionBudget (PDB) 🛡️",
+            "content": "## Protect against voluntary disruptions\n\nWhen you drain a node or perform a cluster upgrade, Pods are evicted. A PDB ensures a **minimum number or percentage** of Pods remain available.\n\n```yaml\napiVersion: policy/v1\nkind: PodDisruptionBudget\nmetadata:\n  name: myapp-pdb\nspec:\n  minAvailable: 2          # or maxUnavailable: 1\n  selector:\n    matchLabels:\n      app: myapp\n```\n\nIf only 3 replicas exist, you can't evict more than 1 at a time because `minAvailable: 2` must be respected."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "quiz",
+            "title": "PDB Impact 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "A Deployment has 5 replicas. A PDB sets `minAvailable: 4`. How many Pods can be evicted simultaneously?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "0",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "1",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "2",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "4",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Only 1 Pod can be disrupted at a time to keep 4 available (5 - 1 = 4).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_6",
+            "type": "text",
+            "title": "Node Affinity & Pod Affinity/Anti‑Affinity 🧲",
+            "content": "## Control where Pods land\n\n- **nodeAffinity** – attract Pods to specific nodes (e.g., SSD nodes, GPU nodes).\n- **podAffinity** – place Pods near other Pods (e.g., app and its cache).\n- **podAntiAffinity** – spread Pods apart (e.g., avoid all replicas on the same node/zone).\n\nExample: anti‑affinity to spread replicas across zones:\n```yaml\naffinity:\n  podAntiAffinity:\n    preferredDuringSchedulingIgnoredDuringExecution:\n    - weight: 100\n      podAffinityTerm:\n        labelSelector:\n          matchLabels:\n            app: frontend\n        topologyKey: topology.kubernetes.io/zone\n```"
+        },
+        {
+            "id": "s_l1_7",
+            "type": "code",
+            "title": "Full Pod Spec with Affinity",
+            "content": "Combine anti‑affinity with node selector:",
+            "codeSnippet": "apiVersion: v1\nkind: Pod\nspec:\n  affinity:\n    podAntiAffinity:\n      requiredDuringSchedulingIgnoredDuringExecution:\n      - labelSelector:\n          matchLabels:\n            app: frontend\n        topologyKey: kubernetes.io/hostname\n    nodeAffinity:\n      requiredDuringSchedulingIgnoredDuringExecution:\n        nodeSelectorTerms:\n        - matchExpressions:\n          - key: node-type\n            operator: In\n            values:\n            - worker",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_8",
+            "type": "text",
+            "title": "Taints and Tolerations 🧪",
+            "content": "## Repel or allow specific Pods\n\n- **Taint** on a node: \"no Pods here unless they tolerate me\".\n- **Toleration** on a Pod: \"I can handle that taint\".\n\nUseful to dedicate nodes (e.g., `CriticalAddonsOnly` taint on master nodes).\n\n```yaml\ntolerations:\n- key: \"node-role.kubernetes.io/control-plane\"\n  operator: \"Exists\"\n  effect: \"NoSchedule\"\n```\n\nThis Pod can run on a control‑plane node."
+        },
+        {
+            "id": "s_l1_9",
+            "type": "quiz",
+            "title": "Taints vs Affinity 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_3",
+                "type": "multiple_choice",
+                "question": "What's the difference between a taint and node affinity?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Taints attract Pods, affinity repels them",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Taints repel Pods, affinity attracts Pods",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Both are the same",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Taints are for Pod‑to‑Pod relationships",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Taints let a node repel a set of Pods; tolerations are the Pod's permission to ignore them. Affinity/anti‑affinity attract or repel based on Pod/node labels.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_10",
+            "type": "text",
+            "title": "Topology Spread Constraints 🌍",
+            "content": "## Even distribution across zones, nodes, etc.\n\n```yaml\nspec:\n  topologySpreadConstraints:\n  - maxSkew: 1\n    topologyKey: topology.kubernetes.io/zone\n    whenUnsatisfiable: DoNotSchedule\n    labelSelector:\n      matchLabels:\n        app: myapp\n```\n\nEnsures Pods are spread so no zone has more than 1 Pod difference from the least loaded zone. Great for high availability."
+        },
+        {
+            "id": "s_l1_11",
+            "type": "tip",
+            "title": "Production Checklist ✅",
+            "content": "- Set resource requests/limits.\n- Use PDBs for apps with >1 replica.\n- Spread Pods across failure domains (zones/nodes).\n- Use health probes (liveness, readiness, startup).\n- Run as non‑root with SecurityContext.\n- Enable NetworkPolicies.\n- Monitor with Prometheus/Grafana."
+        }
+    ]
+}

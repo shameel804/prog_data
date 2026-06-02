@@ -1,0 +1,135 @@
+{
+    "id": "l2",
+    "chapterId": "ch_5",
+    "title": "Introducing ConfigMaps 📋",
+    "description": "Create and manage ConfigMap objects to externalise configuration.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "What is a ConfigMap? 🗂️",
+            "content": "# A dictionary of configuration\n\nA ConfigMap is a Kubernetes object that stores non‑confidential data in key‑value pairs. It can hold:\n- Simple values (key=value)\n- Full configuration files\n- JSON or YAML data\n\nPods can consume ConfigMaps as environment variables, command‑line arguments, or files in a volume."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Creating a ConfigMap Imperatively ⚡",
+            "content": "## From literal values\n\n```bash\nkubectl create configmap app-config \\\n  --from-literal=APP_COLOR=blue \\\n  --from-literal=APP_MODE=production\n```\n\n## From a file\n\n```bash\nkubectl create configmap nginx-conf --from-file=nginx.conf\n```\n\nThe filename becomes the key, and the file content becomes the value."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Imperative Creation 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which command creates a ConfigMap with a key `port` and value `8080`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "kubectl create cm port --from-literal=port=8080",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "kubectl create config --key port=8080",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "kubectl create configmap port:8080",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "kubectl apply -f port.yaml",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`kubectl create configmap <name> --from-literal=<key>=<value>` is the correct syntax.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Declarative ConfigMap YAML 📄",
+            "content": "## More control and versioning\n\n```yaml\napiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: game-config\ndata:\n  game.properties: |\n    enemy.types=aliens,monsters\n    player.maximum-lives=5\n  user-interface.properties: |\n    color.good=purple\n    color.bad=yellow\n```\n\n- `data` contains key‑value pairs. Keys with `.` in them create nested files when mounted.\n- Use `|` for multi‑line strings (literal block scalar in YAML)."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "quiz",
+            "title": "YAML ConfigMap 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What does the `|` symbol do in a ConfigMap YAML?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Creates a list",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Allows multi‑line string values",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Encrypts the data",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Comments out the line",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "YAML's literal block scalar (`|`) preserves newlines, ideal for config files.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Viewing and Describing ConfigMaps 🔍",
+            "content": "## Inspect your configuration\n\n- `kubectl get configmaps` – list all ConfigMaps in the namespace\n- `kubectl describe configmap game-config` – shows keys (but not values by default)\n- `kubectl get configmap game-config -o yaml` – full content\n\nUse `-o yaml` to see the actual values; `describe` hides them for brevity."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "code",
+            "title": "Inspect a ConfigMap",
+            "content": "",
+            "codeSnippet": "kubectl create configmap test-cm --from-literal=key=value\nkubectl describe configmap test-cm\nkubectl get configmap test-cm -o yaml",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_8",
+            "type": "text",
+            "title": "Size Limits and Immutability ⚖️",
+            "content": "## ConfigMap constraints\n\n- Maximum size: **1 MB** (etcd limit). Don’t store large config files.\n- You can make a ConfigMap **immutable** by setting `immutable: true` in its spec. This prevents accidental changes and improves performance (kubelet doesn’t watch for updates).\n\n```yaml\nmetadata:\n  name: stable-config\nimmutable: true\n```"
+        },
+        {
+            "id": "s_l2_9",
+            "type": "quiz",
+            "title": "Immutability 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_3",
+                "type": "true_false",
+                "question": "True or False: An immutable ConfigMap can still be updated via `kubectl edit`.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "An immutable ConfigMap cannot be changed after creation; you must delete and recreate it.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

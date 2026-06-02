@@ -1,0 +1,252 @@
+{
+    "id": "quiz_ch_4",
+    "chapterId": "ch_4",
+    "title": "Chapter 4 Quiz",
+    "description": "Master Services, networking, and service discovery in Kubernetes.",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "Why are Pod IPs unreliable for communication?",
+            "options": [
+                "They are shared among Pods",
+                "They change when Pods restart or are replaced",
+                "They are encrypted",
+                "They are only reachable from outside the cluster"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Pod IPs are ephemeral; new Pods get new IPs."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "Which Service type provides a virtual IP reachable only within the cluster?",
+            "options": [
+                "NodePort",
+                "LoadBalancer",
+                "ClusterIP",
+                "ExternalName"
+            ],
+            "correctAnswer": 2,
+            "explanation": "ClusterIP is the default, internal‑only Service."
+        },
+        {
+            "id": "q3",
+            "type": "fill_blank",
+            "question": "A Service selects Pods by matching their _____.",
+            "options": [
+                "names",
+                "labels",
+                "IPs",
+                "container images"
+            ],
+            "correctAnswer": "labels",
+            "explanation": "Services use label selectors to identify target Pods."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "Which command exposes a Deployment as a Service?",
+            "options": [
+                "kubectl expose deployment my-dep --port=80",
+                "kubectl create service --deployment my-dep",
+                "kubectl service expose deployment my-dep",
+                "kubectl set service deployment my-dep"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`kubectl expose` is the command to create a Service from a resource."
+        },
+        {
+            "id": "q5",
+            "type": "true_false",
+            "question": "True or False: A ClusterIP Service can be accessed directly from the internet.",
+            "correctAnswer": false,
+            "explanation": "ClusterIP is only reachable from within the cluster."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "What is the default port range for NodePort Services?",
+            "options": [
+                "80-443",
+                "30000-32767",
+                "1024-65535",
+                "8000-9000"
+            ],
+            "correctAnswer": 1,
+            "explanation": "NodePorts are allocated from 30000 to 32767."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "What happens if you create a LoadBalancer Service on a local cluster without a cloud provider?",
+            "options": [
+                "It fails immediately",
+                "EXTERNAL-IP stays pending",
+                "It works with a default IP",
+                "It converts to NodePort"
+            ],
+            "correctAnswer": 1,
+            "explanation": "No cloud controller means the external IP will never be assigned."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "Which annotation is used to create an internal AWS load balancer?",
+            "options": [
+                "service.beta.kubernetes.io/aws-load-balancer-internal: \"true\"",
+                "cloud.google.com/lb-internal: \"true\"",
+                "internal.loadbalancer: true",
+                "aws/internal: true"
+            ],
+            "correctAnswer": 0,
+            "explanation": "AWS internal LB is configured via that annotation."
+        },
+        {
+            "id": "q9",
+            "type": "fill_blank",
+            "question": "The full DNS name for a Service `api` in namespace `staging` is api.staging.svc._____.",
+            "options": [
+                "local",
+                "cluster.local",
+                "k8s.local",
+                "default"
+            ],
+            "correctAnswer": "cluster.local",
+            "explanation": "The cluster domain defaults to `cluster.local`."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "How does Kubernetes ensure that traffic is only sent to healthy Pods via a Service?",
+            "options": [
+                "Readiness probes",
+                "Liveness probes",
+                "Manual endpoint editing",
+                "Health checks by kubelet"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Readiness probes determine if a Pod is ready to receive traffic."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "What is the main advantage of using an Ingress over many LoadBalancer Services?",
+            "options": [
+                "Faster network speed",
+                "Reduced cost by sharing a single load balancer",
+                "Built‑in authentication",
+                "Automatic scaling"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Ingress allows HTTP routing to multiple Services via one external LB."
+        },
+        {
+            "id": "q12",
+            "type": "true_false",
+            "question": "True or False: A headless Service returns the ClusterIP.",
+            "correctAnswer": false,
+            "explanation": "Headless Services (clusterIP: None) return individual Pod IPs."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "What is an Endpoints object?",
+            "options": [
+                "The list of Pod IPs and ports backing a Service",
+                "The configuration of kube‑proxy",
+                "The DNS records for a Service",
+                "The external load balancer IP"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Endpoints track the IP:port of Pods matching a Service's selector."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "How can you route a Service to an external IP outside the cluster?",
+            "options": [
+                "Use ExternalName type",
+                "Create a Service without a selector and manually define Endpoints",
+                "Set externalIPs in Service spec",
+                "All of the above"
+            ],
+            "correctAnswer": 3,
+            "explanation": "All three methods can direct traffic to external resources."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "Which component programs iptables rules for Services?",
+            "options": [
+                "kubelet",
+                "kube‑proxy",
+                "CoreDNS",
+                "kube‑apiserver"
+            ],
+            "correctAnswer": 1,
+            "explanation": "kube‑proxy watches Services and Endpoints and updates iptables."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "What is the purpose of `sessionAffinity: ClientIP` in a Service?",
+            "options": [
+                "To encrypt traffic",
+                "To stick a client to a specific Pod",
+                "To increase the number of Pods",
+                "To change the Service type"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Session affinity ensures requests from the same client IP go to the same Pod."
+        },
+        {
+            "id": "q17",
+            "type": "true_false",
+            "question": "True or False: A NodePort Service also gets a ClusterIP.",
+            "correctAnswer": true,
+            "explanation": "NodePort builds on ClusterIP; the Service still has an internal virtual IP."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "Which Service type would you use for a public‑facing web application on AWS?",
+            "options": [
+                "ClusterIP",
+                "NodePort",
+                "LoadBalancer",
+                "ExternalName"
+            ],
+            "correctAnswer": 2,
+            "explanation": "LoadBalancer provisions an AWS ELB with a public IP."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "What does `kubectl get endpoints` show?",
+            "options": [
+                "The Pod template of a Deployment",
+                "The IP:port pairs of Pods backing a Service",
+                "The external IP of a LoadBalancer",
+                "The DNS configuration"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Endpoints list the actual Pods that the Service routes to."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "Why might you use a headless Service for a database cluster?",
+            "options": [
+                "To hide all Pod IPs",
+                "To allow direct peer‑to‑peer communication",
+                "To expose the database to the internet",
+                "To increase the number of replicas"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Stateful apps often need to discover each other’s IPs for replication."
+        }
+    ]
+}

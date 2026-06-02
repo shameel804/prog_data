@@ -1,0 +1,111 @@
+{
+    "id": "l1",
+    "chapterId": "ch_10",
+    "title": "Kubernetes Security Foundations 🛡️",
+    "description": "Understand the difference between authentication and authorisation, and why RBAC is central.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Introduction",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The Two Gates 🚪🚪",
+            "content": "# Authentication (AuthN) vs Authorisation (AuthZ)\n\nEvery request to the Kubernetes API goes through two stages:\n1. **Authentication** – *Who are you?* Checks your identity (certificate, token, OIDC).\n2. **Authorisation** – *What are you allowed to do?* Checks whether the authenticated user/service account can perform the requested action.\n\nIf you fail AuthN, you get a `401 Unauthorized` error. If you fail AuthZ, you get a `403 Forbidden`."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Which step verifies the identity of the caller?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Authorisation",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Authentication",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Admission",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Auditing",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Authentication checks ‘who you are’ before checking permissions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "Who Can Talk to the API? 👤",
+            "content": "## Users and ServiceAccounts\n\nKubernetes has two kinds of identities:\n- **Normal users** – managed outside the cluster (X.509 certificates, OpenID Connect). No User object in the API.\n- **ServiceAccounts** – managed by Kubernetes, intended for Pods. Each Pod runs under a ServiceAccount.\n\nBoth are subjects that can be assigned permissions via **RBAC**."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "What is RBAC? 🔐",
+            "content": "# Role‑Based Access Control\n\nRBAC is the authorisation mechanism of Kubernetes. It lets you define **who** (subject) can do **what** (verbs) on **which resources** (Pods, Services, etc.) in **which namespace** or **cluster‑wide**.\n\nInstead of giving everyone admin access, you create **Roles** with minimal privileges and bind them to users/ServiceAccounts. This is the principle of **least privilege**."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "quiz",
+            "title": "RBAC Purpose 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "What is the main goal of RBAC?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To encrypt network traffic",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To enforce least privilege by assigning permissions to roles",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To replace ServiceAccounts",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To manage container images",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "RBAC restricts what subjects can do, minimising the blast radius of compromises.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_6",
+            "type": "text",
+            "title": "RBAC Building Blocks 🧱",
+            "content": "## Four key resources\n\n- **Role** – defines a set of permissions **within a namespace**.\n- **RoleBinding** – grants a Role to a subject (user, group, or ServiceAccount) **within a namespace**.\n- **ClusterRole** – defines permissions **cluster‑wide** (or across namespaces).\n- **ClusterRoleBinding** – grants a ClusterRole to a subject **cluster‑wide**.\n\nThink of a Role as a job description, and a RoleBinding as the hire letter."
+        },
+        {
+            "id": "s_l1_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Always enable RBAC\n\nMost managed Kubernetes services (EKS, AKS, GKE) have RBAC enabled by default. For self‑managed clusters, pass `--authorization-mode=RBAC` to the API server."
+        }
+    ]
+}

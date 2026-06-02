@@ -1,0 +1,135 @@
+{
+    "id": "l5",
+    "chapterId": "ch_9",
+    "title": "Advanced Helm: Hooks, Tests & Dependencies 🔧",
+    "description": "Enhance your charts with lifecycle hooks, automated tests, and sub‑charts.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Helm Lifecycle Hooks 🪝",
+            "content": "# Run actions at specific points\n\nHooks execute one‑time operations during the release lifecycle:\n- `pre-install`, `post-install`\n- `pre-delete`, `post-delete`\n- `pre-upgrade`, `post-upgrade`\n- `pre-rollback`, `post-rollback`\n- `test`\n\nA hook is a regular Kubernetes object (Job, Pod) with an annotation:\n```yaml\nannotations:\n  \"helm.sh/hook\": post-install,post-upgrade\n  \"helm.sh/hook-weight\": \"5\"\n  \"helm.sh/hook-delete-policy\": before-hook-creation,hook-succeeded\n```\n\nCommon uses: database migrations, certificate generation, cleanup."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Hook Example: Database Migration",
+            "content": "A Job that runs `post-upgrade`:",
+            "codeSnippet": "apiVersion: batch/v1\nkind: Job\nmetadata:\n  name: {{ .Release.Name }}-db-migrate\n  annotations:\n    \"helm.sh/hook\": post-upgrade\n    \"helm.sh/hook-delete-policy\": hook-succeeded\nspec:\n  template:\n    spec:\n      restartPolicy: Never\n      containers:\n      - name: migrate\n        image: myapp:{{ .Values.image.tag }}\n        command: [\"./migrate.sh\"]",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Hook Annotation 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which annotation defines a resource as a Helm hook?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "helm.sh/chart",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "helm.sh/hook",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "app.kubernetes.io/managed-by",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "helm/release",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`helm.sh/hook` tells Helm to treat the resource as a hook.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Hook Weights and Deletion Policies ⚖️",
+            "content": "## Ordering and cleanup\n\n- **Hook weights** (`helm.sh/hook-weight`): hooks are executed in ascending weight order. Default weight is 0.\n- **Delete policies** (`helm.sh/hook-delete-policy`):\n  - `before-hook-creation`: delete previous hook before running a new one.\n  - `hook-succeeded`: delete after successful run.\n  - `hook-failed`: delete after failed run.\n\nBy default, hooks are not deleted; they remain for debugging."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Chart Tests 🧪",
+            "content": "## Validate your deployment\n\nA chart test is a Pod (or other resource) with the annotation `\"helm.sh/hook\": test`. It runs when you execute:\n```bash\nhelm test <release-name>\n```\n\nThe test Pod should run a verification script and exit 0 on success. If the Pod fails (exit non‑zero), the test is considered failed.\n\nExample: a Pod that curls the Service and checks the response."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "code",
+            "title": "Test Resource Example",
+            "content": "Place this in `templates/tests/test-connection.yaml`:",
+            "codeSnippet": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: \"{{ include \"mychart.fullname\" . }}-test-connection\"\n  annotations:\n    \"helm.sh/hook\": test\nspec:\n  containers:\n    - name: wget\n      image: busybox\n      command: ['wget']\n      args: ['{{ include \"mychart.fullname\" . }}:{{ .Values.service.port }}']\n  restartPolicy: Never",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Chart Test Trigger 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "How do you execute a chart's tests?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "helm verify",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "helm test <release>",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "helm lint",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "helm run test",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`helm test` runs all resources annotated with `test` hook.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_8",
+            "type": "text",
+            "title": "Managing Dependencies 🔗",
+            "content": "## Sub‑charts and the `charts/` directory\n\nYou can include other charts as dependencies. Define them in `Chart.yaml`:\n```yaml\ndependencies:\n  - name: mysql\n    version: 9.x.x\n    repository: https://charts.bitnami.com/bitnami\n    condition: mysql.enabled\n    tags:\n      - database\n```\n\n- `helm dependency update` downloads dependencies into `charts/`.\n- `condition` and `tags` allow users to enable/disable sub‑charts via values.\n- Values can be passed to sub‑charts using a `mysql:` key in your `values.yaml`."
+        },
+        {
+            "id": "s_l5_9",
+            "type": "text",
+            "title": "Library Charts 📚",
+            "content": "## Reusable snippets only\n\nA library chart (`type: library` in Chart.yaml) contains no Kubernetes resources, only template helpers (`_*.tpl` files). It cannot be installed directly; it’s meant to be imported by other charts.\n\nExample use: a library of common labels, naming functions, or deployment patterns. Import it as a dependency and use its templates."
+        },
+        {
+            "id": "s_l5_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `helm lint` and `helm install --dry-run`\n\nAlways lint your chart (`helm lint ./mychart`) and dry‑run the installation (`helm install --dry-run --debug`) to catch template errors before deployment."
+        }
+    ]
+}

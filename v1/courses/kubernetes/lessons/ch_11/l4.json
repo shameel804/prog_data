@@ -1,0 +1,126 @@
+{
+    "id": "l4",
+    "chapterId": "ch_11",
+    "title": "Visualizing with Grafana 📈",
+    "description": "Build dashboards and set up alerts on top of your Prometheus data.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Monitoring",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Grafana – The Dashboard King 🎨",
+            "content": "# Turn metrics into pictures\n\nGrafana is the most popular open‑source visualization tool. It can:\n- Query multiple data sources (Prometheus, Elasticsearch, InfluxDB, etc.)\n- Create dashboards with graphs, gauges, heatmaps\n- Set up alerts with notification channels (Slack, email, PagerDuty)\n- Share dashboards across teams\n\nIf you installed `kube-prometheus-stack`, Grafana is already running."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Accessing Grafana 🚪",
+            "content": "## Default credentials\n\n```bash\nkubectl port-forward svc/prometheus-grafana -n monitoring 3000:80\n```\n\nLogin with:\n- Username: `admin`\n- Password: Get from Secret:\n```bash\nkubectl get secret prometheus-grafana -n monitoring -o jsonpath=\"{.data.admin-password}\" | base64 --decode\n```\n\nOpen `http://localhost:3000`."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Grafana Data Sources 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which data source does Grafana typically use for Kubernetes metrics?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Metrics Server",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Prometheus",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Elasticsearch",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "kubectl top",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Prometheus is the standard backend for Grafana in Kubernetes environments.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Built‑in Dashboards 🎁",
+            "content": "## The kube‑prometheus‑stack comes with many\n\nNavigate to Dashboards → Browse and explore:\n- **Kubernetes / Compute Resources / Pod** – CPU, memory per Pod\n- **Kubernetes / Networking / Pod** – network I/O\n- **Kubernetes / API Server** – API request rates\n- **Node Exporter / Nodes** – host‑level metrics\n\nThese dashboards are curated and ready‑to‑use."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Creating a Custom Dashboard 🛠️",
+            "content": "## Build your own view\n\n1. Create a new dashboard (+, Dashboard).\n2. Add a panel → choose Prometheus as data source.\n3. Enter a PromQL query, e.g.:\n   ```\n   sum(rate(container_cpu_usage_seconds_total{namespace=\"default\"}[5m])) by (pod)\n   ```\n4. Choose visualization type (graph, gauge, stat).\n5. Save and share.\n\nGrafana also supports variables (like `$namespace`) to make dashboards dynamic."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "code",
+            "title": "Example Query for Dashboard",
+            "content": "Show 5‑minute rate of HTTP 5xx errors:",
+            "codeSnippet": "rate(http_requests_total{status=~\"5..\"}[5m])",
+            "codeLanguage": "promql",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Alerting in Grafana 🚨",
+            "content": "## Proactive notifications\n\nYou can set alerts on any panel:\n1. Edit panel → Alert tab.\n2. Define condition (e.g., average CPU > 80% for 5 minutes).\n3. Choose a notification channel (Slack, email, etc.).\n4. Grafana will fire when the condition is met.\n\nAlertmanager (part of Prometheus) can also handle alerts, but Grafana alerting is simpler for dashboard‑level alerts."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "quiz",
+            "title": "Alerting 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Where can you set up alerts based on a Grafana panel?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "In the Prometheus config file",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "In the panel's Alert tab",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only through Alertmanager",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "In the Kubernetes Event API",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Grafana allows alerting directly from panels with conditions and thresholds.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Import dashboards from Grafana.com\n\nThousands of pre‑built dashboards are available. Go to Dashboards → Import → enter a dashboard ID (e.g., `315` for Kubernetes cluster monitoring)."
+        }
+    ]
+}

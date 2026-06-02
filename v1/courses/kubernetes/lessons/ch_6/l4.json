@@ -1,0 +1,126 @@
+{
+    "id": "l4",
+    "chapterId": "ch_6",
+    "title": "Dynamic Provisioning with StorageClasses ⚡",
+    "description": "Automatically create PVs when PVCs are created.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Static vs Dynamic Provisioning ⚖️",
+            "content": "# From manual to automatic\n\n**Static**: admin creates PVs manually, users claim them.\n**Dynamic**: when a PVC is created, a provisioner (specified in a StorageClass) automatically creates a PV and the backing storage.\n\nDynamic provisioning is the standard for cloud environments – it’s fast, self‑service, and reduces admin overhead."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "StorageClass – The Blueprint 📐",
+            "content": "## Defines the “class” of storage\n\n```yaml\napiVersion: storage.k8s.io/v1\nkind: StorageClass\nmetadata:\n  name: fast-ssd\nprovisioner: kubernetes.io/aws-ebs\nparameters:\n  type: gp3\n  fsType: ext4\nreclaimPolicy: Delete\nvolumeBindingMode: WaitForFirstConsumer\n```\n\n- `provisioner`: determines which plugin creates the volume (AWS EBS, GCE PD, Azure Disk, NFS, etc.).\n- `parameters`: passed to the provisioner.\n- `volumeBindingMode`: `Immediate` (default) or `WaitForFirstConsumer` (delays binding until a Pod using the PVC is scheduled – ensures topology awareness)."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "StorageClass Fields 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which StorageClass parameter controls when the PV is bound?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "reclaimPolicy",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "provisioner",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "volumeBindingMode",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "parameters",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "volumeBindingMode can be Immediate (bind on PVC creation) or WaitForFirstConsumer.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Using a StorageClass in a PVC 🎯",
+            "content": "## Specify the storageClassName\n\n```yaml\napiVersion: v1\nkind: PersistentVolumeClaim\nmetadata:\n  name: db-pvc\nspec:\n  storageClassName: fast-ssd\n  accessModes:\n    - ReadWriteOnce\n  resources:\n    requests:\n      storage: 20Gi\n```\n\nKubernetes will:\n1. Look up the StorageClass `fast-ssd`.\n2. Call the provisioner to create an EBS gp3 volume of 20Gi.\n3. Create a PV and bind it to this PVC.\n4. The Pod can then use the PVC."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Create StorageClass and PVC",
+            "content": "",
+            "codeSnippet": "kubectl apply -f storageclass.yaml\nkubectl apply -f pvc.yaml\nkubectl get pvc db-pvc --watch",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Default StorageClass ⭐",
+            "content": "## One class can be the default\n\nIf you mark a StorageClass with `storageclass.kubernetes.io/is-default-class: \"true\"` annotation, it becomes the default. PVCs that don’t specify `storageClassName` will use it.\n\nCheck your cluster’s default:\n```bash\nkubectl get storageclass\n```\nThe default is marked with `(default)`."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "Default Class 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What happens if a PVC has no storageClassName and there is a default StorageClass?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The PVC fails to bind",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It uses the default StorageClass for dynamic provisioning",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It uses emptyDir",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It waits for an admin‑created PV",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "If a default StorageClass exists, it is used automatically.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_8",
+            "type": "text",
+            "title": "WaitForFirstConsumer 🕒",
+            "content": "## Topology‑aware scheduling\n\nWith `volumeBindingMode: WaitForFirstConsumer`, the PV is not created until a Pod that uses the PVC is scheduled. This ensures:\n- The volume is created in the same zone as the node.\n- No cross‑zone mounting penalties.\n\nRecommended for multi‑zone clusters."
+        },
+        {
+            "id": "s_l4_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Expand a PVC online\n\nIf the StorageClass has `allowVolumeExpansion: true`, you can resize a PVC by simply increasing its `storage` request. The underlying volume is expanded without downtime (depends on driver support)."
+        }
+    ]
+}

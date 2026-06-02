@@ -1,0 +1,141 @@
+{
+    "id": "l5",
+    "chapterId": "ch_11",
+    "title": "Logging Architecture & the Sidecar Pattern 🪵",
+    "description": "Master kubectl logs, use sidecar containers to ship logs, and understand the EFK stack.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Logging",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Kubernetes Logging 101 📜",
+            "content": "# Containers write to stdout/stderr\n\nBy default, Kubernetes captures everything a container writes to stdout and stderr. These logs are stored on the node and accessible via `kubectl logs`.\n\n- `kubectl logs <pod>` – standard output of the first container.\n- `kubectl logs <pod> -c <container>` – specific container.\n- `kubectl logs -f <pod>` – follow.\n- `kubectl logs --previous <pod>` – previous crashed instance.\n\nBut logs are **not persistent**: when a Pod is deleted, its logs are gone unless you ship them elsewhere."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Log Lifetime 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "true_false",
+                "question": "True or False: `kubectl logs` will always show logs of a Pod even after it has been deleted.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "Logs are stored on the node and deleted when the Pod is removed or log rotation occurs.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "The Sidecar Logging Pattern 🧑‍🤝‍🧑",
+            "content": "# Ship logs with a helper container\n\nIf your app writes logs to a file (not stdout), you can use a sidecar container that reads the file and outputs it to its own stdout. This way `kubectl logs` works, or a logging agent can pick them up.\n\nExample: app writes to `/var/log/app.log`. A sidecar container runs `tail -f /var/log/app.log`. Both share an emptyDir volume."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Sidecar Logging Example",
+            "content": "Pod spec snippet:",
+            "codeSnippet": "containers:\n- name: app\n  image: my-app\n  volumeMounts:\n  - name: logs\n    mountPath: /var/log\n- name: log-sidecar\n  image: busybox\n  command: [\"sh\", \"-c\", \"tail -f /var/log/app.log\"]\n  volumeMounts:\n  - name: logs\n    mountPath: /var/log\nvolumes:\n- name: logs\n  emptyDir: {}",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Sidecar Purpose 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What is a typical use of a sidecar container for logging?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To run the main application",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To read log files and forward them to stdout or a collector",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To replace kubectl logs",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To store logs in etcd",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Sidecars act as log shippers, converting file‑based logs to stdout or sending to external systems.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Centralized Logging with EFK/ELK 📚",
+            "content": "# Search, analyze, visualize\n\nFor production, you need a centralized logging system:\n- **Elasticsearch** – stores and indexes logs.\n- **Fluentd/Fluent Bit** – collects and forwards logs from nodes.\n- **Kibana** – web UI to search and visualize logs.\n\nAlternatively, **Loki** (by Grafana) is a lightweight, Prometheus‑like logging system that integrates with Grafana.\n\nHow it works:\n1. Fluentd runs as a DaemonSet on every node, tailing container logs.\n2. It enriches logs with Kubernetes metadata (Pod name, namespace, labels).\n3. Sends to Elasticsearch.\n4. Kibana queries Elasticsearch and provides dashboards."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Deploying EFK with Helm ⛵",
+            "content": "## Quick installation\n\n```bash\nhelm repo add elastic https://helm.elastic.co\nhelm install elasticsearch elastic/elasticsearch -n logging --create-namespace\nhelm install fluentd fluent/fluentd -n logging\nhelm install kibana elastic/kibana -n logging\n```\n\nThen access Kibana:\n```bash\nkubectl port-forward svc/kibana-kibana 5601 -n logging\n```"
+        },
+        {
+            "id": "s_l5_8",
+            "type": "quiz",
+            "title": "Logging Stack 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_3",
+                "type": "multiple_choice",
+                "question": "Which component in the EFK stack collects logs from nodes?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Elasticsearch",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Fluentd / Fluent Bit",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Kibana",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Prometheus",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Fluentd/Fluent Bit runs as a node‑level log agent, forwarding logs to Elasticsearch.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_9",
+            "type": "text",
+            "title": "Loki – The Lighter Alternative 🦎",
+            "content": "## From Grafana Labs\n\nLoki is designed to be cost‑effective and easy to operate. It indexes only metadata (labels), not full text, and stores compressed chunks. It integrates with Grafana seamlessly.\n\nDeploy with:\n```bash\nhelm install loki grafana/loki-stack -n monitoring\n```\n\nIt includes Promtail (log collector) and Loki. Great for teams already using Grafana."
+        },
+        {
+            "id": "s_l5_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Always include a timestamp and structured fields in logs\n\nUse JSON logging format – it makes querying in Elasticsearch or Loki much easier. Include fields like `timestamp`, `level`, `service`, `trace_id`."
+        }
+    ]
+}

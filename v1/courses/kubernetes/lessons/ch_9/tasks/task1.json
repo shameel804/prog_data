@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_9",
+    "title": "Deploy an App with Helm",
+    "description": "Install a Bitnami NGINX chart, upgrade it, and then clean up.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## 🎯 Goal\nExperience the full lifecycle of a Helm release using the Bitnami NGINX chart.\n\n### Steps\n1. Add the Bitnami repository:\n   ```bash\n   helm repo add bitnami https://charts.bitnami.com/bitnami\n   helm repo update\n   ```\n2. Search for the nginx chart: `helm search repo bitnami/nginx`.\n3. Install the chart with release name `my-nginx`:\n   ```bash\n   helm install my-nginx bitnami/nginx\n   ```\n4. Check the release: `helm list`, `helm status my-nginx`.\n5. Get the default values: `helm show values bitnami/nginx`.\n6. Upgrade the release to change the service type to NodePort and increase replicas to 2:\n   ```bash\n   helm upgrade my-nginx bitnami/nginx --set service.type=NodePort --set replicaCount=2\n   ```\n7. Verify the upgrade: `helm history my-nginx`, `kubectl get pods`.\n8. Rollback to the first revision: `helm rollback my-nginx 1` (or just `helm rollback my-nginx`).\n9. Confirm rollback: `helm history my-nginx`, check pods count.\n10. Uninstall the release: `helm uninstall my-nginx`.\n11. Verify no resources remain.",
+    "hints": [
+        "Use `--wait` during install/upgrade to wait for all resources to be ready.",
+        "If the release name already exists, use `helm uninstall` first.",
+        "After uninstall, check with `kubectl get all`."
+    ],
+    "expectedOutput": "Successful install, upgrade, rollback, and uninstall with no leftover resources.",
+    "solutionCode": "helm repo add bitnami https://charts.bitnami.com/bitnami\nhelm install my-nginx bitnami/nginx\nhelm upgrade my-nginx bitnami/nginx --set service.type=NodePort --set replicaCount=2\nhelm rollback my-nginx\nhelm uninstall my-nginx"
+}

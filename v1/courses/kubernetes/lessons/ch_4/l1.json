@@ -1,0 +1,149 @@
+{
+    "id": "l1",
+    "chapterId": "ch_4",
+    "title": "Why Services? 🔌",
+    "description": "Discover why you can't rely on Pod IPs and how Services solve the problem.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Motivation",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The Pod IP Problem 🎯",
+            "content": "# Pods come and go\n\nEvery Pod gets its own IP address, but that IP is **ephemeral**:\n- When a Pod is deleted and recreated (by a Deployment), it gets a new IP.\n- If a node fails, Pods move to other nodes with new IPs.\n- Scaling up creates new Pods with fresh IPs.\n\nIf your frontend app hard‑codes a backend Pod’s IP, it will break the moment that Pod restarts.\n\nWe need a **stable, permanent address** that always points to the right set of Pods. That’s what a Service provides."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Why can't you rely on a Pod's IP for long‑term connectivity?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Pod IPs are encrypted",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Pod IPs change when Pods restart or are replaced",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Pod IPs are only reachable from outside the cluster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Pod IPs are shared among all containers",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Pods are ephemeral; a new Pod gets a new IP, so direct IP usage is fragile.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "What Is a Service? 🎛️",
+            "content": "# A stable endpoint for a set of Pods\n\nA Service is a Kubernetes object that:\n- Gets a **permanent, virtual IP** (ClusterIP) – it never changes.\n- Provides **load balancing** across a dynamic set of Pods matching a label selector.\n- Automatically tracks which Pods are healthy (readiness probe) and routes only to ready ones.\n- Offers different types of exposure: internal, node‑level, or cloud‑load‑balancer.\n\nThink of it as a built‑in proxy that sits in front of your Pods."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "How Services Select Pods 🏷️",
+            "content": "## Labels again!\n\nA Service uses a `selector` (label query) to find the Pods that should receive traffic. Example:\n```yaml\nselector:\n  app: backend\n```\nThe Service will send traffic to any Pod in the same namespace that has the label `app: backend` and is **Ready**.\n\nWhen Pods are added or removed (scale up/down), the Service automatically updates its list of endpoints."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "quiz",
+            "title": "Selector Role 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "What determines which Pods a Service routes traffic to?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The Pod's name",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The Service's label selector",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The Pod's IP address",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The namespace of the Service",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The Service matches Pods by their labels, as defined in the selector field.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_6",
+            "type": "text",
+            "title": "Service Types Overview 🗺️",
+            "content": "## Four main types\n\n| Type          | Scope                     | Use Case                            |\n|---------------|---------------------------|-------------------------------------|\n| **ClusterIP** | Internal only             | Backend‑to‑backend communication    |\n| **NodePort**  | Node IP + static port     | Debugging, on‑premise access         |\n| **LoadBalancer** | External IP via cloud LB  | Public internet traffic             |\n| **ExternalName** | CNAME record            | Redirect to an external DNS name    |\n\nWe'll explore the first three in depth."
+        },
+        {
+            "id": "s_l1_7",
+            "type": "code",
+            "title": "Imperative Service Creation",
+            "content": "Quickly expose a Deployment:",
+            "codeSnippet": "kubectl expose deployment nginx-deploy --port=80 --target-port=80 --type=ClusterIP",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_8",
+            "type": "quiz",
+            "title": "Command Purpose 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_3",
+                "type": "multiple_choice",
+                "question": "What does `kubectl expose` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Creates a Deployment",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Creates a Service that routes to the specified resource",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Exposes a container port to the node",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Deletes a Pod",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`expose` generates a Service based on a Deployment or Pod.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

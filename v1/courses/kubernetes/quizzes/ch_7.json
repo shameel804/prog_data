@@ -1,0 +1,258 @@
+{
+    "id": "quiz_ch_7",
+    "chapterId": "ch_7",
+    "title": "Chapter 7 Quiz",
+    "description": "Test your knowledge of scaling, probes, and resource management.",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What does a CPU request of 250m mean?",
+            "options": [
+                "The container will use exactly 0.25 cores",
+                "The container is guaranteed 250 millicores (0.25 core) for scheduling",
+                "The container cannot use more than 250 millicores",
+                "The container will be throttled to 25% CPU"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Requests are used for scheduling and guarantee a minimum amount of CPU."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "What happens when a container exceeds its memory limit?",
+            "options": [
+                "It is throttled",
+                "It is restarted (OOMKill)",
+                "It is migrated to another node",
+                "It continues running but with warnings"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Memory is incompressible; exceeding the limit triggers an OOM kill."
+        },
+        {
+            "id": "q3",
+            "type": "mcq",
+            "question": "Which QoS class does a Pod get if all containers have equal requests and limits for CPU and memory?",
+            "options": [
+                "BestEffort",
+                "Burstable",
+                "Guaranteed",
+                "System"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Guaranteed QoS requires equal requests and limits for all containers."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "What is the purpose of a readiness probe?",
+            "options": [
+                "To restart a crashed container",
+                "To check if a container is ready to serve traffic",
+                "To check if a container is alive and restart if not",
+                "To initialise the container with data"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Readiness probes determine if the Pod should receive traffic."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "What happens when a readiness probe fails?",
+            "options": [
+                "The container is restarted",
+                "The Pod is removed from Service endpoints",
+                "The Pod is evicted",
+                "The node is rebooted"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Failing readiness stops traffic but doesn't restart the container."
+        },
+        {
+            "id": "q6",
+            "type": "fill_blank",
+            "question": "The three types of probe handlers are httpGet, tcpSocket, and _____.",
+            "options": [
+                "exec",
+                "command",
+                "grpc",
+                "script"
+            ],
+            "correctAnswer": "exec",
+            "explanation": "exec runs a command inside the container."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "What is the main difference between liveness and readiness probes?",
+            "options": [
+                "Liveness restarts the container on failure, readiness stops traffic",
+                "Readiness restarts the container, liveness stops traffic",
+                "Both do the same thing but have different names",
+                "Liveness is for HTTP, readiness is for TCP"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Liveness leads to container restart; readiness affects service routing."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "What should you avoid checking in a liveness probe?",
+            "options": [
+                "Internal process health",
+                "Dependencies like an external database",
+                "File existence",
+                "Memory usage"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Checking external dependencies can cause cascading restarts."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "When should you use a startup probe?",
+            "options": [
+                "For containers that need frequent restarts",
+                "For containers with a long initial startup time",
+                "For containers that never become ready",
+                "For containers without any other probes"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Startup probes delay liveness/readiness until the app is fully initialised."
+        },
+        {
+            "id": "q10",
+            "type": "true_false",
+            "question": "True or False: A startup probe runs periodically even after initial success.",
+            "correctAnswer": false,
+            "explanation": "Once it succeeds once, it never runs again."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "What component does the HPA rely on for CPU/memory metrics by default?",
+            "options": [
+                "Prometheus",
+                "Metrics Server",
+                "kube‑state‑metrics",
+                "Node Exporter"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The Metrics Server provides resource metrics for HPA."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "Which command creates an HPA for a Deployment targeting 50% CPU?",
+            "options": [
+                "kubectl scale deployment my-dep --cpu=50",
+                "kubectl autoscale deployment my-dep --cpu-percent=50 --min=1 --max=10",
+                "kubectl hpa deployment my-dep --target-cpu=50",
+                "kubectl create hpa my-dep --cpu=50"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`kubectl autoscale` is the imperative command."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "Why must Pods have CPU requests for HPA to work?",
+            "options": [
+                "HPA uses absolute CPU value",
+                "HPA calculates utilisation as a percentage of requests",
+                "CPU limits are mandatory for HPA",
+                "Metrics Server requires requests"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Without requests, utilisation percentage cannot be computed."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "If an HPA defines both CPU (target 50%) and memory (target 80%), how does it determine replicas?",
+            "options": [
+                "It uses CPU only",
+                "It takes the average of both",
+                "It picks the metric yielding the highest replica count",
+                "It uses memory only"
+            ],
+            "correctAnswer": 2,
+            "explanation": "The max of all metric calculations is used."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "What is the stabilisation window in HPA?",
+            "options": [
+                "The time to wait before scaling up",
+                "The time to wait before scaling down",
+                "Both up and down windows to prevent flapping",
+                "The time between metric collections"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Stabilisation windows (scaleUp and scaleDown) prevent rapid fluctuations."
+        },
+        {
+            "id": "q16",
+            "type": "true_false",
+            "question": "True or False: HPA can scale on custom metrics like requests per second.",
+            "correctAnswer": true,
+            "explanation": "HPA supports custom and external metrics via adapters."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "Which probe would you use to prevent a Pod from receiving traffic while its cache warms up?",
+            "options": [
+                "Liveness",
+                "Readiness",
+                "Startup",
+                "None"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Readiness controls traffic; use it to delay service inclusion."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "What happens if a startup probe never succeeds within `failureThreshold * periodSeconds`?",
+            "options": [
+                "The container continues running but never gets traffic",
+                "The container is restarted",
+                "The Pod is deleted",
+                "The liveness probe takes over"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Exceeding the startup probe's failure threshold causes a container restart."
+        },
+        {
+            "id": "q19",
+            "type": "fill_blank",
+            "question": "To check current CPU/memory usage of Pods, use the command `kubectl top _____`.",
+            "options": [
+                "pods",
+                "pods --all-namespaces",
+                "containers",
+                "pods (or nodes)"
+            ],
+            "correctAnswer": "pods",
+            "explanation": "`kubectl top pods` shows resource usage."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "Which QoS class has the lowest priority during node memory pressure?",
+            "options": [
+                "Guaranteed",
+                "Burstable",
+                "BestEffort",
+                "System"
+            ],
+            "correctAnswer": 2,
+            "explanation": "BestEffort Pods are evicted first because they have no resource guarantees."
+        }
+    ]
+}

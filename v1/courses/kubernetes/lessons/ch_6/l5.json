@@ -1,0 +1,112 @@
+{
+    "id": "l5",
+    "chapterId": "ch_6",
+    "title": "StatefulSets – Pods with Identity 🧬",
+    "description": "Run stateful applications that require stable network identity and persistent storage.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Deployments vs StatefulSets ⚔️",
+            "content": "# Deployments are for stateless Pods\n\nDeployments create Pods with random names and shared PersistentVolumeClaims (if any). That’s a problem for databases, message brokers, or any app where each instance needs:\n- A **stable hostname** (pod-0, pod-1, ...)\n- **Dedicated storage** (each Pod gets its own PVC)\n- **Ordered startup and shutdown**\n\n**StatefulSet** provides all of that."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Key Features of StatefulSet 🧩",
+            "content": "## Identity and ordering\n\n- **Stable network ID**: Pod name is `<statefulset-name>-<ordinal-index>` (e.g., `db-0`, `db-1`).\n- **Stable storage**: each Pod gets its own PVC, automatically created from a `volumeClaimTemplate`.\n- **Ordered deployment**: starts Pods in increasing order (0 → N-1); reverse for termination.\n- **Headless Service required**: a headless Service (ClusterIP=None) is needed to control the network domain."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "StatefulSet Identity 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the name of the second Pod in a StatefulSet named `redis`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "redis-2",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "redis-1",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "redis-01",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "redis-b",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Ordinals start at 0, so the second is index 1.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "StatefulSet YAML Structure 📄",
+            "content": "## A minimal example\n\n```yaml\napiVersion: apps/v1\nkind: StatefulSet\nmetadata:\n  name: web\nspec:\n  serviceName: \"nginx\"         # headless Service\n  replicas: 3\n  selector:\n    matchLabels:\n      app: nginx\n  template:\n    metadata:\n      labels:\n        app: nginx\n    spec:\n      containers:\n      - name: nginx\n        image: nginx:1.25\n        volumeMounts:\n        - name: www\n          mountPath: /usr/share/nginx/html\n  volumeClaimTemplates:\n  - metadata:\n      name: www\n    spec:\n      accessModes: [ \"ReadWriteOnce\" ]\n      storageClassName: \"standard\"\n      resources:\n        requests:\n          storage: 1Gi\n```\nNotice `volumeClaimTemplates` – Kubernetes creates a PVC for each Pod using the template."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Apply StatefulSet",
+            "content": "",
+            "codeSnippet": "kubectl apply -f statefulset.yaml\nkubectl get pods -w\nkubectl get pvc",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "How PVCs Are Named 📛",
+            "content": "## Predictable naming\n\nThe PVC name is `<volumeClaimTemplate-name>-<statefulset-name>-<ordinal>`.\nExample: `www-web-0`, `www-web-1`, etc.\n\nIf Pod `web-0` is rescheduled or restarted, it reattaches the same PVC – data survives."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "PVC Lifecycle 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "true_false",
+                "question": "True or False: When a StatefulSet Pod is deleted, its PVC is automatically deleted.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "PVCs persist even after Pod deletion; they must be manually cleaned up.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_8",
+            "type": "text",
+            "title": "Headless Service Requirement 🌐",
+            "content": "## Stable DNS names\n\nYou must create a headless Service (ClusterIP: None) with the same name as `serviceName` in the StatefulSet. This gives each Pod a DNS name like:\n```\n<pod-name>.<service-name>.<namespace>.svc.cluster.local\n```\nExample: `web-0.nginx.default.svc.cluster.local`.\n\nOther Pods can discover each individual instance."
+        },
+        {
+            "id": "s_l5_9",
+            "type": "text",
+            "title": "Scaling StatefulSets 📈",
+            "content": "## Ordered scale‑up and scale‑down\n\n- Scaling up: Pods are created in order (0, then 1, then 2...). Each must be Ready before the next starts.\n- Scaling down: Pods are terminated in reverse order (highest ordinal first).\n\nThis ensures data safety for apps that need controlled cluster membership changes."
+        },
+        {
+            "id": "s_l5_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `kubectl rollout status` for StatefulSets\n\nStatefulSets support rolling updates (like Deployments) with partition and strategy controls. Use `kubectl rollout status statefulset/<name>` to watch."
+        }
+    ]
+}

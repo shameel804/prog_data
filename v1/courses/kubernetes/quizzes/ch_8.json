@@ -1,0 +1,252 @@
+{
+    "id": "quiz_ch_8",
+    "chapterId": "ch_8",
+    "title": "Chapter 8 Quiz",
+    "description": "Test your knowledge of Ingress, Ingress Controllers, and Network Policies.",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the main benefit of Ingress over multiple LoadBalancer Services?",
+            "options": [
+                "Faster network throughput",
+                "One external IP can route to many Services based on rules",
+                "Built‑in authentication",
+                "Automatic Pod restarts"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Ingress consolidates routing, reducing cost and complexity."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "What are the two main components of Kubernetes Ingress?",
+            "options": [
+                "Ingress resource and Service",
+                "Ingress Controller and Ingress resource",
+                "LoadBalancer and NodePort",
+                "ConfigMap and Secret"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The controller implements the rules defined in the Ingress resource."
+        },
+        {
+            "id": "q3",
+            "type": "true_false",
+            "question": "True or False: An Ingress resource works without an Ingress controller if you use a Service type LoadBalancer.",
+            "correctAnswer": false,
+            "explanation": "The controller is mandatory; the Ingress resource alone does nothing."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "Which command enables the NGINX Ingress controller in minikube?",
+            "options": [
+                "minikube addons enable ingress",
+                "minikube start --ingress",
+                "kubectl create ingress",
+                "minikube ingress enable"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Minikube ships with the ingress addon."
+        },
+        {
+            "id": "q5",
+            "type": "fill_blank",
+            "question": "To select which controller handles an Ingress, set the _____ field in the spec.",
+            "options": [
+                "ingressClassName",
+                "controllerName",
+                "class",
+                "driver"
+            ],
+            "correctAnswer": "ingressClassName",
+            "explanation": "`ingressClassName` matches an IngressClass resource."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "Which pathType matches the URL path and any sub‑paths?",
+            "options": [
+                "Exact",
+                "Prefix",
+                "ImplementationSpecific",
+                "RegularExpression"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Prefix matches `/foo` and `/foo/bar`."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "How do you enable TLS for an Ingress?",
+            "options": [
+                "Add a tls section referencing a TLS Secret",
+                "Set annotation secure: true",
+                "Use a Service type TLS",
+                "TLS is enabled by default"
+            ],
+            "correctAnswer": 0,
+            "explanation": "You define a TLS section with hosts and secretName."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "Where does TLS termination occur in a typical Ingress setup?",
+            "options": [
+                "At the backend Pod",
+                "At the Ingress controller",
+                "At the Service",
+                "At the kube‑apiserver"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The controller terminates TLS and forwards unencrypted traffic internally."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "What does a NetworkPolicy with an empty podSelector and empty ingress rule do?",
+            "options": [
+                "Allows all ingress traffic",
+                "Denies all ingress traffic to all Pods in the namespace",
+                "Denies all egress",
+                "Deletes all Pods"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Empty podSelector selects all Pods, empty ingress means no allowed ingress."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "Which selectors can you use in a NetworkPolicy ingress rule?",
+            "options": [
+                "podSelector and namespaceSelector",
+                "podSelector, namespaceSelector, and ipBlock",
+                "Only podSelector",
+                "Only ipBlock"
+            ],
+            "correctAnswer": 1,
+            "explanation": "All three can be used to define traffic sources."
+        },
+        {
+            "id": "q11",
+            "type": "true_false",
+            "question": "True or False: By default, all egress traffic from Pods is allowed unless a NetworkPolicy with egress rules is applied.",
+            "correctAnswer": true,
+            "explanation": "All egress is permitted; you must explicitly restrict it."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "What is the recommended strategy for network security?",
+            "options": [
+                "Allow all, then deny specific",
+                "Deny all, then allow specific",
+                "Use only namespace labels",
+                "Disable network plugins"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Zero‑trust: default deny, then add minimal allow rules."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "Which annotation enables canary traffic splitting in the NGINX Ingress controller?",
+            "options": [
+                "nginx.ingress.kubernetes.io/canary: \"true\"",
+                "nginx.org/canary: true",
+                "canary.weight: 10",
+                "ingress.kubernetes.io/canary: enabled"
+            ],
+            "correctAnswer": 0,
+            "explanation": "The canary annotation is specific to the NGINX community controller."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "What does the annotation `nginx.ingress.kubernetes.io/rewrite-target: /$2` do?",
+            "options": [
+                "Redirects to another host",
+                "Rewrites the request URI before forwarding to the backend",
+                "Enables TLS",
+                "Sets the backend Service"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It modifies the URI path based on capture groups."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "Which CNI plugins support NetworkPolicies?",
+            "options": [
+                "Only Calico",
+                "Calico, Cilium, Weave Net, Antrea",
+                "All CNI plugins",
+                "Only Flannel"
+            ],
+            "correctAnswer": 1,
+            "explanation": "These plugins implement the NetworkPolicy API."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "How can you allow traffic from a specific namespace to a Pod?",
+            "options": [
+                "Use namespaceSelector with a label",
+                "Hard‑code the namespace name",
+                "Use podSelector only",
+                "Both a and b (via label matching)"
+            ],
+            "correctAnswer": 3,
+            "explanation": "namespaceSelector selects by label; you can also match namespace name with an expression."
+        },
+        {
+            "id": "q17",
+            "type": "true_false",
+            "question": "True or False: NetworkPolicies can restrict traffic on specific ports and protocols.",
+            "correctAnswer": true,
+            "explanation": "You can specify port numbers and protocols (TCP, UDP, SCTP)."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "What is a common use case for combining Ingress and NetworkPolicy?",
+            "options": [
+                "To scale Pods automatically",
+                "To force all external traffic to go through the Ingress controller and block direct Pod access",
+                "To enable storage",
+                "To encrypt etcd"
+            ],
+            "correctAnswer": 1,
+            "explanation": "NetworkPolicy ensures only the Ingress controller can reach backend Pods."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "Which command creates a TLS Secret for Ingress?",
+            "options": [
+                "kubectl create secret tls my-tls --cert=cert.pem --key=key.pem",
+                "kubectl create secret generic my-tls --from-literal=cert=...",
+                "kubectl create configmap tls --from-file=cert.pem",
+                "kubectl tls create my-tls"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`kubectl create secret tls` is the dedicated command."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "If an Ingress has no `ingressClassName` set, what happens?",
+            "options": [
+                "It uses the default IngressClass if one exists",
+                "It fails to work",
+                "It uses all controllers",
+                "It defaults to nginx"
+            ],
+            "correctAnswer": 0,
+            "explanation": "If a default IngressClass is present, it's used; otherwise, no controller picks it up."
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_3",
+    "title": "Zero‑Downtime Deployment Challenge",
+    "description": "Create a Deployment with a custom rolling update strategy and readiness probe.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## 🎯 Goal\nDesign a Deployment for a hypothetical app that must **never** drop requests during updates.\n\n### Requirements\n1. The Deployment is named `zero-downtime-app`.\n2. Image: `nginx:1.25` (simulate your app).\n3. Replicas: 3.\n4. Strategy: `RollingUpdate` with `maxSurge: 1` and `maxUnavailable: 0`.\n5. Add a readiness probe to the container:\n   - `httpGet` on `path: /` and `port: 80`\n   - `initialDelaySeconds: 5`\n   - `periodSeconds: 5`\n6. Write the YAML file `zero-downtime.yaml` and apply it.\n7. Verify the strategy: `kubectl describe deployment zero-downtime-app | grep -A5 Strategy`.\n8. Update the image to `nginx:1.26` and observe the rollout: `kubectl rollout status deployment/zero-downtime-app`.\n9. While the update is running, check if any Pods become unavailable (none should).\n10. Once the update completes, check the history.\n11. Delete the Deployment afterwards.",
+    "hints": [
+        "The readiness probe must return a successful HTTP status (200‑399) for the Pod to be marked Ready.",
+        "Because `maxUnavailable` is 0, no old Pod is terminated until a new one is Ready. This requires that the new Pod's readiness probe passes.",
+        "You can simulate a slow readiness by using `initialDelaySeconds` but for nginx it’s immediate."
+    ],
+    "expectedOutput": "During the update, `kubectl get pods` should show at most 4 Pods at any time (3 old + 1 new) and no Pods in Terminating state until new ones are Ready.",
+    "solutionCode": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: zero-downtime-app\nspec:\n  replicas: 3\n  strategy:\n    type: RollingUpdate\n    rollingUpdate:\n      maxSurge: 1\n      maxUnavailable: 0\n  selector:\n    matchLabels:\n      app: zero\n  template:\n    metadata:\n      labels:\n        app: zero\n    spec:\n      containers:\n      - name: nginx\n        image: nginx:1.25\n        ports:\n        - containerPort: 80\n        readinessProbe:\n          httpGet:\n            path: /\n            port: 80\n          initialDelaySeconds: 5\n          periodSeconds: 5"
+}

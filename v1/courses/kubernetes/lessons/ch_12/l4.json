@@ -1,0 +1,141 @@
+{
+    "id": "l4",
+    "chapterId": "ch_12",
+    "title": "Cluster Upgrades & Maintenance 🛠️",
+    "description": "Plan and execute Kubernetes version upgrades, node replacements, and backup strategies.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Operations",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Why Upgrades Matter 🔄",
+            "content": "# Stay supported, stay secure\n\nKubernetes releases a new minor version every ~4 months. Older versions eventually lose support.\n\nUpgrade reasons:\n- Security patches\n- New features (e.g., removal of deprecated APIs)\n- Bug fixes\n- Compliance requirements\n\nBut an upgrade must be planned to avoid downtime."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Kubernetes Version Skew Policy 📜",
+            "content": "## Components can be at different versions\n\nThe official policy allows:\n- **kube-apiserver** at version X\n- **kube‑controller‑manager**, **kube‑scheduler**, **cloud‑controller‑manager** at version X (or X‑1 for some)\n- **kubelet** and **kube‑proxy** at version X‑2\n- **kubectl** at X or X±1\n\nThis means you can upgrade the control plane first, then upgrade nodes gradually."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Upgrade Strategy 🔢",
+            "content": "## One minor version at a time\n\nYou cannot skip minor versions. From 1.26 to 1.28, you must go through 1.27.\n\nTypical process (managed cluster like EKS, AKS, GKE):\n1. Upgrade the control plane (cloud console or CLI).\n2. After control plane is updated, upgrade each node group (creates new nodes, drains old ones).\n\nSelf‑managed cluster with kubeadm:\n1. `kubeadm upgrade plan`\n2. `kubeadm upgrade apply v1.28.0` on the first control plane node.\n3. Upgrade kubelet and kubectl on each node.\n4. `kubeadm upgrade node` on other control plane nodes and worker nodes."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Version Skew 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Can you upgrade a cluster directly from version 1.24 to 1.27?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Yes, if it's a managed service",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "No, you must go through 1.25 and 1.26",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only if you upgrade the control plane first",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Yes, using kubeadm upgrade skip",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Kubernetes requires sequential minor version upgrades.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Node Maintenance – Cordon & Drain 🚧",
+            "content": "## Safely remove nodes\n\nBefore a node maintenance:\n1. **Cordon** the node: marks it unschedulable (`kubectl cordon <node>`).\n2. **Drain** the node: evicts all Pods respecting PDBs and grace periods (`kubectl drain <node> --ignore-daemonsets --delete-emptydir-data`).\n3. Perform maintenance.\n4. Uncordon: `kubectl uncordon <node>` to allow new Pods.\n\n**Drain flags**\n- `--ignore-daemonsets` (DaemonSets are already on every node).\n- `--delete-emptydir-data` (emptyDir volumes will be lost, must acknowledge).\n- `--grace-period` (how long to wait for Pods to shut down)."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "code",
+            "title": "Drain a Node",
+            "content": "",
+            "codeSnippet": "kubectl cordon worker-1\nkubectl drain worker-1 --ignore-daemonsets --delete-emptydir-data --force\n# Upgrade / reboot node\nkubectl uncordon worker-1",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "Drain Behavior 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What does `kubectl drain` do to Pods on the node?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Deletes them permanently",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Evicts them gracefully, rescheduling if controlled by a controller",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Stops them but keeps them on the node",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Moves the node to another cluster",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Drain evicts Pods; a controller like Deployment will recreate them elsewhere.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_8",
+            "type": "text",
+            "title": "Backup and Restore 🗄️",
+            "content": "## Protect your cluster state\n\nWhat needs backup?\n- **etcd** – the entire cluster state (all objects).\n- **PersistentVolume** data – your application data.\n\netcd backup:\n```bash\nETCDCTL_API=3 etcdctl snapshot save /backup/snapshot.db \\\n  --endpoints=https://127.0.0.1:2379 \\\n  --cacert /etc/kubernetes/pki/etcd/ca.crt \\\n  --cert /etc/kubernetes/pki/etcd/server.crt \\\n  --key /etc/kubernetes/pki/etcd/server.key\n```\n\nRestore:\n```bash\netcdctl snapshot restore /backup/snapshot.db --data-dir /var/lib/etcd-restored\n```\n\nFor managed clusters, cloud providers often handle etcd backups automatically."
+        },
+        {
+            "id": "s_l4_9",
+            "type": "text",
+            "title": "PV Backup with Velero 💾",
+            "content": "## Open‑source cluster backup\n\n**Velero** backs up your entire cluster (objects + persistent volumes) to object storage (S3, GCS).\n\n```bash\n# Backup entire cluster\nvelero backup create full-backup --include-namespaces '*'\n# Restore a namespace\nvelero restore create --from-backup full-backup --include-namespaces myapp\n```\n\nIt also supports **scheduled backups** and **migration** between clusters."
+        },
+        {
+            "id": "s_l4_10",
+            "type": "quiz",
+            "title": "etcd Backup 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_3",
+                "type": "true_false",
+                "question": "True or False: Backing up etcd alone is enough to recover all application data in a cluster.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "etcd stores cluster objects, but persistent volume data (actual database files) must be backed up separately.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

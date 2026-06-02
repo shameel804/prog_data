@@ -1,0 +1,114 @@
+{
+    "id": "l1",
+    "chapterId": "ch_8",
+    "title": "Why Ingress? 🚪",
+    "description": "Learn why Ingress is the best way to expose HTTP services to the outside world.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Motivation",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "The LoadBalancer Problem 💸",
+            "content": "# Too many load balancers\n\nIn Chapter 4, we exposed a Service using `type: LoadBalancer`. That works, but if you have 10 microservices, you’ll create 10 cloud load balancers – each costing money and adding complexity.\n\n**Ingress** provides a single entry point for all your HTTP/HTTPS services, routing traffic based on hostname and path to different backend Services. One load balancer, many apps."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "What is the main advantage of Ingress over multiple LoadBalancer Services?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Faster network speed",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "One external IP can route to many Services, reducing cost",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Built‑in database",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Automatic Pod scaling",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Ingress consolidates traffic, sharing a single load balancer across multiple backends.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "How Ingress Works 🗺️",
+            "content": "# Two pieces of the puzzle\n\n1. **Ingress Controller** – a pod that watches for Ingress resources and configures a load balancer (e.g., NGINX, HAProxy, Traefik).\n2. **Ingress Resource** – a YAML manifest that defines routing rules (host, path → Service).\n\nThe controller implements the rules; you just declare them. It’s like a smart reverse proxy built into Kubernetes."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "Ingress vs Service Types ⚖️",
+            "content": "| Feature          | NodePort         | LoadBalancer      | Ingress          |\n|------------------|------------------|-------------------|------------------|\n| **External IP**  | Node IP only     | One per Service   | One for all rules|\n| **Routing**      | Simple port      | Simple port       | Host/path based  |\n| **TLS**          | Manual config    | Manual config     | Automatic via cert-manager |\n| **Cost**         | Free (on‑prem)   | High (per LB)     | Low (one LB)     |\n\nIngress is the modern standard for HTTP(S) workloads."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "quiz",
+            "title": "Ingress Components 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "What does the Ingress Controller do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Creates Pods",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Configures a reverse proxy based on Ingress resources",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Manages storage",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Encrypts etcd",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The controller translates high‑level routing rules into actual proxy configuration.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_6",
+            "type": "code",
+            "title": "Minimal Ingress Resource Example",
+            "content": "Routes traffic from `api.example.com` to Service `api-svc` on port 80:",
+            "codeSnippet": "apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: api-ingress\nspec:\n  rules:\n  - host: api.example.com\n    http:\n      paths:\n      - path: /\n        pathType: Prefix\n        backend:\n          service:\n            name: api-svc\n            port:\n              number: 80",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Ingress is not a Service type\n\nYou can't `kubectl expose` with Ingress. You create an Ingress resource, and the controller handles the rest. Always deploy an Ingress controller first."
+        }
+    ]
+}

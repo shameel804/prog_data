@@ -1,0 +1,138 @@
+{
+    "id": "l5",
+    "chapterId": "ch_5",
+    "title": "Security Best Practices & Immutable Secrets 🛡️",
+    "description": "Protect your configuration with encryption, RBAC, and immutability.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "The Shared Responsibility Model 🤝",
+            "content": "# Kubernetes gives you tools – you must use them\n\nOut of the box, Secrets are only base64‑encoded. To truly secure them:\n- Enable **encryption at rest** in etcd\n- Use **RBAC** to restrict access to Secrets\n- Consider external secret stores (Vault, AWS Secrets Manager) with **Secrets Store CSI Driver**\n- Rotate secrets regularly\n\nNever store plain‑text secrets in Git or ConfigMaps!"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Encryption at Rest 🔐",
+            "content": "## Encrypt Secrets in etcd\n\nBy default, etcd stores Secrets as base64 (not encrypted). You can enable encryption with a configuration file passed to the API server:\n\n```yaml\napiVersion: apiserver.config.k8s.io/v1\nkind: EncryptionConfiguration\nresources:\n  - resources:\n    - secrets\n    providers:\n    - aescbc:\n        keys:\n        - name: key1\n          secret: <base64-key>\n    - identity: {}\n```\n\nThis encrypts secrets before storing them in etcd. The identity provider allows reading old unencrypted secrets."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Encryption Purpose 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "true_false",
+                "question": "True or False: Enabling encryption at rest means secrets are automatically secure in transit.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "Encryption at rest protects data in etcd; you still need TLS for in‑transit security.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "RBAC for Secrets 🛡️",
+            "content": "## Limit who can read/write\n\nUse Kubernetes RBAC (Role‑Based Access Control) to restrict access. Example Role that allows reading Secrets:\n\n```yaml\nkind: Role\napiVersion: rbac.authorization.k8s.io/v1\nmetadata:\n  namespace: default\n  name: secret-reader\nrules:\n- apiGroups: [\"\"]\n  resources: [\"secrets\"]\n  verbs: [\"get\", \"list\"]\n```\n\nThen bind it to a specific service account. Never give broad secrets access to arbitrary Pods."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Immutable Secrets 🔒",
+            "content": "## Prevent accidental updates\n\nLike ConfigMaps, you can make Secrets immutable by setting `immutable: true`:\n\n```yaml\napiVersion: v1\nkind: Secret\nmetadata:\n  name: stable-cert\nimmutable: true\ndata:\n  tls.crt: ...\n```\n\nThis is crucial for production – it prevents a rogue update from breaking running Pods that still reference the old secret (if not watching for changes)."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Immutable Secrets 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "Why would you set a Secret as immutable?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To improve performance and prevent accidental changes",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To make it encrypted",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To allow editing only via CLI",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To convert it to a ConfigMap",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Immutability stops accidental updates and reduces kubelet watch load.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "External Secrets Management 🌐",
+            "content": "## Go beyond Kubernetes Secrets\n\nFor enterprises, centralise secret management:\n- **HashiCorp Vault** with Vault Agent Injector or Secrets Store CSI Driver\n- **AWS Secrets Manager**, **Azure Key Vault**, **GCP Secret Manager** via CSI driver\n- **Sealed Secrets** – encrypt secrets that can be stored in Git\n\nThese tools provide rotation, audit logs, and granular access control."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "text",
+            "title": "Secret Size and Limits ⚖️",
+            "content": "## A few constraints\n\n- Secret size is limited to **1 MB** (same as ConfigMap).\n- Too many secrets per namespace may impact performance.\n- Secrets are mounted as tmpfs (memory‑backed filesystem), so they never touch disk.\n- Do not use secrets for large binary files – consider a separate storage solution."
+        },
+        {
+            "id": "s_l5_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `kubectl create secret docker-registry` for pulling private images\n\n```bash\nkubectl create secret docker-registry regcred \\\n  --docker-server=myregistry.com \\\n  --docker-username=myuser \\\n  --docker-password=mypass\n```\nThen reference it in your Pod spec with `imagePullSecrets`."
+        },
+        {
+            "id": "s_l5_10",
+            "type": "quiz",
+            "title": "Final Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_3",
+                "type": "multiple_choice",
+                "question": "Which tool integrates external secret stores into Kubernetes?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Secrets Store CSI Driver",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Ingress Controller",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "CoreDNS",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "kube‑proxy",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The CSI driver allows mounting secrets from external providers as volumes.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

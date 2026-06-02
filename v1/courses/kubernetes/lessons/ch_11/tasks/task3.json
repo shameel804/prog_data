@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_11",
+    "title": "Set Up a Sidecar to Ship Logs",
+    "description": "Create a Pod with an app that writes logs to a file, and a sidecar that tails them.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## 🎯 Goal\nUnderstand the sidecar logging pattern by building a Pod where an app writes to a file and a sidecar container ships the logs to stdout.\n\n### Steps\n1. Write a Pod YAML `log-sidecar-pod.yaml`:\n   - Name: `logger-demo`\n   - Two containers:\n     - **app**: uses `busybox`, runs a script that loops every 2 seconds and appends `Hello $(date)` to `/var/log/app.log`.\n     - **sidecar**: uses `busybox`, runs `tail -f /var/log/app.log`.\n   - An `emptyDir` volume named `log-volume` mounted at `/var/log` in both containers.\n2. Apply the Pod: `kubectl apply -f log-sidecar-pod.yaml`.\n3. Check logs of the sidecar container: `kubectl logs logger-demo -c sidecar`. You should see the timestamps appearing.\n4. Compare with the app container logs: `kubectl logs logger-demo -c app` – it won't show the log lines because they go to a file, not stdout.\n5. Delete the Pod.\n\n### Questions\n- Why does `kubectl logs logger-demo -c app` show nothing (or only the shell prompt)?\n- How could you extend this to send logs to an external system like Elasticsearch?",
+    "hints": [
+        "The `-c` flag specifies which container to target. If omitted, `kubectl logs` defaults to the first container.",
+        "The script for the app container could be: `[\"sh\", \"-c\", \"while true; do echo Hello $(date) >> /var/log/app.log; sleep 2; done\"]`.",
+        "To extend, replace the sidecar with a Fluentd or Filebeat container that reads the log file and ships it."
+    ],
+    "expectedOutput": "Sidecar logs show the same lines that the app writes to the file, proving the pattern works.",
+    "solutionCode": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: logger-demo\nspec:\n  volumes:\n  - name: log-volume\n    emptyDir: {}\n  containers:\n  - name: app\n    image: busybox\n    command: [\"sh\", \"-c\", \"while true; do echo Hello $(date) >> /var/log/app.log; sleep 2; done\"]\n    volumeMounts:\n    - name: log-volume\n      mountPath: /var/log\n  - name: sidecar\n    image: busybox\n    command: [\"sh\", \"-c\", \"tail -f /var/log/app.log\"]\n    volumeMounts:\n    - name: log-volume\n      mountPath: /var/log"
+}

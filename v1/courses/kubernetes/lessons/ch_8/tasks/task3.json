@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_8",
+    "title": "Canary Release with Ingress",
+    "description": "Split traffic between two versions of a service using NGINX Ingress canary annotations.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## 🎯 Goal\nSet up a canary deployment where 25% of traffic goes to `app-v2` and 75% to `app-v1`.\n\n### Prerequisites\n- NGINX Ingress controller installed and a running Ingress controller pod.\n- Two Deployments/Services: `app-v1` and `app-v2` (use `hashicorp/http-echo` with different texts).\n\n### Steps\n1. Deploy `app-v1` and expose it as ClusterIP Service `app-svc` (the main service).\n2. Deploy `app-v2` and expose it as `app-v2-svc`.\n3. Create the main Ingress `app-main-ingress.yaml`:\n   - host: `canary.example.com`\n   - path: `/`, backend: `app-svc`\n4. Apply it and verify traffic goes to v1: `curl -H \"Host: canary.example.com\" http://<ingress-ip>` (should show v1).\n5. Create the canary Ingress `app-canary-ingress.yaml`:\n   - same host, path: `/`\n   - annotations:\n     - `nginx.ingress.kubernetes.io/canary: \"true\"`\n     - `nginx.ingress.kubernetes.io/canary-weight: \"25\"`\n   - backend: `app-v2-svc`\n6. Apply the canary Ingress.\n7. Run multiple curls (e.g., `for i in {1..20}; do curl -s -H \"Host: canary.example.com\" http://<ip>; done`) and count how many responses are v2 vs v1. Approximately 25% should be v2.\n8. Clean up by deleting the Ingresses, Services, and Deployments.",
+    "hints": [
+        "The main Ingress must exist before the canary Ingress. The controller merges them based on host.",
+        "If minikube, use `minikube ip` and the NodePort or `minikube tunnel` for LoadBalancer IP.",
+        "Increase the number of curls to get a clearer distribution."
+    ],
+    "expectedOutput": "Out of many requests, roughly 25% return the v2 response.",
+    "solutionCode": "# app-main-ingress.yaml\napiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: app-main\nspec:\n  rules:\n  - host: canary.example.com\n    http:\n      paths:\n      - path: /\n        pathType: Prefix\n        backend:\n          service:\n            name: app-svc\n            port:\n              number: 80\n---\n# app-canary-ingress.yaml\napiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: app-canary\n  annotations:\n    nginx.ingress.kubernetes.io/canary: \"true\"\n    nginx.ingress.kubernetes.io/canary-weight: \"25\"\nspec:\n  rules:\n  - host: canary.example.com\n    http:\n      paths:\n      - path: /\n        pathType: Prefix\n        backend:\n          service:\n            name: app-v2-svc\n            port:\n              number: 80"
+}

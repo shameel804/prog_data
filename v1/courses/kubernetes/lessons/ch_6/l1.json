@@ -1,0 +1,108 @@
+{
+    "id": "l1",
+    "chapterId": "ch_6",
+    "title": "The Need for Persistent Storage 💾",
+    "description": "Understand why ephemeral Pods require durable storage solutions.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Motivation",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Pods Are Ephemeral 🍂",
+            "content": "# Data dies with the Pod\n\nWhen a Pod is deleted (or its container restarts), any data written inside the container's filesystem is **gone forever**. That’s fine for stateless apps, but databases, caches, and file uploads need **persistence**.\n\nKubernetes provides **volumes** that outlive individual containers – and even Pods."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Why does a container’s local filesystem lose data on restart?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The filesystem is encrypted",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Containers are stateless by nature",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The writable layer is ephemeral and tied to the container lifecycle",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Kubernetes deletes all files on restart",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Container filesystems are temporary; only volumes persist beyond a container’s lifetime.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "Volume Fundamentals 📚",
+            "content": "## What is a Volume?\n\nA volume is a directory accessible to containers in a Pod. Unlike the container filesystem, volumes have a **lifetime independent of any single container**.\n\n- Defined in the Pod spec (`spec.volumes`).\n- Mounted into containers via `volumeMounts`.\n- Can be backed by many types: emptyDir, hostPath, cloud disk, NFS, etc.\n\nA volume exists as long as the Pod exists (unless it’s a PersistentVolume)."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "code",
+            "title": "Minimal Volume Example",
+            "content": "A Pod with an emptyDir volume shared between two containers:",
+            "codeSnippet": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: shared-volume-pod\nspec:\n  volumes:\n  - name: cache\n    emptyDir: {}\n  containers:\n  - name: app\n    image: nginx\n    volumeMounts:\n    - name: cache\n      mountPath: /cache\n  - name: logger\n    image: busybox\n    command: [\"sh\", \"-c\", \"while true; do echo $(date) >> /cache/log.txt; sleep 5; done\"]\n    volumeMounts:\n    - name: cache\n      mountPath: /cache",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_5",
+            "type": "text",
+            "title": "Use Cases for Volumes 🗂️",
+            "content": "## Common scenarios\n\n- **Cache / temporary data**: emptyDir – deleted when Pod is removed.\n- **Logs / metrics**: shared volume with a sidecar.\n- **Config / secrets**: ConfigMap and Secret volumes (Chapter 5).\n- **Persistent data**: cloud disk, NFS – outlives Pod and even node.\n- **Container-to-container communication**: via shared files."
+        },
+        {
+            "id": "s_l1_6",
+            "type": "quiz",
+            "title": "Volume Lifetime 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "Which volume type’s lifetime is tied to the Pod?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "PersistentVolume",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "emptyDir",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "hostPath",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "ConfigMap",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "emptyDir is created when the Pod is assigned to a node and deleted when the Pod is removed.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

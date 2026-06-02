@@ -1,0 +1,135 @@
+{
+    "id": "l2",
+    "chapterId": "ch_7",
+    "title": "Readiness Probes – Healthy Traffic Control 🚦",
+    "description": "Keep traffic away from Pods that are not ready to serve requests.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Self‑healing",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "What is a Readiness Probe? ❤️",
+            "content": "# The bouncer at the door\n\nA readiness probe checks if a container is **ready to serve traffic**. Until the probe succeeds, the Pod is not included in the Endpoints of any Service – no traffic is sent to it.\n\nThis is crucial during startup (loading configuration, warming caches) and when a Pod becomes unhealthy but hasn’t crashed."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Three Probe Handlers 🧰",
+            "content": "## How to check readiness\n\n1. **httpGet** – performs an HTTP GET request. Status code 200‑399 = success.\n2. **tcpSocket** – tries to open a TCP socket; success if connection established.\n3. **exec** – runs a command inside the container; exit code 0 = success.\n\nAll probes share common parameters:\n- `initialDelaySeconds` – wait before first probe.\n- `periodSeconds` – how often to probe.\n- `timeoutSeconds` – probe timeout.\n- `failureThreshold` – number of consecutive failures to mark as not ready.\n- `successThreshold` – number of consecutive successes to mark as ready (usually 1)."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "HTTP Readiness Probe YAML",
+            "content": "Example for a web app:",
+            "codeSnippet": "readinessProbe:\n  httpGet:\n    path: /healthz\n    port: 8080\n  initialDelaySeconds: 5\n  periodSeconds: 10\n  failureThreshold: 3",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Probe Handler 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which probe handler would you use to check if a database is accepting connections?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "httpGet",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "tcpSocket",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "exec",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "command",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "tcpSocket checks if a port is open, great for databases like MySQL on 3306.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Readiness vs Liveness ⚖️",
+            "content": "## Don’t confuse them\n\n- **Readiness** – controls traffic. If it fails, the Pod is removed from Services but **not restarted**.\n- **Liveness** – controls restart. If it fails, the container is killed and restarted.\n\nUse readiness to shield a Pod temporarily, e.g., during a temporary backend hiccup. Use liveness to recover from deadlocks."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Readiness Action 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What happens when a readiness probe fails?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The container is restarted",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The Pod’s IP is removed from Service Endpoints",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The Pod is evicted from the node",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The kubelet restarts the node",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Failing readiness just stops traffic; the container keeps running.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "Readiness Probe for Startup 🌱",
+            "content": "## The initial delay is key\n\nSet `initialDelaySeconds` high enough for your app to initialise. If the probe starts too early, the Pod will be marked not ready, causing a delay but no crash. However, with a Deployment, the new Pod won’t receive traffic until ready – which is exactly what you want for zero‑downtime updates."
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Combine readiness and startup probes\n\nIf your app takes a long time to start, use a **startup probe** (next lesson) to delay both readiness and liveness checks until initialisation is complete."
+        },
+        {
+            "id": "s_l2_9",
+            "type": "quiz",
+            "title": "Initial Delay 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_3",
+                "type": "true_false",
+                "question": "True or False: A readiness probe with initialDelaySeconds=0 might cause the Pod to be considered not ready forever if the app takes 10 seconds to start.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "It would be not ready initially, but once the app is up, the probe succeeds and the Pod becomes ready. So not forever.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

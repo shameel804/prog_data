@@ -1,0 +1,258 @@
+{
+    "id": "quiz_ch_10",
+    "chapterId": "ch_10",
+    "title": "Chapter 10 Quiz",
+    "description": "Test your knowledge of Kubernetes security: RBAC, ServiceAccounts, and SecurityContexts.",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the difference between authentication and authorisation?",
+            "options": [
+                "Authentication checks permissions; authorisation checks identity",
+                "Authentication verifies identity; authorisation checks permissions",
+                "Both mean the same thing",
+                "Authorisation is done before authentication"
+            ],
+            "correctAnswer": 1,
+            "explanation": "AuthN = who you are; AuthZ = what you can do."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "What type of identity does a Pod use to talk to the API server?",
+            "options": [
+                "User account",
+                "ServiceAccount",
+                "kubectl context",
+                "Bearer token from ConfigMap"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Pods use ServiceAccounts, which are Kubernetes‑managed identities."
+        },
+        {
+            "id": "q3",
+            "type": "fill_blank",
+            "question": "A token for a ServiceAccount is mounted into the Pod at _____.",
+            "options": [
+                "/etc/ssl/certs",
+                "/var/run/secrets/kubernetes.io/serviceaccount",
+                "/tmp/sa-token",
+                "/run/secrets/kubernetes.io/token"
+            ],
+            "correctAnswer": "/var/run/secrets/kubernetes.io/serviceaccount",
+            "explanation": "The token, CA cert, and namespace files are projected there."
+        },
+        {
+            "id": "q4",
+            "type": "true_false",
+            "question": "True or False: The default ServiceAccount has full admin permissions in its namespace.",
+            "correctAnswer": false,
+            "explanation": "It has no special permissions; RBAC must be granted."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "Which RBAC resource is namespaced?",
+            "options": [
+                "ClusterRole",
+                "ClusterRoleBinding",
+                "Role",
+                "Node"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Role is namespaced; ClusterRole is cluster‑wide."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "What does a RoleBinding do?",
+            "options": [
+                "Defines a set of permissions",
+                "Grants the permissions of a Role to a subject",
+                "Creates a ServiceAccount",
+                "Enables network policies"
+            ],
+            "correctAnswer": 1,
+            "explanation": "RoleBinding connects a Role with a user or ServiceAccount."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "Which verb is NOT a standard RBAC verb?",
+            "options": [
+                "get",
+                "list",
+                "execute",
+                "delete"
+            ],
+            "correctAnswer": 2,
+            "explanation": "RBAC verbs include get, list, watch, create, update, patch, delete, not execute."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "How can you grant access to only one specific Secret?",
+            "options": [
+                "Use a Role with resourceNames field",
+                "Create a separate namespace for that Secret",
+                "Use a ClusterRole",
+                "That's not possible"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`resourceNames` restricts the rule to named objects."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "What is a ClusterRole used for?",
+            "options": [
+                "Granting permissions within a single namespace",
+                "Defining permissions on cluster‑scoped resources or across all namespaces",
+                "Creating Pods",
+                "Managing storage"
+            ],
+            "correctAnswer": 1,
+            "explanation": "ClusterRoles can cover nodes, PVs, and resources in all namespaces."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "If you bind a ClusterRole via a RoleBinding, what is the scope?",
+            "options": [
+                "Cluster‑wide",
+                "The namespace of the RoleBinding",
+                "All namespaces except kube‑system",
+                "Nowhere, it's not allowed"
+            ],
+            "correctAnswer": 1,
+            "explanation": "RoleBinding limits the scope to its own namespace."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "Which built‑in ClusterRole gives read‑only access to most resources?",
+            "options": [
+                "admin",
+                "edit",
+                "view",
+                "cluster‑admin"
+            ],
+            "correctAnswer": 2,
+            "explanation": "`view` is the read‑only ClusterRole."
+        },
+        {
+            "id": "q12",
+            "type": "true_false",
+            "question": "True or False: Aggregated ClusterRoles dynamically merge rules from other ClusterRoles with a specific label.",
+            "correctAnswer": true,
+            "explanation": "Aggregation allows rules to be combined based on labels."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "Which command checks if a ServiceAccount can list Pods?",
+            "options": [
+                "kubectl auth can-i list pods --as=sa:my-sa",
+                "kubectl auth can-i get pods --as=system:serviceaccount:default:my-sa",
+                "kubectl check-permissions sa/my-sa list pods",
+                "kubectl describe permissions sa/my-sa"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`kubectl auth can-i` with `--as` impersonates a ServiceAccount."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "What is the purpose of a SecurityContext?",
+            "options": [
+                "To manage network traffic",
+                "To set privileges and access controls for Pods and containers",
+                "To define storage volumes",
+                "To configure DNS"
+            ],
+            "correctAnswer": 1,
+            "explanation": "SecurityContext controls runtime security settings (user, capabilities, etc.)."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "What does `runAsNonRoot: true` enforce?",
+            "options": [
+                "The container must run as UID 0",
+                "The container cannot run as UID 0",
+                "The container must be a rootless image",
+                "The container must have no capabilities"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It prevents the container from running with root privileges."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "What does `readOnlyRootFilesystem: true` do?",
+            "options": [
+                "Prevents any file writes",
+                "Makes the container’s root filesystem read‑only; writable directories must be volumes",
+                "Encrypts the filesystem",
+                "Disables tmpfs"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It mounts the root as read‑only; you must specify volumes for writable paths."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "Which capability is commonly needed to bind to ports <1024 as a non‑root user?",
+            "options": [
+                "SYS_ADMIN",
+                "NET_RAW",
+                "NET_BIND_SERVICE",
+                "SYS_PTRACE"
+            ],
+            "correctAnswer": 2,
+            "explanation": "NET_BIND_SERVICE allows binding to privileged ports (1‑1024)."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "What is the recommended approach for Linux capabilities in containers?",
+            "options": [
+                "Keep all default capabilities",
+                "Drop ALL and add back only required ones",
+                "Add SYS_ADMIN to all containers",
+                "Capabilities are deprecated"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Least privilege: drop everything, then add back only what's needed."
+        },
+        {
+            "id": "q19",
+            "type": "mcq",
+            "question": "What does the Pod Security Admission controller do?",
+            "options": [
+                "Manages network policies",
+                "Enforces Pod Security Standards (privileged, baseline, restricted) based on namespace labels",
+                "Creates ServiceAccounts automatically",
+                "Rotates TLS certificates"
+            ],
+            "correctAnswer": 1,
+            "explanation": "PSA enforces security profiles at admission time."
+        },
+        {
+            "id": "q20",
+            "type": "fill_blank",
+            "question": "To label a namespace to enforce the restricted Pod Security Standard, use `kubectl label ns my-ns pod-security.kubernetes.io/_____=restricted`.",
+            "options": [
+                "warn",
+                "audit",
+                "enforce",
+                "mode"
+            ],
+            "correctAnswer": "enforce",
+            "explanation": "The `enforce` label makes the admission controller reject non‑compliant Pods."
+        }
+    ]
+}

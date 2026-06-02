@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_10",
+    "title": "Create a ServiceAccount and Restrict It",
+    "description": "Use a dedicated ServiceAccount with a Role that only allows listing Pods.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## 🎯 Goal\nCreate a ServiceAccount `pod-lister`, grant it permission to only list Pods in the `default` namespace, and test the permissions.\n\n### Steps\n1. Create the ServiceAccount: `kubectl create serviceaccount pod-lister`.\n2. Create a Role named `pod-lister-role` that allows `get`, `list`, `watch` on `pods` in the core API group.\n   - Use a YAML file or imperative: `kubectl create role pod-lister-role --verb=get,list,watch --resource=pods --dry-run=client -o yaml > role.yaml` then edit if needed.\n3. Create a RoleBinding named `pod-lister-binding` that binds this Role to the ServiceAccount `pod-lister`.\n   - `kubectl create rolebinding pod-lister-binding --role=pod-lister-role --serviceaccount=default:pod-lister --dry-run=client -o yaml > binding.yaml`.\n4. Apply the Role and RoleBinding.\n5. Test access: `kubectl auth can-i list pods --as=system:serviceaccount:default:pod-lister`.\n   It should return `yes`.\n6. Test that it cannot create Pods: `kubectl auth can-i create pods --as=system:serviceaccount:default:pod-lister`. Should return `no`.\n7. (Optional) Create a Pod that uses this ServiceAccount and verify its identity.\n   - Pod spec: `serviceAccountName: pod-lister`.\n   - Exec into the Pod (if it has curl/kubectl) and try to list Pods; but by default the default namespace SA might not have token auto‑mounted? It will be, but you can test via `cat /var/run/secrets/.../token` and using curl manually.\n8. Clean up the ServiceAccount, Role, and RoleBinding.",
+    "hints": [
+        "If the `kubectl auth can-i` returns `no`, check that the Role and RoleBinding are created correctly and the SA name matches.",
+        "Use `-n default` if you are not in the default namespace.",
+        "The token auto‑mount is on by default; if you set `automountServiceAccountToken: false` on the SA or Pod, you won't get a token."
+    ],
+    "expectedOutput": "`kubectl auth can-i list pods` returns yes; `create pods` returns no.",
+    "solutionCode": "kubectl create serviceaccount pod-lister\nkubectl create role pod-lister-role --verb=get,list,watch --resource=pods\nkubectl create rolebinding pod-lister-binding --role=pod-lister-role --serviceaccount=default:pod-lister\nkubectl auth can-i list pods --as=system:serviceaccount:default:pod-lister\nkubectl auth can-i create pods --as=system:serviceaccount:default:pod-lister"
+}

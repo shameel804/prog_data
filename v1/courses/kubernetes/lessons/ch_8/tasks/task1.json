@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_8",
+    "title": "Set Up an Ingress with Path‑Based Routing",
+    "description": "Deploy two simple web apps and route them via an Ingress on different URL paths.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## 🎯 Goal\nCreate an Ingress that routes `/app1` to one Service and `/app2` to another, all under the same host.\n\n### Prerequisites\n- An Ingress controller installed (minikube addons enable ingress).\n\n### Steps\n1. Create two Deployments: `app1` (image `hashicorp/http-echo`, args `-text=\"App1\" -listen=:8080`) and `app2` (same image, args `-text=\"App2\"`). Each with label `app: app1` and `app: app2`.\n2. Expose each with a ClusterIP Service (`app1-svc`, port 80 → 8080) and (`app2-svc`, port 80 → 8080).\n3. Apply both Deployments and Services.\n4. Create an Ingress YAML `path-ingress.yaml`:\n   - host: `demo.local` (or omit host for default)\n   - two paths: `/app1` and `/app2`, both `pathType: Prefix`, pointing to the respective Services on port 80.\n5. Apply the Ingress.\n6. Edit your `/etc/hosts` (or use `curl -H \"Host: demo.local\"`) to map `demo.local` to the Ingress controller’s external IP (minikube ip).\n7. Access `http://demo.local/app1` and `http://demo.local/app2` – you should see \"App1\" and \"App2\".\n8. If using minikube, you can also run `minikube tunnel` and use the LoadBalancer IP.\n9. Clean up.",
+    "hints": [
+        "If you omit `host`, the Ingress applies to all HTTP traffic (default backend). But specifying a host is clearer.",
+        "Use `kubectl get ingress` to see the ADDRESS field populated after a few seconds.",
+        "The `hashicorp/http-echo` image is a simple server that prints a given text."
+    ],
+    "expectedOutput": "Different responses for `/app1` and `/app2` from the same IP.",
+    "solutionCode": "# app1.yaml\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: app1\nspec:\n  replicas: 1\n  selector:\n    matchLabels:\n      app: app1\n  template:\n    metadata:\n      labels:\n        app: app1\n    spec:\n      containers:\n      - name: echo\n        image: hashicorp/http-echo\n        args: [\"-text=App1\", \"-listen=:8080\"]\n        ports:\n        - containerPort: 8080\n---\napiVersion: v1\nkind: Service\nmetadata:\n  name: app1-svc\nspec:\n  selector:\n    app: app1\n  ports:\n  - port: 80\n    targetPort: 8080\n---\n# app2.yaml (similar, replace App1 with App2)\n---\n# path-ingress.yaml\napiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: path-ingress\nspec:\n  rules:\n  - host: demo.local\n    http:\n      paths:\n      - path: /app1\n        pathType: Prefix\n        backend:\n          service:\n            name: app1-svc\n            port:\n              number: 80\n      - path: /app2\n        pathType: Prefix\n        backend:\n          service:\n            name: app2-svc\n            port:\n              number: 80"
+}

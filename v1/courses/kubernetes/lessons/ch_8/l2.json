@@ -1,0 +1,100 @@
+{
+    "id": "l2",
+    "chapterId": "ch_8",
+    "title": "Ingress Controllers 🕹️",
+    "description": "Install and understand the engine that powers Ingress – the controller.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "No Built‑in Controller 🚫",
+            "content": "# Kubernetes doesn’t come with one\n\nUnlike other objects, an Ingress resource alone does nothing. You must deploy an **Ingress controller** to the cluster. It watches the API for Ingress objects and updates the underlying load balancer.\n\nPopular controllers:\n- **ingress‑nginx** (Kubernetes community)\n- **Traefik**\n- **HAProxy**\n- **AWS Load Balancer Controller** (for ALB)\n- **Contour** (Envoy‑based)"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Installing ingress‑nginx (minikube) 🛠️",
+            "content": "## Simplest for local dev\n\nMinikube bundles the NGINX Ingress controller as an addon:\n```bash\nminikube addons enable ingress\n```\n\nFor other clusters, use the official manifest:\n```bash\nkubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml\n```\n\nThis creates a `ingress-nginx` namespace with the controller Deployment and Service of type LoadBalancer."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Controller Requirement 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "true_false",
+                "question": "True or False: An Ingress resource will route traffic even if no Ingress controller is installed.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "The controller is needed to actually implement the routing rules.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "How Controllers Work 🔄",
+            "content": "## The reconciliation loop\n\n1. Controller watches for new/changed Ingress objects.\n2. It reads the rules and builds a configuration for its proxy (e.g., nginx.conf).\n3. When a Service or Endpoints change, it updates the configuration.\n4. It also manages TLS certificates if you reference a Secret in the Ingress.\n\nThis happens automatically – no manual reloads needed."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Verify Controller Deployment",
+            "content": "After enabling the minikube ingress addon:",
+            "codeSnippet": "kubectl get pods -n ingress-nginx\nkubectl get svc -n ingress-nginx",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Ingress Class 🏷️",
+            "content": "## Multiple controllers in one cluster\n\nIf you install several controllers, you need to tell each Ingress resource which controller to use. Use the `ingressClassName` field:\n\n```yaml\nspec:\n  ingressClassName: nginx\n```\n\nThe class must match a `IngressClass` resource defined by the controller.\n\nFrom Kubernetes 1.18+, this is the standard way (not the old annotation)."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "Ingress Class 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Why would you use `ingressClassName`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To specify the container image",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To select which Ingress controller handles this Ingress",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To set the namespace",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To enable TLS",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It ensures the correct controller processes the Ingress when multiple exist.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use the NGINX Ingress controller for most cases\n\nIt’s mature, widely used, and well‑documented. For cloud‑native L7 load balancers (like AWS ALB), use the cloud‑specific controller."
+        }
+    ]
+}

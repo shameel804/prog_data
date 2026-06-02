@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_12",
+    "title": "Apply Production Best Practices to a Deployment",
+    "description": "Take a basic Deployment and make it production‑grade.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## 🎯 Goal\nStart with a minimal Deployment and add:\n- Resource requests and limits.\n- A PodDisruptionBudget (minAvailable: 1).\n- Pod anti‑affinity to spread across nodes.\n- Liveness and readiness probes.\n\n### Steps\n1. Create a basic Deployment YAML `prod-app.yaml` for an nginx app, replicas: 3.\n2. Add resource requests (cpu: 100m, memory: 64Mi) and limits (cpu: 200m, memory: 128Mi) to the container.\n3. Add a `livenessProbe` (httpGet on /, port 80, initialDelay 5s, period 10s) and a `readinessProbe` (same httpGet, initialDelay 5s, period 5s).\n4. Add Pod anti‑affinity to prefer spreading replicas across hosts (use `preferredDuringSchedulingIgnoredDuringExecution` with `topologyKey: kubernetes.io/hostname` and weight 100, matching label `app: prod`). Ensure the template label is `app: prod`.\n5. Apply the Deployment.\n6. Create a PDB YAML `pdb.yaml` selecting `app: prod` with `minAvailable: 2` (ensures at least 2 out of 3 are available).\n7. Apply the PDB.\n8. Verify: `kubectl get pods -l app=prod -o wide` – check if Pods are spread across different nodes (may not be strictly enforced with preferred).\n9. Test probes: check Pod status is Ready.\n10. Clean up: delete Deployment and PDB.",
+    "hints": [
+        "The anti‑affinity label selector must match the labels in the Pod template.",
+        "If you use `requiredDuringScheduling` and the cluster can't satisfy it, Pods will stay Pending. Use `preferred` for this exercise.",
+        "The PDB ensures that at least 2 Pods are kept during voluntary evictions."
+    ],
+    "expectedOutput": "Pods are running with resources, probes active; PDB restricts disruptions.",
+    "solutionCode": "# prod-app.yaml\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: prod-app\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: prod\n  template:\n    metadata:\n      labels:\n        app: prod\n    spec:\n      affinity:\n        podAntiAffinity:\n          preferredDuringSchedulingIgnoredDuringExecution:\n          - weight: 100\n            podAffinityTerm:\n              labelSelector:\n                matchLabels:\n                  app: prod\n              topologyKey: kubernetes.io/hostname\n      containers:\n      - name: nginx\n        image: nginx:1.25\n        resources:\n          requests:\n            cpu: 100m\n            memory: 64Mi\n          limits:\n            cpu: 200m\n            memory: 128Mi\n        livenessProbe:\n          httpGet:\n            path: /\n            port: 80\n          initialDelaySeconds: 5\n          periodSeconds: 10\n        readinessProbe:\n          httpGet:\n            path: /\n            port: 80\n          initialDelaySeconds: 5\n          periodSeconds: 5\n---\n# pdb.yaml\napiVersion: policy/v1\nkind: PodDisruptionBudget\nmetadata:\n  name: prod-pdb\nspec:\n  minAvailable: 2\n  selector:\n    matchLabels:\n      app: prod"
+}

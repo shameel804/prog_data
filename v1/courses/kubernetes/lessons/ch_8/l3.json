@@ -1,0 +1,129 @@
+{
+    "id": "l3",
+    "chapterId": "ch_8",
+    "title": "Writing Ingress Resources 📝",
+    "description": "Create host, path rules, and secure your endpoints with TLS.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Hands-on",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The Anatomy of an Ingress YAML 🧬",
+            "content": "# Four main sections\n\n```yaml\napiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: my-ingress\n  annotations: {}\nspec:\n  ingressClassName: nginx\n  rules: [...]\n  tls: [...]\n```\n- `rules`: array of host/path rules.\n- `tls`: section for HTTPS secrets."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Path‑Based Routing 🛤️",
+            "content": "## Split traffic by URL path\n\n```yaml\nrules:\n- host: shop.example.com\n  http:\n    paths:\n    - path: /products\n      pathType: Prefix\n      backend:\n        service:\n          name: product-svc\n          port:\n            number: 80\n    - path: /orders\n      pathType: Prefix\n      backend:\n        service:\n          name: order-svc\n          port:\n            number: 80\n```\n\nRequests to `shop.example.com/products/*` go to `product-svc`, `/orders/*` to `order-svc`."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Apply the Ingress",
+            "content": "",
+            "codeSnippet": "kubectl apply -f path-ingress.yaml\nkubectl get ingress",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "Path Types 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What does `pathType: Prefix` mean?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Matches only the exact path",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Matches the path and any sub‑paths that start with it",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Matches any path",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It’s an alias for Exact",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Prefix matching routes `/foo` and `/foo/bar` to the same backend.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Host‑Based Routing 🏨",
+            "content": "## Different domains, different backends\n\n```yaml\nrules:\n- host: api.example.com\n  http:\n    paths:\n    - path: /\n      pathType: Prefix\n      backend:\n        service:\n          name: api-svc\n          port:\n            number: 80\n- host: web.example.com\n  http:\n    paths:\n    - path: /\n      pathType: Prefix\n      backend:\n        service:\n          name: web-svc\n          port:\n            number: 80\n```\n\nAllows virtual hosting on the same IP."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "Enabling TLS 🔐",
+            "content": "## HTTPS with a TLS certificate\n\nFirst, create a TLS Secret:\n```bash\nkubectl create secret tls my-tls-secret --cert=cert.pem --key=key.pem\n```\n\nThen reference it in the Ingress:\n```yaml\ntls:\n- hosts:\n  - example.com\n  secretName: my-tls-secret\n```\n\nThe Ingress controller will terminate TLS and forward decrypted traffic to Services."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "code",
+            "title": "Ingress with TLS YAML",
+            "content": "Full example:",
+            "codeSnippet": "apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: secure-ingress\nspec:\n  ingressClassName: nginx\n  tls:\n  - hosts:\n    - secure.example.com\n    secretName: tls-secret\n  rules:\n  - host: secure.example.com\n    http:\n      paths:\n      - path: /\n        pathType: Prefix\n        backend:\n          service:\n            name: my-service\n            port:\n              number: 443",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_8",
+            "type": "quiz",
+            "title": "TLS Termination 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Where does TLS termination happen with an Ingress?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "At the Service",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "At the Ingress controller",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "At the Pod",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "At the node’s kubelet",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The controller decrypts TLS and forwards plain HTTP to the backend Service.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use cert‑manager for automatic TLS\n\ncert‑manager can automatically provision and renew Let’s Encrypt certificates. Just add an annotation to your Ingress."
+        }
+    ]
+}

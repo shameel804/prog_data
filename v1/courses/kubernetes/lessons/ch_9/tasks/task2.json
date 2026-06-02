@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_9",
+    "title": "Create and Package a Custom Chart",
+    "description": "Scaffold a new chart, modify it to deploy a simple echo server, and package it.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## 🎯 Goal\nBuild a Helm chart from scratch that deploys a simple HTTP echo server.\n\n### Steps\n1. Scaffold a new chart: `helm create echo-server`.\n2. Clean up the generated templates: remove `hpa.yaml`, `ingress.yaml`, `serviceaccount.yaml`, and the tests directory from `templates/` (we'll add later).\n3. Modify `values.yaml`:\n   - `replicaCount: 1`\n   - `image.repository: hashicorp/http-echo`, `tag: latest`\n   - `service.type: ClusterIP`, `port: 80`\n   - Add a value `echoText: \"Hello Helm!\"`\n4. Edit `templates/deployment.yaml`:\n   - Use `{{ .Values.image.repository }}:{{ .Values.image.tag }}`.\n   - Add environment variable `ECHO_TEXT` with value `{{ .Values.echoText }}` (the http-echo image reads `-text` argument or env? Actually the image uses args `-text`; we'll use args: `[\"-text\", \"{{ .Values.echoText }}\"]` and port `8080`).\n   - Change containerPort to `8080`.\n5. Edit `templates/service.yaml`:\n   - Change targetPort to `8080`.\n6. Edit `templates/_helpers.tpl` to ensure naming is consistent (it's fine by default).\n7. Lint the chart: `helm lint ./echo-server`.\n8. Dry‑run the install: `helm install --dry-run --debug test-echo ./echo-server`.\n9. Install for real in a namespace `echo-demo`: `helm install my-echo ./echo-server -n echo-demo --create-namespace`.\n10. Test the service: port‑forward and curl, or use `kubectl run`.\n11. Package the chart: `helm package ./echo-server` (produces `echo-server-0.1.0.tgz`).\n12. Uninstall the release and delete the namespace.",
+    "hints": [
+        "The http-echo server listens on port 8080 by default; pass `-text` as an argument.",
+        "You can test with `kubectl port-forward svc/my-echo-echo-server 8080:80 -n echo-demo` (the service name depends on the helper). The default fullname includes release name.",
+        "If the port‑forward fails, check the service selector matches the deployment labels."
+    ],
+    "expectedOutput": "A working chart that deploys an echo server, packaged into a .tgz file.",
+    "solutionCode": "# Chart.yaml (generated, unchanged)\n# values.yaml:\nreplicaCount: 1\nimage:\n  repository: hashicorp/http-echo\n  tag: latest\nservice:\n  type: ClusterIP\n  port: 80\nechoText: Hello Helm!\n---\n# templates/deployment.yaml (key parts):\ncontainers:\n  - name: {{ .Chart.Name }}\n    image: \"{{ .Values.image.repository }}:{{ .Values.image.tag }}\"\n    args: [\"-text\", \"{{ .Values.echoText }}\"]\n    ports:\n      - containerPort: 8080\n---\n# templates/service.yaml ports:\n  - port: {{ .Values.service.port }}\n    targetPort: 8080"
+}

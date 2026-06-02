@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_7",
+    "title": "Autoscale with HPA",
+    "description": "Create an HPA for a Deployment and generate CPU load to see scaling in action.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## 🎯 Goal\nDeploy a CPU‑burning application and configure an HPA to automatically scale it.\n\n### Prerequisites\n- Metrics Server must be enabled (`kubectl top nodes` should work). If using minikube: `minikube addons enable metrics-server`.\n\n### Steps\n1. Create a Deployment YAML `cpu-eater.yaml`:\n   - name: `cpu-eater`\n   - replicas: 1\n   - container image: `vish/stress` (or any image that can burn CPU). Use command: `[\"stress\"]` with args (optional). We’ll use a simple busybox that runs an infinite loop to stress CPU.\n   - Set resource requests: `cpu: 200m, memory: 64Mi`.\n   - Actually, a simple method: use `kubectl create deployment stress --image=progrium/stress -- --cpu 2` but that might not have requests. We'll craft a YAML with requests.\n   Let's use `alpine` with `sh -c \"while true; do :; done\"` which consumes CPU. And set resources.\n2. Apply Deployment.\n3. Expose it as a service (optional, not needed for HPA).\n4. Create an HPA: `kubectl autoscale deployment cpu-eater --cpu-percent=50 --min=1 --max=4`.\n5. Check HPA: `kubectl get hpa`. It may show `<unknown>` initially until metrics are available.\n6. To generate load, run a temporary Pod that sends many requests? The busybox loop itself is already consuming CPU. Since request is 200m, one Pod will use 200m or more, utilisation near 100%. So HPA should scale up.\n7. Wait a few minutes and check `kubectl get pods` – replicas should increase.\n8. Describe HPA to see the events: `kubectl describe hpa cpu-eater`.\n9. Delete the HPA, Deployment, and any spawned Pods.",
+    "hints": [
+        "If the HPA shows `unknown` for a while, give it a minute; Metrics Server needs time to collect data.",
+        "You can also use `kubectl top pods` to see current CPU usage.",
+        "If the cluster doesn't have a Metrics Server, HPA won't work. Enable it first."
+    ],
+    "expectedOutput": "The Deployment scales from 1 to multiple Pods as the CPU utilisation exceeds 50%.",
+    "solutionCode": "# cpu-eater.yaml\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: cpu-eater\nspec:\n  replicas: 1\n  selector:\n    matchLabels:\n      app: cpu-eater\n  template:\n    metadata:\n      labels:\n        app: cpu-eater\n    spec:\n      containers:\n      - name: stress\n        image: alpine\n        command: [\"/bin/sh\", \"-c\", \"while true; do :; done\"]\n        resources:\n          requests:\n            cpu: \"200m\"\n            memory: \"64Mi\"\n---\n# Apply Deployment then:\nkubectl autoscale deployment cpu-eater --cpu-percent=50 --min=1 --max=4"
+}

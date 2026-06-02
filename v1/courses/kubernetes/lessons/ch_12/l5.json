@@ -1,0 +1,164 @@
+{
+    "id": "l5",
+    "chapterId": "ch_12",
+    "title": "Multi‑Cluster & Security Hardening 🌍",
+    "description": "Manage multiple clusters and apply enterprise‑grade security measures.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Why Multi‑Cluster? 🌐",
+            "content": "# Separate concerns, scale globally\n\nReasons to run multiple clusters:\n- **Environment isolation**: dev, staging, prod in separate clusters.\n- **Geographic distribution**: lower latency for users worldwide.\n- **Compliance**: data must stay in a specific region.\n- **Blast radius reduction**: a misconfiguration in one cluster doesn't affect others.\n- **Provider diversity**: avoid single cloud vendor lock‑in.\n\nBut multi‑cluster introduces complexity: you need unified management."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Federation & Management Tools 🧰",
+            "content": "## Keep a single view\n\n- **KubeFed** – Kubernetes Cluster Federation (sync objects across clusters).\n- **Rancher** – multi‑cluster management platform.\n- **Open Cluster Management (OCM)** – open‑source project for registration, placement, and policy.\n- **ArgoCD** – can manage applications across many clusters from a single hub.\n- **Anthos** (Google) / **AKS Arc** (Azure) – managed multi‑cluster solutions.\n\nArgoCD is especially popular for GitOps across clusters: one ArgoCD instance can deploy to multiple destination clusters."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Multi‑Cluster Tool 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which tool can deploy applications to many clusters using a Git repository?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "kubectl",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "ArgoCD",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Metrics Server",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "CoreDNS",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "ArgoCD is designed for multi‑cluster GitOps, registering external clusters.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Security Hardening – Beyond the Basics 🔒",
+            "content": "## Layers of protection\n\nProduction clusters need:\n- **Pod Security Admission** (restricted profile).\n- **Network Policies** (deny all, allow specific).\n- **RBAC** (least privilege).\n- **Image scanning** (Trivy, Clair) to catch vulnerabilities before deployment.\n- **Admission Controllers** like OPA/Gatekeeper or Kyverno for custom policies.\n- **Runtime security** with Falco (detect abnormal behavior).\n- **Audit logging** to track who did what."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Open Policy Agent (OPA) & Gatekeeper 🚔",
+            "content": "## Enforce policies across the cluster\n\nGatekeeper is a Kubernetes admission controller that uses OPA’s Rego language to validate and mutate resources before they are created.\n\nExample: deny containers running as root:\n```rego\nviolation[{\"msg\": \"Container must not run as root\"}] {\n  input.review.object.kind == \"Pod\"\n  container := input.review.object.spec.containers[_]\n  container.securityContext.runAsNonRoot != true\n}\n```\n\nThis prevents developers from accidentally deploying insecure Pods."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Admission Controller 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What is the purpose of Gatekeeper?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Monitor network traffic",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Enforce custom policies on Kubernetes resources",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Manage cluster upgrades",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Generate certificates",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Gatekeeper validates and mutates objects to ensure they comply with policies.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Image Scanning with Trivy 🔎",
+            "content": "## Catch CVEs before they reach production\n\nTrivy can scan container images for vulnerabilities:\n```bash\ntrivy image nginx:1.25\n```\n\nIntegrate into CI/CD pipeline:\n- Fail the build if a HIGH/CRITICAL vulnerability is found.\n- Use an admission webhook to deny deployment of images with known issues.\n\nTrivy can also scan IaC files (Terraform, Kubernetes manifests)."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "text",
+            "title": "Falco – Runtime Threat Detection 🕵️",
+            "content": "## Watch for suspicious activity\n\nFalco monitors syscalls and Kubernetes audit logs to detect:\n- Unexpected process execution (e.g., `bash` inside a frontend container).\n- File access to sensitive locations.\n- Network connections to unauthorized IPs.\n\nAlerts are sent to SIEM, Slack, or directly to the cluster.\n\n```yaml\n- rule: Unexpected spawned process\n  desc: Detect a process spawned in a container that isn't expected\n  condition: spawned_process and container and not proc.name in (allowed_processes)\n  output: \"Unexpected process %proc.name spawned in container %container.name\"\n  priority: WARNING\n```"
+        },
+        {
+            "id": "s_l5_9",
+            "type": "text",
+            "title": "Audit Logging 📜",
+            "content": "## Who did what when?\n\nKubernetes can log all API requests to a file or webhook. Configure `--audit-policy-file` on the API server to set audit levels:\n- `None`\n- `Metadata` (request metadata)\n- `Request` (metadata + body)\n- `RequestResponse` (full request and response)\n\nCombined with a backend (e.g., Elasticsearch), you can answer: \"Who deleted that namespace?\""
+        },
+        {
+            "id": "s_l5_10",
+            "type": "quiz",
+            "title": "Runtime Security 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_3",
+                "type": "multiple_choice",
+                "question": "Which tool detects abnormal behavior like a shell being spawned in a container at runtime?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Trivy",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Falco",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Gatekeeper",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Velero",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Falco monitors system calls for runtime threat detection.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_11",
+            "type": "tip",
+            "title": "Final Words 🚀",
+            "content": "## You've mastered the foundations!\n\nFrom Pods to production, you've learned how to deploy, scale, secure, and maintain applications on Kubernetes. The cloud‑native journey continues – explore operators, service meshes, and serverless on Kubernetes. Keep learning, keep building!"
+        }
+    ]
+}

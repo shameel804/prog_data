@@ -1,0 +1,106 @@
+{
+    "id": "l2",
+    "chapterId": "ch_10",
+    "title": "ServiceAccounts – Pod Passports 📇",
+    "description": "Understand how Pods authenticate to the Kubernetes API using ServiceAccounts.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Every Pod Has an Identity 🆔",
+            "content": "# Meet the ServiceAccount\n\nWhen you create a Pod, Kubernetes automatically assigns a **ServiceAccount** to it. If you don’t specify one, the `default` ServiceAccount in the Pod’s namespace is used.\n\nA ServiceAccount:\n- Is a Kubernetes object (kind: ServiceAccount)\n- Provides a **token** (JWT) that the Pod can use to authenticate to the API\n- Can be restricted with RBAC to limit what the Pod can do"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "ServiceAccount Resources 📜",
+            "content": "## See what’s there\n\n```bash\nkubectl get serviceaccounts\nkubectl describe serviceaccount default\n```\n\nEvery namespace has a `default` ServiceAccount. It has no special permissions by itself – it’s just an identity. Permissions come from RBAC bindings."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Default SA 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "true_false",
+                "question": "True or False: The default ServiceAccount has admin powers in its namespace.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "It has no special rights; RBAC must explicitly grant permissions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "How Pods Use a ServiceAccount 🔑",
+            "content": "## The token gets mounted\n\nWhen a Pod starts, the kubelet:\n1. Projects a **service account token** (JWT) into the Pod at `/var/run/secrets/kubernetes.io/serviceaccount/token`.\n2. Also provides the API server address and CA certificate.\n3. The Pod can use that token in an `Authorization: Bearer` header to call the API.\n\nIn newer clusters, **token projection** is used; the token is volume‑mounted with a limited lifetime."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Check a Pod’s ServiceAccount",
+            "content": "Look at the `serviceAccount` field:",
+            "codeSnippet": "kubectl get pod my-pod -o jsonpath='{.spec.serviceAccountName}'",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Creating a Dedicated ServiceAccount 🛠️",
+            "content": "## Don’t use default for apps\n\n```bash\nkubectl create serviceaccount app-sa\n```\n\nThen reference it in your Pod spec:\n```yaml\nspec:\n  serviceAccountName: app-sa\n```\n\nThis gives that Pod its own identity, which you can then lock down with RBAC."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "Using SA in Pod 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Which field in a Pod spec assigns a ServiceAccount?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "serviceAccount",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "serviceAccountName",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "saName",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "automountServiceAccountToken",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`spec.serviceAccountName` sets the ServiceAccount for the Pod.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_8",
+            "type": "text",
+            "title": "Disabling Auto‑Mount of Tokens 🛑",
+            "content": "## If your Pod doesn’t need API access\n\nFor security, prevent the token from being mounted at all:\n```yaml\nspec:\n  automountServiceAccountToken: false\n```\n\nEven better, set it on the ServiceAccount itself, and it will apply to all Pods using it. This reduces the attack surface."
+        },
+        {
+            "id": "s_l2_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use tokenRequest API for short‑lived tokens\n\nInstead of mounting a static token, you can request a time‑bound token via the API, enhancing security. Many SDKs support this natively."
+        }
+    ]
+}

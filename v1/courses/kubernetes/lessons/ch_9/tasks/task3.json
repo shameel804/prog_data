@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_9",
+    "title": "Chart Hooks and Tests",
+    "description": "Enhance your echo-server chart with a post‑install Job and a test Pod.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## 🎯 Goal\nAdd a post‑install hook that prints a message and a chart test that validates the deployment.\n\n### Steps\n1. Use the chart from Task 2 (or a fresh one).\n2. Create a `post-install-job.yaml` in `templates/`:\n   - Kind: Job\n   - Annotations: `\"helm.sh/hook\": post-install,post-upgrade`, `\"helm.sh/hook-delete-policy\": hook-succeeded,before-hook-creation`\n   - It should run a busybox container that executes `echo \"Post‑install hook: Release {{ .Release.Name }} completed\"`.\n   - Use `restartPolicy: Never`.\n3. Create a test Pod in `templates/tests/test-connection.yaml`:\n   - Kind: Pod\n   - Annotation: `\"helm.sh/hook\": test`\n   - Runs a busybox container that does `wget -O- http://{{ include \"echo-server.fullname\" . }}:{{ .Values.service.port }}` and expects a 200 response (or just `wget` success).\n   - `restartPolicy: Never`.\n4. Lint and dry‑run the chart to ensure no errors.\n5. Install the chart (e.g., `helm install my-echo ./echo-server -n echo-demo --create-namespace`). The Job should run automatically after install.\n6. Check the Job: `kubectl get jobs -n echo-demo` and its logs.\n7. Run the tests: `helm test my-echo -n echo-demo`.\n8. Verify the test Pod completes successfully.\n9. Uninstall the release (the Job will remain? With `hook-succeeded` policy it should be cleaned up; check).\n10. Clean up.",
+    "hints": [
+        "The test Pod's command can be `['wget', '-q', '-O-', 'http://my-echo-echo-server:80']` but the fullname may differ; use template function `{{ include \"echo-server.fullname\" . }}` to get the correct service name.",
+        "Remember to set `restartPolicy: Never` for both Job and test Pod.",
+        "The test Pod will stay after completion; delete manually or use a delete policy in the annotation."
+    ],
+    "expectedOutput": "The post‑install hook prints a message, and `helm test` returns success.",
+    "solutionCode": "# post-install-job.yaml\napiVersion: batch/v1\nkind: Job\nmetadata:\n  name: {{ include \"echo-server.fullname\" . }}-post-install\n  annotations:\n    \"helm.sh/hook\": post-install,post-upgrade\n    \"helm.sh/hook-delete-policy\": hook-succeeded,before-hook-creation\nspec:\n  template:\n    spec:\n      restartPolicy: Never\n      containers:\n      - name: hook-job\n        image: busybox\n        command: [\"sh\", \"-c\", \"echo Post-install hook: Release {{ .Release.Name }} completed\"]\n---\n# templates/tests/test-connection.yaml\napiVersion: v1\nkind: Pod\nmetadata:\n  name: \"{{ include \"echo-server.fullname\" . }}-test-connection\"\n  annotations:\n    \"helm.sh/hook\": test\nspec:\n  containers:\n    - name: wget\n      image: busybox\n      command: ['wget']\n      args: ['-q', '-O-', 'http://{{ include \"echo-server.fullname\" . }}:{{ .Values.service.port }}']\n  restartPolicy: Never"
+}

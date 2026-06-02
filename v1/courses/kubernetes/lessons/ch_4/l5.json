@@ -1,0 +1,155 @@
+{
+    "id": "l5",
+    "chapterId": "ch_4",
+    "title": "Service Discovery & DNS 📡",
+    "description": "Learn how Kubernetes DNS enables Pods to find Services by name.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Operations",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "No Hard‑Coded IPs! 🚫",
+            "content": "# Use names, not IPs\n\nInstead of connecting to `10.96.0.15` (which might change if you recreate the Service), you connect to a **DNS name** that Kubernetes automatically creates:\n\n```\n<service-name>.<namespace>.svc.cluster.local\n```\n\nFor a Service named `backend` in the `default` namespace:\n```\nbackend.default.svc.cluster.local\n```\nEven shorter within the same namespace: just `backend`."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "CoreDNS Architecture 🧬",
+            "content": "## The cluster’s DNS server\n\nKubernetes runs a DNS pod (usually **CoreDNS**) in the `kube-system` namespace. Every Pod is configured with this DNS server via `/etc/resolv.conf`.\n\nWhen a Pod does a DNS lookup for a Service name, CoreDNS returns the Service’s ClusterIP.\n\nCoreDNS also watches the Kubernetes API for new Services and Endpoints, updating its records automatically."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "DNS Name 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the full DNS name of a Service `api` in namespace `prod`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "api.prod.svc.local",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "api.prod.svc.cluster.local",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "api.svc.prod.cluster.local",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "prod.api.svc.cluster.local",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The format is `<service>.<namespace>.svc.cluster.local`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Testing DNS Resolution 🧪",
+            "content": "## From inside a Pod\n\nRun a temporary Pod with `busybox` or `dnsutils`:\n```bash\nkubectl run -it --rm debug --image=busybox --restart=Never -- nslookup backend\n```\n\nYou should see the Service’s ClusterIP and the name resolution. Use `ping` (if allowed) or `wget` to test connectivity."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Debug DNS Example",
+            "content": "",
+            "codeSnippet": "kubectl run -it --rm debug --image=busybox --restart=Never -- sh\n# Inside the container:\nnslookup backend.default.svc.cluster.local\nwget -O- http://backend",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "DNS Resolution 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What does CoreDNS return when you resolve a Service name?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The Pod IPs of the Service",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The ClusterIP of the Service",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The node IP",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The load balancer IP",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Service DNS returns the ClusterIP; traffic then gets load balanced via kube‑proxy.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Environment Variables (Legacy) 📦",
+            "content": "## Another way to discover Services\n\nBefore DNS, Kubernetes injected environment variables into Pods for each Service that existed at Pod startup time. Example:\n```\nBACKEND_SERVICE_HOST=10.96.0.10\nBACKEND_SERVICE_PORT=80\n```\n\n**Downside:** only Services that existed before the Pod started are visible. DNS is dynamic and preferred."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use headless Services for direct Pod DNS (next lesson)\n\nIf you need to resolve individual Pod IPs (e.g., for a StatefulSet), set `clusterIP: None` to get a headless Service."
+        },
+        {
+            "id": "s_l5_9",
+            "type": "quiz",
+            "title": "Service Discovery Methods 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_3",
+                "type": "multiple_choice",
+                "question": "Which Service discovery method is dynamic (works for new Services after Pod starts)?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Environment variables",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "DNS",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Hard‑coded IPs",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Manual endpoint editing",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "DNS lookups are live, while env vars are only set at Pod creation.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

@@ -1,0 +1,120 @@
+{
+    "id": "l2",
+    "chapterId": "ch_11",
+    "title": "Metrics Server & kubectl top 📊",
+    "description": "Enable the core metrics pipeline and use kubectl top to check resource usage.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Monitoring",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Resource Metrics Pipeline ⛓️",
+            "content": "# Lightweight, built‑in metrics\n\nThe **Metrics Server** collects CPU and memory metrics from kubelets, stores them in memory, and serves them via the `metrics.k8s.io` API. It’s the standard source for:\n- `kubectl top`\n- Horizontal Pod Autoscaler (HPA)\n- `kubectl describe` resource usage\n\nIt does **not** persist data – it’s meant for short‑term, real‑time views."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Installing Metrics Server 🛠️",
+            "content": "## One command on most clusters\n\n**minikube**:\n```bash\nminikube addons enable metrics-server\n```\n**kind / production**: apply the official YAML:\n```bash\nkubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml\n```\n\nCheck it’s running:\n```bash\nkubectl get deployment metrics-server -n kube-system\n```"
+        },
+        {
+            "id": "s_l2_3",
+            "type": "code",
+            "title": "Verify Metrics API",
+            "content": "Check if the API is available:",
+            "codeSnippet": "kubectl get --raw /apis/metrics.k8s.io/v1beta1",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Metrics Server Purpose 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which component does the HPA use by default to get CPU/memory metrics?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Prometheus",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Metrics Server",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Grafana",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "kubelet logs",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Metrics Server provides the resource metrics API used by HPA and kubectl top.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Using kubectl top 🖥️",
+            "content": "## Real‑time resource usage\n\n```bash\nkubectl top nodes          # CPU & memory per node\nkubectl top pods           # all Pods in current namespace\nkubectl top pods -A        # all namespaces\nkubectl top pod my-pod --containers  # per‑container\n```\n\nOutput example:\n```\nNAME        CPU(cores)   MEMORY(bytes)\nmy-pod      45m          128Mi\n```\n\nNote: `m` = millicores (1000m = 1 core)."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Top Command 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What does `kubectl top pods` show?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Logs of each Pod",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "CPU and memory usage of Pods",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Number of restarts",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Network I/O",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It displays current CPU and memory consumption per Pod.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "Limitations of Metrics Server ⚠️",
+            "content": "## Not for long‑term monitoring\n\n- No historical data – only current snapshot.\n- No custom metrics – only CPU and memory.\n- No alerting or dashboards built‑in.\n\nFor production monitoring, you need Prometheus."
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Metrics Server is a must‑have for HPA\n\nAlways install it, even if you use Prometheus for dashboards. HPA relies on it for resource‑based autoscaling out of the box."
+        }
+    ]
+}

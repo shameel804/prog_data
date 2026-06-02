@@ -1,0 +1,141 @@
+{
+    "id": "l3",
+    "chapterId": "ch_10",
+    "title": "RBAC – Role‑Based Access Control 🔑",
+    "description": "Define fine‑grained permissions with Roles and RoleBindings inside a namespace.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The RBAC Rule Structure 📐",
+            "content": "# A permission rule\n\nEach rule in a Role specifies:\n- **apiGroups** – which API group (e.g., `\"\"` for core, `apps` for apps/v1)\n- **resources** – object type (e.g., `pods`, `deployments`)\n- **verbs** – actions allowed: `get`, `list`, `watch`, `create`, `update`, `patch`, `delete`\n\nExample:\n```yaml\nrules:\n- apiGroups: [\"\"]          # core group\n  resources: [\"pods\"]\n  verbs: [\"get\", \"list\", \"watch\"]\n```\n\nThis allows reading Pods but not modifying them."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Creating a Role YAML 📝",
+            "content": "## A simple example\n\n```yaml\napiVersion: rbac.authorization.k8s.io/v1\nkind: Role\nmetadata:\n  namespace: default\n  name: pod-reader\nrules:\n- apiGroups: [\"\"]\n  resources: [\"pods\"]\n  verbs: [\"get\", \"list\", \"watch\"]\n```\n\nThis Role exists only within the `default` namespace."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Role Scope 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Where is a Role valid?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Cluster‑wide",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Only in the namespace where it is created",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "In all namespaces",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only in kube‑system",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Roles are namespaced; ClusterRoles are cluster‑wide.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "RoleBinding – Granting the Role 🤝",
+            "content": "## Link a subject to a Role\n\n```yaml\napiVersion: rbac.authorization.k8s.io/v1\nkind: RoleBinding\nmetadata:\n  name: read-pods\n  namespace: default\nsubjects:\n- kind: ServiceAccount\n  name: app-sa\n  namespace: default\nroleRef:\n  kind: Role\n  name: pod-reader\n  apiGroup: rbac.authorization.k8s.io\n```\n\nNow the ServiceAccount `app-sa` can get/list/watch Pods in the `default` namespace."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Test RBAC",
+            "content": "Use `kubectl auth can-i` to check access:",
+            "codeSnippet": "kubectl auth can-i get pods --as=system:serviceaccount:default:app-sa",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "RoleBinding Purpose 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "What does a RoleBinding do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Creates a ServiceAccount",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Grants the permissions in a Role to a subject",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Defines a set of API rules",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Encrypts secrets",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "RoleBinding connects a Role to a user or ServiceAccount.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Allowing Specific Resources by Name 🎯",
+            "content": "## `resourceNames` for extra granularity\n\nYou can restrict access to individual objects:\n```yaml\nrules:\n- apiGroups: [\"\"]\n  resources: [\"secrets\"]\n  verbs: [\"get\"]\n  resourceNames: [\"my-secret\"]\n```\n\nThis grants read access only to the Secret named `my-secret`, not all secrets."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "text",
+            "title": "Subresources (status, logs) 📊",
+            "content": "## Access to specific sub‑resources\n\nSome resources have sub‑resources like `pods/log` or `deployments/status`. You must explicitly list them:\n```yaml\nrules:\n- apiGroups: [\"\"]\n  resources: [\"pods/log\"]\n  verbs: [\"get\", \"list\"]\n```\n\nThis allows reading logs but not the Pod itself."
+        },
+        {
+            "id": "s_l3_9",
+            "type": "quiz",
+            "title": "Subresource Access 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_3",
+                "type": "true_false",
+                "question": "True or False: A Role that allows `get pods` automatically allows `get pods/log`.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "Logs are a separate subresource; you must explicitly grant access.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `kubectl create role` and `kubectl create rolebinding` for imperative quick starts\n\n```bash\nkubectl create role pod-reader --verb=get,list,watch --resource=pods\nkubectl create rolebinding read-pods --role=pod-reader --serviceaccount=default:app-sa\n```\n\nThen dump to YAML with `-o yaml --dry-run=client` for editing."
+        }
+    ]
+}

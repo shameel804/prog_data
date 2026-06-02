@@ -1,0 +1,135 @@
+{
+    "id": "l3",
+    "chapterId": "ch_3",
+    "title": "Creating a Deployment 📄",
+    "description": "Write a declarative Deployment YAML and deploy it to the cluster.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Hands-on",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The Deployment Manifest 📜",
+            "content": "# Same four top‑level fields\n\n```yaml\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: nginx-deploy\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: nginx\n  template:\n    metadata:\n      labels:\n        app: nginx\n    spec:\n      containers:\n      - name: nginx\n        image: nginx:1.25\n        ports:\n        - containerPort: 80\n```\n\nNote `apiVersion: apps/v1` – Deployments belong to the apps API group."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "API Version 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which apiVersion is correct for a Deployment?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "v1",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "apps/v1",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "extensions/v1beta1",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "networking.k8s.io/v1",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Deployments have been in apps/v1 since Kubernetes 1.9.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Breaking Down the Spec 🔨",
+            "content": "## Each part explained\n\n- **replicas**: the number of Pod copies you want. The Deployment ensures this count.\n- **selector.matchLabels**: must match the Pod template’s labels. This is how the Deployment finds its Pods.\n- **template.metadata.labels**: labels applied to each Pod. These must satisfy the selector.\n- **template.spec**: the Pod spec – exactly what you used for a bare Pod (containers, volumes, etc.)"
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Apply the Deployment",
+            "content": "Save as `deploy.yaml` and run:",
+            "codeSnippet": "kubectl apply -f deploy.yaml",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Verifying the Deployment ✅",
+            "content": "## Useful commands\n\n- `kubectl get deployments` – list Deployments\n- `kubectl get pods -l app=nginx` – Pods matching the label\n- `kubectl describe deployment nginx-deploy` – details and events\n- `kubectl get replicasets` – see the ReplicaSet created by the Deployment\n\nYou should see 3 Pods running, and the ReplicaSet named something like `nginx-deploy-7c4f9d6d8`."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Verify Pods 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Which command shows only the Pods belonging to the 'nginx-deploy' Deployment?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "kubectl get pods --all",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "kubectl get pods -l app=nginx",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "kubectl get deployments pods",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "kubectl describe pods",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Label selectors (`-l`) filter resources by label.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Immutable Fields 🔒",
+            "content": "## Some fields can’t be updated after creation\n\nOnce a Pod is created, you cannot change its label that is used by the Deployment’s selector. The `selector` field in a Deployment is immutable after creation. If you need to change it, you must recreate the Deployment (which deletes all Pods).\n\n**Always design your selector carefully from the start.**"
+        },
+        {
+            "id": "s_l3_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use kubectl create deployment --dry-run=client -o yaml\n\nWant a skeleton YAML? Run:\n```\nkubectl create deployment my-dep --image=nginx --dry-run=client -o yaml > deploy.yaml\n```\nIt generates a valid YAML file you can customize."
+        },
+        {
+            "id": "s_l3_9",
+            "type": "quiz",
+            "title": "Deployment Creation 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_3",
+                "type": "true_false",
+                "question": "True or False: You can change the selector of an existing Deployment without recreating it.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "The selector is immutable once the Deployment is created.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

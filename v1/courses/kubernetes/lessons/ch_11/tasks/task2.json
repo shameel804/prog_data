@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_11",
+    "title": "Deploy Prometheus and Query Metrics",
+    "description": "Install the kube‑prometheus‑stack using Helm and run basic PromQL queries.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## 🎯 Goal\nGet hands‑on with Prometheus by deploying the full stack and querying metrics.\n\n### Prerequisites\n- Helm installed.\n- Enough cluster resources (at least 2 GB RAM free).\n\n### Steps\n1. Add the Prometheus community Helm repo and update:\n   ```bash\n   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts\n   helm repo update\n   ```\n2. Install the stack in a new `monitoring` namespace:\n   ```bash\n   helm install monitor prometheus-community/kube-prometheus-stack -n monitoring --create-namespace\n   ```\n3. Wait for all Pods to be ready: `kubectl get pods -n monitoring -w`.\n4. Access Prometheus UI:\n   ```bash\n   kubectl port-forward svc/monitor-kube-prometheus-prometheus -n monitoring 9090:9090\n   ```\n   Open `http://localhost:9090` in your browser.\n5. In the Prometheus UI, go to the Graph tab and try these queries:\n   - `up` – shows which targets are up.\n   - `container_memory_usage_bytes{namespace=\"monitoring\"}` – memory usage of monitoring pods.\n   - `rate(node_cpu_seconds_total{mode=\"idle\"}[5m])` – idle CPU rate per node.\n6. Check the Service Discovery page (Status → Service Discovery) to see which Kubernetes endpoints Prometheus is scraping.\n7. (Optional) Access Grafana:\n   ```bash\n   kubectl port-forward svc/monitor-grafana -n monitoring 3000:80\n   ```\n   Login with admin / (get password from Secret).\n8. Clean up (optional): `helm uninstall monitor -n monitoring` and delete namespace.",
+    "hints": [
+        "The initial install may take a few minutes to pull images.",
+        "If port-forward fails, check the service names: `kubectl get svc -n monitoring`.",
+        "Grafana password: `kubectl get secret monitor-grafana -n monitoring -o jsonpath=\"{.data.admin-password}\" | base64 --decode`."
+    ],
+    "expectedOutput": "Prometheus UI accessible, queries return metric data, targets show up as healthy.",
+    "solutionCode": "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts\nhelm install monitor prometheus-community/kube-prometheus-stack -n monitoring --create-namespace\n# Wait for pods\nkubectl port-forward svc/monitor-kube-prometheus-prometheus -n monitoring 9090:9090"
+}

@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_6",
+    "title": "Dynamic Provisioning with PVC",
+    "description": "Create a PVC using a StorageClass and mount it into an nginx Pod.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## 🎯 Goal\nUse dynamic provisioning to give an nginx Pod persistent storage for its web root.\n\n### Prerequisites\n- Your cluster must have a default StorageClass (most local clusters like minikube have one; check with `kubectl get storageclass`).\n- If none, you can create one (but many local setups use hostPath provisioner). For minikube, the default `standard` class works.\n\n### Steps\n1. Create a PVC YAML `nginx-pvc.yaml`:\n   - name: `nginx-pvc`\n   - storageClassName: `<your-default-class>` (or omit if default).\n   - accessModes: ReadWriteOnce\n   - storage: 1Gi\n2. Apply the PVC: `kubectl apply -f nginx-pvc.yaml`.\n3. Verify it becomes Bound: `kubectl get pvc nginx-pvc`.\n4. Create a Pod YAML `nginx-pv-pod.yaml`:\n   - name: `nginx-persistent`\n   - image: nginx:1.25\n   - volume that references the PVC by name\n   - mount path: `/usr/share/nginx/html`\n5. Apply the Pod.\n6. Access the Pod (port‑forward) and see the default nginx page (since the volume is empty).\n7. Write a custom `index.html` inside the Pod:\n   ```bash\n   kubectl exec nginx-persistent -- sh -c \"echo 'Persistent!' > /usr/share/nginx/html/index.html\"\n   ```\n8. Verify the page changed.\n9. Delete the Pod (but NOT the PVC).\n10. Re‑create the Pod with the same YAML. The custom page should still be there because the PVC data persisted.\n11. Clean up: delete Pod and PVC.",
+    "hints": [
+        "If PVC stays Pending, check that a StorageClass exists and the provisioner is working (`kubectl get events`).",
+        "The port‑forward command: `kubectl port-forward pod/nginx-persistent 8080:80`.",
+        "To see the PVC's PV, run `kubectl get pv`."
+    ],
+    "expectedOutput": "After deleting and recreating the Pod, the custom 'Persistent!' page is still served.",
+    "solutionCode": "# nginx-pvc.yaml\napiVersion: v1\nkind: PersistentVolumeClaim\nmetadata:\n  name: nginx-pvc\nspec:\n  accessModes:\n    - ReadWriteOnce\n  resources:\n    requests:\n      storage: 1Gi\n  # storageClassName: standard  # optional if default\n---\n# nginx-pv-pod.yaml\napiVersion: v1\nkind: Pod\nmetadata:\n  name: nginx-persistent\nspec:\n  volumes:\n  - name: html-storage\n    persistentVolumeClaim:\n      claimName: nginx-pvc\n  containers:\n  - name: nginx\n    image: nginx:1.25\n    ports:\n    - containerPort: 80\n    volumeMounts:\n    - name: html-storage\n      mountPath: /usr/share/nginx/html"
+}

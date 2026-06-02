@@ -1,0 +1,82 @@
+{
+    "id": "sq_kubernetes_2",
+    "title": "Deployment Detective 🔮",
+    "triggerChapterIndex": 3,
+    "metadata": {
+        "type": "prediction"
+    },
+    "questions": [
+        {
+            "id": "sq_kubernetes_2_q1",
+            "type": "code_output",
+            "question": "What is the output of this command after applying the given Deployment?",
+            "codeSnippet": "kubectl create deployment web --image=nginx:1.25 --replicas=2\nkubectl scale deployment web --replicas=5\nkubectl get pods -l app=web --no-headers | wc -l",
+            "correctOutput": "5",
+            "correctAnswer": "5",
+            "options": [],
+            "explanation": "The Deployment is first created with 2 replicas, then scaled to 5. The final replica count is 5, so `kubectl get pods` will show 5 running Pods.",
+            "xpReward": 25,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_kubernetes_2_q2",
+            "type": "code_output",
+            "question": "Given this Service definition, what will be the ClusterIP (type of IP) assigned?",
+            "codeSnippet": "apiVersion: v1\nkind: Service\nmetadata:\n  name: backend\nspec:\n  selector:\n    app: backend\n  ports:\n  - port: 80\n    targetPort: 8080\n  type: ClusterIP",
+            "correctOutput": "A virtual IP from the service cluster IP range",
+            "correctAnswer": "A virtual IP from the service cluster IP range",
+            "options": [],
+            "explanation": "ClusterIP services receive a stable internal IP from the service CIDR range, like 10.96.0.1.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_kubernetes_2_q3",
+            "type": "code_output",
+            "question": "After running this command, what will be the status of the rollout?",
+            "codeSnippet": "kubectl set image deployment/web nginx=nginx:1.26\nkubectl rollout status deployment/web",
+            "correctOutput": "Waiting for rollout to finish: 1 old replicas are pending termination...\ndeployment \"web\" successfully rolled out",
+            "correctAnswer": "deployment \"web\" successfully rolled out",
+            "options": [],
+            "explanation": "Assuming the update succeeds, `rollout status` will report a successful rollout. The exact message includes the deployment name.",
+            "xpReward": 25,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_kubernetes_2_q4",
+            "type": "code_output",
+            "question": "What is the result of this YAML?",
+            "codeSnippet": "apiVersion: v1\nkind: Service\nmetadata:\n  name: external\nspec:\n  type: ExternalName\n  externalName: api.example.com",
+            "correctOutput": "A CNAME record pointing to api.example.com is created in cluster DNS",
+            "correctAnswer": "A CNAME record pointing to api.example.com is created in cluster DNS",
+            "options": [],
+            "explanation": "An ExternalName service creates a DNS CNAME that directs traffic to the external domain.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_kubernetes_2_q5",
+            "type": "code_output",
+            "question": "What will this kubectl command return?",
+            "codeSnippet": "kubectl get endpoints backend -o jsonpath='{.subsets[*].ports[*].port}'",
+            "correctOutput": "80",
+            "correctAnswer": "80",
+            "options": [],
+            "explanation": "The Endpoints object for the backend Service lists the port 80 (assuming the Service defined port 80). The exact output depends on the Service configuration, but typically it would be '80' if the Service's port is 80.",
+            "xpReward": 25,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_kubernetes_2_q6",
+            "type": "code_output",
+            "question": "What does this Pod DNS query return?",
+            "codeSnippet": "# Inside a Pod:\nnslookup backend.default.svc.cluster.local",
+            "correctOutput": "Server:    10.96.0.10\nAddress 1: 10.96.0.10 kube-dns.kube-system.svc.cluster.local\n\nName:      backend.default.svc.cluster.local\nAddress 1: 10.96.0.42",
+            "correctAnswer": "The ClusterIP of the backend service",
+            "options": [],
+            "explanation": "DNS resolution returns the ClusterIP of the Service, e.g., 10.96.0.42.",
+            "xpReward": 25,
+            "difficulty": 2
+        }
+    ]
+}

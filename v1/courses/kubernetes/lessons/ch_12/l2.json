@@ -1,0 +1,132 @@
+{
+    "id": "l2",
+    "chapterId": "ch_12",
+    "title": "CI/CD for Kubernetes 🚀",
+    "description": "Build automated pipelines to continuously deliver applications to your cluster.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "DevOps",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "CI/CD in a Container World 🌍",
+            "content": "# From code to cluster, automatically\n\nContinuous Integration (CI) builds and tests your application on every commit.\nContinuous Delivery/Deployment (CD) automatically deploys those changes to Kubernetes.\n\nA typical pipeline:\n1. Push code → build container image.\n2. Run tests (unit, integration).\n3. Push image to registry.\n4. Update Kubernetes manifests (e.g., change image tag).\n5. Apply to cluster."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "Key Tools 🔧",
+            "content": "## Popular CI/CD platforms\n\n- **GitHub Actions** – tightly integrated with GitHub, many pre‑built actions.\n- **GitLab CI** – built‑in registry, Kubernetes integration.\n- **Jenkins** – powerful but requires more setup.\n- **Tekton** – Kubernetes‑native pipeline engine.\n- **Argo Workflows/Events** – for complex event‑driven workflows.\n\nAll can build, test, and deploy to Kubernetes using kubectl or Helm commands."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Example: GitHub Actions Pipeline ⚡",
+            "content": "## Build, test, deploy\n\n```yaml\nname: Build and Deploy\non:\n  push:\n    branches: [main]\njobs:\n  build-deploy:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v3\n      - name: Build container\n        run: docker build -t myapp:${{ github.sha }} .\n      - name: Push to registry\n        run: |\n          docker tag myapp:${{ github.sha }} myregistry/myapp:${{ github.sha }}\n          docker push myregistry/myapp:${{ github.sha }}\n      - name: Set image in manifests\n        run: |\n          sed -i \"s|image:.*|image: myregistry/myapp:${{ github.sha }}|\" k8s/deployment.yaml\n      - name: Deploy to cluster\n        uses: appleboy/kubectl-action@master\n        with:\n          kubeconfig: ${{ secrets.KUBECONFIG }}\n          args: apply -f k8s/\n```"
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "CI/CD Steps 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Why is it common to use `${{ github.sha }}` as an image tag?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's the fastest tag to type",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It provides a unique, immutable tag for each build",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's the default in Docker",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It reduces image size",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Commit SHA ensures each image version is uniquely identifiable and traceable to code.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Updating Manifests: The 'Write Back' Pattern ↩️",
+            "content": "## Keep your Git repo in sync\n\nInstead of just applying a change, update the YAML file in Git (e.g., via a PR) and let the CD tool merge and apply. This is the basis of **GitOps**.\n\nTools like **Renovate** or **Argo CD Image Updater** can automatically open PRs to update image tags."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Securing Deployments 🔐",
+            "content": "## Never hard‑code credentials\n\n- Use Kubernetes Secrets or external secret stores.\n- Inject registry credentials via `imagePullSecrets`.\n- Use short‑lived tokens for pipeline access (e.g., OIDC with GitHub Actions).\n- Limit the pipeline’s RBAC permissions (don't give cluster‑admin)."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "code",
+            "title": "Tokenless Authentication (OIDC)",
+            "content": "GitHub Actions can authenticate to cloud providers without static secrets:",
+            "codeSnippet": "- name: Authenticate to GKE\n  uses: google-github-actions/auth@v1\n  with:\n    workload_identity_provider: 'projects/...'\n    service_account: 'my-sa@...'",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_8",
+            "type": "quiz",
+            "title": "GitHub Actions Security 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What is the benefit of using OIDC for GitHub Actions instead of a static KUBECONFIG secret?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "No long‑lived secrets to manage or rotate",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It bypasses RBAC",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It doesn't need a cluster at all",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "OIDC issues short‑lived tokens, eliminating static credential storage.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_9",
+            "type": "text",
+            "title": "Canary and Blue‑Green Deployments 🐤🔵🟢",
+            "content": "## Beyond 'kubectl apply'\n\nAdvanced deployment strategies:\n- **Rolling update** (default) – gradual replacement.\n- **Canary** – shift a small percentage of traffic to new version (via Ingress annotations).\n- **Blue‑Green** – deploy a completely new environment and switch traffic (via Service selectors).\n\nThese minimize risk during releases."
+        },
+        {
+            "id": "s_l2_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use Helm in CI/CD\n\n`helm upgrade --install --atomic --set image.tag=$NEW_TAG` makes rollbacks easy and keeps releases tidy."
+        }
+    ]
+}

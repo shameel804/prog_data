@@ -1,0 +1,161 @@
+{
+    "id": "l3",
+    "chapterId": "ch_9",
+    "title": "Installing & Managing Releases 🚀",
+    "description": "Deploy, upgrade, rollback, and uninstall apps with Helm.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Operations",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Installing a Chart 🛠️",
+            "content": "# The `helm install` command\n\n```bash\nhelm install <release-name> <chart> [flags]\n```\n\nExamples:\n```bash\nhelm install my-nginx bitnami/nginx\nhelm install my-web bitnami/nginx --set service.type=ClusterIP\nhelm install prod-db bitnami/postgresql -f db-values.yaml\n```\n\nEach release is namespaced: `--namespace` or `-n`."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "Install Syntax 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which command installs a chart with a custom values file?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "helm install my-app chart -f values.yaml",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "helm install my-app chart --set-file values.yaml",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "helm create my-app -f values.yaml",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "helm apply my-app -f values.yaml",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`-f` or `--values` specifies a YAML file.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Listing Releases 📋",
+            "content": "## See what's installed\n\n```bash\nhelm list                 # current namespace\nhelm list -A              # all namespaces\nhelm list --filter my-    # releases starting with 'my-'\nhelm list --failed        # only failed releases\n```\nEach release shows: name, namespace, revision, status, chart, app version."
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Release Status & History 📜",
+            "content": "## Inspect a release\n\n```bash\nhelm status my-nginx      # current state\nhelm history my-nginx     # all revisions\nhelm get values my-nginx  # user‑supplied values\nhelm get manifest my-nginx # full Kubernetes YAML applied\n```\n\nUse these for debugging and auditing."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "quiz",
+            "title": "Release Info 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Which command shows the rendered Kubernetes YAML for a release?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "helm show chart",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "helm get manifest",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "helm status -o yaml",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "helm values",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`helm get manifest <release>` outputs all resources created.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "Upgrading a Release ⬆️",
+            "content": "## Change configuration or chart version\n\n```bash\nhelm upgrade my-nginx bitnami/nginx --set service.type=NodePort\n```\n\n- Increments the revision number.\n- Applies a patch (similar to `kubectl apply`).\n- If you want to install if not exists: `helm upgrade --install my-nginx bitnami/nginx`."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "code",
+            "title": "Upgrade Example",
+            "content": "",
+            "codeSnippet": "# Update to a new chart version and change replicas\nhelm upgrade my-nginx bitnami/nginx --version 15.0.0 --set replicaCount=3",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_8",
+            "type": "text",
+            "title": "Rolling Back a Release ↩️",
+            "content": "## Undo a bad upgrade\n\n```bash\nhelm rollback my-nginx 1      # rollback to revision 1\nhelm rollback my-nginx        # rollback to previous revision\n```\n\nThis restores the release state from the selected revision. Helm keeps up to 10 revisions by default."
+        },
+        {
+            "id": "s_l3_9",
+            "type": "quiz",
+            "title": "Rollback Command 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_3",
+                "type": "multiple_choice",
+                "question": "How do you revert a Helm release to its previous version?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "helm undo",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "helm rollback <release>",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "helm revert <release>",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "helm downgrade <release>",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`helm rollback <release>` goes to the previous revision.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_10",
+            "type": "text",
+            "title": "Uninstalling a Release 🗑️",
+            "content": "## Clean up\n\n```bash\nhelm uninstall my-nginx\n```\n\nRemoves all Kubernetes resources created for that release, except hooks that may have opted out. Add `--keep-history` to preserve the release history for future rollback."
+        }
+    ]
+}

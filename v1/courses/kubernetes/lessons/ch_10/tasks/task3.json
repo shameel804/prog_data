@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_10",
+    "title": "Use ClusterRole and RoleBinding for Multi‑Namespace Access",
+    "description": "Grant a ServiceAccount view access in two namespaces using the built‑in `view` ClusterRole.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## 🎯 Goal\nCreate a ServiceAccount `ns-viewer` that can view resources in both `dev` and `staging` namespaces, but not in `prod`.\n\n### Steps\n1. Create namespaces `dev` and `staging` (if they don't exist).\n2. Create the ServiceAccount `ns-viewer` in the `default` namespace.\n3. In namespace `dev`, create a RoleBinding that binds the ClusterRole `view` to `ns-viewer` (from default).\n   - Since `ns-viewer` is in default, the subject needs `namespace: default`.\n4. Similarly in namespace `staging`, create another RoleBinding binding the same ClusterRole to the same ServiceAccount.\n5. Verify access:\n   - `kubectl auth can-i list pods --as=system:serviceaccount:default:ns-viewer -n dev` -> yes\n   - `kubectl auth can-i list pods --as=... -n staging` -> yes\n   - `kubectl auth can-i list pods --as=... -n default` -> should be no (unless you also bind there)\n   - `kubectl auth can-i list nodes --as=...` -> no, because `view` doesn't include nodes typically (check? view includes nodes? Actually `view` clusterrole allows read on most namespaced resources but not nodes; nodes require a separate clusterrole)\n6. Clean up the namespaces and bindings.\n\n### Bonus\n- Create a Pod in `default` that uses `ns-viewer` ServiceAccount and install curl; try to access the API to list pods in dev.",
+    "hints": [
+        "The built‑in ClusterRole `view` already exists; you don't need to create it.",
+        "The subject in a RoleBinding can be a ServiceAccount from another namespace; just specify `namespace: default`.",
+        "Use `kubectl create rolebinding` with `--clusterrole=view`."
+    ],
+    "expectedOutput": "Access granted in dev and staging, denied elsewhere.",
+    "solutionCode": "kubectl create ns dev\nkubectl create ns staging\nkubectl create serviceaccount ns-viewer\n# RoleBinding in dev\nkubectl create rolebinding view-dev --clusterrole=view --serviceaccount=default:ns-viewer -n dev\n# RoleBinding in staging\nkubectl create rolebinding view-staging --clusterrole=view --serviceaccount=default:ns-viewer -n staging\n# Test\nkubectl auth can-i list pods --as=system:serviceaccount:default:ns-viewer -n dev\nkubectl auth can-i list pods --as=system:serviceaccount:default:ns-viewer -n staging\nkubectl auth can-i list pods --as=system:serviceaccount:default:ns-viewer -n default"
+}

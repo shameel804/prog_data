@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_5",
+    "title": "Secure a Database with Secrets",
+    "description": "Create a Secret for database credentials and inject it into a Pod.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## 🎯 Goal\nCreate a Secret `db-secret` with keys `username` (value `admin`) and `password` (value `supersecret`). Then deploy a busybox Pod that prints these credentials to stdout (for demonstration only – in real life don't print secrets!).\n\n### Steps\n1. Create the Secret imperatively: `kubectl create secret generic db-secret --from-literal=username=admin --from-literal=password=supersecret`.\n2. Verify the Secret exists: `kubectl get secret db-secret`.\n3. Decode and verify the values: `kubectl get secret db-secret -o jsonpath='{.data.password}' | base64 --decode`.\n4. Create a Pod YAML `secret-test-pod.yaml`:\n   - image: busybox\n   - command: `[\"sh\", \"-c\", \"echo Username: $DB_USER; echo Password: $DB_PASS; sleep 3600\"]`\n   - env vars `DB_USER` from `db-secret` key `username`, and `DB_PASS` from key `password`.\n5. Apply the Pod: `kubectl apply -f secret-test-pod.yaml`.\n6. Check logs: `kubectl logs secret-test-pod`. You should see the credentials printed.\n7. Clean up the Pod and Secret.\n\nBonus: Modify the Pod to mount the Secret as a volume at `/etc/secrets` and read the files.",
+    "hints": [
+        "Use `valueFrom.secretKeyRef` for each env var.",
+        "Avoid using `envFrom` in production to prevent accidentally exposing all keys.",
+        "The files in a Secret volume are base64‑decoded automatically."
+    ],
+    "expectedOutput": "Logs show `Username: admin` and `Password: supersecret`.",
+    "solutionCode": "# secret-test-pod.yaml\napiVersion: v1\nkind: Pod\nmetadata:\n  name: secret-test-pod\nspec:\n  containers:\n  - name: busybox\n    image: busybox\n    command: [\"sh\", \"-c\", \"echo Username: $DB_USER; echo Password: $DB_PASS; sleep 3600\"]\n    env:\n    - name: DB_USER\n      valueFrom:\n        secretKeyRef:\n          name: db-secret\n          key: username\n    - name: DB_PASS\n      valueFrom:\n        secretKeyRef:\n          name: db-secret\n          key: password"
+}

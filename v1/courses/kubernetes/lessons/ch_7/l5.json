@@ -1,0 +1,167 @@
+{
+    "id": "l5",
+    "chapterId": "ch_7",
+    "title": "Horizontal Pod Autoscaler (HPA) 📈",
+    "description": "Automatically scale your workloads based on CPU, memory, or custom metrics.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Scaling",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "What is the HPA? 🤖",
+            "content": "# React to load, not your pager\n\nThe Horizontal Pod Autoscaler automatically increases or decreases the number of Pods in a Deployment, StatefulSet, or ReplicaSet based on observed metrics.\n\nBy default, it uses **resource metrics** (CPU, memory) from the Metrics Server. You can also use custom metrics (e.g., requests per second) with external adapters (Prometheus, Datadog)."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Prerequisites 📋",
+            "content": "## What you need\n\n1. **Metrics Server** must be running in your cluster (many managed services have it; for minikube, enable with `minikube addons enable metrics-server`).\n2. Your Pods must have **resource requests** set (HPA calculates utilisation as a percentage of the request).\n3. The target resource must support scaling (Deployment, StatefulSet, ReplicaSet)."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "code",
+            "title": "Check Metrics Server",
+            "content": "Verify it’s running:",
+            "codeSnippet": "kubectl get deployment metrics-server -n kube-system\nkubectl top nodes\nkubectl top pods",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Metrics Requirement 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Why must Pods have CPU requests for HPA to work?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "HPA uses the absolute CPU value",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "HPA calculates utilisation as percentage of the request",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Requests are required for scheduling",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "CPU limits are mandatory",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Without requests, the utilisation percentage cannot be computed.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Creating an HPA Imperatively ⚡",
+            "content": "## Quick autoscale\n\n```bash\nkubectl autoscale deployment my-deploy --cpu-percent=50 --min=1 --max=10\n```\n\nThis creates an HPA that keeps the average CPU utilisation of all Pods at 50%, scaling between 1 and 10 replicas.\n\nCheck status:\n```bash\nkubectl get hpa\nkubectl describe hpa\n```"
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Declarative HPA YAML 📝",
+            "content": "## More control\n\n```yaml\napiVersion: autoscaling/v2\nkind: HorizontalPodAutoscaler\nmetadata:\n  name: app-hpa\nspec:\n  scaleTargetRef:\n    apiVersion: apps/v1\n    kind: Deployment\n    name: my-deploy\n  minReplicas: 2\n  maxReplicas: 8\n  metrics:\n  - type: Resource\n    resource:\n      name: cpu\n      target:\n        type: Utilization\n        averageUtilization: 60\n  - type: Resource\n    resource:\n      name: memory\n      target:\n        type: Utilization\n        averageUtilization: 80\n```\n\nYou can have multiple metrics; HPA will calculate desired replicas for each and pick the highest."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Multi‑Metric HPA 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "If you define both CPU and memory metrics in an HPA, which one dictates the replica count?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "CPU only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Memory only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The metric that yields the highest replica count",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The average of both",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "HPA takes the max desired replicas across all metrics to ensure all constraints are met.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_8",
+            "type": "text",
+            "title": "HPA Algorithm 🧮",
+            "content": "## How it calculates\n\nThe desired replicas are calculated roughly as:\n```\ndesiredReplicas = ceil( currentReplicas * ( currentMetricValue / desiredMetricValue ) )\n```\nFor CPU at 50% target: if current utilisation is 80%, it would double the replicas (capped by maxReplicas).\n\nHPA reevaluates every 15 seconds by default (configurable). It includes stabilisation windows to prevent flapping."
+        },
+        {
+            "id": "s_l5_9",
+            "type": "text",
+            "title": "Custom and External Metrics 📊",
+            "content": "## Beyond CPU and memory\n\nHPA can scale on:\n- **Pods metrics** (e.g., requests per second, queue length) via the custom metrics API.\n- **Object metrics** (e.g., a database connection count).\n- **External metrics** (e.g., messages in a cloud pub/sub queue).\n\nThis requires an adapter like Prometheus Adapter or a cloud provider’s metrics adapter."
+        },
+        {
+            "id": "s_l5_10",
+            "type": "quiz",
+            "title": "Scaling Down 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_3",
+                "type": "multiple_choice",
+                "question": "Which parameter prevents HPA from scaling up too quickly?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "maxReplicas",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "stabilizationWindowSeconds (scale‑up)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "minReplicas",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "averageUtilization",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The stabilisation window delays scaling actions to prevent flapping.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_11",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Always set resource requests\n\nWithout requests, HPA can't compute utilization. Also, set appropriate limits to prevent a single Pod from consuming all node resources and triggering eviction."
+        }
+    ]
+}

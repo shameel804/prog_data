@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_4",
+    "title": "Expose a Service via NodePort and LoadBalancer",
+    "description": "Make your nginx app accessible from outside the cluster.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## 🎯 Goal\nConvert the existing Service to NodePort and then try LoadBalancer (if your cluster supports it, e.g., minikube tunnel).\n\n### Steps\n1. Use `kubectl edit svc nginx-svc` and change `type` to `NodePort`. Save and exit.\n2. Check the assigned NodePort: `kubectl get svc nginx-svc` (look at PORT(S) column, e.g., 80:30080/TCP).\n3. Find the node IP:\n   - minikube: `minikube ip`\n   - kind: `kubectl get nodes -o wide`\n4. Access via curl or browser: `http://<node-ip>:<node-port>`. You should see nginx.\n5. (Optional) If using minikube, you can also run `minikube service nginx-svc --url` to get the URL.\n6. Now change the Service type to `LoadBalancer`. If on minikube, open a new terminal and run `minikube tunnel` (this simulates a cloud LB).\n7. Check `kubectl get svc nginx-svc`. An EXTERNAL-IP should appear.\n8. Access via that external IP: `curl http://<external-ip>`.\n9. Revert back to ClusterIP or delete the Service when done.",
+    "hints": [
+        "If using kind, LoadBalancer won't work without MetalLB; NodePort still works.",
+        "The `minikube tunnel` command must keep running; it creates a network route to the LoadBalancer IP.",
+        "NodePort range can be customized in kube-apiserver, but stick to default 30000+."
+    ],
+    "expectedOutput": "You can reach nginx via NodePort and (if supported) LoadBalancer IP.",
+    "solutionCode": "# Edit Service type to NodePort\nkubectl patch svc nginx-svc -p '{\"spec\":{\"type\":\"NodePort\"}}'\n# For LoadBalancer with minikube:\nminikube tunnel\n# In another terminal:\nkubectl patch svc nginx-svc -p '{\"spec\":{\"type\":\"LoadBalancer\"}}'\ncurl http://<EXTERNAL-IP>"
+}

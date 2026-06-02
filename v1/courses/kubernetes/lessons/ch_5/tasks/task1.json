@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_5",
+    "title": "Inject Config via ConfigMap",
+    "description": "Create a ConfigMap and use it both as environment variables and a volume mount.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## 🎯 Goal\nCreate a ConfigMap `web-config` with two keys: `APP_PORT=8080` and a file `index.html` with content `<h1>Hello from ConfigMap</h1>`. Then deploy an nginx Pod that:\n- Sets the environment variable `NGINX_PORT` from `APP_PORT`.\n- Mounts the `index.html` file into `/usr/share/nginx/html/index.html`.\n\n### Steps\n1. Create the ConfigMap using a YAML file `web-config.yaml` (key: `index.html`, value as the HTML). Include `APP_PORT` as a second key.\n2. Apply the ConfigMap: `kubectl apply -f web-config.yaml`.\n3. Create a Pod YAML `nginx-config-pod.yaml`:\n   - image: nginx:1.25\n   - env: `NGINX_PORT` from configmap key `APP_PORT`\n   - volume from `web-config` with `items` to mount only `index.html`\n   - mount the volume at `/usr/share/nginx/html`\n4. Apply the Pod: `kubectl apply -f nginx-config-pod.yaml`.\n5. Forward the port: `kubectl port-forward pod/nginx-config-pod 8080:80`.\n6. Access `http://localhost:8080` – see the custom HTML.\n7. Check the environment variable: `kubectl exec nginx-config-pod -- env | grep NGINX_PORT`.\n8. Clean up: delete Pod and ConfigMap.",
+    "hints": [
+        "Use `items` in the volume definition to select only the `index.html` key, mapping `key: index.html` and `path: index.html`.",
+        "If port forwarding fails, ensure the Pod is Running and port 80 is correct.",
+        "Remember ConfigMaps are per‑namespace."
+    ],
+    "expectedOutput": "The nginx home page shows 'Hello from ConfigMap' and the env var `NGINX_PORT` is 8080.",
+    "solutionCode": "# web-config.yaml\napiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: web-config\ndata:\n  APP_PORT: \"8080\"\n  index.html: |\n    <h1>Hello from ConfigMap</h1>\n\n# nginx-config-pod.yaml\napiVersion: v1\nkind: Pod\nmetadata:\n  name: nginx-config-pod\nspec:\n  containers:\n  - name: nginx\n    image: nginx:1.25\n    env:\n    - name: NGINX_PORT\n      valueFrom:\n        configMapKeyRef:\n          name: web-config\n          key: APP_PORT\n    volumeMounts:\n    - name: html-volume\n      mountPath: /usr/share/nginx/html\n  volumes:\n  - name: html-volume\n    configMap:\n      name: web-config\n      items:\n      - key: index.html\n        path: index.html"
+}

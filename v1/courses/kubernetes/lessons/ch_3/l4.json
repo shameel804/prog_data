@@ -1,0 +1,135 @@
+{
+    "id": "l4",
+    "chapterId": "ch_3",
+    "title": "Scaling Up and Down 📈📉",
+    "description": "Change the number of Pod replicas manually or automatically.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Operations",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Why Scale? ⚖️",
+            "content": "# Match demand to resources\n\nWhen traffic increases, you need more Pods. When it drops, you save resources by scaling down. Kubernetes gives you several ways to scale:\n- **Imperative**: `kubectl scale`\n- **Declarative**: update `replicas` in the Deployment YAML and apply\n- **Autoscaling**: Horizontal Pod Autoscaler (HPA), covered in Chapter 7"
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Imperative Scaling with kubectl scale 🎚️",
+            "content": "## Quick one‑liners\n\n```bash\nkubectl scale deployment nginx-deploy --replicas=5\n```\n\nImmediately scales the Deployment to 5 replicas. The ReplicaSet sees the new desired count and creates additional Pods.\n\nTo scale down:\n```bash\nkubectl scale deployment nginx-deploy --replicas=2\n```\n\nThe ReplicaSet terminates excess Pods gracefully (SIGTERM, wait, SIGKILL)."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Scale Command 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which command scales a Deployment named 'web' to 10 replicas?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "kubectl scale deploy web --replicas=10",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "kubectl resize deploy web --count=10",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "kubectl update deploy web --replicas=10",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "kubectl set replicas deploy web 10",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`kubectl scale deployment <name> --replicas=<N>` is the correct syntax.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Declarative Scaling 📝",
+            "content": "## The GitOps way\n\nInstead of using `kubectl scale`, edit your `deploy.yaml`:\n```yaml\nspec:\n  replicas: 5\n```\nThen apply again:\n```bash\nkubectl apply -f deploy.yaml\n```\n\nKubernetes detects the change and adjusts the ReplicaSet accordingly. This method is auditable and version‑controlled."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Edit Replicas in YAML",
+            "content": "Update the replicas field and apply:",
+            "codeSnippet": "# Change replicas: 3 to replicas: 5 in deploy.yaml\nkubectl apply -f deploy.yaml",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "What Happens to Traffic? 🌐",
+            "content": "## Scaling and Services\n\nWhen a new Pod is created, it takes a few seconds to become ready. If a Service is load‑balancing to these Pods (label match), it will only send traffic to Pods that pass their readiness probe.\n\nIf there's no readiness probe, traffic might be sent to a Pod before it’s fully started. We'll cover probes in Chapter 7."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "Readiness 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "True or False: A Service sends traffic to a Pod as soon as the container process starts.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "The Pod must be marked Ready (readiness probe or default Ready condition) before it receives traffic.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_8",
+            "type": "text",
+            "title": "Scaling Down Gracefully 🛑",
+            "content": "## PreStop hook and terminationGracePeriodSeconds\n\nWhen scaling down, Kubernetes sends SIGTERM to the container, waits for `terminationGracePeriodSeconds` (default 30s), then sends SIGKILL. You can add a `preStop` hook to drain connections:\n\n```yaml\nlifecycle:\n  preStop:\n    exec:\n      command: [\"/bin/sh\", \"-c\", \"sleep 15\"]\n```\n\nThis gives time for the Service to stop routing to this Pod."
+        },
+        {
+            "id": "s_l4_9",
+            "type": "quiz",
+            "title": "Graceful Shutdown 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_3",
+                "type": "multiple_choice",
+                "question": "What signal does Kubernetes send to a container when scaling down?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "SIGKILL immediately",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "SIGTERM, then SIGKILL after a grace period",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "SIGINT",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "SIGHUP",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "SIGTERM allows clean shutdown; SIGKILL is sent if the process hasn't exited in time.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

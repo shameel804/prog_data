@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_6",
+    "title": "Deploy a Stateful Application with StatefulSet",
+    "description": "Create a StatefulSet for nginx with per‑Pod storage and a headless Service.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## 🎯 Goal\nRun a StatefulSet named `web-sts` that provides each Pod with its own PVC and stable DNS.\n\n### Steps\n1. Create a headless Service YAML `web-headless.yaml`:\n   - name: `web`\n   - clusterIP: None\n   - selector: `app: web`\n   - port: 80\n2. Apply the Service: `kubectl apply -f web-headless.yaml`.\n3. Create a StatefulSet YAML `web-sts.yaml`:\n   - name: `web-sts`\n   - serviceName: `web`\n   - replicas: 2\n   - selector matching `app: web`\n   - template with label `app: web`, container nginx, volume mount `/usr/share/nginx/html`\n   - volumeClaimTemplates with name `www`, accessModes ReadWriteOnce, storage 100Mi (leave storageClassName empty to use default).\n4. Apply the StatefulSet: `kubectl apply -f web-sts.yaml`.\n5. Watch Pods: `kubectl get pods -w` (should see web-sts-0, then web-sts-1).\n6. Verify PVCs: `kubectl get pvc` (should see www-web-sts-0 and www-web-sts-1).\n7. Check stable DNS: run a debug Pod and `nslookup web-sts-0.web` (or `web-sts-0.web.default.svc.cluster.local`).\n8. Write a distinct index.html in each Pod:\n   - `kubectl exec web-sts-0 -- sh -c \"echo 'Pod 0' > /usr/share/nginx/html/index.html\"`\n   - `kubectl exec web-sts-1 -- sh -c \"echo 'Pod 1' > /usr/share/nginx/html/index.html\"`\n9. Delete Pod web-sts-0: `kubectl delete pod web-sts-0`. It will be recreated automatically. Check that the data survived: `kubectl exec web-sts-0 -- cat /usr/share/nginx/html/index.html`.\n10. Scale down to 1: `kubectl scale statefulset web-sts --replicas=1` (Pod 1 is terminated).\n11. Scale back up to 2: Pod 1 comes back and reattaches its original PVC.\n12. Clean up: delete StatefulSet and PVCs (manually).",
+    "hints": [
+        "The headless Service must be created before the StatefulSet.",
+        "If PVCs don't bind, ensure a default StorageClass exists.",
+        "When scaling down, the highest ordinal Pod is removed first."
+    ],
+    "expectedOutput": "Each Pod retains its unique data even after delete/recreate and scale operations.",
+    "solutionCode": "# web-headless.yaml\napiVersion: v1\nkind: Service\nmetadata:\n  name: web\nspec:\n  clusterIP: None\n  selector:\n    app: web\n  ports:\n  - port: 80\n---\n# web-sts.yaml\napiVersion: apps/v1\nkind: StatefulSet\nmetadata:\n  name: web-sts\nspec:\n  serviceName: web\n  replicas: 2\n  selector:\n    matchLabels:\n      app: web\n  template:\n    metadata:\n      labels:\n        app: web\n    spec:\n      containers:\n      - name: nginx\n        image: nginx:1.25\n        volumeMounts:\n        - name: www\n          mountPath: /usr/share/nginx/html\n  volumeClaimTemplates:\n  - metadata:\n      name: www\n    spec:\n      accessModes: [ \"ReadWriteOnce\" ]\n      resources:\n        requests:\n          storage: 100Mi"
+}

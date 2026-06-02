@@ -1,0 +1,252 @@
+{
+    "id": "quiz_ch_5",
+    "chapterId": "ch_5",
+    "title": "Chapter 5 Quiz",
+    "description": "Test your knowledge of ConfigMaps, Secrets, and configuration management.",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the primary purpose of a ConfigMap?",
+            "options": [
+                "Store sensitive encrypted data",
+                "Store non‑confidential configuration data",
+                "Manage Pod replicas",
+                "Expose services externally"
+            ],
+            "correctAnswer": 1,
+            "explanation": "ConfigMaps hold plain text configuration data, while Secrets are for sensitive info."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "Which command creates a ConfigMap from a literal key‑value pair?",
+            "options": [
+                "kubectl create config my-cm --key=val",
+                "kubectl create configmap my-cm --from-literal=key=val",
+                "kubectl configmap create my-cm key=val",
+                "kubectl apply configmap my-cm key=val"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`kubectl create configmap <name> --from-literal=<key>=<value>` is correct."
+        },
+        {
+            "id": "q3",
+            "type": "fill_blank",
+            "question": "To make a ConfigMap immutable, set its _____ field to true.",
+            "options": [
+                "immutable",
+                "readOnly",
+                "locked",
+                "permanent"
+            ],
+            "correctAnswer": "immutable",
+            "explanation": "`immutable: true` prevents any future changes to the ConfigMap."
+        },
+        {
+            "id": "q4",
+            "type": "true_false",
+            "question": "True or False: A ConfigMap can store up to 10 MB of data.",
+            "correctAnswer": false,
+            "explanation": "The limit is 1 MB, as etcd has a size limit on stored objects."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "How can you consume a ConfigMap as environment variables in a container?",
+            "options": [
+                "Using `valueFrom.configMapKeyRef`",
+                "Using `envFrom.configMapRef`",
+                "Both of the above",
+                "By hard‑coding the ConfigMap name"
+            ],
+            "correctAnswer": 2,
+            "explanation": "You can inject specific keys or all keys using these two methods."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "What happens when you mount a ConfigMap as a volume and then update the ConfigMap?",
+            "options": [
+                "The Pod immediately restarts",
+                "The files on the node are updated eventually (kubelet sync)",
+                "The mount point becomes empty",
+                "The old files remain forever"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Kubelet periodically syncs ConfigMap volumes, but the app must watch for file changes."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "Which field in a volume mount restricts which ConfigMap keys become files?",
+            "options": [
+                "items",
+                "keys",
+                "selector",
+                "configMap.files"
+            ],
+            "correctAnswer": 0,
+            "explanation": "The `items` array under `configMap` allows selective projection of keys."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "By default, how are Secrets stored in etcd?",
+            "options": [
+                "Encrypted with AES‑256",
+                "Base64‑encoded (not encrypted)",
+                "Plain text",
+                "Hashed with SHA‑256"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Secrets are base64‑encoded, which is obfuscation but not encryption."
+        },
+        {
+            "id": "q9",
+            "type": "fill_blank",
+            "question": "To create a Secret from literal values, use `kubectl create secret _____ <name> --from-literal=key=val`.",
+            "options": [
+                "opaque",
+                "generic",
+                "data",
+                "literal"
+            ],
+            "correctAnswer": "generic",
+            "explanation": "`kubectl create secret generic` creates an Opaque Secret."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "Which Secret type is used for Docker registry credentials?",
+            "options": [
+                "Opaque",
+                "kubernetes.io/tls",
+                "kubernetes.io/dockerconfigjson",
+                "kubernetes.io/service-account-token"
+            ],
+            "correctAnswer": 2,
+            "explanation": "`dockerconfigjson` stores Docker registry authentication."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "How can you reference a specific key from a Secret as an environment variable?",
+            "options": [
+                "valueFrom.secretKeyRef",
+                "envFrom.secretRef",
+                "secretRefKey",
+                "valueFrom.secretRef"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`secretKeyRef` maps a single secret key to an env var."
+        },
+        {
+            "id": "q12",
+            "type": "true_false",
+            "question": "True or False: When a Secret is mounted as a volume, the files are automatically base64‑decoded.",
+            "correctAnswer": true,
+            "explanation": "Kubelet decodes the values before writing them to the tmpfs mount."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "Which Kubernetes component encrypts Secrets at rest when configured?",
+            "options": [
+                "kubelet",
+                "kube‑apiserver",
+                "etcd",
+                "kube‑scheduler"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The API server performs encryption/decryption before storing/reading from etcd."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "What does the `stringData` field in a Secret allow?",
+            "options": [
+                "Storing base64‑encoded data",
+                "Storing plain text that gets auto‑encoded",
+                "Storing binary data",
+                "Storing encrypted data"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`stringData` accepts plain text; Kubernetes encodes it when applying."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "Why might you set a Secret as immutable?",
+            "options": [
+                "To enable encryption",
+                "To prevent accidental changes and improve performance",
+                "To allow editing only via API",
+                "To convert it to a ConfigMap"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Immutability stops updates and reduces kubelet watch overhead."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "Which RBAC verb allows reading a Secret?",
+            "options": [
+                "read",
+                "get",
+                "view",
+                "show"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The 'get' verb permits retrieval of an individual Secret."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "How can you restrict Secret access to specific service accounts?",
+            "options": [
+                "NetworkPolicies",
+                "Pod Security Policies",
+                "RBAC Roles and RoleBindings",
+                "ConfigMap selectors"
+            ],
+            "correctAnswer": 2,
+            "explanation": "RBAC defines which subjects can perform which actions on resources like Secrets."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "What tool can sync secrets from AWS Secrets Manager into a Kubernetes volume?",
+            "options": [
+                "Ingress controller",
+                "Secrets Store CSI Driver",
+                "CoreDNS",
+                "Prometheus"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The CSI driver provides a standard interface for external secret stores."
+        },
+        {
+            "id": "q19",
+            "type": "true_false",
+            "question": "True or False: `imagePullSecrets` uses a Secret to authenticate with a private container registry.",
+            "correctAnswer": true,
+            "explanation": "You create a docker‑config secret and reference it in `imagePullSecrets` to pull private images."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "What is the maximum size of a single Secret?",
+            "options": [
+                "1 MB",
+                "10 MB",
+                "500 KB",
+                "Unlimited"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Like ConfigMaps, Secrets have a 1 MB limit due to etcd constraints."
+        }
+    ]
+}

@@ -1,0 +1,123 @@
+{
+    "id": "l2",
+    "chapterId": "ch_6",
+    "title": "Volumes – Attaching Storage to Pods 📦",
+    "description": "Deep dive into emptyDir, hostPath, cloud volumes, and more.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Volume Types Overview 🗃️",
+            "content": "# Kubernetes supports many backends\n\n- **emptyDir** – temporary, node-local, survives container restarts but not Pod deletion.\n- **hostPath** – mounts a file/directory from the node’s filesystem.\n- **cloud volumes**: `awsElasticBlockStore`, `azureDisk`, `gcePersistentDisk`.\n- **network storage**: `nfs`, `csi` (Container Storage Interface).\n\nEach has its own use cases and trade‑offs."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "emptyDir – Temporary Shared Space 💨",
+            "content": "## Ephemeral storage on the node\n\n```yaml\nvolumes:\n- name: temp-storage\n  emptyDir: {}\n```\n\n- Lives as long as the Pod is on that node.\n- Survives container restarts.\n- Can use `medium: Memory` for a RAM‑backed filesystem (very fast, but data lost on node reboot).\n\nIdeal for scratch space, caching, or sharing files between containers in the same Pod."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "emptyDir Properties 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What happens to an emptyDir volume when a Pod is deleted?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Data is archived to etcd",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Data remains on the node forever",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Data is deleted",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Data is moved to a PersistentVolume",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "emptyDir is tied to the Pod; deleting the Pod removes the data.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "hostPath – Direct Node Access 🖥️",
+            "content": "## Mount a path from the host\n\n```yaml\nvolumes:\n- name: host-data\n  hostPath:\n    path: /data\n    type: DirectoryOrCreate\n```\n\n- Allows Pods to access the node’s filesystem.\n- **Dangerous** for production: ties Pod to a specific node and can compromise node security.\n- Typical uses: DaemonSet log collectors, monitoring agents, or local development."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "warning",
+            "title": "⚠️ hostPath Caution",
+            "content": "## Never use hostPath for persistent application data\n\nIf a Pod using hostPath is rescheduled to another node, the data is left behind. It’s not portable and creates node dependencies."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Cloud‑Provider Volumes ☁️",
+            "content": "## Persistent disks in the cloud\n\nExamples:\n```yaml\nvolumes:\n- name: aws-disk\n  awsElasticBlockStore:\n    volumeID: vol-0a1b2c3d\n    fsType: ext4\n```\n- Disk must exist before Pod creation (static provisioning).\n- Pod is automatically scheduled on a node that can access the disk (e.g., same availability zone).\n\nLater we’ll see how PersistentVolumes make this dynamic."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "Cloud Volumes 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What is a disadvantage of using cloud volume directly in Pod spec?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It’s automatically encrypted",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The volume ID is hard‑coded, making it inflexible",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It works only with Linux",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It cannot be shared across Pods",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Static provisioning requires pre‑created volumes and manual ID handling; PV/PVC abstracts this.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_8",
+            "type": "text",
+            "title": "NFS – Network File System 🌐",
+            "content": "## Share across many Pods\n\n```yaml\nvolumes:\n- name: nfs-storage\n  nfs:\n    server: 10.0.0.10\n    path: /exports/data\n```\n\n- Multiple Pods can read/write simultaneously (depending on NFS configuration).\n- Data persists independently of Pods and nodes.\n- Good for shared content, not ideal for high‑performance databases."
+        },
+        {
+            "id": "s_l2_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use CSI drivers for modern storage\n\nThe Container Storage Interface (CSI) allows third‑party storage providers to integrate seamlessly. CSI drivers handle provisioning, attaching, and mounting volumes."
+        }
+    ]
+}

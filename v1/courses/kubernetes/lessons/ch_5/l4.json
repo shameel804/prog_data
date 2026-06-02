@@ -1,0 +1,141 @@
+{
+    "id": "l4",
+    "chapterId": "ch_5",
+    "title": "Secrets – Handling Sensitive Data 🔒",
+    "description": "Store and use passwords, tokens, and TLS keys safely with Secrets.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Why Not ConfigMaps for Secrets? 🚫",
+            "content": "# ConfigMaps are not encrypted\n\nConfigMaps store data in plain text in etcd and in your YAML files. Anyone with API access can read them.\n\n**Secrets** are designed for sensitive information:\n- Base64 encoded (not encryption, but obfuscation)\n- Can be encrypted at rest (encryption configuration)\n- Can be stored in external secret managers (e.g., Vault, AWS Secrets Manager) via CSI drivers\n- RBAC can restrict who can view them"
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Secret Types 🏷️",
+            "content": "## Common built‑in types\n\n- **Opaque** (default) – arbitrary key‑value pairs\n- **kubernetes.io/service-account-token** – automatically mounted to Pods\n- **kubernetes.io/dockerconfigjson** – Docker registry credentials\n- **kubernetes.io/tls** – TLS certificate and private key\n\nFor this lesson, we focus on Opaque secrets."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Secret vs ConfigMap 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What is the main advantage of Secrets over ConfigMaps?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Secrets can store binary data",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Secrets are designed for sensitive data with encryption at rest support",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Secrets are faster to access",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Secrets can be larger than 1 MB",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Secrets can be encrypted, and RBAC is typically tighter around them.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Creating Secrets Imperatively ⚡",
+            "content": "## From literal values\n\n```bash\nkubectl create secret generic db-creds \\\n  --from-literal=username=admin \\\n  --from-literal=password=s3cr3t\n```\n\n## From files\n\n```bash\nkubectl create secret generic tls-certs \\\n  --from-file=tls.crt \\\n  --from-file=tls.key\n```\n\nKubernetes automatically base64‑encodes the values when storing."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Check the Encoded Value",
+            "content": "The Secret stores data as base64. View it and decode:",
+            "codeSnippet": "kubectl get secret db-creds -o yaml\n# Decode:\necho 'czNjcjN0' | base64 --decode",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Base64 Encoding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "True or False: Base64 encoding is encryption and makes the secret secure.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "Base64 is only encoding; anyone with access can decode it. Encryption must be configured separately.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Declarative Secret YAML 📝",
+            "content": "## Pre‑encode your data\n\n```yaml\napiVersion: v1\nkind: Secret\nmetadata:\n  name: api-secret\ntype: Opaque\ndata:\n  api-key: YXBpLWtleS12YWx1ZQ==   # base64 of 'api-key-value'\n  client-cert: LS0tLS1CRUdJTi...\n```\n\nUse `data` for pre‑encoded base64 values. If you want to write plain text, use `stringData` instead (only for convenience; it’s encoded on apply).\n\n```yaml\nstringData:\n  username: admin\n  password: passw0rd\n```"
+        },
+        {
+            "id": "s_l4_8",
+            "type": "quiz",
+            "title": "stringData vs data 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_3",
+                "type": "multiple_choice",
+                "question": "What is the difference between `data` and `stringData` in a Secret?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "data is encrypted, stringData is not",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "data expects base64, stringData expects plain text (auto‑encoded)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "data is for binary, stringData for text",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "There is no difference",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`data` requires you to provide base64‑encoded values; `stringData` lets you write plain text.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_9",
+            "type": "text",
+            "title": "Using Secrets in Pods 🔌",
+            "content": "## Same as ConfigMaps, but with `secretKeyRef`\n\n### As environment variables\n```yaml\nenv:\n- name: DB_PASSWORD\n  valueFrom:\n    secretKeyRef:\n      name: db-creds\n      key: password\n```\n\n### As volumes\n```yaml\nvolumes:\n- name: secret-volume\n  secret:\n    secretName: db-creds\n```\nFiles are automatically base64‑decoded when mounted."
+        },
+        {
+            "id": "s_l4_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Never use `envFrom` with Secrets for all keys\n\nIt's convenient but pulls all keys, possibly exposing sensitive ones. Prefer explicit `secretKeyRef` for specific keys."
+        }
+    ]
+}

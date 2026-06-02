@@ -1,0 +1,94 @@
+{
+    "id": "l4",
+    "chapterId": "ch_7",
+    "title": "Startup Probes – Give Slow Apps Time 🐢",
+    "description": "Protect slow‑starting containers from premature liveness kills.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Self‑healing",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Slow Start Problem 🐌",
+            "content": "# When initialDelaySeconds isn’t enough\n\nSome applications (JVM, legacy monoliths) can take minutes to start. You can’t set `initialDelaySeconds` on liveness to an extreme value because it delays detection of actual deadlocks later.\n\n**Startup probes** solve this: they run **first**. Until the startup probe succeeds, liveness and readiness probes are not started. This lets you set a `failureThreshold * periodSeconds` that covers the maximum expected startup time."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Startup Probe Example 📝",
+            "content": "## Configure a long grace period\n\n```yaml\nstartupProbe:\n  httpGet:\n    path: /ready\n    port: 8080\n  periodSeconds: 10\n  failureThreshold: 30   # up to 300 seconds (5 min)\nlivenessProbe:\n  httpGet:\n    path: /live\n    port: 8080\n  periodSeconds: 10\n  failureThreshold: 3\nreadinessProbe:\n  httpGet:\n    path: /health\n    port: 8080\n  periodSeconds: 5\n  failureThreshold: 2\n```\n\nIf the startup probe hasn’t succeeded after 30 tries (300s), the container is restarted. Once it succeeds, liveness and readiness take over."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Startup Probe Behavior 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "When are liveness probes activated?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Immediately after container start",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "After readiness probe succeeds",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "After startup probe succeeds",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "They run concurrently with startup",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Startup probe gates liveness and readiness; they are disabled until startup succeeds.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Pod with All Three Probes",
+            "content": "Full container spec:",
+            "codeSnippet": "containers:\n- name: slow-app\n  image: java-app:1.0\n  startupProbe:\n    httpGet:\n      path: /started\n      port: 8080\n    periodSeconds: 5\n    failureThreshold: 24   # 2 minutes\n  livenessProbe:\n    httpGet:\n      path: /health\n      port: 8080\n    periodSeconds: 10\n    failureThreshold: 3\n  readinessProbe:\n    httpGet:\n      path: /ready\n      port: 8080\n    periodSeconds: 5\n    failureThreshold: 2",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "When to Use Startup Probes 📌",
+            "content": "## Guidelines\n\n- Use when your container’s first startup takes **> initialDelaySeconds + failureThreshold*periodSeconds** of your liveness probe.\n- If you don’t define a startup probe, liveness begins after `initialDelaySeconds` (if set) or immediately.\n- Startup probes are **one‑shot**: after they succeed once, they never run again for the lifetime of the container."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Startup Probe Lifetime 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "True or False: A startup probe continues to run periodically after initial success.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "Once the startup probe succeeds, it is never run again.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Combine startup probe with readiness to hide slow startup from Services\n\nEven if liveness doesn’t start, the Pod won’t get traffic until readiness passes. So a slow startup won’t cause dropped requests – the Pod simply isn’t added to Endpoints."
+        }
+    ]
+}

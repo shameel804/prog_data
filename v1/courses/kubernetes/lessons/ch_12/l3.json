@@ -1,0 +1,112 @@
+{
+    "id": "l3",
+    "chapterId": "ch_12",
+    "title": "GitOps with ArgoCD 🔄",
+    "description": "Declare your cluster’s desired state in Git and let ArgoCD sync it automatically.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "DevOps",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "What is GitOps? 🤔",
+            "content": "# Git is the single source of truth\n\nIn GitOps, you store all Kubernetes manifests (or Helm charts, Kustomize overlays) in a Git repository. A controller inside the cluster continuously compares the **desired state** (Git) with the **actual state** (cluster) and reconciles them.\n\nThis brings:\n- Audit trail (every change is a commit)\n- Rollback via `git revert`\n- Developer self‑service (create a PR to deploy)\n- Increased security (no direct kubectl access needed)"
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "ArgoCD – The Kubernetes Operator 👑",
+            "content": "## One of the most popular GitOps tools\n\nArgoCD:\n- Automatically syncs applications from Git to the cluster.\n- Provides a web UI and CLI.\n- Supports plain YAML, Helm, Kustomize, and Jsonnet.\n- Tracks drift – shows if someone manually changed a resource.\n- Multi‑tenancy – manage multiple clusters from one instance.\n\nIt runs inside the cluster (a controller) and watches Git repositories."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Installing ArgoCD 🛠️",
+            "content": "## Quick setup\n\n```bash\nkubectl create namespace argocd\nkubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml\n```\n\nAccess the UI:\n```bash\nkubectl port-forward svc/argocd-server -n argocd 8080:443\n```\n\nInitial password:\n```bash\nkubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath=\"{.data.password}\" | base64 -d\n```"
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "ArgoCD Admin 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "How does ArgoCD authenticate initially?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "OAuth only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Admin username and a generated password",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "No authentication",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "kubeconfig file",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "ArgoCD creates a default admin user with a password stored in a Secret.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Defining an Application 📝",
+            "content": "## Tell ArgoCD what to sync\n\nAn **Application** resource defines:\n- **Source**: Git repo URL, path, revision.\n- **Destination**: cluster and namespace.\n- **Sync policy**: automatic or manual, pruning, self‑heal.\n\n```yaml\napiVersion: argoproj.io/v1alpha1\nkind: Application\nmetadata:\n  name: myapp\n  namespace: argocd\nspec:\n  project: default\n  source:\n    repoURL: https://github.com/myorg/myapp-gitops.git\n    targetRevision: HEAD\n    path: kustomize/overlays/staging\n  destination:\n    server: https://kubernetes.default.svc\n    namespace: staging\n  syncPolicy:\n    automated:\n      prune: true\n      selfHeal: true\n```\n\nWith `automated: {prune:true, selfHeal:true}`, ArgoCD will delete resources removed from Git and fix any manual changes."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "code",
+            "title": "Apply and Watch",
+            "content": "",
+            "codeSnippet": "kubectl apply -f myapp.yaml\nargocd app get myapp --refresh\nargocd app sync myapp",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_7",
+            "type": "quiz",
+            "title": "Self‑Heal 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "true_false",
+                "question": "True or False: ArgoCD with selfHeal enabled will revert manual changes made via kubectl.",
+                "options": [],
+                "correctAnswer": true,
+                "explanation": "selfHeal automatically brings the cluster back to the desired state from Git.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_8",
+            "type": "text",
+            "title": "Progressive Delivery with Argo Rollouts 🚦",
+            "content": "## Canary and blue‑green made easy\n\nArgo Rollouts is an extension that provides advanced deployment strategies:\n- **Canary** – step‑by‑step traffic shifting.\n- **Blue‑Green** – instant cutover.\n\nIt replaces the standard Deployment with a `Rollout` resource and integrates with Ingress controllers for traffic management.\n\n```yaml\napiVersion: argoproj.io/v1alpha1\nkind: Rollout\n...\nstrategy:\n  canary:\n    steps:\n    - setWeight: 20\n    - pause: {duration: 60}\n    - setWeight: 50\n    - pause: {}\n```"
+        },
+        {
+            "id": "s_l3_9",
+            "type": "text",
+            "title": "Sealed Secrets & External Secrets 🔐",
+            "content": "## GitOps needs secret handling\n\nYou can't store plain‑text secrets in Git. Solutions:\n- **Sealed Secrets** – encrypt secrets with a cluster‑specific key; the SealedSecret controller decrypts them inside the cluster.\n- **External Secrets Operator** – syncs secrets from external providers (Vault, AWS, GCP) into Kubernetes Secrets.\n\nBoth are GitOps‑friendly: encrypted or pointer‑only data in Git, actual secrets live outside."
+        },
+        {
+            "id": "s_l3_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use Kustomize or Helm with ArgoCD\n\nArgoCD natively supports both. Use Kustomize for environment‑specific overlays; Helm for complex apps with dependencies."
+        }
+    ]
+}

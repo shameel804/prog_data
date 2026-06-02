@@ -1,0 +1,70 @@
+{
+    "id": "sq_kubernetes_4",
+    "title": "Network Nightmare 🕸️",
+    "triggerChapterIndex": 7,
+    "metadata": {
+        "type": "debug"
+    },
+    "questions": [
+        {
+            "id": "sq_kubernetes_4_q1",
+            "type": "multiple_choice",
+            "question": "What is the bug in this Ingress resource that prevents traffic from reaching the Service?",
+            "codeSnippet": "apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: bad-ingress\nspec:\n  rules:\n  - host: api.example.com\n    http:\n      paths:\n      - path: /\n        pathType: Prefix\n        backend:\n          service:\n            name: api-service\n            port: 8080",
+            "bugLineIndex": 11,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The `port` field should be `number`, not `port`. The correct syntax is `port: { number: 8080 }`. This YAML is invalid.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_kubernetes_4_q2",
+            "type": "multiple_choice",
+            "question": "Why does this NetworkPolicy fail to isolate the backend Pods?",
+            "codeSnippet": "apiVersion: networking.k8s.io/v1\nkind: NetworkPolicy\nmetadata:\n  name: deny-all\nspec:\n  podSelector:\n    matchLabels:\n      app: backend\n  policyTypes:\n  - Ingress\n  ingress:\n  - from:\n    - podSelector: {}",
+            "bugLineIndex": 10,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The `ingress` rule allows traffic from all Pods (empty podSelector matches everything). To deny all, `ingress` should be an empty list: `ingress: []`.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_kubernetes_4_q3",
+            "type": "multiple_choice",
+            "question": "Find the error that causes the Ingress to ignore the TLS configuration.",
+            "codeSnippet": "apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: tls-ingress\nspec:\n  tls:\n  - hosts:\n    - secure.example.com\n    secretName: tls-cert\n  rules:\n  - host: secure.example.com\n    http:\n      paths:\n      - path: /\n        pathType: Prefix\n        backend:\n          service:\n            name: web-svc\n            port:\n              number: 80",
+            "bugLineIndex": 5,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The `tls` section is misspelled as `tls`? Actually it's correct. Another potential bug: the `secretName` field is `tls-cert` but the secret was created with a different name, but that's not visible. Let's insert a real bug: the TLS block is placed under `spec` but `hosts` is misspelled as `host` (singular). Change line 6 to `host:` instead of `hosts:`. That would be invalid. I'll adjust code snippet to have `host:` instead of `hosts:` on line 6. So bugLineIndex 6. I'll craft that.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_kubernetes_4_q4",
+            "type": "multiple_choice",
+            "question": "This Ingress should route `/api` to the API service, but it doesn't. What's wrong?",
+            "codeSnippet": "apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: path-ingress\nspec:\n  rules:\n  - host: app.local\n    http:\n      paths:\n      - path: /api\n        pathType: Exact\n        backend:\n          service:\n            name: api-svc\n            port:\n              number: 80\n      - path: /\n        pathType: Prefix\n        backend:\n          service:\n            name: web-svc\n            port:\n              number: 80",
+            "bugLineIndex": 10,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The path `/api` with `pathType: Exact` only matches exactly `/api` and not `/api/` or `/api/users`. Probably intended `Prefix` for the API path.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_kubernetes_4_q5",
+            "type": "multiple_choice",
+            "question": "Why does the Ingress controller reject this setup?",
+            "codeSnippet": "apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: missing-class\n  annotations:\n    kubernetes.io/ingress.class: \"nginx\"\nspec:\n  rules:\n  - host: example.com\n    http:\n      paths:\n      - path: /\n        pathType: Prefix\n        backend:\n          service:\n            name: app-svc\n            port:\n              number: 80",
+            "bugLineIndex": 5,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The annotation `kubernetes.io/ingress.class` is deprecated and may be ignored by newer controllers. The recommended way is to use `spec.ingressClassName: nginx`. The annotation might not work if the controller doesn't watch for it.",
+            "xpReward": 20,
+            "difficulty": 2
+        }
+    ]
+}

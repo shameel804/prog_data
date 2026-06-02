@@ -1,0 +1,252 @@
+{
+    "id": "quiz_ch_3",
+    "chapterId": "ch_3",
+    "title": "Chapter 3 Quiz",
+    "description": "Test your understanding of Deployments, ReplicaSets, scaling, and rolling updates.",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the primary purpose of a Deployment?",
+            "options": [
+                "To store configuration data",
+                "To manage a set of identical Pods with updates and scaling",
+                "To expose a Service externally",
+                "To schedule Pods on specific nodes"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Deployments manage replica count, updates, and rollbacks for stateless apps."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "Which component directly creates Pods in a Deployment?",
+            "options": [
+                "Deployment controller",
+                "ReplicaSet",
+                "kubelet",
+                "Scheduler"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Deployments create ReplicaSets, which then create and manage Pods."
+        },
+        {
+            "id": "q3",
+            "type": "fill_blank",
+            "question": "The correct apiVersion for a Deployment is _____.",
+            "options": [
+                "v1",
+                "apps/v1",
+                "extensions/v1beta1",
+                "batch/v1"
+            ],
+            "correctAnswer": "apps/v1",
+            "explanation": "Deployments are part of the apps API group, stable since Kubernetes 1.9."
+        },
+        {
+            "id": "q4",
+            "type": "mcq",
+            "question": "Which field in a Deployment spec is immutable after creation?",
+            "options": [
+                "replicas",
+                "selector",
+                "template.spec.containers",
+                "strategy"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The selector cannot be changed; you must recreate the Deployment."
+        },
+        {
+            "id": "q5",
+            "type": "true_false",
+            "question": "True or False: You can update the container image of a Deployment by editing the ReplicaSet directly.",
+            "correctAnswer": false,
+            "explanation": "You should update the Deployment; directly editing the ReplicaSet can cause conflicts."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "Which command creates a Deployment imperatively with 3 replicas?",
+            "options": [
+                "kubectl run dep --image=nginx --replicas=3",
+                "kubectl create deployment my-dep --image=nginx --replicas=3",
+                "kubectl apply -f deploy.yaml",
+                "kubectl create replicaset my-rs --image=nginx --replicas=3"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`kubectl create deployment` is the imperative command."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "What happens when you scale a Deployment from 3 to 5 replicas using `kubectl scale`?",
+            "options": [
+                "All Pods are recreated",
+                "Two new Pods are created",
+                "Two existing Pods are duplicated",
+                "The Deployment is paused"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The ReplicaSet sees the new desired count and creates additional Pods."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "What does `maxUnavailable: 0` in a rolling update guarantee?",
+            "options": [
+                "No Pods are created",
+                "No Pods are ever terminated",
+                "No old Pod is killed until a new Pod is ready",
+                "Updates happen instantly"
+            ],
+            "correctAnswer": 2,
+            "explanation": "It ensures that during the update, at least the desired number of Pods are available."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "Which command shows the revision history of a Deployment?",
+            "options": [
+                "kubectl rollout status",
+                "kubectl rollout history",
+                "kubectl describe deployment",
+                "kubectl get deployments -o yaml"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`kubectl rollout history deployment/<name>` lists all revisions."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "How do you rollback to a specific revision?",
+            "options": [
+                "kubectl rollback deployment/... --to-revision=2",
+                "kubectl rollout undo deployment/... --to-revision=2",
+                "kubectl revert deployment/... --revision=2",
+                "kubectl apply -f old.yaml"
+            ],
+            "correctAnswer": 1,
+            "explanation": "`kubectl rollout undo` with `--to-revision` reverts to a specific revision."
+        },
+        {
+            "id": "q11",
+            "type": "mcq",
+            "question": "Which Deployment strategy causes downtime?",
+            "options": [
+                "RollingUpdate",
+                "Recreate",
+                "Blue‑green",
+                "Canary"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Recreate kills all old Pods before creating new ones, causing a service interruption."
+        },
+        {
+            "id": "q12",
+            "type": "fill_blank",
+            "question": "The command to update the image of a Deployment is kubectl set image deployment/<name> _____=new-image.",
+            "options": [
+                "container",
+                "*",
+                "<container-name>",
+                "all"
+            ],
+            "correctAnswer": "<container-name>",
+            "explanation": "You must specify the container name as defined in the Pod template."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "What does `kubectl rollout pause deployment/...` do?",
+            "options": [
+                "Deletes the Deployment",
+                "Stops the ongoing rolling update midway",
+                "Reverts the Deployment to the previous version",
+                "Scales the Deployment to zero"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Pause freezes the rollout; you can inspect and then resume."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "If replicas=4, maxSurge=50%, how many extra Pods can be created during an update?",
+            "options": [
+                "1",
+                "2",
+                "3",
+                "4"
+            ],
+            "correctAnswer": 1,
+            "explanation": "50% of 4 is 2; Kubernetes rounds up if needed."
+        },
+        {
+            "id": "q15",
+            "type": "true_false",
+            "question": "True or False: A ReplicaSet automatically updates its Pod template when a Deployment changes the image.",
+            "correctAnswer": false,
+            "explanation": "The old ReplicaSet is scaled down and a new one is created with the updated template."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "How many old ReplicaSets are kept by default for revision history?",
+            "options": [
+                "3",
+                "5",
+                "10",
+                "Unlimited"
+            ],
+            "correctAnswer": 2,
+            "explanation": "The default `revisionHistoryLimit` is 10."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "Which of the following is a valid selector expression in a Deployment?",
+            "options": [
+                "app: nginx",
+                "matchLabels: {app: nginx}",
+                "matchLabels: {app: nginx} under selector",
+                "Both b and c"
+            ],
+            "correctAnswer": 3,
+            "explanation": "The selector must use `matchLabels` under the `selector` field."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "What is the effect of `terminationGracePeriodSeconds` during a scale‑down?",
+            "options": [
+                "Time before the Pod is removed from the Service",
+                "Time allowed for the container to shut down gracefully after SIGTERM",
+                "Time before the node is drained",
+                "Time to wait before starting a new Pod"
+            ],
+            "correctAnswer": 1,
+            "explanation": "It sets the grace period before a SIGKILL is sent."
+        },
+        {
+            "id": "q19",
+            "type": "true_false",
+            "question": "True or False: A Deployment can have multiple container images with different tags.",
+            "correctAnswer": true,
+            "explanation": "Yes, a Deployment's Pod template can include multiple containers, each with its own image."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "What command generates a Deployment YAML skeleton without creating it?",
+            "options": [
+                "kubectl create deployment --dry-run=client -o yaml",
+                "kubectl apply --dry-run=server -o yaml",
+                "kubectl get deployment --export",
+                "kubectl run --generator=deployment/v1beta1"
+            ],
+            "correctAnswer": 0,
+            "explanation": "`--dry-run=client -o yaml` prints the object without sending it to the server."
+        }
+    ]
+}

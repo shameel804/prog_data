@@ -1,0 +1,252 @@
+{
+    "id": "quiz_ch_12",
+    "chapterId": "ch_12",
+    "title": "Chapter 12 Quiz",
+    "description": "Test your knowledge of production Kubernetes – best practices, CI/CD, GitOps, maintenance, and security.",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is the purpose of a PodDisruptionBudget?",
+            "options": [
+                "To limit the number of Pods that can be created",
+                "To ensure a minimum number of Pods remain available during voluntary disruptions",
+                "To define CPU limits for Pods",
+                "To schedule Pods on specific nodes"
+            ],
+            "correctAnswer": 1,
+            "explanation": "PDBs protect application availability when nodes are drained or upgrades occur."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "Which QoS class guarantees the highest priority?",
+            "options": [
+                "BestEffort",
+                "Burstable",
+                "Guaranteed",
+                "System"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Guaranteed Pods are last to be evicted under memory pressure."
+        },
+        {
+            "id": "q3",
+            "type": "fill_blank",
+            "question": "To spread Pods across different zones, use podAntiAffinity with topologyKey set to _____.",
+            "options": [
+                "kubernetes.io/hostname",
+                "topology.kubernetes.io/zone",
+                "failure-domain.beta.kubernetes.io/region",
+                "app"
+            ],
+            "correctAnswer": "topology.kubernetes.io/zone",
+            "explanation": "Zone anti‑affinity distributes Pods to different availability zones."
+        },
+        {
+            "id": "q4",
+            "type": "true_false",
+            "question": "True or False: A taint on a node prevents all Pods from scheduling there unless they have a matching toleration.",
+            "correctAnswer": true,
+            "explanation": "Taints repel Pods that don't tolerate them."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "In a CI/CD pipeline, why is it recommended to use a unique image tag like the git commit SHA?",
+            "options": [
+                "It's shorter than other tags",
+                "It provides traceability and immutability",
+                "It reduces image size",
+                "It automatically enables caching"
+            ],
+            "correctAnswer": 1,
+            "explanation": "SHA‑based tags uniquely identify the code that produced the image."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "What is the main philosophy of GitOps?",
+            "options": [
+                "Run all operations from Git commands",
+                "Use Git as the single source of truth for desired cluster state",
+                "Store only secrets in Git",
+                "Replace kubectl with git CLI"
+            ],
+            "correctAnswer": 1,
+            "explanation": "GitOps declares desired infrastructure and application state in Git, and a controller reconciles it."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "Which ArgoCD feature automatically reverts manual changes to match the Git state?",
+            "options": [
+                "Prune",
+                "Self‑heal",
+                "Auto‑sync",
+                "Force apply"
+            ],
+            "correctAnswer": 1,
+            "explanation": "selfHeal detects and corrects drift between the live cluster and the Git repo."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "How does Sealed Secrets enable storing secrets in Git?",
+            "options": [
+                "It encrypts secrets with a cluster‑specific key; only the controller can decrypt",
+                "It converts secrets to base64",
+                "It stores secrets in a separate private repo",
+                "It uses password‑protected ZIP files"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Sealed Secrets encrypts data so that only the target cluster can decrypt it."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "What is the correct Kubernetes upgrade order?",
+            "options": [
+                "Upgrade all nodes, then control plane",
+                "Upgrade control plane first, then worker nodes",
+                "Upgrade control plane and workers simultaneously",
+                "Upgrade only the kubelets"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The control plane must be at least as high a version as the kubelets."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "Which command safely removes all Pods from a node before maintenance?",
+            "options": [
+                "kubectl delete node",
+                "kubectl cordon node",
+                "kubectl drain node",
+                "kubectl evict node"
+            ],
+            "correctAnswer": 2,
+            "explanation": "`kubectl drain` evicts Pods respecting PDBs and grace periods."
+        },
+        {
+            "id": "q11",
+            "type": "true_false",
+            "question": "True or False: `kubectl drain` automatically respects PodDisruptionBudgets.",
+            "correctAnswer": true,
+            "explanation": "Drain will not evict Pods if it would violate a PDB; you can use `--force` but it's not recommended."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "What does etcd store?",
+            "options": [
+                "Container images",
+                "All Kubernetes cluster state (objects, config)",
+                "Persistent volume data",
+                "Application logs"
+            ],
+            "correctAnswer": 1,
+            "explanation": "etcd is the backend database for the entire cluster's desired and current state."
+        },
+        {
+            "id": "q13",
+            "type": "mcq",
+            "question": "Which tool can back up both Kubernetes objects and persistent volume data?",
+            "options": [
+                "etcdctl",
+                "Velero",
+                "kubectl export",
+                "Helm"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Velero can snapshot PVs via cloud provider snapshots and save cluster resources."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "Why might you run multiple Kubernetes clusters?",
+            "options": [
+                "To reduce the number of nodes",
+                "To isolate environments, meet compliance, and reduce blast radius",
+                "To make kubectl commands shorter",
+                "To share a single etcd instance"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Multi‑cluster setups improve security, compliance, and availability."
+        },
+        {
+            "id": "q15",
+            "type": "fill_blank",
+            "question": "ArgoCD can manage applications across multiple clusters from a single _____ cluster.",
+            "options": [
+                "hub",
+                "spoke",
+                "worker",
+                "control plane"
+            ],
+            "correctAnswer": "hub",
+            "explanation": "ArgoCD uses a hub‑spoke model where one cluster manages deployments to many."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "What does an admission controller like Gatekeeper do?",
+            "options": [
+                "Routes network traffic",
+                "Validates and mutates Kubernetes resources before they are persisted",
+                "Monitors node health",
+                "Schedules Pods"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Gatekeeper intercepts API requests and enforces custom policies using OPA."
+        },
+        {
+            "id": "q17",
+            "type": "mcq",
+            "question": "Which tool scans container images for known vulnerabilities?",
+            "options": [
+                "Falco",
+                "Trivy",
+                "Velero",
+                "Gatekeeper"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Trivy is an open‑source vulnerability scanner for container images and IaC."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "Falco is used for:",
+            "options": [
+                "Vulnerability scanning",
+                "Runtime threat detection via syscall monitoring",
+                "Cluster backup",
+                "Service mesh"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Falco detects abnormal behavior at runtime, like unexpected shell spawns."
+        },
+        {
+            "id": "q19",
+            "type": "true_false",
+            "question": "True or False: Kubernetes audit logging is enabled by default on all clusters.",
+            "correctAnswer": false,
+            "explanation": "Audit logging must be explicitly configured on the API server."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "Which of these is NOT a benefit of GitOps?",
+            "options": [
+                "Audit trail via Git history",
+                "Easy rollback by reverting a commit",
+                "Eliminates the need for container registries",
+                "Increased security by reducing direct kubectl access"
+            ],
+            "correctAnswer": 2,
+            "explanation": "GitOps still requires a container registry; it manages deployment manifests, not images."
+        }
+    ]
+}

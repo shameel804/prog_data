@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_5",
+    "title": "Immutable ConfigMap and Secret Challenge",
+    "description": "Explore immutability and RBAC concepts for configuration security.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## 🎯 Goal\nUnderstand immutability and access control by doing the following:\n\n### Part A: Immutable ConfigMap\n1. Create a ConfigMap `immutable-cm` from literal `key1=val1` with `immutable: true` in the YAML.\n2. Apply it successfully.\n3. Try to update it (e.g., `kubectl edit configmap immutable-cm` and change `val1` to `val2`). The API should reject the change.\n4. Verify that the ConfigMap still has the original data.\n5. Delete the ConfigMap.\n\n### Part B: Secure a Secret with RBAC (simulated)\n1. Create a namespace `secure-ns`: `kubectl create ns secure-ns`.\n2. Create a Secret in that namespace: `kubectl create secret generic private-secret -n secure-ns --from-literal=token=12345`.\n3. Create a Role in `secure-ns` that allows `get` and `list` on secrets (use YAML).\n4. Create a RoleBinding that binds this Role to the default service account in `secure-ns` (or a test user).\n5. Switch context to that service account (or use `kubectl auth can-i get secrets --as=system:serviceaccount:secure-ns:default -n secure-ns`).\n6. Demonstrate that you can now read the Secret with that service account.\n7. Clean up the namespace.\n\nNote: If you don't have a separate user, just run the `auth can-i` command to simulate.",
+    "hints": [
+        "For Part A, you can create the immutable ConfigMap declaratively: `apiVersion: v1, kind: ConfigMap, immutable: true`.",
+        "For Part B, the Role needs `apiGroups: [\"\"]` (core) and `resources: [\"secrets\"]`.",
+        "The `auth can-i` command is great for testing RBAC rules without actually creating a new kubeconfig."
+    ],
+    "expectedOutput": "Part A: Update is rejected with an error. Part B: `kubectl auth can-i` returns 'yes' after RoleBinding.",
+    "solutionCode": "# Part A - immutable-cm.yaml\napiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: immutable-cm\nimmutable: true\ndata:\n  key1: val1\n\n# Part B - rbac.yaml\nkind: Role\napiVersion: rbac.authorization.k8s.io/v1\nmetadata:\n  namespace: secure-ns\n  name: secret-reader\nrules:\n- apiGroups: [\"\"]\n  resources: [\"secrets\"]\n  verbs: [\"get\", \"list\"]\n---\nkind: RoleBinding\napiVersion: rbac.authorization.k8s.io/v1\nmetadata:\n  name: read-secrets\n  namespace: secure-ns\nsubjects:\n- kind: ServiceAccount\n  name: default\n  namespace: secure-ns\nroleRef:\n  kind: Role\n  name: secret-reader\n  apiGroup: rbac.authorization.k8s.io"
+}

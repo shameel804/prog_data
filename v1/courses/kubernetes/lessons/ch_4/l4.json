@@ -1,0 +1,135 @@
+{
+    "id": "l4",
+    "chapterId": "ch_4",
+    "title": "LoadBalancer – Cloud‑Ready Exposure ☁️",
+    "description": "Get a public IP for your Service using a cloud provider’s load balancer.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Cloud",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "What is LoadBalancer? ☁️",
+            "content": "# The production standard for external access\n\nA LoadBalancer Service type provisions an **external load balancer** from your cloud provider (AWS ELB, GCP Cloud LB, Azure LB) and assigns a public IP. It also creates a ClusterIP and NodePort internally.\n\nIdeal for:\n- Public‑facing web applications\n- APIs consumed by external clients\n- Any service that needs a stable, public endpoint"
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "LoadBalancer YAML 📝",
+            "content": "## Almost identical to NodePort\n\n```yaml\napiVersion: v1\nkind: Service\nmetadata:\n  name: web-lb\nspec:\n  type: LoadBalancer\n  selector:\n    app: web\n  ports:\n    - port: 80\n      targetPort: 8080\n```\n\nNo `nodePort` needed – the cloud provider allocates one automatically and sets up the load balancer to forward to it."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Create and Wait for External IP",
+            "content": "In a cloud cluster (or with a local LB solution like MetalLB):",
+            "codeSnippet": "kubectl apply -f web-lb.yaml\nkubectl get services web-lb --watch\n# Wait until EXTERNAL-IP is no longer <pending>",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Cloud Dependency 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What happens if you create a LoadBalancer Service on a local cluster without a cloud provider?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It fails immediately",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "EXTERNAL-IP stays <pending> forever",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It automatically becomes a NodePort",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It uses a default public IP",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Without a cloud controller or MetalLB, the LoadBalancer external IP will never be assigned.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Internal Load Balancers 🏢",
+            "content": "## Not always public\n\nCloud providers also support **internal** load balancers (private IPs within your VPC). You annotate the Service:\n\n```yaml\nmetadata:\n  annotations:\n    service.beta.kubernetes.io/aws-load-balancer-internal: \"true\"\n```\n\nThis creates a load balancer reachable only inside your VPC – great for internal APIs."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use an Ingress for HTTP(S) traffic\n\nInstead of creating a LoadBalancer per Service (expensive), use an **Ingress** (Chapter 8) that routes by hostname/path to multiple ClusterIP Services through a single load balancer."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "Ingress vs LoadBalancer 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Why use an Ingress instead of many LoadBalancer Services?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Ingress is faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Ingress reduces cost by sharing one load balancer across multiple Services",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Ingress replaces kube‑proxy",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Ingress provides a database",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Ingress consolidates routing, saving cloud LB costs and simplifying management.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_8",
+            "type": "text",
+            "title": "MetalLB for Bare‑Metal ⚙️",
+            "content": "## Get LoadBalancer on‑premise\n\nIf you run Kubernetes on bare‑metal or VMs, you can install **MetalLB** – a software load balancer that assigns IPs to Services of type LoadBalancer. It works by announcing IPs via ARP/NDP or BGP.\n\nThis gives you LoadBalancer functionality without a cloud provider."
+        },
+        {
+            "id": "s_l4_9",
+            "type": "quiz",
+            "title": "Bare‑Metal 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_3",
+                "type": "true_false",
+                "question": "True or False: MetalLB can provide LoadBalancer Services on a bare‑metal cluster.",
+                "options": [],
+                "correctAnswer": true,
+                "explanation": "MetalLB implements the LoadBalancer interface for on‑premise clusters.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

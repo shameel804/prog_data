@@ -1,0 +1,161 @@
+{
+    "id": "l4",
+    "chapterId": "ch_10",
+    "title": "ClusterRoles & ClusterRoleBindings 🌍",
+    "description": "Extend RBAC beyond namespaces with cluster‑scoped permissions.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "When Roles Aren’t Enough 🌐",
+            "content": "# Some resources have no namespace\n\nNodes, PersistentVolumes, Namespaces themselves, and some APIs (like `certificates.k8s.io`) are **cluster‑scoped**. A Role (namespaced) cannot grant access to them.\n\n**ClusterRoles** work like Roles but can cover:\n- Cluster‑scoped resources\n- Non‑resource endpoints (e.g., `/healthz`)\n- Resources in all namespaces at once"
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "ClusterRole YAML 📝",
+            "content": "## A cluster‑wide Node reader\n\n```yaml\napiVersion: rbac.authorization.k8s.io/v1\nkind: ClusterRole\nmetadata:\n  name: node-reader\nrules:\n- apiGroups: [\"\"]\n  resources: [\"nodes\"]\n  verbs: [\"get\", \"list\", \"watch\"]\n```\n\nNo namespace is needed."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "ClusterRole Scope 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which resource is cluster‑scoped and requires a ClusterRole?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Pod",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Service",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Node",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "ConfigMap",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Nodes are not namespaced; they need a ClusterRole.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "ClusterRoleBinding 🔗",
+            "content": "## Bind the ClusterRole globally\n\n```yaml\napiVersion: rbac.authorization.k8s.io/v1\nkind: ClusterRoleBinding\nmetadata:\n  name: read-nodes\nsubjects:\n- kind: ServiceAccount\n  name: node-inspector\n  namespace: default\nroleRef:\n  kind: ClusterRole\n  name: node-reader\n  apiGroup: rbac.authorization.k8s.io\n```\n\nNow that ServiceAccount can see all nodes cluster‑wide."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Using ClusterRole with RoleBinding 🧩",
+            "content": "## Reuse ClusterRoles in a namespace\n\nYou can bind a ClusterRole to a **RoleBinding** (not ClusterRoleBinding). Then the permissions are scoped to that namespace only.\n\nExample: the built‑in `view` ClusterRole lets you read most objects. You can bind it to a user only in the `dev` namespace:\n```yaml\nkind: RoleBinding\nname: dev-view\nnamespace: dev\nsubjects:\n- kind: User\n  name: alice\nroleRef:\n  kind: ClusterRole\n  name: view\n  apiGroup: rbac.authorization.k8s.io\n```\n\nAlice can view everything in `dev`, but nowhere else."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "ClusterRole in RoleBinding 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "If you bind a ClusterRole via a RoleBinding, where does the permission apply?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Cluster‑wide",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Only in the namespace of the RoleBinding",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "In all namespaces",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Nowhere, it’s invalid",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A RoleBinding restricts the scope to its own namespace, even if the role is a ClusterRole.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Built‑in ClusterRoles 👑",
+            "content": "## Kubernetes ships with handy defaults\n\n- **cluster‑admin** – full control.\n- **admin** – full control in a namespace (including RBAC).\n- **edit** – modify most objects, but not RBAC or quotas.\n- **view** – read‑only access to most objects.\n\nUse `kubectl get clusterroles` to see them. Avoid reinventing the wheel for common patterns."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "code",
+            "title": "Check Built‑in ClusterRoles",
+            "content": "",
+            "codeSnippet": "kubectl get clusterroles\nkubectl describe clusterrole view",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_9",
+            "type": "text",
+            "title": "Aggregated ClusterRoles 🧬",
+            "content": "## Build larger roles from smaller ones\n\nYou can use labels to combine ClusterRoles. Example:\n```yaml\napiVersion: rbac.authorization.k8s.io/v1\nkind: ClusterRole\nmetadata:\n  name: combined-role\naggregationRule:\n  clusterRoleSelectors:\n  - matchLabels:\n      rbac.example.com/aggregate-to-combined: \"true\"\nrules: []  # rules are dynamically merged\n```\n\nOther ClusterRoles with matching label will have their rules added automatically. Handy for extending built‑in roles."
+        },
+        {
+            "id": "s_l4_10",
+            "type": "quiz",
+            "title": "Aggregation 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_3",
+                "type": "multiple_choice",
+                "question": "What does an aggregated ClusterRole do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Replaces other roles",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Merges rules from other ClusterRoles matching a label",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Creates a namespace automatically",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Encrypts all secrets",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Aggregation allows dynamic rule composition based on labels.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

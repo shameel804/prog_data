@@ -1,0 +1,135 @@
+{
+    "id": "l3",
+    "chapterId": "ch_7",
+    "title": "Liveness Probes – Restart Stuck Apps 🔁",
+    "description": "Automatically restart containers that have entered a broken state.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Self‑healing",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Why Liveness Probes? 🩺",
+            "content": "# Fix deadlocks automatically\n\nA container might still be running but completely stuck – a deadlock, infinite loop, or corrupted state. It won’t crash, so no restart happens. A **liveness probe** catches this.\n\nIf the liveness probe fails consecutively (`failureThreshold` times), the kubelet kills the container and (depending on restartPolicy) starts a fresh one."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Liveness Probe Configuration 🛠️",
+            "content": "## Very similar to readiness\n\n```yaml\nlivenessProbe:\n  httpGet:\n    path: /health\n    port: 8080\n  initialDelaySeconds: 15\n  periodSeconds: 20\n  failureThreshold: 3\n```\n\n- `initialDelaySeconds` – wait before first check (should be longer than the app’s startup time).\n- `failureThreshold` – how many failures before restart.\n- **Do not check dependencies** in a liveness probe (e.g., an external DB). A flaky DB could restart your app unnecessarily. Liveness should only verify the app’s internal health."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Liveness Failure 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What happens after a liveness probe fails `failureThreshold` times?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The Pod is deleted",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The container is restarted",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Traffic is stopped",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The node is rebooted",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The kubelet kills the container and creates a new one per the restart policy.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Exec-based Liveness Probe 💻",
+            "content": "## Run a script inside the container\n\n```yaml\nlivenessProbe:\n  exec:\n    command:\n    - cat\n    - /tmp/healthy\n  initialDelaySeconds: 5\n  periodSeconds: 5\n```\n\nThis checks for the existence of a file. If the file is removed, the probe fails, and the container is restarted."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Demonstrate Liveness",
+            "content": "Create a Pod that deletes the file after 30 seconds:",
+            "codeSnippet": "kubectl apply -f - <<EOF\napiVersion: v1\nkind: Pod\nmetadata:\n  name: liveness-exec\nspec:\n  containers:\n  - name: liveness\n    image: busybox\n    args:\n    - /bin/sh\n    - -c\n    - touch /tmp/healthy; sleep 30; rm -f /tmp/healthy; sleep 600\n    livenessProbe:\n      exec:\n        command:\n        - cat\n        - /tmp/healthy\n      initialDelaySeconds: 5\n      periodSeconds: 5\nEOF",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Exec Probe 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "true_false",
+                "question": "True or False: An exec liveness probe succeeds if the command returns a non‑zero exit code.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "Exit code 0 means success; non‑zero means failure.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Liveness Probe Pitfalls ⚠️",
+            "content": "## Avoid cascading failures\n\n- Don’t check external services. If your liveness probe hits a downstream API, a network blip could restart all your pods.\n- Set `initialDelaySeconds` generously so the container has time to start.\n- Use lightweight checks – don’t run heavy computation every few seconds."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use separate endpoints for readiness and liveness\n\nFor example, `/healthz` for readiness (includes dependency checks) and `/livez` for liveness (only internal process check)."
+        },
+        {
+            "id": "s_l3_9",
+            "type": "quiz",
+            "title": "Liveness vs Readiness 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_3",
+                "type": "multiple_choice",
+                "question": "Which probe should you use to handle a deadlocked process?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Readiness",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Liveness",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Startup",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Custom",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Liveness restarts the container when the process is stuck.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

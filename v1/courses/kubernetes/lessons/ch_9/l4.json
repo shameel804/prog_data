@@ -1,0 +1,170 @@
+{
+    "id": "l4",
+    "chapterId": "ch_9",
+    "title": "Writing Your First Chart 📝",
+    "description": "Create a Helm chart from scratch using `helm create` and understand templates.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Development",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Scaffolding a Chart 🏗️",
+            "content": "# `helm create` gives you a skeleton\n\n```bash\nhelm create mychart\n```\n\nGenerates a directory structure:\n```\nmychart/\n├── Chart.yaml          # metadata\n├── values.yaml         # default configuration\n├── charts/             # sub‑charts\n├── templates/          # Kubernetes resource templates\n│   ├── deployment.yaml\n│   ├── service.yaml\n│   ├── hpa.yaml\n│   ├── ingress.yaml\n│   ├── _helpers.tpl    # reusable template helpers\n│   ├── NOTES.txt       # post‑install message\n│   └── tests/          # test resources\n└── .helmignore\n```"
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Chart.yaml – The Metadata Card 📇",
+            "content": "```yaml\napiVersion: v2\nname: mychart\nversion: 0.1.0\nappVersion: \"1.16.0\"\ndescription: A Helm chart for Kubernetes\ntype: application\nkeywords:\n  - web\nhome: https://example.com\nsources:\n  - https://github.com/example/repo\nmaintainers:\n  - name: Your Name\n    email: you@example.com\n```\n- `apiVersion: v2` is the Helm 3 format.\n- `type` can be `application` or `library` (helper charts)."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Chart Metadata 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which file contains the chart name and version?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "values.yaml",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Chart.yaml",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "templates/deployment.yaml",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "NOTES.txt",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Chart.yaml holds chart metadata like name, version, and description.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Templates and the Go Template Language 📄",
+            "content": "# Dynamically generate Kubernetes YAML\n\nTemplates use Go’s `text/template` syntax plus Sprig functions. Example from `deployment.yaml`:\n```yaml\nreplicas: {{ .Values.replicaCount }}\n```\n\nBuilt‑in objects:\n- `.Values` – user values from `values.yaml` and `--set`.\n- `.Release` – release name, namespace, revision.\n- `.Chart` – contents of `Chart.yaml`.\n- `.Files` – access to files in the chart.\n- `.Template` – current template info.\n\nYou can use conditionals, loops, and functions: `{{ if .Values.service.enabled }}...{{ end }}`, `{{- range .Values.env }}...{{ end }}`."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "code",
+            "title": "Template Example: Service",
+            "content": "From `templates/service.yaml`:",
+            "codeSnippet": "apiVersion: v1\nkind: Service\nmetadata:\n  name: {{ include \"mychart.fullname\" . }}\nspec:\n  type: {{ .Values.service.type }}\n  ports:\n    - port: {{ .Values.service.port }}\n      targetPort: http\n  selector:\n    {{- include \"mychart.selectorLabels\" . | nindent 4 }}",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "values.yaml – User‑Configurable Settings ⚙️",
+            "content": "## The default configuration\n\n```yaml\nreplicaCount: 1\nimage:\n  repository: nginx\n  tag: \"\"\n  pullPolicy: IfNotPresent\nservice:\n  type: ClusterIP\n  port: 80\nresources: {}\n```\n\nUsers can override any value with `--set` or `-f`. Keep your values well‑documented (comments) because they are the user interface of your chart."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "_helpers.tpl – Reusable Functions 🧩",
+            "content": "## Define reusable template snippets\n\n```go\n{{/*\nExpand the name of the chart.\n*/}}\n{{- define \"mychart.name\" -}}\n{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix \"-\" }}\n{{- end }}\n```\n\nUse `{{ include \"mychart.name\" . }}` in your templates. This reduces duplication and enforces naming conventions."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "quiz",
+            "title": "Template Functions 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What does `{{ .Values.replicaCount }}` access?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The number of nodes",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A user‑defined value from values.yaml",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The release revision",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The container’s CPU request",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It reads the `replicaCount` key from the chart's values.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_9",
+            "type": "code",
+            "title": "Render Templates Locally",
+            "content": "See the final YAML without installing:",
+            "codeSnippet": "helm template my-release ./mychart -f custom-values.yaml",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_10",
+            "type": "text",
+            "title": "Packaging and Distributing Charts 📦",
+            "content": "## Create a .tgz package\n\n```bash\nhelm package ./mychart       # creates mychart-0.1.0.tgz\n```\n\nTo serve a repository, generate an `index.yaml`:\n```bash\nhelm repo index . --url https://my-repo.example.com\n```\nThen host the directory with any HTTP server.\n\nYou can also push to OCI registries (`helm push` with OCI support)."
+        },
+        {
+            "id": "s_l4_11",
+            "type": "quiz",
+            "title": "Chart Packaging 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_3",
+                "type": "multiple_choice",
+                "question": "Which command creates a chart archive?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "helm build",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "helm package",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "helm create",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "helm archive",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`helm package` bundles the chart directory into a .tgz file.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

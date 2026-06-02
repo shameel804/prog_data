@@ -1,0 +1,129 @@
+{
+    "id": "l3",
+    "chapterId": "ch_4",
+    "title": "NodePort – Opening the Door 🚪",
+    "description": "Expose your Service on a static port across all nodes for external access.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "What is NodePort? 🚪",
+            "content": "# A window to the outside\n\nNodePort builds on top of ClusterIP. It opens a specific port (30000‑32767 by default) on **every node’s IP**. Traffic hitting that port is forwarded to the Service’s ClusterIP and then to Pods.\n\nYou can access the app using:\n- `<any-node-ip>:<nodePort>`\n\nUseful for:\n- Quick external access during development\n- On‑premise environments without cloud load balancers"
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "NodePort YAML 📝",
+            "content": "## Specify the type and optional port\n\n```yaml\napiVersion: v1\nkind: Service\nmetadata:\n  name: frontend-nodeport\nspec:\n  type: NodePort\n  selector:\n    app: frontend\n  ports:\n    - port: 80\n      targetPort: 8080\n      nodePort: 30080   # optional; if omitted, Kubernetes picks one\n```\n\n- `port`: Service port (used internally).\n- `targetPort`: container port.\n- `nodePort`: the port on the node (30000‑32767). If you don’t specify, a random one is assigned."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "NodePort Range 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the valid range for a NodePort?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "1‑65535",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "80‑443",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "30000‑32767",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "1024‑65535",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "NodePort services are allocated ports in the range 30000‑32767 by default.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "How NodePort Works 🔄",
+            "content": "## Traffic flow\n\n1. External request hits `<node-ip>:30080`.\n2. kube‑proxy intercepts it (iptables rule).\n3. It forwards to the Service’s ClusterIP (or directly to a Pod IP, depending on configuration).\n4. The packet reaches a Pod and the response returns.\n\n**Important:** Even if your Pods are only on one node, the port is open on all nodes and will forward to the correct node."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Create and Access",
+            "content": "Apply and find the node IP (minikube ip or kind node):",
+            "codeSnippet": "kubectl apply -f frontend-nodeport.yaml\nkubectl get services frontend-nodeport\n# If using minikube: minikube service frontend-nodeport --url\n# On kind: kubectl get nodes -o wide, then curl <node-ip>:30080",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "NodePort Accessibility 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "true_false",
+                "question": "True or False: If there are no Pods on a node, the NodePort on that node won’t work.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "kube‑proxy on every node can forward traffic to Pods on other nodes, so it still works.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "NodePort Limitations ⚠️",
+            "content": "## When not to use it\n\n- **Production**: using node IPs directly is fragile; nodes can fail.\n- **Port conflicts**: you must coordinate NodePorts across Services.\n- **Security**: you’re exposing a port on every node.\n\nIn cloud environments, prefer **LoadBalancer** or **Ingress** for production. NodePort is great for development and testing."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "quiz",
+            "title": "Production Use 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_3",
+                "type": "multiple_choice",
+                "question": "Which is a better choice for exposing a production app to the internet on a cloud?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "NodePort",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "ClusterIP",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "LoadBalancer",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "HostNetwork",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "LoadBalancer integrates with cloud providers for a stable public IP and load balancing.",
+                "xpReward": 10
+            }
+        }
+    ]
+}
