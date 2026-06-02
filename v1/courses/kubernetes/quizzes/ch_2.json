@@ -1,0 +1,252 @@
+{
+    "id": "quiz_ch_2",
+    "chapterId": "ch_2",
+    "title": "Chapter 2 Quiz",
+    "description": "Test your mastery of Pods – anatomy, YAML, management, and lifecycle.",
+    "passingScore": 70,
+    "xpReward": 50,
+    "questions": [
+        {
+            "id": "q1",
+            "type": "mcq",
+            "question": "What is a Pod in Kubernetes?",
+            "options": [
+                "A virtual machine",
+                "A grouping of one or more containers with shared storage/network",
+                "A controller for Deployments",
+                "A physical server"
+            ],
+            "correctAnswer": 1,
+            "explanation": "A Pod is the smallest deployable unit that can contain multiple containers sharing namespaces."
+        },
+        {
+            "id": "q2",
+            "type": "mcq",
+            "question": "Which of the following is NOT shared between containers in the same Pod?",
+            "options": [
+                "Network namespace",
+                "IPC namespace",
+                "PID namespace (by default)",
+                "Storage volumes"
+            ],
+            "correctAnswer": 2,
+            "explanation": "PID namespace sharing is optional; by default each container has its own PID namespace."
+        },
+        {
+            "id": "q3",
+            "type": "fill_blank",
+            "question": "The special container that holds the network namespace for a Pod is called the _____ container.",
+            "options": [
+                "init",
+                "sidecar",
+                "pause",
+                "proxy"
+            ],
+            "correctAnswer": "pause",
+            "explanation": "The pause container anchors the network namespace and exists for the Pod's lifetime."
+        },
+        {
+            "id": "q4",
+            "type": "true_false",
+            "question": "True or False: Two containers in a Pod can bind to the same port if they use different protocols.",
+            "correctAnswer": false,
+            "explanation": "The network stack is shared, so port numbers must be unique regardless of protocol."
+        },
+        {
+            "id": "q5",
+            "type": "mcq",
+            "question": "Which Kubernetes API version should you use for a Pod?",
+            "options": [
+                "apps/v1",
+                "v1",
+                "networking.k8s.io/v1",
+                "batch/v1"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Pods belong to the core API group, so apiVersion: v1."
+        },
+        {
+            "id": "q6",
+            "type": "mcq",
+            "question": "What is the purpose of labels in Kubernetes?",
+            "options": [
+                "To store secrets",
+                "To identify and select objects",
+                "To define container images",
+                "To set memory limits"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Labels are key-value pairs used for grouping and selecting resources."
+        },
+        {
+            "id": "q7",
+            "type": "mcq",
+            "question": "Which command applies a YAML manifest to the cluster?",
+            "options": [
+                "kubectl create -f",
+                "kubectl run",
+                "kubectl apply -f",
+                "kubectl get -f"
+            ],
+            "correctAnswer": 2,
+            "explanation": "kubectl apply -f is the declarative way to create or update resources."
+        },
+        {
+            "id": "q8",
+            "type": "mcq",
+            "question": "What does `kubectl get pods -o wide` show that `kubectl get pods` does not?",
+            "options": [
+                "Container status",
+                "Node name and Pod IP",
+                "Labels",
+                "Events"
+            ],
+            "correctAnswer": 1,
+            "explanation": "-o wide adds columns for Node and IP address."
+        },
+        {
+            "id": "q9",
+            "type": "mcq",
+            "question": "How can you delete all Pods with the label 'app=test'?",
+            "options": [
+                "kubectl delete pods --all",
+                "kubectl delete pod -l app=test",
+                "kubectl delete pod --selector app=test",
+                "Both b and c are correct"
+            ],
+            "correctAnswer": 3,
+            "explanation": "-l and --selector are equivalent and accept label queries."
+        },
+        {
+            "id": "q10",
+            "type": "mcq",
+            "question": "Which kubectl command shows detailed events for a Pod?",
+            "options": [
+                "kubectl logs",
+                "kubectl exec",
+                "kubectl describe",
+                "kubectl get events"
+            ],
+            "correctAnswer": 2,
+            "explanation": "kubectl describe pod includes a section of recent events."
+        },
+        {
+            "id": "q11",
+            "type": "fill_blank",
+            "question": "To get an interactive shell inside a container, use kubectl exec _____ <pod-name> -- /bin/sh.",
+            "options": [
+                "-it",
+                "-f",
+                "-o wide",
+                "-n"
+            ],
+            "correctAnswer": "-it",
+            "explanation": "-i (stdin) and -t (TTY) are needed for interactive sessions."
+        },
+        {
+            "id": "q12",
+            "type": "mcq",
+            "question": "Which pattern describes a helper container that proxies network traffic for the main container?",
+            "options": [
+                "Sidecar",
+                "Ambassador",
+                "Adapter",
+                "Init container"
+            ],
+            "correctAnswer": 1,
+            "explanation": "Ambassador containers sit between the main app and the outside world."
+        },
+        {
+            "id": "q13",
+            "type": "true_false",
+            "question": "True or False: Init containers run after the main containers start.",
+            "correctAnswer": false,
+            "explanation": "Init containers run to completion before any main container is started."
+        },
+        {
+            "id": "q14",
+            "type": "mcq",
+            "question": "What Pod phase indicates that all containers have terminated successfully?",
+            "options": [
+                "Running",
+                "Failed",
+                "Succeeded",
+                "Pending"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Succeeded means all containers exited with code 0."
+        },
+        {
+            "id": "q15",
+            "type": "mcq",
+            "question": "Which restartPolicy should you use for a batch job that must not restart on failure?",
+            "options": [
+                "Always",
+                "OnFailure",
+                "Never",
+                "Default"
+            ],
+            "correctAnswer": 2,
+            "explanation": "Never ensures the Pod will not be restarted automatically."
+        },
+        {
+            "id": "q16",
+            "type": "mcq",
+            "question": "What does CrashLoopBackOff indicate?",
+            "options": [
+                "The Pod is running normally",
+                "A container is crashing repeatedly",
+                "The node is out of memory",
+                "The image pull failed"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The kubelet backs off restarting a container that crashes quickly after starting."
+        },
+        {
+            "id": "q17",
+            "type": "fill_blank",
+            "question": "To see logs from a previous crashed container, use kubectl logs _____ <pod>.",
+            "options": [
+                "-f",
+                "--previous",
+                "-c",
+                "--tail"
+            ],
+            "correctAnswer": "--previous",
+            "explanation": "--previous retrieves logs from the terminated container instance."
+        },
+        {
+            "id": "q18",
+            "type": "mcq",
+            "question": "Which command forwards a local port to a Pod?",
+            "options": [
+                "kubectl proxy",
+                "kubectl expose",
+                "kubectl port-forward",
+                "kubectl connect"
+            ],
+            "correctAnswer": 2,
+            "explanation": "kubectl port-forward pod/<name> local-port:pod-port creates a tunnel."
+        },
+        {
+            "id": "q19",
+            "type": "true_false",
+            "question": "True or False: A multi‑container Pod must have at least one volume defined.",
+            "correctAnswer": false,
+            "explanation": "Volumes are optional; containers can communicate via localhost without any shared volume."
+        },
+        {
+            "id": "q20",
+            "type": "mcq",
+            "question": "Which field in a Pod spec is mandatory?",
+            "options": [
+                "volumes",
+                "containers",
+                "initContainers",
+                "restartPolicy"
+            ],
+            "correctAnswer": 1,
+            "explanation": "At minimum, spec must contain a containers list."
+        }
+    ]
+}

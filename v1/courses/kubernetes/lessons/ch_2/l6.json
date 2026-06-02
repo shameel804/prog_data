@@ -1,0 +1,158 @@
+{
+    "id": "l6",
+    "chapterId": "ch_2",
+    "title": "Pod Lifecycle & Restart Policies ♻️",
+    "description": "Understand Pod phases and how Kubernetes handles container crashes.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Pod Phases 📦",
+            "content": "# The journey of a Pod\n\nA Pod’s `status.phase` can be:\n- **Pending** – Pod accepted, but one or more containers not running\n- **Running** – all containers started, at least one still running\n- **Succeeded** – all containers terminated with exit code 0\n- **Failed** – all containers terminated, at least one with non‑zero exit\n- **Unknown** – state cannot be obtained (node communication issue)\n\nUse `kubectl get pods` to see the phase."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Check Pod Phase",
+            "content": "Look at the STATUS column:",
+            "codeSnippet": "kubectl get pods",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "Phase Identification 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "If a Pod’s container exits with a non‑zero code, what phase will the Pod end in?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Succeeded",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Running",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Failed",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Pending",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Non‑zero exit leads to Failed phase after termination.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Container Restart Policies 🔁",
+            "content": "## When a container dies…\n\n`spec.restartPolicy` controls what happens:\n- **Always** (default) – restart regardless of exit code (suitable for long‑running apps)\n- **OnFailure** – restart only on non‑zero exit (suitable for batch jobs)\n- **Never** – never restart\n\nRestarts are performed with exponential back‑off (up to 5 minutes). The Pod remains on the same node."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "quiz",
+            "title": "Restart Policy Default 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "multiple_choice",
+                "question": "What is the default restartPolicy for a Pod?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Never",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "OnFailure",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Always",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "There is no default",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "If not specified, restartPolicy is Always, which restarts containers indefinitely.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_6",
+            "type": "text",
+            "title": "CrashLoopBackOff 🔴",
+            "content": "## Common failure state\n\nIf a container crashes repeatedly, the Pod enters `CrashLoopBackOff`. The kubelet waits longer between restart attempts (up to 5 min).\n\nYou’ll see this in `kubectl get pods` status and in the Events of `describe`.\n\n**Fix:** Check logs (`kubectl logs --previous`), correct the image/command, and re‑deploy."
+        },
+        {
+            "id": "s_l6_7",
+            "type": "code",
+            "title": "See CrashLoopBackOff",
+            "content": "Intentionally create a failing Pod:",
+            "codeSnippet": "kubectl run fail-pod --image=busybox --restart=Never -- /bin/false",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_8",
+            "type": "quiz",
+            "title": "Troubleshooting 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_3",
+                "type": "multiple_choice",
+                "question": "How can you view logs from a previous crashed container?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "kubectl logs --previous <pod>",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "kubectl exec <pod> -- cat /var/log/syslog",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "kubectl describe <pod> (only)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "kubectl get events --previous",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `--previous` flag retrieves logs from the last terminated container instance.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_9",
+            "type": "tip",
+            "title": "Remember 🧠",
+            "content": "## RestartPolicy and Pod termination\nWhen a Pod is deleted (kubectl delete), containers are stopped and the Pod is removed. RestartPolicy only applies to container crashes, not to intentional deletes."
+        }
+    ]
+}

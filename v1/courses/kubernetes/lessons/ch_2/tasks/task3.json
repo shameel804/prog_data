@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_2",
+    "title": "Debug a CrashLoopBackOff",
+    "description": "Create a Pod that fails and learn to diagnose the problem.",
+    "estimatedMinutes": 10,
+    "problemStatement": "## 🎯 Goal\nIntentionally create a Pod that will fail, then use `kubectl` to diagnose why.\n\n### Steps\n1. Create a file `fail-pod.yaml` with the following content:\n   ```yaml\n   apiVersion: v1\n   kind: Pod\n   metadata:\n     name: fail-pod\n   spec:\n     containers:\n     - name: fail-container\n       image: busybox\n       command: ['sh', '-c', 'echo \"I will fail now\"; exit 1']\n   ```\n2. Apply it: `kubectl apply -f fail-pod.yaml`.\n3. Run `kubectl get pods` repeatedly. You'll see `CrashLoopBackOff` after a few restarts.\n4. Use `kubectl describe pod fail-pod` and look at the Events section. Note the restart count and the exit code.\n5. View the logs of the previous container instance: `kubectl logs fail-pod --previous`.\n6. The output should show \"I will fail now\".\n7. Delete the Pod when you're done: `kubectl delete pod fail-pod`.\n\n### Questions to Answer\n- What is the exit code? (Should be 1)\n- Why does the Pod show CrashLoopBackOff?\n- How many restarts occurred?",
+    "hints": [
+        "CrashLoopBackOff means the container keeps dying quickly, so Kubernetes backs off restarting it.",
+        "`--previous` is crucial to get logs from a crashed container.",
+        "Check `restartCount` in the `describe` output."
+    ],
+    "expectedOutput": "Events in describe show 'Back-off restarting failed container'. Logs show 'I will fail now'.",
+    "solutionCode": "kubectl apply -f fail-pod.yaml\nkubectl get pods\nkubectl describe pod fail-pod\nkubectl logs fail-pod --previous\nkubectl delete pod fail-pod"
+}

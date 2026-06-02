@@ -1,0 +1,149 @@
+{
+    "id": "l3",
+    "chapterId": "ch_1",
+    "title": "Key Concepts: Pods, Deployments, Services 🧩",
+    "description": "Get a bird’s‑eye view of the three most important Kubernetes objects.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The Building Blocks 🧱",
+            "content": "# Three concepts you’ll use daily\n\n- **Pod** – smallest deployable unit; a wrapper around one or more containers\n- **Deployment** – manages a set of identical Pods, handles updates\n- **Service** – stable network endpoint to access a set of Pods\n\nUnderstanding these will unlock 80% of Kubernetes."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Pod – the Atomic Unit ⚛️",
+            "content": "## What’s inside a Pod?\n\nA Pod can contain one or more containers that:\n- Share the same network namespace (localhost works between them)\n- Share storage volumes\n- Are always co‑located on the same node\n\nMost often, a Pod runs a single main container. Sidecar containers (like log shippers) are also common."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Pod Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the smallest deployable unit in Kubernetes?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Container",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Pod",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Deployment",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Node",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A Pod is the atom of Kubernetes—you cannot deploy a container without a Pod.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Deployment – the Scalable Manager 🎛️",
+            "content": "## Why you need more than a Pod\n\nPods are ephemeral. If a node dies, Pods on it are lost. A **Deployment** ensures:\n- A specified number of replica Pods are always running\n- Rolling updates with zero downtime\n- Ability to rollback to a previous version\n\nIt creates a ReplicaSet, which in turn creates/ deletes Pods."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "quiz",
+            "title": "Deployment Role 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "What does a Deployment guarantee?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "That Pods are scheduled on the fastest node",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A desired number of replica Pods are always running",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "That every Pod gets a persistent IP",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Automatic storage provisioning",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Deployments maintain the replica count and handle updates.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "Service – Stable Networking 🔌",
+            "content": "## Pods come and go, IPs change\n\nA **Service** provides:\n- A stable IP address (ClusterIP)\n- A DNS name\n- Load balancing across the Pods selected by labels\n\nTypes: ClusterIP (internal), NodePort (node‑level access), LoadBalancer (cloud provider)."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "code",
+            "title": "Connecting Them",
+            "content": "Example: A Deployment manages Pods, a Service selects them by label:",
+            "codeSnippet": "apiVersion: v1\nkind: Service\nmetadata:\n  name: nginx-service\nspec:\n  selector:\n    app: nginx\n  ports:\n    - port: 80\n      targetPort: 80",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_8",
+            "type": "quiz",
+            "title": "Quiz: Label Selector 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_3",
+                "type": "multiple_choice",
+                "question": "How does a Service know which Pods to send traffic to?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "By Pod IP address",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "By matching labels",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "By Pod name",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "By container image",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Services use label selectors to find the right Pods.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

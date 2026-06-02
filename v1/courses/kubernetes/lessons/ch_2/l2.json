@@ -1,0 +1,164 @@
+{
+    "id": "l2",
+    "chapterId": "ch_2",
+    "title": "Declarative Pods with YAML 📝",
+    "description": "Master the art of writing Pod manifests using YAML.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "YAML: The Language of Kubernetes 🗣️",
+            "content": "# Why YAML?\n\nKubernetes objects are defined in YAML (or JSON). YAML is human‑friendly, but strict about indentation (2 spaces, no tabs!).\n\nAll manifests share a common structure:\n- `apiVersion` – which API group/version (e.g., v1, apps/v1)\n- `kind` – type of object (Pod, Deployment, Service)\n- `metadata` – name, labels, namespace\n- `spec` – desired state of the object"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "YAML Indentation 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the standard indentation in Kubernetes YAML?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Tabs",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "4 spaces",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "2 spaces",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "1 space",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Two spaces are the convention; tabs cause parsing errors.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "apiVersion and kind 📚",
+            "content": "## Choose the right version\n\nFor a Pod, use `apiVersion: v1` (core API group). Other resources use different versions:\n- `apps/v1` for Deployments\n- `networking.k8s.io/v1` for Network Policies\n\nAlways check `kubectl api-resources` to see which version to use."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Check Available API Resources",
+            "content": "Run this to see all resources and their API groups:",
+            "codeSnippet": "kubectl api-resources",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "metadata – Naming and Labeling 🏷️",
+            "content": "## Essential identifiers\n\n- `name` – unique within the namespace\n- `labels` – key‑value pairs for selecting objects\n- `namespace` – which virtual cluster (defaults to `default`)\n\nExample:\n```yaml\nmetadata:\n  name: frontend-pod\n  labels:\n    app: frontend\n    tier: web\n  namespace: production\n```"
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Metadata Purpose 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What is the primary use of labels?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To store passwords",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To group and select objects",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To define container images",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To set node affinity",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Labels are key for Services, Deployments, and selectors to identify Pods.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "spec – The Container(s) 🛳️",
+            "content": "## The heart of the Pod\n\nThe `spec.containers` list defines what runs. Required fields per container:\n- `name` – unique within the Pod\n- `image` – Docker image (e.g., `nginx:1.25`)\n\nOptional but common:\n- `command` and `args` – override entrypoint\n- `ports` – declared container ports (documentation only, but useful)\n- `env` – environment variables\n- `resources` – CPU/memory limits and requests"
+        },
+        {
+            "id": "s_l2_8",
+            "type": "code",
+            "title": "Complete Pod YAML",
+            "content": "Save as `pod.yaml`:",
+            "codeSnippet": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: hello-pod\n  labels:\n    app: hello\nspec:\n  containers:\n  - name: hello-container\n    image: nginx:1.25\n    ports:\n    - containerPort: 80\n    env:\n    - name: ENVIRONMENT\n      value: \"dev\"",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_9",
+            "type": "quiz",
+            "title": "Quiz: Required Fields 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_3",
+                "type": "multiple_choice",
+                "question": "Which field is mandatory in a container spec?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "ports",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "image",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "env",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "command",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "At minimum, a container needs a name and an image.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "Use `kubectl explain pod.spec.containers` to see detailed documentation right in the terminal. It’s a lifesaver when writing manifests!"
+        }
+    ]
+}

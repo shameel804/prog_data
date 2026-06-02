@@ -1,0 +1,135 @@
+{
+    "id": "l2",
+    "chapterId": "ch_1",
+    "title": "The Kubernetes Architecture 🏗️",
+    "description": "Dive into the control plane, worker nodes, and the components that make it tick.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Content",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "High‑Level Architecture 🗺️",
+            "content": "# Master‑Worker Model\n\nA Kubernetes cluster consists of:\n- **Control Plane (Master)** – the brain that makes global decisions\n- **Worker Nodes** – the muscles that run your application Pods\n\nThey communicate via the **API server** over REST."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which part of the cluster is responsible for scheduling Pods?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Worker Node",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Control Plane",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Container runtime",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "kubelet",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The scheduler (a control plane component) decides which node a Pod runs on.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Control Plane Components 🧠",
+            "content": "## Four Key Players\n\n1. **kube‑apiserver** – front‑door; all commands go through it.\n2. **etcd** – distributed key‑value store holding all cluster data.\n3. **kube‑scheduler** – watches for new Pods and picks a node.\n4. **kube‑controller‑manager** – runs controllers (e.g., node controller, replication controller).\n\nEach runs as a separate process, often as containers themselves."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## etcd is the source of truth\n\nNever touch etcd directly unless you really know what you're doing. The API server is the only safe way to change cluster state."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Worker Node Components 💪",
+            "content": "## What runs on every node?\n\n- **kubelet** – agent that ensures containers are running in a Pod\n- **kube‑proxy** – network proxy that implements Service rules\n- **Container Runtime** – software that runs containers (e.g., Docker, containerd, CRI‑O)\n\nThese components work together to maintain the desired state sent by the control plane."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Identify the Component 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Which component runs on every node and starts/stops containers?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "kube‑apiserver",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "kubelet",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "kube‑scheduler",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "etcd",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The kubelet communicates with the container runtime to ensure Pods are running as expected.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "The Reconciliation Loop 🔁",
+            "content": "## How Kubernetes Keeps Desired State\n\n1. You declare a desired state (e.g., “I want 3 replicas of my app”).\n2. Controllers continuously compare **desired state** vs **current state**.\n3. If they differ, controllers take action to reconcile (e.g., start a new Pod).\n\nThis loop is the heart of Kubernetes’ self‑healing and scalability."
+        },
+        {
+            "id": "s_l2_8",
+            "type": "code",
+            "title": "Declarative vs Imperative",
+            "content": "You tell Kubernetes **what** you want, not **how** to do it:",
+            "codeSnippet": "kubectl create deployment nginx --image=nginx --replicas=3",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_9",
+            "type": "quiz",
+            "title": "Quiz: Reconciliation 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_3",
+                "type": "true_false",
+                "question": "True or False: Kubernetes requires you to manually restart failed containers.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "False. The reconciliation loop automatically detects and replaces failed containers.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

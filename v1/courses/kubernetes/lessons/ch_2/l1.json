@@ -1,0 +1,135 @@
+{
+    "id": "l1",
+    "chapterId": "ch_2",
+    "title": "Pod Anatomy 101 🧬",
+    "description": "A deep dive into the Pod – the smallest unit in Kubernetes.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Core",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "What’s Inside a Pod? 🎁",
+            "content": "# More than a wrapper\n\nA Pod is a logical host for one or more containers. It provides:\n- **Shared network namespace** – all containers share the same IP and port space\n- **Shared IPC namespace** – can communicate via System V semaphores or POSIX shared memory\n- **Shared storage volumes** – volumes are mounted into all containers\n- **Unified lifecycle** – they are scheduled, started, and stopped together"
+        },
+        {
+            "id": "s_l1_2",
+            "type": "text",
+            "title": "Networking Inside a Pod 🌐",
+            "content": "## localhost really is local\n\nContainers within a Pod can reach each other on `localhost`. Example:\n- Container A listens on `localhost:8080`\n- Container B can `curl localhost:8080`\n\nThis works because they share the same network stack (including the loopback interface).\n\n**Warning:** Ports cannot overlap. Two containers cannot both bind to port 8080."
+        },
+        {
+            "id": "s_l1_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Can two containers in the same Pod bind to the same port?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Yes, they are isolated",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "No, they share the network namespace",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only if they are on different networks",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Yes, Kubernetes assigns dynamic ports",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "They share the same IP and port space, so port conflicts cause failure.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_4",
+            "type": "text",
+            "title": "The Pause Container ⏸️",
+            "content": "## The invisible helper\n\nEvery Pod contains a special container called the **pause container** (or sandbox container). It:\n- Holds the network namespace for the whole Pod\n- Does nothing but sleep\n- Ensures the namespace exists even if application containers crash\n\nWhen you run `docker ps` on a node, you’ll see a `pause` container for every Pod."
+        },
+        {
+            "id": "s_l1_5",
+            "type": "tip",
+            "title": "Why It Matters 💡",
+            "content": "## Debugging tip\nIf you exec into a Pod and can't find a process, remember the pause container is PID 1. The main application containers have their own PID namespace unless you share it."
+        },
+        {
+            "id": "s_l1_6",
+            "type": "text",
+            "title": "Shared Volumes 📂",
+            "content": "## Exchange files easily\n\nA Pod can define volumes that are mounted into all containers. This lets a sidecar container process logs, sync files, or share configuration.\n\nExample: an `emptyDir` volume shared between a web server and a content updater.\n\n```yaml\nvolumes:\n  - name: shared-data\n    emptyDir: {}\ncontainers:\n  - name: app\n    volumeMounts:\n      - name: shared-data\n        mountPath: /data\n  - name: sidecar\n    volumeMounts:\n      - name: shared-data\n        mountPath: /data\n```"
+        },
+        {
+            "id": "s_l1_7",
+            "type": "quiz",
+            "title": "Volume Sharing 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "true_false",
+                "question": "True or False: Each container in a Pod gets its own copy of the volume.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "Volumes are shared – all containers see the same data.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_8",
+            "type": "code",
+            "title": "Full Pod Spec Example",
+            "content": "A minimal Pod YAML with one container:",
+            "codeSnippet": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: my-pod\nspec:\n  containers:\n  - name: nginx\n    image: nginx:1.25\n    ports:\n    - containerPort: 80",
+            "codeLanguage": "yaml",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_9",
+            "type": "quiz",
+            "title": "Identify the Kind 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_3",
+                "type": "multiple_choice",
+                "question": "What value must 'kind' have to create a Pod?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Service",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Deployment",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Pod",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Container",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "kind: Pod tells Kubernetes to create a Pod resource.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

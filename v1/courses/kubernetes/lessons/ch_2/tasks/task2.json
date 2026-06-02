@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_2",
+    "title": "Write and Apply a Multi‑container Pod",
+    "description": "Create a YAML file for a Pod that runs two containers sharing a volume.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## 🎯 Goal\nWrite a Pod manifest that runs two containers:\n1. **writer** – uses `busybox` and writes the current date to `/data/date.txt` every 5 seconds.\n2. **reader** – uses `busybox` and continuously prints the content of `/data/date.txt`.\n\nBoth containers must mount an `emptyDir` volume at `/data`.\n\n### Steps\n1. Create a file `shared-pod.yaml`.\n2. Define the Pod with apiVersion v1, kind Pod, metadata name `shared-pod`.\n3. Add two containers: `writer` and `reader`.\n   - Use `image: busybox`.\n   - For writer, set command: `['sh', '-c', 'while true; do date >> /data/date.txt; sleep 5; done']`\n   - For reader, set command: `['sh', '-c', 'tail -f /data/date.txt']`\n4. Define an `emptyDir` volume named `shared-data` and mount it to `/data` in both containers.\n5. Apply the manifest: `kubectl apply -f shared-pod.yaml`.\n6. Check logs of the reader container: `kubectl logs shared-pod -c reader`.\n7. You should see timestamps appearing every 5 seconds.\n8. Delete the Pod when done.",
+    "hints": [
+        "The emptyDir volume is created when the Pod is assigned to a node and lives as long as the Pod.",
+        "If you see 'CrashLoopBackOff', check the container commands and ensure the image is correct.",
+        "Use `kubectl get pods -w` to watch the Pod start."
+    ],
+    "expectedOutput": "Logs from the reader container show lines like 'Mon Jan 1 12:00:00 UTC 2024' updating every 5 seconds.",
+    "solutionCode": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: shared-pod\nspec:\n  volumes:\n  - name: shared-data\n    emptyDir: {}\n  containers:\n  - name: writer\n    image: busybox\n    command: ['sh', '-c', 'while true; do date >> /data/date.txt; sleep 5; done']\n    volumeMounts:\n    - name: shared-data\n      mountPath: /data\n  - name: reader\n    image: busybox\n    command: ['sh', '-c', 'tail -f /data/date.txt']\n    volumeMounts:\n    - name: shared-data\n      mountPath: /data"
+}

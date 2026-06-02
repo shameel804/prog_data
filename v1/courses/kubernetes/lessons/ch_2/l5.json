@@ -1,0 +1,129 @@
+{
+    "id": "l5",
+    "chapterId": "ch_2",
+    "title": "Multi‑container Pods 🧑‍🤝‍🧑",
+    "description": "Learn when and how to run multiple containers in one Pod.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Why Multi‑container? 🤝",
+            "content": "# Beyond one process\n\nSingle‑container Pods are the norm, but sometimes a helper container (sidecar) is needed to:\n- **Pull/update data** (git sync, config refresh)\n- **Proxy network traffic** (Envoy, linkerd)\n- **Collect logs** (Fluentd sidecar)\n- **Perform initialization** (init containers, separate concept)\n\nThey share lifecycle and resources, making tight coupling easy."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Design Patterns 🏛️",
+            "content": "## Three classic patterns\n\n1. **Sidecar** – extends the main container (e.g., log shipper)\n2. **Ambassador** – proxies connections (e.g., database proxy)\n3. **Adapter** – transforms output (e.g., monitoring metrics adapter)\n\nAll patterns rely on the Pod’s shared network and storage."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Pattern Recognition 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "A container that collects logs from the main app and forwards them is an example of which pattern?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Ambassador",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Sidecar",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Adapter",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Init container",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Sidecars run alongside the main container to provide complementary features.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Communication via Shared Volumes 📂",
+            "content": "## Example: Web server + content fetcher\n\n- Container A: nginx serving files from `/usr/share/nginx/html`\n- Container B: git‑sync periodically pulling a repo into the same path\n\nShare an `emptyDir` volume to let both containers access the same files.\n\n```yaml\nvolumes:\n  - name: web-content\n    emptyDir: {}\ncontainers:\n  - name: web\n    image: nginx:1.25\n    volumeMounts:\n      - name: web-content\n        mountPath: /usr/share/nginx/html\n  - name: git-sync\n    image: alpine/git\n    volumeMounts:\n      - name: web-content\n        mountPath: /git\n    command: [\"sh\", \"-c\", \"while true; do git clone ... ; sleep 60; done\"]\n```"
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Apply Multi‑container Pod",
+            "content": "Save the above YAML as `multi-pod.yaml` and apply:",
+            "codeSnippet": "kubectl apply -f multi-pod.yaml",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Volume Sharing 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "true_false",
+                "question": "True or False: Containers in a multi‑container Pod must use different ports.",
+                "options": [],
+                "correctAnswer": true,
+                "explanation": "Because they share the network namespace, port conflicts must be avoided.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Init Containers (Bonus) 🚀",
+            "content": "## Run once before app containers\n\nInit containers execute to completion before any app container starts. Use them for setup tasks (e.g., database schema migration). They are defined under `spec.initContainers`.\n\n```yaml\nspec:\n  initContainers:\n  - name: init-db\n    image: busybox\n    command: ['sh', '-c', 'until nslookup mydb; do echo waiting for db; sleep 2; done']\n```"
+        },
+        {
+            "id": "s_l5_8",
+            "type": "quiz",
+            "title": "Init Container Order 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_3",
+                "type": "multiple_choice",
+                "question": "When do init containers run?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "After the main containers start",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Before any main container starts",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "In parallel with the main containers",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only when the Pod restarts",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "All init containers must finish successfully before the main containers are launched.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

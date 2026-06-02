@@ -1,0 +1,173 @@
+{
+    "id": "l4",
+    "chapterId": "ch_2",
+    "title": "Inspecting Pods 🔍",
+    "description": "Debug and interact with Pods using logs, exec, and describe.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Hands-on",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Why Inspect? 🕵️",
+            "content": "# Peek inside your Pods\n\nYou need to see:\n- **Logs** – what’s happening right now\n- **Events** – why a Pod failed to start\n- **State** – resource usage, volume mounts\n- **Inside the container** – run commands interactively\n\nThree main tools: `kubectl logs`, `kubectl describe`, `kubectl exec`."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "kubectl logs 📜",
+            "content": "## Stream application output\n\n```bash\nkubectl logs <pod-name>           # first container\nkubectl logs <pod-name> -c <container>  # specific container in a multi‑container Pod\nkubectl logs -f <pod-name>        # follow (like tail -f)\nkubectl logs --previous <pod-name> # logs from previous crashed container\n```\n\nGreat for viewing application stdout/stderr."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Logs in Action",
+            "content": "Try it on a running nginx Pod:",
+            "codeSnippet": "kubectl logs hello-pod",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Log Options 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which flag streams logs in real time?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "-c",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "--previous",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "-f",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "-o wide",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "-f (follow) continuously prints new log lines.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "kubectl describe 🧾",
+            "content": "## The ultimate debug report\n\n```bash\nkubectl describe pod <pod-name>\n```\n\nShows:\n- Pod status and conditions\n- Container images, ports, environment\n- Volume mounts\n- **Events** – the chronological log of what happened (image pull, scheduling, container start)\n\nLook at Events first when a Pod is stuck in `Pending` or `CrashLoopBackOff`."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "code",
+            "title": "Describe a Pod",
+            "content": "Replace with your Pod name:",
+            "codeSnippet": "kubectl describe pod hello-pod",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "Describe Use Case 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Where can you find the reason a Pod failed to pull an image?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "kubectl logs",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "kubectl exec",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Events section of kubectl describe",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "kubectl get pod -o yaml (only)",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The Events section shows a timeline of actions like image pulling errors.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_8",
+            "type": "text",
+            "title": "kubectl exec 🖥️",
+            "content": "## Run commands inside a container\n\n```bash\nkubectl exec -it <pod-name> -- /bin/sh\n```\n- `-i` – keep stdin open\n- `-t` – allocate a TTY (interactive)\n- `--` separates kubectl options from the command\n\nUse this to explore the filesystem, check processes, or debug. It’s like `docker exec`."
+        },
+        {
+            "id": "s_l4_9",
+            "type": "code",
+            "title": "Get an interactive shell",
+            "content": "For a Pod with a shell (like nginx) – note: nginx official image has /bin/sh:",
+            "codeSnippet": "kubectl exec -it hello-pod -- /bin/sh\n# then inside: ls, env, etc.",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Port Forwarding\n\nNeed to access a Pod’s port locally? Use:\n```bash\nkubectl port-forward pod/hello-pod 8080:80\n```\nThen open `http://localhost:8080`. Great for debugging without a Service."
+        },
+        {
+            "id": "s_l4_11",
+            "type": "quiz",
+            "title": "Interactive Commands 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_3",
+                "type": "multiple_choice",
+                "question": "What do the -it flags do in kubectl exec?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Ignore errors and time out",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Interactive terminal (stdin open + TTY)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Install tools inside the container",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Inline template processing",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "-i keeps stdin open, -t allocates a pseudo‑terminal for an interactive experience.",
+                "xpReward": 10
+            }
+        }
+    ]
+}

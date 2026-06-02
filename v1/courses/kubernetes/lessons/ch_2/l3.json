@@ -1,0 +1,147 @@
+{
+    "id": "l3",
+    "chapterId": "ch_2",
+    "title": "Create and Manage Pods 🏗️",
+    "description": "Bring your YAML to life using kubectl create and apply.",
+    "xpReward": 25,
+    "estimatedMinutes": 5,
+    "section": "Hands-on",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Imperative vs Declarative ⚡",
+            "content": "# Two ways to create Pods\n\n**Imperative:** `kubectl run nginx --image=nginx`\n- Quick and easy for tests\n- No saved manifest\n\n**Declarative:** `kubectl apply -f pod.yaml`\n- Source of truth in a file\n- Re‑runnable, version‑control friendly\n\nProduction environments always use declarative."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Imperative Pod Creation",
+            "content": "Create a Pod directly from the CLI:",
+            "codeSnippet": "kubectl run my-nginx --image=nginx:1.25 --port=80",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Command vs File 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which method is best for production deployments?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "kubectl run",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "kubectl apply -f manifest.yaml",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Docker run",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Editing etcd directly",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Declarative configuration stored in files provides reproducibility and auditability.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Applying a Manifest 📄",
+            "content": "## The declarative way\n\n1. Write a YAML file (e.g., `pod.yaml`)\n2. Run `kubectl apply -f pod.yaml`\n3. Kubernetes creates the Pod if it doesn’t exist, or updates it if possible (though Pod updates are limited).\n\n`apply` is the recommended command because it respects the `kubectl.kubernetes.io/last-applied-configuration` annotation, enabling smarter diffs."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Apply the Pod",
+            "content": "Assuming the file from the previous lesson:",
+            "codeSnippet": "kubectl apply -f pod.yaml",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "Listing and Watching Pods 👀",
+            "content": "## Essential commands\n\n- **`kubectl get pods`** – list Pods in current namespace\n- **`kubectl get pods -o wide`** – includes node, IP\n- **`kubectl get pods -w`** – watch for changes (Ctrl+C to stop)\n- **`kubectl get pods --show-labels`** – display labels\n\nYou can also filter by label: `kubectl get pods -l app=hello`"
+        },
+        {
+            "id": "s_l3_7",
+            "type": "quiz",
+            "title": "Get Pods Options 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Which flag shows the node a Pod is running on?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "-w",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "-o wide",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "--show-labels",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "-A",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "-o wide adds extra columns including Node and IP.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_8",
+            "type": "text",
+            "title": "Deleting Pods 🗑️",
+            "content": "## Remove resources safely\n\n- **`kubectl delete pod <name>`** – delete by name\n- **`kubectl delete -f pod.yaml`** – delete the resource defined in a file\n- **`kubectl delete pod -l app=hello`** – delete all Pods with matching label\n\nDeleting a Pod terminates it immediately. If a Deployment manages it, a new Pod will be created (we’ll see later)."
+        },
+        {
+            "id": "s_l3_9",
+            "type": "code",
+            "title": "Delete Example",
+            "content": "",
+            "codeSnippet": "kubectl delete pod hello-pod",
+            "codeLanguage": "bash",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_10",
+            "type": "quiz",
+            "title": "Deletion Safety 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_3",
+                "type": "true_false",
+                "question": "True or False: Deleting a Pod that is part of a Deployment will permanently remove it.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "The Deployment controller will notice the missing Pod and create a replacement to match the desired replica count.",
+                "xpReward": 10
+            }
+        }
+    ]
+}
