@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_8",
+    "title": "Specificity Showdown",
+    "description": "Given multiple CSS rules, predict which style applies and refactor for low specificity.",
+    "estimatedMinutes": 10,
+    "problemStatement": "You have the following CSS rules (in a single external file, in this order). For the HTML `<p id=\"intro\" class=\"highlight\">Welcome</p>`, answer the questions.\n\n```css\n/* Rule A */\np { color: green; }\n\n/* Rule B */\n.highlight { color: orange; }\n\n/* Rule C */\n#intro { color: purple; }\n\n/* Rule D */\np.highlight { color: blue; }\n\n/* Rule E */\n#intro.highlight { color: red; }\n```\n\n1. What colour does the paragraph become? Explain using specificity values.\n2. If Rule E was removed, what colour would win?\n3. If you add `p { color: black !important; }` at the very end, what colour now?\n4. Rewrite Rule E to have the same visual result but using only a class selector (no ID) and without `!important`. How would you do it while keeping specificity low? (Hint: BEM naming)\n\nProvide answers in comments, then show the refactored CSS.",
+    "hints": [
+        "Calculate (a,b,c,d) for each rule.",
+        "Remember: later rule wins only if specificity is equal.",
+        "For refactoring, change the HTML class to be unique, e.g., `class=\"highlight highlight--intro\"`."
+    ],
+    "expectedOutput": "Answers in comments and a new CSS rule that achieves the same red colour with low specificity.",
+    "solutionCode": "/* 1. Rule E wins: red. Specificity: A (0,0,0,1), B (0,0,1,0), C (0,1,0,0), D (0,0,1,1), E (0,1,1,0). E has highest because 1 ID and 1 class, beats C's single ID (0,1,0,0 vs 0,1,1,0). \n2. Without E, C (purple) wins because ID specificity (0,1,0,0) beats D (0,0,1,1).\n3. With !important at end, it becomes black because !important overrides normal specificity.\n4. Refactor using a unique class: change HTML to <p class=\"highlight highlight--intro\"> and use CSS: .highlight--intro { color: red; }. This uses a single class (specificity 0,0,1,0) but because of naming convention it targets the intro uniquely without high specificity. */\n\n/* Refactored CSS */\n.highlight--intro {\n  color: red;\n}\n/* No ID needed; maintainability improves. */"
+}

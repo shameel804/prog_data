@@ -1,0 +1,83 @@
+{
+    "id": "l3",
+    "chapterId": "ch_13",
+    "title": "3D Transforms & Perspective 🧊",
+    "description": "Add depth with `rotateX/Y/Z`, `translateZ`, `perspective`, and `backface-visibility`.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Transforms",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The Third Dimension 🌌",
+            "content": "# Going Beyond 2D\n\nCSS can simulate 3D space with `rotateX()`, `rotateY()`, `rotateZ()`, and `translateZ()`. These require a **perspective** to give the illusion of depth.\n\n3D transforms affect how elements are rendered, not the actual DOM. The browser calculates them using matrix3d."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "text",
+            "title": "Setting Perspective 🎥",
+            "content": "# The Vanishing Point\n\n`perspective` is a parent property that defines the distance between the viewer and the screen. Smaller values = more dramatic perspective.\n\n```css\n.scene {\n  perspective: 600px;\n}\n.box {\n  transform: rotateY(30deg);\n}\n```\nWithout perspective on the parent, `rotateY()` looks flat. You can also use `perspective()` function inside the transform but the parent approach is more realistic."
+        },
+        {
+            "id": "s_l3_3",
+            "type": "code",
+            "title": "Card Flip with `rotateY`",
+            "content": "Create a classic flip animation:",
+            "codeSnippet": ".card {\n  transition: transform 0.6s;\n  transform-style: preserve-3d;\n}\n.card.flipped {\n  transform: rotateY(180deg);\n}\n.front, .back {\n  backface-visibility: hidden;\n  position: absolute;\n}\n.back {\n  transform: rotateY(180deg);\n}",
+            "codeLanguage": "css",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What does `backface-visibility: hidden;` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Hides the element when it's upside down",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Hides the back side of an element when rotated, preventing mirror‑image visibility",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Flips the element horizontally",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It hides the element's reverse side, making a card flip look correct.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Perspective Origin & `transform-style` 🎚️",
+            "content": "# Fine‑Tuning 3D Space\n\n- `perspective-origin` – where the viewer is looking from (default centre). e.g., `perspective-origin: left top;`\n- `transform-style: preserve-3d;` – allows children to exist in 3D space. Otherwise, they flatten onto the parent's plane.\n\nThese properties enable complex 3D scenes."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "code",
+            "title": "3D Cube Example (Concept)",
+            "content": "A cube built from six faces with transforms:",
+            "codeSnippet": ".cube {\n  transform-style: preserve-3d;\n  transform: rotateX(-30deg) rotateY(30deg);\n}\n.face {\n  position: absolute;\n  width: 200px; height: 200px;\n}\n.front  { transform: translateZ(100px); }\n.back   { transform: rotateY(180deg) translateZ(100px); }\n.left   { transform: rotateY(-90deg) translateZ(100px); }\n.right  { transform: rotateY(90deg) translateZ(100px); }\n.top    { transform: rotateX(90deg) translateZ(100px); }\n.bottom { transform: rotateX(-90deg) translateZ(100px); }",
+            "codeLanguage": "css",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Always Test on Real Devices\n\n3D transforms can be heavy on mobile GPUs. Use `will-change: transform;` to optimise, but don't overuse it."
+        }
+    ]
+}

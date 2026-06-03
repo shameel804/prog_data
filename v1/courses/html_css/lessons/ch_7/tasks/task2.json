@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_7",
+    "title": "Cascade Challenge",
+    "description": "Write conflicting CSS rules and predict which style wins based on specificity and order.",
+    "estimatedMinutes": 10,
+    "problemStatement": "Given the HTML `<p id=\"greeting\" class=\"message\">Hello, Progly!</p>`, you have the following three CSS rules in a stylesheet (in this order):\n\n```css\np {\n  color: green;\n}\n.message {\n  color: blue;\n}\n#greeting {\n  color: red;\n}\n```\n\n**Questions (answer in a comment in your CSS):**\n1. What colour will the text be and why?\n2. If you add `p { color: orange !important; }` at the very end, what colour now?\n\nNow, write a fourth rule that changes the text colour to purple **without using `!important`** and without modifying the existing three rules. Where would you place it to ensure it wins? Write the CSS rule and explain in a comment.\n\nFinally, write a CSS snippet for a `<style>` block that demonstrates inheritance: set `body` to have `color: darkgray;` and `font-family: Arial;`. Then override the colour for a specific paragraph with class `special` to be black. Show the HTML and CSS together.",
+    "hints": [
+        "The ID selector has higher specificity than class or type selectors.",
+        "To override without !important, you need higher specificity or same specificity but later in source order.",
+        "Inheritance means child elements inherit the body's colour unless explicitly overridden."
+    ],
+    "expectedOutput": "A single CSS block (or multiple comments) with correct predictions and the demonstrated inheritance example.",
+    "solutionCode": "/* 1. The text will be red. #greeting (ID) has highest specificity (0,1,0) vs .message (0,0,1) vs p (0,0,0).\n2. With !important on p { color: orange !important; } at the end, it becomes orange because !important overrides normal rules regardless of specificity. */\n\n/* To make it purple without !important, use a more specific selector, e.g., #greeting.message { color: purple; }.\n   Place it after the existing rules to take advantage of equal specificity and source order? Actually this has higher specificity (0,1,1) so it wins regardless of order. */\n\n#greeting.message {\n  color: purple;\n}\n\n/* ---- Inheritance example ---- */\n/* HTML:\n<body>\n  <p>Normal paragraph.</p>\n  <p class=\"special\">Special paragraph.</p>\n</body>\n*/\nbody {\n  color: darkgray;\n  font-family: Arial, sans-serif;\n}\n.special {\n  color: black;\n}\n/* The first paragraph inherits darkgray. The .special paragraph overrides to black. */"
+}

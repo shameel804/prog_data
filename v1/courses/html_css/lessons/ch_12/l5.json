@@ -1,0 +1,83 @@
+{
+    "id": "l5",
+    "chapterId": "ch_12",
+    "title": "Responsive Layouts with Flexbox & Grid 🧩",
+    "description": "Combine Flexbox, Grid, and media queries to build truly adaptive interfaces.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Layout",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Putting It All Together 🧱",
+            "content": "# Responsive Layout Strategy\n\n1. Start mobile‑first: single column, stacked content.\n2. Use Flexbox or Grid for the basic layout.\n3. Add `min-width` media queries to change the layout for wider screens.\n4. Use relative units and `max-width` to keep content readable.\n5. Test on real devices or using DevTools device mode.\n\nThis approach creates layouts that flow naturally from the smallest screen to the largest."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Mobile‑First Card Grid (Flexbox)",
+            "content": "Flexbox cards that go from one column to three columns:",
+            "codeSnippet": ".cards {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 1rem;\n}\n.card {\n  flex: 1 1 100%; /* full width on mobile */\n}\n\n@media (min-width: 600px) {\n  .card { flex: 1 1 calc(50% - 1rem); } /* 2 columns */\n}\n@media (min-width: 900px) {\n  .card { flex: 1 1 calc(33.33% - 1rem); } /* 3 columns */\n}",
+            "codeLanguage": "css",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Auto‑Responsive Grid with `auto-fit` 🌐",
+            "content": "# No Media Queries Needed\n\nCSS Grid with `auto-fit` and `minmax()` can create fully responsive grids without any breakpoints:\n```css\n.gallery {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));\n  gap: 1rem;\n}\n```\nThe browser adds as many 250px+ columns as fit, and `1fr` makes them expand equally. Perfect for card layouts, galleries, or product grids."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What does `repeat(auto-fit, minmax(250px, 1fr))` achieve?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Creates exactly 4 columns",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Creates as many columns as fit, each at least 250px, stretching to fill space",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Creates one column that is 250px",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`auto-fit` fills the row with as many tracks as possible; tracks are at least 250px and grow with `1fr`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Responsive Sidebar with Grid Areas",
+            "content": "A layout that switches from single column to sidebar + main on larger screens:",
+            "codeSnippet": ".layout {\n  display: grid;\n  gap: 20px;\n}\n@media (min-width: 768px) {\n  .layout {\n    grid-template-columns: 250px 1fr;\n    grid-template-areas: \"sidebar main\";\n  }\n  .sidebar { grid-area: sidebar; }\n  .main-content { grid-area: main; }\n}",
+            "codeLanguage": "css",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Container Queries (The Future) 🔮",
+            "content": "# Beyond Viewport‑Based Breakpoints\n\nContainer queries allow you to style elements based on the size of their parent container, not the whole viewport. They're now widely supported (2023+).\n\n```css\n.card-container {\n  container-type: inline-size;\n}\n@container (min-width: 400px) {\n  .card {\n    display: flex;\n  }\n}\n```\nThis makes components truly reusable, adapting to wherever they're placed."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `max-width` and Margin Auto for Centred Content\n\nEven in responsive layouts, a centred container with `max-width: 1200px; margin: 0 auto;` prevents content from stretching too wide on ultrawide monitors, preserving readability."
+        }
+    ]
+}

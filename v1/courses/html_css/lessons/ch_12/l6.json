@@ -1,0 +1,80 @@
+{
+    "id": "l6",
+    "chapterId": "ch_12",
+    "title": "Mobile Navigation Patterns 🧭",
+    "description": "Implement accessible, responsive navigation: hamburger menu, off‑canvas, and priority+.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Real-World Patterns",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "The Challenge of Small Screens 📱",
+            "content": "# Too Many Links for a Tiny Bar\n\nA horizontal nav with many links doesn't fit on a phone. Common solutions:\n- **Hamburger menu** – hide links behind a button, toggle visibility.\n- **Off‑canvas** – slide the menu in from the side.\n- **Priority+** – show as many links as fit, hide the rest in a 'More' dropdown.\n\nAll need to be keyboard and screen‑reader accessible."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "The Hamburger Menu 🍔",
+            "content": "# Toggle Visibility with CSS/JS\n\nA typical structure:\n```html\n<button class=\"menu-toggle\" aria-expanded=\"false\">☰</button>\n<nav class=\"main-nav\">\n  <ul> ... </ul>\n</nav>\n```\nWith CSS, the menu is hidden by default on mobile and shown when the button is clicked (often toggling a class via JavaScript). The button must have `aria-expanded` and control the menu’s visibility."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "code",
+            "title": "Basic Hamburger CSS",
+            "content": "Mobile‑first hiding and showing:",
+            "codeSnippet": ".main-nav { display: none; }\n.main-nav.open { display: block; }\n\n@media (min-width: 768px) {\n  .menu-toggle { display: none; }\n  .main-nav { display: block; }\n}",
+            "codeLanguage": "css",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Why is `aria-expanded` important on a hamburger button?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It styles the button",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It tells screen readers whether the menu is currently open or closed",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's just a visual decoration",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`aria-expanded=\"true/false\"` communicates state to assistive technologies.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_5",
+            "type": "text",
+            "title": "Off‑Canvas Menu 🎭",
+            "content": "# Slide In from the Side\n\nAn off‑canvas menu sits off‑screen (e.g., `transform: translateX(-100%)`) and slides in when toggled. It overlays or pushes the main content. CSS `transition` provides the animation.\n\nKey CSS:\n```css\n.offcanvas {\n  position: fixed;\n  top: 0; left: 0;\n  width: 80%; height: 100%;\n  background: white;\n  transform: translateX(-100%);\n  transition: transform 0.3s;\n}\n.offcanvas.open {\n  transform: translateX(0);\n}\n```\nAccessibility: trap focus inside the menu when open, add a close button, and use `aria-hidden`."
+        },
+        {
+            "id": "s_l6_6",
+            "type": "text",
+            "title": "Priority+ Navigation ⚖️",
+            "content": "# Show What Fits, Hide the Rest\n\nA priority+ pattern uses JavaScript to measure available space and moves overflowing links into a 'More' dropdown. CSS alone can't do this perfectly, but you can approximate with:\n- Using `flex-wrap: wrap;` and allowing items to wrap naturally.\n- Setting a `max-height` and `overflow: hidden;` on the nav, but it's not ideal.\n\nFor robust priority+, a small JavaScript library or custom script is needed."
+        },
+        {
+            "id": "s_l6_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Never Hide Critical Navigation\n\nIf a navigation item is essential, don't bury it behind a hamburger on desktop. On mobile it's acceptable, but provide clear labelling ('Menu', 'Site navigation')."
+        }
+    ]
+}

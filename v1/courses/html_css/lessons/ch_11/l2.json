@@ -1,0 +1,94 @@
+{
+    "id": "l2",
+    "chapterId": "ch_11",
+    "title": "Defining the Grid: Columns & Rows 📏",
+    "description": "Create explicit grid tracks with `grid-template-columns`, `grid-template-rows`, the `fr` unit, `repeat()`, and `minmax()`.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Container Properties",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "`grid-template-columns` & `grid-template-rows` 📐",
+            "content": "# Define the Track Sizes\n\nThese properties take a space‑separated list of track sizes. Each value creates a new column or row.\n\n```css\n.container {\n  grid-template-columns: 100px 200px 1fr;\n  grid-template-rows: 80px auto 80px;\n}\n```\n- First column: 100px, second: 200px, third: 1 fraction of remaining space.\n- First row: 80px, second: `auto` (height based on content), third: 80px.\n\nYou can use any CSS length, percentage, `auto`, or the powerful `fr` unit."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "text",
+            "title": "The `fr` Unit: Fractional Space 🧮",
+            "content": "# Divide Available Space Proportionally\n\n`fr` stands for fraction. It distributes the free space (after fixed tracks and gaps) according to the specified proportions.\n\n```css\ngrid-template-columns: 1fr 2fr 1fr;\n/* Free space split: 1 + 2 + 1 = 4 parts.\n   Column 1 gets 1/4, column 2 gets 2/4, column 3 gets 1/4. */\n```\nUnlike percentages, `fr` never overflows the container because it only uses leftover space. Combine with fixed widths for hybrid layouts."
+        },
+        {
+            "id": "s_l2_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "With `grid-template-columns: 200px 1fr 2fr;` and a container width of 800px, how wide is the second column?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "200px",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "200px",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "200px (first) + remaining 600px split 1:2 → 200px and 400px, so second column 200px",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Container 800px - 200px (col1) = 600px free. Split 1fr:2fr = 200px (col2) and 400px (col3). So col2 = 200px.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "`repeat()`: DRY Track Definitions 🔁",
+            "content": "# Avoid Repetitive Values\n\nInstead of writing `1fr 1fr 1fr 1fr`, use `repeat(4, 1fr)`.\n\n```css\ngrid-template-columns: repeat(3, 1fr);   /* three equal columns */\ngrid-template-columns: repeat(2, 200px 1fr); /* two times the pattern 200px 1fr = four columns */\n```\nYou can also use `auto-fill` and `auto-fit` for responsive, auto‑generated columns without media queries."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "code",
+            "title": "Auto‑Fill vs Auto‑Fit",
+            "content": "Create a responsive gallery that adds columns as space allows:",
+            "codeSnippet": ".gallery {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));\n  gap: 16px;\n}",
+            "codeLanguage": "css",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "`minmax()`: Flexible Tracks with Limits 🚧",
+            "content": "# Set a Minimum and Maximum Size\n\n`minmax(min, max)` defines a size range for a track. The track will never be smaller than `min` nor larger than `max`.\n\n```css\ngrid-template-columns: minmax(200px, 1fr) 1fr;\n/* First column: at least 200px, can grow to fill space. Second: 1fr of remaining. */\n```\nCombined with `auto-fill`/`auto-fit`, you get fully responsive grids without breakpoints."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "true_false",
+                "question": "`repeat(3, 1fr)` is equivalent to `1fr 1fr 1fr`.",
+                "correctAnswer": true,
+                "explanation": "`repeat()` simply repeats the track list the specified number of times.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use `fr` for Fluid Layouts\n\n`fr` units are ideal for responsive designs. Combine with `minmax()` and `auto-fit` to create layouts that adapt without a single media query."
+        }
+    ]
+}

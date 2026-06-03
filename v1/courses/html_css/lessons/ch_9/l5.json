@@ -1,0 +1,88 @@
+{
+    "id": "l5",
+    "chapterId": "ch_9",
+    "title": "Box-Sizing & the Universal Reset 🔧",
+    "description": "Grasp `content-box` vs `border-box`, and why a global reset makes your life easier.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Core Concepts",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "The `box-sizing` Property 🧮",
+            "content": "# Changing the Box Model Calculation\n\nBy default, `box-sizing: content-box;` means width/height = content only. This often leads to unexpected total sizes.\n\n`box-sizing: border-box;` makes width/height include content, padding, and border. The content area shrinks to accommodate padding and border, keeping the outer size constant.\n\n```css\n.box {\n  box-sizing: border-box;\n  width: 200px;\n  padding: 20px;\n  border: 5px solid;\n  /* actual width stays 200px, content becomes 150px */\n}\n```\nThis is much more intuitive for layout."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "With `box-sizing: border-box; width: 300px; padding: 10px; border: 5px;`, what is the content width?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "300px",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "270px",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "290px",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Total width 300px minus padding (20) minus border (10) = 270px content width.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "The Universal Box-Sizing Reset 🌍",
+            "content": "# Set It and Forget It\n\nAlmost all modern CSS projects start with this rule:\n\n```css\n*, *::before, *::after {\n  box-sizing: border-box;\n}\n```\nThis makes every element (and its pseudo‑elements) use `border-box`, so declaring a width of `50%` actually gives you a box that is 50% of its parent, padding and borders included.\n\nIt eliminates the mental math of `content-box` and prevents layout bugs. This reset is in every popular CSS framework."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Add the Reset to Your Project",
+            "content": "Place this at the very top of your main stylesheet:",
+            "codeSnippet": "/* Box-sizing reset */\n*,\n*::before,\n*::after {\n  box-sizing: border-box;\n}",
+            "codeLanguage": "css",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "When to Use `content-box`? 🔍",
+            "content": "# Rare Cases\n\nThe default `content-box` is useful when you want the padding/border to be purely additive, e.g., for decorative effects or when you need the content to remain a fixed size.\n\nBut for general layout, `border-box` is the standard. You can always apply it globally and then override for specific elements if needed."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "true_false",
+                "question": "Using `box-sizing: border-box;` on the `*` selector will affect pseudo‑elements like `::before`.",
+                "correctAnswer": false,
+                "explanation": "The universal selector `*` does not apply to pseudo‑elements; you must explicitly include `*::before, *::after` as shown.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Debugging the Box Model\n\nIn DevTools, you can toggle `box-sizing` on the fly to see the difference. It's a great way to understand why an element is larger than expected."
+        }
+    ]
+}

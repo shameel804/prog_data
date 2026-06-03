@@ -1,0 +1,94 @@
+{
+    "id": "l6",
+    "chapterId": "ch_7",
+    "title": "The Cascade & Inheritance 🌊",
+    "description": "Understand how the browser decides which styles win and why some properties pass to children.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Core Concepts",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "What Is the Cascade? 🌊",
+            "content": "# The 'C' in CSS\n\nThe cascade is the algorithm that determines which CSS rule applies when multiple rules target the same element. It considers:\n1. **Origin & Importance** – browser default < user styles < author styles < author `!important` < user `!important`.\n2. **Specificity** – how precise a selector is.\n3. **Source Order** – if specificity ties, the last declared rule wins.\n\nThis is why your stylesheet can override browser defaults."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "Specificity in a Nutshell 🔢",
+            "content": "# A Weight System\n\nThink of specificity as a score (a, b, c):\n- **Inline styles** – highest (a=1).\n- **ID selectors** – (b=1 for each ID).\n- **Class, attribute, pseudo‑class selectors** – (c=1 for each).\n- **Type selectors & pseudo‑elements** – (d=1 for each).\n\nExamples:\n- `p` → (0,0,0,1)\n- `.intro` → (0,0,1,0)\n- `#logo` → (0,1,0,0)\n- `#logo .intro p` → (0,1,1,1)\n\nHigher specificity wins. If equal, source order decides."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Which selector has higher specificity?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": ".class",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "#id",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "div",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "An ID selector (#id) has higher specificity than a class or a type selector.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Inheritance 🧬",
+            "content": "# Styles Passed Down to Children\n\nSome CSS properties are **inherited** by child elements automatically (e.g., `color`, `font-family`, `line-height`). Others are **not inherited** (e.g., `margin`, `padding`, `border`, `background`).\n\nYou can force inheritance with the `inherit` keyword:\n```css\np {\n  border: inherit; /* takes border from parent */\n}\n```\nOr use `initial` to reset to the default value, `unset` to behave as if not set."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "code",
+            "title": "Inheritance in Action",
+            "content": "The paragraph inherits the text colour from the body:",
+            "codeSnippet": "body {\n  color: darkblue;\n  font-family: Verdana, sans-serif;\n}\np {\n  /* colour is inherited, but margin is NOT inherited */\n  margin-top: 20px;\n}",
+            "codeLanguage": "css",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_6",
+            "type": "text",
+            "title": "The `!important` Exception ⚠️",
+            "content": "# Use Sparingly\n\nAdding `!important` to a declaration breaks the natural cascade and specificity rules:\n```css\np {\n  color: red !important;\n}\n```\nIt overrides any other declaration of the same property, regardless of specificity. Only use it as a last resort (e.g., utility classes or overriding inline styles). Overusing `!important` makes CSS unmanageable."
+        },
+        {
+            "id": "s_l6_7",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "true_false",
+                "question": "All CSS properties are inherited by child elements.",
+                "correctAnswer": false,
+                "explanation": "Only certain properties (mostly text‑related) are inherited. Box model properties like margin and padding are not.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Keep Specificity Low\n\nPrefer classes over IDs for styling. Avoid deep nesting in selectors. This keeps your CSS flexible and easier to override when needed."
+        }
+    ]
+}

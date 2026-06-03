@@ -1,0 +1,94 @@
+{
+    "id": "l6",
+    "chapterId": "ch_8",
+    "title": "Specificity Mastery & Best Practices 🏆",
+    "description": "Calculate specificity scores, understand !important, and write maintainable CSS that won't break.",
+    "xpReward": 25,
+    "estimatedMinutes": 6,
+    "section": "Core Concepts",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "The Specificity Scorecard 🔢",
+            "content": "# A Deeper Look\n\nSpecificity is calculated as a vector (a, b, c):\n- **a:** 1 if the declaration is inside a `style` attribute (inline). Otherwise 0.\n- **b:** number of ID selectors.\n- **c:** number of class selectors, attribute selectors, and pseudo‑classes.\n- **d:** number of type selectors and pseudo‑elements.\n\n`*` (universal) and combinators don't add specificity. `:not()` itself adds nothing, but the selector inside it does."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "text",
+            "title": "Examples of Specificity 📊",
+            "content": "# Break Down the Numbers\n\n- `p` → (0,0,0,1)\n- `.warning` → (0,0,1,0)\n- `#header` → (0,1,0,0)\n- `#header .nav a:hover` → (0,1,2,1)\n- `ul > li:first-child` → (0,0,1,2) (one class, two types)\n- `style=\"color: red\"` → (1,0,0,0)\n\nCompare left to right: a trumps b, b trumps c, c trumps d. If all equal, the last rule wins (source order)."
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What is the specificity of `div.card > img.thumbnail`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "(0,0,1,2)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "(0,0,2,2)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "(0,1,0,2)",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Two classes (.card, .thumbnail) → 2 class; two types (div, img) → 2 type. So (0,0,2,2).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "The `!important` Exception ⚡",
+            "content": "# Breaking the Cascade\n\n`!important` overrides all normal declarations, regardless of specificity. It creates a separate cascade layer.\n\n```css\np { color: red !important; }\n#main p { color: blue; } /* still red */\n```\nWhen multiple `!important` rules target the same property, specificity among them still applies. Avoid `!important` as much as possible; it makes debugging hell."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "text",
+            "title": "Best Practices for Maintainable Selectors 🧹",
+            "content": "# Keep Specificity Low & Flat\n\n- Prefer **class selectors** over IDs and deep nesting.\n- Avoid inline styles for general styling.\n- Use **BEM** or similar naming conventions to create unique class names, eliminating the need for high specificity.\n- Keep selectors as short as possible: `.card__title` instead of `div.card > h2.title`.\n- When you need to override, use a single class that's more specific (or same level but later in source), not `!important`.\n\nLow specificity makes your CSS scalable and easy to refactor."
+        },
+        {
+            "id": "s_l6_6",
+            "type": "code",
+            "title": "Bad vs Good Specificity",
+            "content": "Compare overqualified selectors with clean class‑based ones:",
+            "codeSnippet": "/* Overly specific, hard to override */\n#content div.article > p.intro { ... }\n\n/* Clean and reusable */\n.article__intro { ... }\n\n/* Override by adding another class later */\n.article__intro.special { color: darkred; }",
+            "codeLanguage": "css",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_7",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "true_false",
+                "question": "Using `!important` is a sign of well‑structured CSS.",
+                "correctAnswer": false,
+                "explanation": "It often indicates specificity wars. In well‑structured CSS, you rarely need `!important`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use DevTools to See Specificity\n\nIn browser DevTools, hover over a rule to see its specificity score (often shown as a tooltip). It helps debug why a style isn't applying."
+        }
+    ]
+}

@@ -1,0 +1,64 @@
+{
+    "id": "l5",
+    "chapterId": "ch_13",
+    "title": "Animation Performance & Best Practices ⚡",
+    "description": "Write high‑performance animations, respect user preferences, and debug with DevTools.",
+    "xpReward": 20,
+    "estimatedMinutes": 5,
+    "section": "Performance",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "The 60fps Goal 🎯",
+            "content": "# Smooth Animations Need Efficient Code\n\nBrowsers aim to render at 60 frames per second (fps). To achieve smooth animations, you must avoid triggering expensive layout recalculations (reflow) or repaints.\n\nThe cheapest properties to animate are `transform` and `opacity`. They only trigger compositing, which runs on the GPU. Avoid animating `width`, `left`, `margin`, `padding`, which cause layout thrashing."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Using `will-change` 🚀",
+            "content": "# Hint the Browser in Advance\n\n`will-change` tells the browser that an element is likely to be animated, so it can prepare optimisation layers:\n\n```css\n.slide-element {\n  will-change: transform;\n}\n```\nUse it sparingly and remove it after the animation ends (otherwise it keeps GPU memory allocated). Only apply right before the animation and remove when done."
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "true_false",
+                "question": "Animating `width` instead of `transform: scaleX()` is more performant.",
+                "correctAnswer": false,
+                "explanation": "`width` triggers layout recalculations; `transform` is compositor‑only and far more performant.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "The `prefers-reduced-motion` Media Query ♿",
+            "content": "# Respect User Accessibility Settings\n\nSome users disable animations in their OS. Honor that with:\n\n```css\n@media (prefers-reduced-motion: reduce) {\n  .animated {\n    animation: none;\n    transition: none;\n  }\n}\n```\nThis is a WCAG requirement for motion sensitivity. Always provide a reduced‑motion version."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Debugging with DevTools 🛠️",
+            "content": "# Visualise Animation Performance\n\nChrome DevTools:\n- **Animations tab** (Customize and control → More tools → Animations) lets you inspect, slow down, and scrub through animations.\n- **Performance panel** records frames to see which properties cause layout or paint.\n- **Rendering tab** (More tools → Rendering) can highlight paint rectangles and FPS meter.\n\nFirefox: Animation inspector and frame‑by‑frame scrubbing."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "code",
+            "title": "Reduced Motion Example",
+            "content": "Complete pattern:",
+            "codeSnippet": ".hero-slide {\n  animation: slideUp 0.8s ease;\n}\n@media (prefers-reduced-motion: reduce) {\n  .hero-slide {\n    animation: none;\n  }\n}",
+            "codeLanguage": "css",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use the Compositor\n\nKeep animations on the GPU: only change `transform` and `opacity`. Use `requestAnimationFrame()` in JS for more complex logic, but CSS animations are often enough."
+        }
+    ]
+}

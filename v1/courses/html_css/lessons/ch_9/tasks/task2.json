@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_9",
+    "title": "Box‑Sizing Bug Fix",
+    "description": "Diagnose and fix a broken layout caused by content‑box sizing, then apply the universal reset.",
+    "estimatedMinutes": 10,
+    "problemStatement": "A developer wrote CSS for a two‑column layout but the columns don't fit side by side. Explain why and fix it.\n\nHTML:\n```html\n<div class=\"row\">\n  <div class=\"col\">Column 1</div>\n  <div class=\"col\">Column 2</div>\n</div>\n```\n\nCSS (flawed):\n```css\n.row {\n  width: 600px;\n  background: #eee;\n}\n.col {\n  width: 50%;\n  padding: 10px;\n  border: 1px solid #999;\n  float: left;\n}\n```\n\n**Problems & Questions:**\n1. Why don't the two 50% columns fit inside the 600px row? (Explain using the box model).\n2. What is the total width of each column in `content-box`?\n3. Rewrite the CSS to make the columns fit exactly inside the row **without changing the visual spacing** (i.e., they still have 10px padding and 1px border). Use `box-sizing: border-box;` either globally or on the columns.\n4. Show the corrected CSS.\n\nAlso, include a comment block at the top that answers question 1 and 2.\n\nProvide the final CSS.",
+    "hints": [
+        "The total width per column = 50% of 600px = 300px content, plus padding and border → 300 + 20 + 2 = 322px each. Two columns = 644px > 600px, so they wrap.",
+        "By setting `box-sizing: border-box;`, the 50% width includes padding and border, so each column stays at 300px total."
+    ],
+    "expectedOutput": "Comments explaining the issue, then corrected CSS using border-box.",
+    "solutionCode": "/* 1. With content-box, each .col has content width 300px (50% of 600). \n   Plus 10px left/right padding (20px) and 1px left/right border (2px) = 322px total. \n   Two columns = 644px, which is wider than the 600px row, causing them to wrap.\n2. Total width per column = 322px. */\n\n/* Corrected CSS with border-box */\n*,\n*::before,\n*::after {\n  box-sizing: border-box;\n}\n\n.row {\n  width: 600px;\n  background: #eee;\n}\n\n.col {\n  width: 50%;\n  padding: 10px;\n  border: 1px solid #999;\n  float: left;\n}\n/* Now 50% includes padding and border, each column exactly 300px total, fitting perfectly. */"
+}
