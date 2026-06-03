@@ -1,0 +1,104 @@
+{
+    "id": "l5",
+    "chapterId": "ch_4",
+    "title": "Motion, Animation & Accessibility 🎞️",
+    "description": "Respect users' preferences for reduced motion and avoid triggering seizures.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Interaction",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "When Animation Hurts 🤢",
+            "content": "For some users, animations can cause:\n\n* **Motion sickness / vertigo** – from parallax, zooming, spinning.\n* **Seizures** – from flashing content (>3 flashes per second).\n* **Distraction** – ADHD users may lose focus.\n\nWCAG 2.3.1: No content that flashes more than 3 times per second, unless it's below the general flash and red flash thresholds."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Seizure Safety 🚨",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the maximum allowed flash rate per second to avoid violating WCAG?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "1 flash",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "3 flashes",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "5 flashes",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Content must not flash more than 3 times per second.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "The `prefers-reduced-motion` Media Query 🧘",
+            "content": "Many operating systems allow users to request reduced motion. Respect this with CSS.\n\n```css\n@media (prefers-reduced-motion: reduce) {\n  * {\n    animation-duration: 0.01ms !important;\n    transition-duration: 0.01ms !important;\n  }\n}\n```\n\nThis effectively disables all animations while keeping them technically present (so no layout breaks)."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Motion Query Quiz 🧘",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "When `prefers-reduced-motion: reduce` is active, what should you do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Do nothing; the browser handles it",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Remove or minimize non‑essential motion",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Add more animations",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Your CSS should override animations and transitions, or replace them with subtle opacity fades.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_5",
+            "type": "code",
+            "title": "Accessible Animation Pattern",
+            "content": "Use a custom property to control motion:",
+            "codeSnippet": ":root {\n  --animation-duration: 0.3s;\n}\n@media (prefers-reduced-motion: reduce) {\n  :root {\n    --animation-duration: 0s;\n  }\n}\n\n.fade-in {\n  animation: fadeIn var(--animation-duration) ease-in;\n}",
+            "codeLanguage": "css",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Best Practices for Motion ✅",
+            "content": "* **Avoid auto‑playing video or animations** that can't be paused.\n* Use **opacity and position** rather than size or rotation for hover effects.\n* Keep transitions **short** (under 200ms for interactions).\n* Provide a **pause/stop** button for any essential animation.\n\nWhen in doubt, test with the system setting enabled."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Animate with `transform` and `opacity`\nThese properties are hardware‑accelerated and cause less jank. Avoid animating `width`, `height`, `top`, `left`."
+        }
+    ]
+}

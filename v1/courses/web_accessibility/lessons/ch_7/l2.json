@@ -1,0 +1,149 @@
+{
+    "id": "l2",
+    "chapterId": "ch_7",
+    "title": "Validation & Error Handling 🛑",
+    "description": "Design graceful, inclusive error messages with aria-invalid, aria-describedby, and live regions.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Core Concepts",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Why Errors Are an Accessibility Problem 🚨",
+            "content": "When a user submits a form with errors, they must be:\n\n* **Informed** that errors occurred.\n* **Told** which fields have errors and how to fix them.\n* **Navigated** to the first error (often via focus).\n\nWithout this, a screen reader user may hear nothing after submission and think the form succeeded. Sighted users might not notice errors if they're only shown as colour changes."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Error Awareness ❗",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the worst way to indicate a form validation error?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Red border only",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Red border + text message",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Error summary at top + inline messages",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Colour alone is not perceivable by all users. Text is needed.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Accessible Error Pattern 🛠️",
+            "content": "1. **On submission** – prevent default, validate.\n2. If errors, set `aria-invalid=\"true\"` on each invalid input.\n3. Generate error message for each field and link it via `aria-describedby`.\n4. Move focus to the first invalid field (or to an error summary).\n5. Announce a summary message with `role=\"alert\"`.\n\nThis ensures screen readers immediately understand what went wrong."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Inline Error Example",
+            "content": "",
+            "codeSnippet": "<label for=\"email\">Email</label>\n<input type=\"email\" id=\"email\" aria-describedby=\"email-error\" aria-invalid=\"true\">\n<span id=\"email-error\" role=\"alert\">Please enter a valid email address.</span>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_5",
+            "type": "quiz",
+            "title": "Error Linking 📎",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "How do you connect an error message to its input field for screen readers?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Place the error below the input visually",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Use aria-describedby pointing to the error element's id",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Use the title attribute",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`aria-describedby` creates a programmatic link between the input and the error text.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Error Summary at the Top 🗂️",
+            "content": "For long forms, an error summary at the top is helpful:\n\n* A `<div role=\"alert\">` containing a heading \"There were errors\" and a list of linked errors.\n* Each error link focuses the corresponding input when clicked.\n* The summary should be focused on form submission failure.\n\nThis pattern is used by gov.uk forms – highly accessible."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "code",
+            "title": "Error Summary Snippet",
+            "content": "",
+            "codeSnippet": "<div id=\"error-summary\" role=\"alert\" tabindex=\"-1\">\n  <h2>There is a problem</h2>\n  <ul>\n    <li><a href=\"#email-field\">Enter your email address</a></li>\n  </ul>\n</div>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_8",
+            "type": "quiz",
+            "title": "Summary Strategy 📋",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_3",
+                "type": "multiple_choice",
+                "question": "Why set `tabindex=\"-1\"` on an error summary container?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To hide it from keyboard users",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To allow programmatic focus via JavaScript after form submission",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's required by WCAG",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It makes the non‑interactive container focusable so you can move focus to it, ensuring the error is announced.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_9",
+            "type": "text",
+            "title": "Client‑side vs. Server‑side Validation 🔄",
+            "content": "Always validate on the server, but also use client‑side for immediate feedback.\n\n* Client‑side: use JavaScript `checkValidity()` or custom logic. Announce errors via live regions.\n* Server‑side: reload the page with error summary at top, and set focus to it.\n\nEnsure the same accessible error patterns are used in both cases."
+        },
+        {
+            "id": "s_l2_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Don't announce errors while typing\nAvoid `aria-live='assertive'` on every keystroke – it's distracting. Announce on blur or on submission."
+        }
+    ]
+}

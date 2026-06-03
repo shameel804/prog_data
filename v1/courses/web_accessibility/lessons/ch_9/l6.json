@@ -1,0 +1,140 @@
+{
+    "id": "l6",
+    "chapterId": "ch_9",
+    "title": "Shifting Left: Accessibility in CI/CD 🚀",
+    "description": "Integrate accessibility checks into your development pipeline and culture to catch issues early.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Shift Left: Catch Bugs Before Production 🐛",
+            "content": "\"Shift left\" means moving testing earlier in the development lifecycle.\n\n- Instead of an audit right before launch, integrate tests during coding.\n- Tools can run on every pull request, blocking merges if new accessibility issues are found.\n\nThis reduces the cost and effort of fixing accessibility problems – a bug found in design is 10x cheaper than in production."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "quiz",
+            "title": "Shift Left Concept 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What does 'shift left' mean in accessibility?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Moving all testing to the user",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Testing earlier in the development cycle",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Using only automated tools",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Testing early and often, integrated into the developer workflow.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_3",
+            "type": "text",
+            "title": "Tools for CI/CD Integration ⚙️",
+            "content": "Add accessibility checks to your pipeline:\n\n- **axe‑core** + Playwright/Cypress: write automated tests that assert no accessibility violations on key pages.\n- **Lighthouse CI**: set a minimum accessibility score (e.g., 90); fail the build if it drops.\n- **pa11y‑ci**: run pa11y on deployed environments, generate reports.\n- **GitHub Actions** / **GitLab CI**: run these on every PR.\n\nStart with a low‑bar baseline (e.g., no critical/serious issues) and tighten over time."
+        },
+        {
+            "id": "s_l6_4",
+            "type": "code",
+            "title": "axe‑core with Playwright Example",
+            "content": "",
+            "codeSnippet": "const { chromium } = require('playwright');\nconst AxeBuilder = require('@axe-core/playwright');\n(async () => {\n  const browser = await chromium.launch();\n  const page = await browser.newPage();\n  await page.goto('https://example.com');\n  const results = await new AxeBuilder({ page }).analyze();\n  if (results.violations.length > 0) {\n    console.error(JSON.stringify(results.violations, null, 2));\n    process.exit(1); // Fail the build\n  }\n  await browser.close();\n})();",
+            "codeLanguage": "javascript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_5",
+            "type": "quiz",
+            "title": "CI Testing Knowledge ⚙️",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "multiple_choice",
+                "question": "What is the main advantage of failing a build when axe finds a new accessibility violation?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It makes the build faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It prevents new accessibility bugs from reaching production",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It satisfies WCAG automatically",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Blocking merges on violations ensures the codebase doesn't regress.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_6",
+            "type": "text",
+            "title": "Testing in Design & Storybook 🎨",
+            "content": "Even before code, accessibility can be tested:\n\n- **Figma plugins**: Stark, Contrast, Focus Order.\n- **Storybook a11y addon**: runs axe on each component story in isolation.\n- **Linting**: eslint‑plugin‑jsx‑a11y warns about missing alt, label‑for, etc.\n\nShift left to the design phase – accessible design reduces rework."
+        },
+        {
+            "id": "s_l6_7",
+            "type": "text",
+            "title": "Building an Accessibility Culture 🧑‍🤝‍🧑",
+            "content": "Tools alone aren't enough. Foster a culture:\n\n- Train the whole team on accessibility basics.\n- Include accessibility in the definition of done.\n- Celebrate accessibility wins.\n- Appoint an accessibility champion.\n\nAccessibility is everyone's responsibility, not just a specialist's."
+        },
+        {
+            "id": "s_l6_8",
+            "type": "quiz",
+            "title": "Culture Check 🧑‍🤝‍🧑",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_3",
+                "type": "multiple_choice",
+                "question": "Who is responsible for accessibility in a team?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Only the accessibility specialist",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Everyone: designers, developers, testers, product owners",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The QA team",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Accessibility must be a shared team responsibility to be effective.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Start small\nAdd one automated check to your CI today. Then add another next sprint. Progress over perfection."
+        }
+    ]
+}

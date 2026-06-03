@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_11",
+    "title": "Build an Accessible Modal in React",
+    "description": "Create a reusable React modal component with focus trapping and proper ARIA.",
+    "estimatedMinutes": 25,
+    "problemStatement": "## Accessible React Modal\n\nBuild a Modal component in React that:\n\n1. Uses a `<dialog>` element (with `ref`) and calls `showModal()` / `close()`.\n2. Has an accessible name via `aria-labelledby` pointing to a heading element passed as a prop or children.\n3. Traps focus (native `<dialog>` with `showModal` does this automatically, but ensure you add `aria-modal='true'` for older browsers).\n4. Closes on Escape key (native behaviour).\n5. Returns focus to the trigger element on close.\n6. Renders its children inside the dialog.\n7. Expose a `triggerRef` prop or use a pattern where the parent can store the trigger ref and call `open()`.\n\nThe component should be controlled by a parent state (show/hide). Example usage:\n```jsx\nconst [open, setOpen] = useState(false);\nconst triggerRef = useRef(null);\n<button ref={triggerRef} onClick={() => setOpen(true)}>Open</button>\n<Modal open={open} onClose={() => setOpen(false)} triggerRef={triggerRef} ariaLabelledby='modal-title'>\n  <h2 id='modal-title'>Confirm</h2>\n  <p>Are you sure?</p>\n  <button onClick={() => setOpen(false)}>Cancel</button>\n</Modal>\n```\n\nImplement the Modal component using a `<dialog>` ref and `useEffect` to handle open/close and focus return. Provide the complete component code.",
+    "hints": [
+        "Use `dialogRef.current?.showModal()` when `open` becomes true.",
+        "Use `dialogRef.current?.close()` when `open` becomes false.",
+        "On close event (listen to 'close' event or the onClose callback), focus the triggerRef."
+    ],
+    "expectedOutput": "A working React Modal component (functional component with hooks).",
+    "solutionCode": "import { useRef, useEffect } from 'react';\n\nexport default function Modal({ open, onClose, triggerRef, ariaLabelledby, children }) {\n  const dialogRef = useRef(null);\n\n  useEffect(() => {\n    const dialog = dialogRef.current;\n    if (open) {\n      dialog.showModal();\n      // Focus the first focusable element automatically? dialog handles it, but we can also set initial focus.\n    } else {\n      dialog.close();\n    }\n  }, [open]);\n\n  useEffect(() => {\n    const dialog = dialogRef.current;\n    const handleClose = () => {\n      onClose?.();\n      triggerRef?.current?.focus();\n    };\n    dialog.addEventListener('close', handleClose);\n    return () => dialog.removeEventListener('close', handleClose);\n  }, [onClose, triggerRef]);\n\n  return (\n    <dialog ref={dialogRef} aria-labelledby={ariaLabelledby} aria-modal=\"true\">\n      {children}\n    </dialog>\n  );\n}"
+}

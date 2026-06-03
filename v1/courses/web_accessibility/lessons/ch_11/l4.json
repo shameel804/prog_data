@@ -1,0 +1,146 @@
+{
+    "id": "l4",
+    "chapterId": "ch_11",
+    "title": "Accessible Components in Vue 💚",
+    "description": "Leverage directives, slots, and composables to create inclusive Vue components that scale.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Vue",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Vue's Accessibility Philosophy 💚",
+            "content": "Vue templates are HTML‑centric, which encourages good semantics. However, Vue also provides powerful directives and composition APIs to manage focus, IDs, and dynamic content.\n\nKey Vue tools for a11y:\n- `v‑bind` for ARIA attributes.\n- `ref` and `nextTick()` for focus management.\n- `v‑model` and custom form components.\n- `Transition` with focus handling.\n\nVue's slot system is excellent for building accessible composite components (e.g., a modal with a named slot for the title)."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Vue A11y Basics 🟢",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "How do you pass ARIA attributes dynamically in Vue?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Only as strings",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Use `v‑bind` or `:` prefix (e.g., `:aria-label` 'dynamicLabel')",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Vue doesn't support ARIA",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Vue binds ARIA attributes just like any other attribute using `v‑bind`.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Focus Management with `ref` & `nextTick` 🎯",
+            "content": "Vue's reactivity means the DOM may not be updated instantly. To focus an element after a state change, use `nextTick()`:\n\n```javascript\nconst inputRef = ref(null);\nconst open = ref(false);\nfunction openModal() {\n  open.value = true;\n  await nextTick();\n  inputRef.value?.focus();\n}\n```\n\nThis ensures the DOM is ready before we try to focus."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Vue Focus Example",
+            "content": "",
+            "codeSnippet": "<script setup>\nimport { ref, nextTick } from 'vue';\nconst heading = ref(null);\nonMounted(async () => {\n  await nextTick();\n  heading.value?.focus();\n});\n</script>\n<template>\n  <h1 ref=\"heading\" tabindex=\"-1\">Welcome</h1>\n</template>",
+            "codeLanguage": "vue",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Focus after render ⏳",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Why do we need `nextTick` before focusing an element in Vue after a state change?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To improve performance",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To ensure the DOM has been updated before we try to set focus",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's a Vue convention with no real effect",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`nextTick` waits for the next DOM update cycle, guaranteeing the element exists.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Accessible Form Components with `v‑model` ✍️",
+            "content": "Custom form controls (checkboxes, selects) can use `v‑model` to be accessible. Ensure:\n\n- The component emits `update:modelValue`.\n- It uses appropriate `role` and `aria‑checked`/`aria‑selected` if not using native inputs.\n- Labels are associated via `id` (generated with `useId` or a simple counter).\n\nVue's `defineModel` (Vue 3.4+) simplifies this."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Vue Transition & Focus 🎬",
+            "content": "Vue's `<Transition>` component can cause focus loss if not careful. When using transitions:\n\n- If you animate leave, ensure that the element is not focused during the animation.\n- On enter, set focus after the transition completes using `@after‑enter` event.\n- Avoid animating `display`; use `opacity` and `visibility`.\n\nExample:\n```html\n<Transition @after‑enter=\"onEnter\">\n  <div v‑if=\"show\">...</div>\n</Transition>\n```"
+        },
+        {
+            "id": "s_l4_8",
+            "type": "quiz",
+            "title": "Transition & Focus 🎞️",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_3",
+                "type": "multiple_choice",
+                "question": "Where should you place focus after a modal opens with a Vue transition?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Before the transition starts",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "After the enter transition completes (`@after‑enter`)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Don't manage focus",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Focusing before the element is fully visible can break; use the transition hook.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_9",
+            "type": "text",
+            "title": "Vue A11y Libraries 📚",
+            "content": "- **Vuetify** – Material Design library with a11y (check compliance).\n- **Headless UI** (by Tailwind Labs) – unstyled, accessible Vue components.\n- **Vue‑a11y** – utilities for focus trap, live regions.\n- **Radix Vue** (community) – accessible primitives.\n\nAlways audit third‑party components; many require additional ARIA tweaks."
+        },
+        {
+            "id": "s_l4_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use Vue's `v‑slot` for accessible names\nPass the dialog title as a named slot and then bind `aria‑labelledby` to the slot's element ID."
+        }
+    ]
+}

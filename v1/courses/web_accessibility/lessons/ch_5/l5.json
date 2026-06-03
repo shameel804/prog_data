@@ -1,0 +1,104 @@
+{
+    "id": "l5",
+    "chapterId": "ch_5",
+    "title": "Accessible Modals & Dialogs 🔔",
+    "description": "Craft a modal dialog with focus trapping, labelledby, and proper semantics.",
+    "xpReward": 35,
+    "estimatedMinutes": 10,
+    "section": "Practice",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "The Dialog Role 🪟",
+            "content": "A modal dialog is a window that overlays the page and demands user interaction.\n\n* `role=\"dialog\"` or the `<dialog>` element (preferred, with JavaScript).\n* `aria-modal=\"true\"` indicates that content behind is inert.\n* Must have an accessible name (`aria-labelledby` pointing to the title).\n* Must trap focus: pressing Tab at the last element wraps to the first; Shift+Tab at the first wraps to the last.\n* When closed, focus must return to the trigger element."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "code",
+            "title": "Dialog Structure with Native <dialog>",
+            "content": "",
+            "codeSnippet": "<dialog aria-labelledby=\"dialog-title\" aria-modal=\"true\">\n  <h2 id=\"dialog-title\">Confirm Delete</h2>\n  <p>Are you sure you want to delete this item?</p>\n  <button>Cancel</button>\n  <button>Delete</button>\n</dialog>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Dialog Basics 📋",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What does `aria-modal=\"true\"` on a dialog achieve?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It makes the dialog visually modal",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It tells assistive tech that content outside the dialog should be ignored",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It traps keyboard focus automatically",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It signals to screen readers that only the dialog content is available; you still must manage focus trapping with JavaScript.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Focus Trapping 🔒",
+            "content": "While the dialog is open:\n\n* All focusable elements outside the dialog must be unfocusable (set `tabindex=\"-1\"` or use `inert` attribute).\n* A focus trap script listens for Tab/Shift+Tab and loops within the dialog's focusable elements.\n\nModern browsers support the `inert` attribute; you can apply `inert` to the main content behind the dialog."
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Focus Trap Quiz 🎯",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What should happen when a modal closes?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Focus goes to the next focusable element on the page",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Focus returns to the element that triggered the dialog",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Focus is lost",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Restoring focus to the trigger preserves context and continuity for keyboard and screen reader users.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "The `<dialog>` Element ✨",
+            "content": "HTML `<dialog>` has built‑in methods:\n\n* `dialog.showModal()` opens it modally, adds backdrop, and traps focus natively (in modern browsers).\n* Still need `aria-labelledby` for the accessible name.\n* Use `<form method=\"dialog\">` inside to close with Enter.\n\nPrefer `<dialog>` over div‑based approaches – less JavaScript, better semantics."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Escape Key Handling\nDialogs must close on Escape. The native `<dialog>` does this automatically. For custom dialogs, listen for `keydown` on Escape."
+        }
+    ]
+}

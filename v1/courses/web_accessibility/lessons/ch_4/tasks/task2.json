@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_4",
+    "title": "Create an Accessible Animation Toggle",
+    "description": "Build a button that switches between full motion and reduced motion, persisting preference.",
+    "estimatedMinutes": 15,
+    "problemStatement": "## Motion Preference Toggle\n\nCreate a small interactive demo with a button and a bouncing box animation. The page should:\n\n1. Respect the user's OS‑level `prefers-reduced-motion` setting by default.\n2. Show a toggle button labelled \"Reduce motion\" / \"Enable motion\" that overrides the OS preference for this session.\n3. Use CSS custom properties to control animation duration.\n4. Use `localStorage` to persist the user's choice.\n\nBuild the HTML, CSS, and JavaScript. The animation itself can be a simple CSS keyframe that bounces a square up and down.",
+    "hints": [
+        "Use `window.matchMedia('(prefers-reduced-motion: reduce)')` to detect OS preference initially.",
+        "Toggle a class on the body to switch between motion states.",
+        "Use `localStorage.setItem('motion', 'on'|'off')`."
+    ],
+    "expectedOutput": "A working webpage where the toggle button immediately stops or starts the animation and remembers the choice on reload.",
+    "solutionCode": "<!-- HTML -->\n<button id=\"toggle-motion\">Reduce motion</button>\n<div class=\"box\"></div>\n\n/* CSS */\n:root {\n  --duration: 2s;\n}\n@media (prefers-reduced-motion: reduce) {\n  :root {\n    --duration: 0s;\n  }\n}\n.reduced-motion {\n  --duration: 0s !important;\n}\n.box {\n  width: 50px;\n  height: 50px;\n  background: rebeccapurple;\n  animation: bounce var(--duration) infinite alternate;\n}\n@keyframes bounce {\n  from { transform: translateY(0); }\n  to { transform: translateY(100px); }\n}\n\n// JS\nconst btn = document.getElementById('toggle-motion');\nconst prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');\nlet motionPref = localStorage.getItem('motion') || (prefersReduced.matches ? 'off' : 'on');\n\nfunction applyMotion() {\n  if (motionPref === 'off') {\n    document.body.classList.add('reduced-motion');\n    btn.textContent = 'Enable motion';\n  } else {\n    document.body.classList.remove('reduced-motion');\n    btn.textContent = 'Reduce motion';\n  }\n}\napplyMotion();\n\nbtn.addEventListener('click', () => {\n  motionPref = motionPref === 'on' ? 'off' : 'on';\n  localStorage.setItem('motion', motionPref);\n  applyMotion();\n});"
+}

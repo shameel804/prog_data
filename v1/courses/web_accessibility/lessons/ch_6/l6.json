@@ -1,0 +1,110 @@
+{
+    "id": "l6",
+    "chapterId": "ch_6",
+    "title": "Keyboard Shortcuts & Advanced Patterns ⚡",
+    "description": "Create custom keyboard shortcuts, handle complex key events, and avoid conflicts with assistive tech.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Custom Keyboard Shortcuts 🎹",
+            "content": "Web apps often need custom keyboard shortcuts (e.g., Ctrl+S to save, ? to show help).\n\n- Use the `keydown` event (not `keypress`, deprecated).\n- Check `event.key` for the key (e.g., 's') and `event.ctrlKey` or `event.metaKey` for modifiers.\n- Always call `event.preventDefault()` to stop the browser's native action (like opening the save dialog).\n\nBe cautious: shortcuts may conflict with screen reader commands. Provide a way to customize or disable them."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "code",
+            "title": "Simple Shortcut Handler",
+            "content": "",
+            "codeSnippet": "document.addEventListener('keydown', (e) => {\n  // Ctrl/Cmd + S\n  if ((e.ctrlKey || e.metaKey) && e.key === 's') {\n    e.preventDefault();\n    saveDocument();\n  }\n});",
+            "codeLanguage": "javascript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_3",
+            "type": "quiz",
+            "title": "Shortcut Safety ⚠️",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "Why should you be careful with single‑key shortcuts (like 'H' for help)?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They slow down the browser",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They may conflict with screen reader navigation shortcuts",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They don't work on Mac",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Screen readers heavily use single‑key navigation (e.g., H for heading). Your shortcut could break their experience.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Designing Accessible Shortcuts 🧩",
+            "content": "Best practices:\n\n- Use modifier keys (Ctrl, Alt, Shift) to reduce conflicts.\n- Implement shortcuts only when focus is within your app (not globally unless necessary).\n- Document shortcuts in an accessible help menu.\n- Allow users to reassign or disable shortcuts.\n\nGmail does this well: '?' opens a keyboard shortcuts dialog, and shortcuts are context‑dependent."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "text",
+            "title": "Advanced: Command Palettes & Focus 🗂️",
+            "content": "Modern apps often have a command palette (Ctrl+K). When it opens:\n\n- Move focus to the search input.\n- Use `aria-activedescendant` to manage selection in the results list (so focus stays on the input while arrow keys highlight results).\n- On selection, close palette and move focus to the target element.\n\nThis is a sophisticated focus management pattern that combines many of the skills from this chapter."
+        },
+        {
+            "id": "s_l6_6",
+            "type": "quiz",
+            "title": "Pattern Recognition 🔍",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "multiple_choice",
+                "question": "What does `aria-activedescendant` allow you to do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Focus multiple elements at once",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Keep focus on a container while indicating which child is active",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Move focus automatically",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It points to the ID of the active descendant, allowing the container to remain focused while the 'active' item is visually indicated.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_7",
+            "type": "text",
+            "title": "Recap: The Keyboard Accessibility Checklist ✅",
+            "content": "1. All interactive elements reachable via Tab.\n2. Logical focus order matching visual layout.\n3. Visible focus indicator at all times.\n4. No keyboard traps (except controlled modals).\n5. Skip navigation links for long pages.\n6. Custom widgets follow standard keyboard patterns (ARIA Authoring Practices).\n7. Keyboard shortcuts don't conflict with assistive tech.\n\nMaster these, and your site is truly keyboard‑accessible."
+        },
+        {
+            "id": "s_l6_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Test with your mouse unplugged\nLiterally remove your mouse for an hour. Use only the keyboard to navigate your web app. You'll find every flaw quickly."
+        }
+    ]
+}

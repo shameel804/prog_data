@@ -1,0 +1,149 @@
+{
+    "id": "l6",
+    "chapterId": "ch_5",
+    "title": "Live Regions & Dynamic Content Updates 🔄",
+    "description": "Use aria-live to politely or assertively announce content changes to screen reader users.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "The Problem: Silent Updates 🤫",
+            "content": "When content changes dynamically (new chat message, form validation error, search results updating), sighted users see it – but screen readers may not announce it.\n\n**ARIA live regions** make these updates audible."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "multiple_choice",
+                "question": "What happens by default when you insert text into a page via JavaScript?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Screen readers immediately read it",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Screen readers may not announce it unless it's a live region",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The browser restarts",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Without `aria-live`, updates can be missed.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_3",
+            "type": "text",
+            "title": "The `aria-live` Attribute 🔊",
+            "content": "Add `aria-live` to a container; its changes will be announced.\n\n* **`off`** (default) – no announcement.\n* **`polite`** – announces when the user is idle (waits for current speech to finish).\n* **`assertive`** – interrupts current speech (use sparingly).\n\nUse `aria-atomic` to control whether the entire region or just the changed part is read.\n\n`aria-relevant` defines what changes trigger announcement: `additions`, `removals`, `text`."
+        },
+        {
+            "id": "s_l6_4",
+            "type": "code",
+            "title": "Polite Live Region Example",
+            "content": "",
+            "codeSnippet": "<div aria-live=\"polite\" aria-atomic=\"true\">\n  <!-- Dynamic content inserted here will be announced -->\n</div>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_5",
+            "type": "quiz",
+            "title": "Live Region Settings 🎛️",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "multiple_choice",
+                "question": "Which `aria-live` value should you use for a critical error message that needs immediate attention?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "polite",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "assertive",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "off",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`assertive` interrupts and announces immediately, suitable for urgent alerts.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_6",
+            "type": "text",
+            "title": "Live Region Roles 🏥",
+            "content": "Certain roles have implicit live region properties:\n\n* `role=\"alert\"` – assertive live region for important messages.\n* `role=\"status\"` – polite live region for status updates.\n* `role=\"log\"` – polite, and additions are read (like a chat log).\n* `role=\"marquee\"` – (avoid it).\n\nUse these instead of bare `<div aria-live>` when the semantics match."
+        },
+        {
+            "id": "s_l6_7",
+            "type": "code",
+            "title": "Alert Role for Errors",
+            "content": "",
+            "codeSnippet": "<div role=\"alert\">Your session will expire in 5 minutes.</div>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l6_8",
+            "type": "quiz",
+            "title": "Role Recall 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_3",
+                "type": "multiple_choice",
+                "question": "Which role automatically acts as a polite live region?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "alert",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "status",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "dialog",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`role=\"status\"` implies `aria-live=\"polite\"` and `aria-atomic=\"true\"` by default.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_9",
+            "type": "text",
+            "title": "Live Region Pitfalls ⚠️",
+            "content": "* **Don't overuse assertive** – interrupts are jarring.\n* **Always insert the live region in the DOM on page load** – dynamically adding a live region may not work.\n* **Don't hide live region from screen readers** (no `aria-hidden`).\n* **Test with real screen readers** – behaviour varies."
+        },
+        {
+            "id": "s_l6_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## To re‑announce the same text\nSome screen readers ignore repeated identical text. Clear the region first (`innerHTML = ''`), then insert the new text after a brief delay."
+        }
+    ]
+}

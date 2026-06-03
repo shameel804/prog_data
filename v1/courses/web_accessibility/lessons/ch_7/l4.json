@@ -1,0 +1,140 @@
+{
+    "id": "l4",
+    "chapterId": "ch_7",
+    "title": "Custom Comboboxes & Autocomplete 🔍",
+    "description": "Build a fully accessible combobox with listbox, option filtering, and keyboard support.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Custom Widgets",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "What Is a Combobox? 🧩",
+            "content": "A combobox combines an input field with a dropdown list of suggestions (autocomplete).\n\nNative `<datalist>` offers basic functionality, but for styled/rich suggestions, you need a custom widget.\n\nKey ARIA roles:\n* `role=\"combobox\"` on the input.\n* `role=\"listbox\"` on the suggestion container.\n* `role=\"option\"` for each suggestion.\n\nKeyboard support must be carefully crafted."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Combobox Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which role should an autocomplete input have?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "textbox",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "combobox",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "search",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`combobox` indicates that the input controls a list of suggestions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Building the Listbox 🧱",
+            "content": "When the user types, filter options and display them in a `<ul role=\"listbox\">`:\n\n* Each `<li role=\"option\">` must have an `id` and be focusable? No – keep focus on the input and use `aria-activedescendant`.\n* The combobox references the active option via `aria-activedescendant` pointing to the option's `id`.\n* Arrow keys move the `aria-activedescendant`; Enter selects the option and fills the input.\n\nThis pattern keeps the user's typing uninterrupted."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Combobox Structure",
+            "content": "",
+            "codeSnippet": "<label for=\"country\">Country</label>\n<input type=\"text\" id=\"country\" role=\"combobox\" aria-expanded=\"false\" aria-owns=\"listbox\" aria-activedescendant=\"\">\n<ul id=\"listbox\" role=\"listbox\" hidden>\n  <li role=\"option\" id=\"opt-1\">Canada</li>\n  <li role=\"option\" id=\"opt-2\">France</li>\n</ul>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Active Descendant 🎯",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Why is `aria-activedescendant` used instead of moving focus to list items?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's more performant",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "So the user can continue typing in the input while navigating options",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's the only way to make options visible",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Focus stays on the input; `aria-activedescendant` points to the visually highlighted option.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Keyboard Behaviour for Combobox ⌨️",
+            "content": "* **Down Arrow**: open listbox (if closed) and highlight first option.\n* **Up/Down Arrow**: move highlight among options, update `aria-activedescendant`.\n* **Enter**: select the highlighted option, fill the input, close listbox.\n* **Escape**: close listbox without changing selection.\n* **Tab**: close listbox and move to next field.\n\nAdditionally, `aria-expanded` must toggle between true/false as the listbox shows/hides."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "quiz",
+            "title": "Keyboard Combobox ⌨️",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_3",
+                "type": "multiple_choice",
+                "question": "What should pressing the Down Arrow do when the combobox list is closed?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Submit the form",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Open the listbox and highlight the first option",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Clear the input",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Per ARIA practices, Down Arrow opens the list and highlights the first suggestion.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_8",
+            "type": "text",
+            "title": "Filtering & Announcements 🗣️",
+            "content": "As options filter, announce the number of results using a live region:\n\n```html\n<div aria-live=\"polite\" class=\"sr-only\">\n  5 suggestions available.\n</div>\n```\n\nUpdate this region whenever the list changes. This keeps screen reader users informed without interrupting."
+        },
+        {
+            "id": "s_l4_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Prefer `<datalist>` if styling is not critical\nNative datalist provides combobox behaviour with no JavaScript. It's not perfect, but it's simple and accessible."
+        }
+    ]
+}

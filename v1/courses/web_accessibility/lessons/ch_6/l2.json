@@ -1,0 +1,143 @@
+{
+    "id": "l2",
+    "chapterId": "ch_6",
+    "title": "Focus Visibility: Never Get Lost 🔍",
+    "description": "Beyond CSS outlines: programmatic focus management, focus-visible vs focus, and styling focus for all users.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Core Concepts",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Why Focus Visibility Matters 👁️",
+            "content": "WCAG 2.4.7 (Focus Visible) requires a visible indication of focus for all keyboard‑operable UIs. Without it, keyboard users are lost.\n\n- The default browser focus ring is often removed by developers (bad!).\n- You can design a beautiful, custom focus ring that meets contrast requirements.\n- Focus must be visible on **all** interactive elements, even custom ones.\n\nThe focus indicator is the 'cursor' for the keyboard – you wouldn't hide the mouse cursor, would you?"
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Visibility Check 👓",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What is the minimum contrast ratio required for a focus indicator?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "No requirement",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "3:1 against adjacent colors",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "4.5:1",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "WCAG 2.4.11 (Focus Appearance) recommends at least 3:1 contrast for the focus indicator.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "`:focus` vs `:focus-visible` – Best Practice 🎨",
+            "content": "`button:focus` applies focus styles even when you click a button with a mouse – which can look ugly. `:focus-visible` is smarter:\n\n- It applies focus styles **only** when the browser thinks the user is navigating via keyboard (or other non‑pointer input).\n- For form fields, always use `:focus` because they always need a visible cue.\n\nModern approach:\n```css\n/* Remove default focus only for mouse clicks */\n:focus:not(:focus-visible) { outline: none; }\n\n/* Add a strong custom focus ring for keyboard */\n:focus-visible { outline: 3px solid #000; outline-offset: 2px; }\n```"
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Accessible Focus CSS",
+            "content": "",
+            "codeSnippet": "/* Global focus styles */\n*:focus {\n  outline: none; /* reset default */\n}\n*:focus-visible {\n  outline: 3px solid #005A9C;\n  outline-offset: 2px;\n  border-radius: 2px;\n}",
+            "codeLanguage": "css",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_5",
+            "type": "quiz",
+            "title": "Pseudo‑class Puzzle 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Which pseudo-class should you use for a custom focus ring that appears only when navigating with the keyboard?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": ":focus",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": ":focus-visible",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": ":active",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`:focus-visible` heuristically applies when the user is likely using a keyboard.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Programmatic Focus Management 📍",
+            "content": "Sometimes you need to move focus via JavaScript:\n\n- `element.focus()` – focuses an element (can be used on any focusable element, including those with tabindex=\"-1\").\n- `element.blur()` – removes focus.\n- `document.activeElement` – returns the currently focused element.\n\nUse cases: opening a modal (move focus inside), closing a modal (return focus), after deleting an item (move focus to next logical item)."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "code",
+            "title": "Focus After Deletion",
+            "content": "",
+            "codeSnippet": "// When deleting a list item, move focus to the next item or previous\nfunction deleteItem(item) {\n  const next = item.nextElementSibling || item.previousElementSibling;\n  item.remove();\n  if (next) next.focus();\n}",
+            "codeLanguage": "javascript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_8",
+            "type": "quiz",
+            "title": "Focus Management 📌",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_3",
+                "type": "multiple_choice",
+                "question": "What will `document.activeElement` return if no element is focused?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "null",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The <body> element",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "undefined",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "If nothing is focused, the active element defaults to the document body.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Always test with a screen reader\nWhat looks visible may not be announced. Use VoiceOver or NVDA to verify focus changes are communicated."
+        }
+    ]
+}

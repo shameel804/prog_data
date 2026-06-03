@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_6",
+    "title": "Build a Roving Tabindex Navigation Menu",
+    "description": "Create a dropdown menu that uses roving tabindex and arrow key navigation.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Roving Tabindex Menu\n\nCreate a simple vertical menu with three menu items (File, Edit, View) using `role=\"menu\"` and `role=\"menuitem\"`. The menu should:\n\n1. Initially, only the first item has `tabindex=\"0\"`, others have `tabindex=\"-1\"`.\n2. When user focuses any item (via mouse or keyboard), ensure only that item gets `tabindex=\"0\"` (and others `-1`).\n3. Arrow Down moves focus to the next item (wrapping from last to first).\n4. Arrow Up moves focus to the previous item (wrapping).\n5. Enter or Space on a menu item triggers an alert showing the item name (simulating selection).\n\nProvide the HTML, CSS (basic), and JavaScript. Use a single event listener on the menu container (event delegation) to handle keydown.\n\nStart with this markup:\n\n```html\n<ul role=\"menu\">\n  <li role=\"menuitem\" tabindex=\"0\">File</li>\n  <li role=\"menuitem\" tabindex=\"-1\">Edit</li>\n  <li role=\"menuitem\" tabindex=\"-1\">View</li>\n</ul>\n```",
+    "hints": [
+        "Use `Array.from(menu.children)` to get items.",
+        "On arrow key, find current index, increment/decrement, and focus the next element (also update tabindex).",
+        "Add a `focus` event listener on the menu (delegated) to update tabindex when any item gets focus."
+    ],
+    "expectedOutput": "A working menu with proper roving tabindex and keyboard navigation.",
+    "solutionCode": "<ul role=\"menu\" id=\"menu\">\n  <li role=\"menuitem\" tabindex=\"0\">File</li>\n  <li role=\"menuitem\" tabindex=\"-1\">Edit</li>\n  <li role=\"menuitem\" tabindex=\"-1\">View</li>\n</ul>\n\n<script>\n  const menu = document.getElementById('menu');\n  const items = Array.from(menu.querySelectorAll('[role=\"menuitem\"]'));\n\n  function setActive(index) {\n    items.forEach((item, i) => {\n      item.tabIndex = i === index ? 0 : -1;\n    });\n  }\n\n  menu.addEventListener('keydown', (e) => {\n    const current = document.activeElement;\n    const currentIndex = items.indexOf(current);\n    let newIndex = currentIndex;\n    if (e.key === 'ArrowDown') {\n      e.preventDefault();\n      newIndex = (currentIndex + 1) % items.length;\n    } else if (e.key === 'ArrowUp') {\n      e.preventDefault();\n      newIndex = (currentIndex - 1 + items.length) % items.length;\n    } else if (e.key === 'Enter' || e.key === ' ') {\n      e.preventDefault();\n      alert('Selected: ' + current.textContent);\n      return;\n    } else {\n      return;\n    }\n    setActive(newIndex);\n    items[newIndex].focus();\n  });\n\n  // Update tabindex on focus (handles mouse clicks)\n  menu.addEventListener('focusin', (e) => {\n    if (e.target.getAttribute('role') === 'menuitem') {\n      const index = items.indexOf(e.target);\n      setActive(index);\n    }\n  });\n</script>"
+}

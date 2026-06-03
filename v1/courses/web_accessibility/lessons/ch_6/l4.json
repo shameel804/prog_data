@@ -1,0 +1,149 @@
+{
+    "id": "l4",
+    "chapterId": "ch_6",
+    "title": "Focus Trapping for Modals & Overlays 🚪",
+    "description": "Implement robust focus traps, understand inert, and return focus safely on close.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Interactive",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "What Is Focus Trapping? 🔒",
+            "content": "When a modal or dialog opens, keyboard focus should be **confined** within it. Pressing Tab at the last focusable element should wrap to the first; Shift+Tab at the first should wrap to the last.\n\nWithout a focus trap, a user could tab behind the modal and interact with hidden content – which is invisible but still reachable by keyboard.\n\nA focus trap is a pattern implemented in JavaScript, not a native HTML feature (except `<dialog showModal>` which does it natively)."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Focus Trap Basics 🔒",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does 'focus trapping' mean?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Preventing focus from moving to any element",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Keeping keyboard focus within a specific container",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Stopping the Tab key from working",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Focus trapping confines focus to a set of elements, typically in a modal dialog.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Manual Focus Trap Algorithm 🧮",
+            "content": "If you're not using the native `<dialog>` element, you need to trap focus manually:\n\n1. Identify all focusable elements inside the modal.\n2. Listen for `keydown` events on Tab.\n3. If Tab is pressed on the last element, move focus to the first.\n4. If Shift+Tab is pressed on the first element, move focus to the last.\n\nAdditionally, everything outside the modal should be made inert (using `inert` attribute or setting `aria-hidden` + disabling)."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Simple Focus Trap Snippet",
+            "content": "",
+            "codeSnippet": "const trap = document.getElementById('modal');\nconst focusable = trap.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex=\"-1\"])');\nconst first = focusable[0];\nconst last = focusable[focusable.length - 1];\n\ntrap.addEventListener('keydown', (e) => {\n  if (e.key === 'Tab') {\n    if (e.shiftKey) {\n      if (document.activeElement === first) {\n        e.preventDefault();\n        last.focus();\n      }\n    } else {\n      if (document.activeElement === last) {\n        e.preventDefault();\n        first.focus();\n      }\n    }\n  }\n});",
+            "codeLanguage": "javascript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Trap Logic 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "In a focus trap, what should happen when the user presses Tab on the last focusable element?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The dialog closes",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Focus moves to the first focusable element inside the trap",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Focus goes to the browser address bar",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Focus wraps to the first element to keep the user within the dialog.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "The `inert` Attribute (Modern Solution) 🚀",
+            "content": "HTML `inert` attribute tells the browser to treat an element and its subtree as non‑interactive:\n\n- Focusable elements become unfocusable.\n- Hidden from accessibility tree.\n\nWhen opening a modal, set `inert` on the main content container. This avoids needing to manually disable everything.\n\n```javascript\n// Open modal\ndocument.getElementById('main-content').setAttribute('inert', '');\n```\n\nBrowser support is good; polyfills exist."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "code",
+            "title": "Inert Example",
+            "content": "",
+            "codeSnippet": "<!-- Main content behind modal -->\n<div id=\"app\" inert>\n  <!-- all interactive elements are now inert -->\n</div>\n<dialog>...</dialog>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_8",
+            "type": "quiz",
+            "title": "Inert Understanding 💡",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_3",
+                "type": "multiple_choice",
+                "question": "What does the `inert` attribute do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Makes the element invisible",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Removes the element from the DOM",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Makes the element and its children non‑interactive and hidden from assistive tech",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "`inert` effectively 'disables' a subtree for interaction and accessibility.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_9",
+            "type": "text",
+            "title": "Focus Restoration on Close 🔙",
+            "content": "When a modal closes, focus must return to the element that triggered it. This preserves context for the user.\n\n```javascript\nconst trigger = document.getElementById('open-btn');\ntrigger.addEventListener('click', () => {\n  // save trigger element\n  lastFocused = document.activeElement;\n  dialog.showModal();\n});\ndialog.addEventListener('close', () => {\n  lastFocused.focus();\n});\n```\n\nNever leave focus dangling at the top of the document."
+        },
+        {
+            "id": "s_l4_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use a library\nFocus trapping is tricky (nested modals, dynamic content). Consider using a well‑tested library like `focus-trap` or the native `<dialog>` element."
+        }
+    ]
+}

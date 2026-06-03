@@ -1,0 +1,146 @@
+{
+    "id": "l3",
+    "chapterId": "ch_11",
+    "title": "Accessible Components in React ⚛️",
+    "description": "Build reusable, accessible components with hooks, refs, and props while keeping semantics intact.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "React",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "React & Accessibility: The Basics ⚛️",
+            "content": "React does not change HTML semantics – JSX compiles to real HTML. So all your HTML a11y rules apply. The main React‑specific tasks are:\n\n- Using `ref` for focus management.\n- Managing `id` for label associations dynamically.\n- Conditionally rendering without destroying focus.\n- Handling keyboard events correctly.\n\nReact's component model encourages reusability – build accessible primitives once."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "React A11y Basics 🧪",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "In React, why might you use a `useRef` for an input element?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To style it",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To programmatically focus it after an action",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To store its value",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Refs allow direct DOM access for focus management and measuring.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Handling IDs for Labels & Descriptions 🏷️",
+            "content": "In React, when you have a reusable component (e.g., an InputField), the label's `for` must match the input's `id`. To avoid collisions, generate a unique ID using a library (`uuid`, `nanoid`) or a simple hook.\n\n```jsx\nimport { useId } from 'react';\nfunction TextField({ label, ...props }) {\n  const id = useId();\n  return (\n    <>\n      <label htmlFor={id}>{label}</label>\n      <input id={id} {...props} />\n    </>\n  );\n}\n```\n`useId` generates a unique, stable ID for each instance."
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "useId Hook Example",
+            "content": "React 18+ provides `useId` for accessibility‑safe IDs.",
+            "codeSnippet": "import { useId } from 'react';\nconst emailId = useId();\nreturn <label htmlFor={emailId}>Email</label>\n<input id={emailId} type='email' />",
+            "codeLanguage": "jsx",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_5",
+            "type": "quiz",
+            "title": "ID Management 🆔",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Why is a unique ID important for accessible forms in a React app?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "For CSS styling",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To associate labels with inputs across multiple instances of the same component",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To improve performance",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Without unique IDs, all inputs would share the same label association, breaking screen reader navigation.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "Focus on Mount & Unmount 🔄",
+            "content": "React components often mount and unmount based on state. When a modal opens, you must trap focus. When it closes, return focus to the trigger.\n\nUse `useEffect` to run focus code after render. For modals, you can use `react‑focus‑trap` or write a custom hook.\n\n```jsx\nuseEffect(() => {\n  triggerRef.current?.focus();\n}, [isOpen]);\n```\n\nAlso, handle the `inert` attribute on the app root when a modal is open."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Accessible Event Handling ⌨️",
+            "content": "Buttons should respond to `onClick` (mouse) and `onKeyDown` (keyboard). React synthetic events work for both. Ensure custom interactions have keyboard equivalents.\n\nExample: a `MenuItem` component should handle `onClick`, `onKeyDown` for Enter/Space, and Arrow keys for navigation (typically delegated to the menu container).\n\n```jsx\n<div\n  role=\"menuitem\"\n  tabIndex={0}\n  onClick={handleSelect}\n  onKeyDown={(e) => { if (e.key === 'Enter') handleSelect(); }}\n>\n```"
+        },
+        {
+            "id": "s_l3_8",
+            "type": "quiz",
+            "title": "Event Handling 🖱️⌨️",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_3",
+                "type": "multiple_choice",
+                "question": "A React component has an `onClick` prop but no keyboard handler. Is it accessible?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Yes, React adds keyboard automatically",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "No, keyboard users cannot activate it",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only if it's a button",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Native buttons handle Enter/Space, but custom elements need explicit key handlers.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_9",
+            "type": "text",
+            "title": "React A11y Libraries 📚",
+            "content": "- **Reach UI** – accessible primitives (dialog, tabs, menu).\n- **Radix UI** – unstyled, accessible components.\n- **Downshift** – accessible autocomplete/combobox.\n- **react‑aria** (Adobe) – hooks for building your own accessible components.\n\nUsing well‑tested libraries reduces your implementation burden and ensures correct ARIA and keyboard patterns."
+        },
+        {
+            "id": "s_l3_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Test components in isolation with Storybook\nUse Storybook's accessibility addon (powered by axe) to audit each component separately."
+        }
+    ]
+}

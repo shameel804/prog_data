@@ -1,0 +1,104 @@
+{
+    "id": "l5",
+    "chapterId": "ch_6",
+    "title": "Roving Tabindex & Composite Widgets 🎮",
+    "description": "Master the roving tabindex pattern for menus, toolbars, and grids to optimize keyboard navigation.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "The Problem: Tab Through Every Item? 😩",
+            "content": "In a list of menu items, tabs, or a toolbar, you don't want the user to have to press Tab 20 times to get through all items. That's tedious.\n\nSolution: **Roving tabindex**.\n\n- Only one item in the group is focusable (tabindex=\"0\").\n- All other items have tabindex=\"-1\".\n- The user presses Tab to reach the group (focuses the single active item).\n- Then arrow keys move focus among the items, updating tabindex dynamically.\n\nThis makes the group behave like a single tab stop."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Roving Concept 🎯",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "In a roving tabindex menu, how many items have `tabindex=\"0\"` at any time?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "All of them",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "One",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "None",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Only the currently focused item gets tabindex=\"0\"; others are tabindex=\"-1\".",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Implementing Roving Tabindex 🛠️",
+            "content": "Steps:\n\n1. Initialize the widget: set tabindex=\"0\" on the first item, \"-1\" on others.\n2. Attach keydown listener to the container (or each item) for Arrow keys.\n3. On arrow key:\n   - Set current item's tabindex=\"-1\".\n   - Move focus to next/prev item (using index math).\n   - Set its tabindex=\"0\" and call `focus()` on it.\n\nThis pattern is used in tabs (Chapter 5), menus, toolbars, listboxes, and grids."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Roving Tabindex for a Menu",
+            "content": "",
+            "codeSnippet": "<ul role=\"menu\">\n  <li role=\"menuitem\" tabindex=\"0\">Cut</li>\n  <li role=\"menuitem\" tabindex=\"-1\">Copy</li>\n  <li role=\"menuitem\" tabindex=\"-1\">Paste</li>\n</ul>\n\n<script>\n  const items = document.querySelectorAll('[role=\"menuitem\"]');\n  let index = 0;\n  items.forEach((item, i) => {\n    item.addEventListener('keydown', (e) => {\n      if (e.key === 'ArrowDown') {\n        e.preventDefault();\n        index = (i + 1) % items.length;\n        items[index].focus();\n      } else if (e.key === 'ArrowUp') {\n        e.preventDefault();\n        index = (i - 1 + items.length) % items.length;\n        items[index].focus();\n      }\n    });\n    item.addEventListener('focus', () => {\n      items.forEach(el => el.tabIndex = -1);\n      item.tabIndex = 0;\n    });\n  });\n</script>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Implementation Check ✅",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What key event should you listen for to move focus between items in a roving tabindex menu?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Tab",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Enter",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Arrow keys",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Arrow keys move focus inside the widget; Tab moves focus out to the next tab stop.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "When to Use Roving Tabindex vs. Tab Stops 🤔",
+            "content": "- Use roving tabindex when the group should be treated as a single tab stop (menus, toolbars, tab lists, radio groups).\n- Use individual tab stops (all items focusable) when each item needs to be directly reachable by Tab – like a list of links where each is distinct.\n\nThe ARIA Authoring Practices guide provides patterns for each widget."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Simplify with `aria-activedescendant`\nFor complex widgets like listboxes, you can keep focus on the container and use `aria-activedescendant` to point to the active item without moving DOM focus. Useful for virtual scrolling."
+        }
+    ]
+}

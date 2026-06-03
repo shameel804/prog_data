@@ -1,0 +1,140 @@
+{
+    "id": "l1",
+    "chapterId": "ch_6",
+    "title": "The Tab Order & Keyboard Fundamentals ⌨️",
+    "description": "Understand how focus works, how the browser determines tab order, and the dangers of tabindex.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Core Concepts",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "Keyboard Accessibility: The Backbone of Interaction 💪",
+            "content": "Many users rely entirely on the keyboard – motor‑impaired, blind users with screen readers, power users. If an interface isn't keyboard‑accessible, it's broken.\n\nKey principles:\n- All functionality must be available using a keyboard (WCAG 2.1.1).\n- The focus order must be logical and predictable (WCAG 2.4.3).\n- Users must never get trapped in a component.\n\nThink of it like driving a car: you need steering, accelerator, brakes – all within reach. Keyboard is the steering wheel of the web."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Which WCAG criterion requires all functionality to be operable through a keyboard interface?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "1.1.1 Non-text Content",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "2.1.1 Keyboard",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "2.4.7 Focus Visible",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Success Criterion 2.1.1 (Level A) mandates keyboard operability.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "Understanding Focus 🎯",
+            "content": "Focus is the browser's way of saying \"this element is ready to receive input\".\n\n- Only one element can have focus at a time.\n- Interactive elements (links, buttons, inputs, select, textarea) are focusable by default.\n- Non‑interactive elements (div, span, p) are not.\n\nYou can make any element focusable using the `tabindex` attribute – but with great power comes great responsibility."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "code",
+            "title": "Focusable Elements",
+            "content": "",
+            "codeSnippet": "<button>Click me</button>  <!-- Focusable, in tab order -->\n<div>Plain div</div>     <!-- Not focusable -->\n<div tabindex=\"0\">I'm focusable now</div>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l1_5",
+            "type": "quiz",
+            "title": "Focus Basics 🔍",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "Which element is natively focusable?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "<div>",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "<span>",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "<a href=\"/page\">",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Links with an href attribute are focusable by default.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_6",
+            "type": "text",
+            "title": "Tab Order & DOM Order 📖",
+            "content": "By default, the tab order follows the **DOM order** (source order). Elements are focused in the sequence they appear in the HTML.\n\n- Always ensure visual order matches DOM order.\n- CSS flexbox/grid can visually reorder things – but focus still follows the DOM. This can be disorienting.\n\n**Golden rule**: make the DOM order logical and then style it."
+        },
+        {
+            "id": "s_l1_7",
+            "type": "quiz",
+            "title": "DOM Order Quiz 📋",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_3",
+                "type": "multiple_choice",
+                "question": "If you use CSS `order` to move a nav to the top, what happens to the keyboard tab order?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It also moves to the top",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It stays in the original DOM order",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The browser crashes",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Keyboard tab order always reflects DOM order, not visual order.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_8",
+            "type": "text",
+            "title": "The `tabindex` Attribute: Use Sparingly ⚠️",
+            "content": "`tabindex` values:\n\n- **`-1`** – element is programmatically focusable (with JS) but NOT in the natural tab order. Used for focus management (e.g., modals).\n- **`0`** – element becomes focusable and is placed in the natural tab order based on DOM position.\n- **Positive values (1, 2, 3...)** – **AVOID!** They create a custom tab order that's hard to maintain and disorienting.\n\nOnly use `tabindex=\"0\"` or `tabindex=\"-1\"`."
+        },
+        {
+            "id": "s_l1_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Never use `tabindex=\"1\"` or higher\nIt can create a 'tab index race' that's impossible to debug. Use DOM order instead."
+        }
+    ]
+}

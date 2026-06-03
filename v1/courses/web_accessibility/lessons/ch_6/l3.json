@@ -1,0 +1,104 @@
+{
+    "id": "l3",
+    "chapterId": "ch_6",
+    "title": "Skip Links & Navigation Efficiency 🏃",
+    "description": "Design skip navigation links, landmark‑based shortcuts, and efficient keyboard routes.",
+    "xpReward": 25,
+    "estimatedMinutes": 7,
+    "section": "Navigation",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "The Problem: Repetitive Navigation 🌀",
+            "content": "Many pages have extensive navigation bars, search fields, and sidebars before the main content. A keyboard user must tab through all of these on **every single page** to reach the main content.\n\nEnter the **skip navigation link** – a link that jumps directly to the main content, bypassing all that repetition.\n\nIt's typically the very first focusable element on the page, often visually hidden until focused."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "Skip Link Knowledge 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Who benefits most from a skip navigation link?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Mouse users",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Keyboard users who must tab through every menu item",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Screen reader users who only listen",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Keyboard and screen reader users use skip links to avoid repetitive navigation.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "How to Build a Skip Link 🔧",
+            "content": "1. Place an `<a>` as the first child of `<body>`.\n2. Link it to the `id` of your `<main>` content.\n3. Style it to be off‑screen until focused (using absolute positioning, not `display:none`).\n\nExample:\n```html\n<a href=\"#main-content\" class=\"skip-link\">Skip to main content</a>\n```\n\n```css\n.skip-link {\n  position: absolute;\n  top: -40px;\n  left: 0;\n  background: #000;\n  color: #fff;\n  padding: 8px;\n  z-index: 100;\n}\n.skip-link:focus {\n  top: 0;\n}\n```"
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Complete Skip Link HTML/CSS",
+            "content": "",
+            "codeSnippet": "<!-- At very top of body -->\n<a href=\"#main\" class=\"skip-to-main\">Skip to main content</a>\n\n<header>...</header>\n<main id=\"main\" tabindex=\"-1\">\n  <!-- Content -->\n</main>\n\n<!-- CSS -->\n.skip-to-main {\n  position: absolute;\n  left: -999px;\n  top: auto;\n  width: 1px;\n  height: 1px;\n  overflow: hidden;\n}\n.skip-to-main:focus {\n  left: 0;\n  top: 0;\n  width: auto;\n  height: auto;\n  padding: 1em;\n  background: black;\n  color: white;\n  text-align: center;\n}",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_5",
+            "type": "quiz",
+            "title": "Skip Link Implementation 🛠️",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Why must the target `<main>` have `tabindex=\"-1\"` when used with a skip link?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To make it focusable so it can receive focus from the skip link",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To hide it from screen readers",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's not necessary",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`<main>` is not natively focusable; `tabindex=\"-1\"` allows it to receive programmatic focus without being in the tab order.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "Beyond Skip Links: Landmark Navigation 🗺️",
+            "content": "Screen reader users can already navigate by landmarks (see Chapter 3). But keyboard‑only sighted users need skip links. For heavy‑duty web apps, consider:\n\n- **Multiple skip links**: \"Skip to main\", \"Skip to search\", \"Skip to footer\".\n- **Accesskeys**: (deprecated, avoid – they conflict with assistive tech).\n- **Keyboard shortcuts** (custom, with a method to disable/reassign).\n\nAlways keep it simple: a good skip link + logical DOM order covers 95% of needs."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Test your skip link\nTurn on your screen reader, load the page, press Tab. The first thing you should hear is 'Skip to main content, link'. Press Enter – focus should move to the main content."
+        }
+    ]
+}

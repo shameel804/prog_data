@@ -1,0 +1,140 @@
+{
+    "id": "l5",
+    "chapterId": "ch_8",
+    "title": "Accessible Media Players & Embedding 🖥️",
+    "description": "Build or choose a video player with full keyboard control, captions, and screen reader support.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Video",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "The Native `<video>` Player Is Your Friend 🎥",
+            "content": "HTML `<video controls>` provides built‑in accessibility:\n\n* Keyboard operability (Tab to controls, Space/Enter to activate, arrow keys for seek/volume).\n* Captions via `<track>`.\n* Screen readers announce the video and controls.\n\nHowever, native players have limitations (styling, feature gaps). If you build a custom player, you must replicate all accessibility."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Native Player Knowledge 🎮",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which of the following is true about the native `<video>` controls?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They are not keyboard accessible",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They are fully keyboard accessible in all modern browsers",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They only work with captions",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Native controls meet WCAG keyboard requirements out of the box.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Building a Custom Accessible Player 🛠️",
+            "content": "A custom player must have:\n\n* **Toggle buttons** for Play/Pause, Mute, Captions, Fullscreen – each with `aria-label` and `aria-pressed` or state management.\n* **Slider** for seek bar and volume (use `role=\"slider\"`, `aria-valuemin`, `aria-valuemax`, `aria-valuenow`).\n* **Keyboard shortcuts**: Space for play/pause, Left/Right for seek, Up/Down for volume.\n* **Focus management**: after interacting, focus should stay on the control.\n\nStart with native `<video>` element, hide its controls, and build your own controls that interact with the video via JavaScript."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Simple Custom Control Snippet",
+            "content": "",
+            "codeSnippet": "<video id=\"my-video\" src=\"movie.mp4\" controls=\"false\">\n  <track kind=\"captions\" src=\"movie.vtt\" srclang=\"en\" label=\"English\">\n</video>\n<button id=\"play-btn\" aria-label=\"Play\" aria-pressed=\"false\">▶</button>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Custom Controls ⌨️",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What attribute should a custom play button use to indicate its toggle state?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "aria-expanded",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "aria-pressed",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "aria-selected",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`aria-pressed='true'/'false'` communicates the toggle state of play/pause.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Embedding Videos from Platforms (YouTube, Vimeo) 🎬",
+            "content": "Embedded players from YouTube and Vimeo are partially accessible – they handle keyboard and captions but may have ARIA gaps.\n\n* Always use the platform's embed code that includes `title` attribute on the iframe: `<iframe title=\"Video title\">`.\n* Ensure the video itself has proper captions (upload your own VTT if possible).\n* Provide a text transcript alongside the embedded video.\n\nNever embed a video in a way that auto‑plays with sound – this disturbs screen readers and violates WCAG."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Embedding Best Practice 🧩",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_3",
+                "type": "multiple_choice",
+                "question": "What is the most important accessibility attribute for an `<iframe>` containing a video?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "src",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "title",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "allowfullscreen",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The `title` attribute provides an accessible name for the iframe, so screen reader users know what it contains.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_8",
+            "type": "text",
+            "title": "Accessible Media Player Libraries 📚",
+            "content": "Consider using well‑tested accessible players:\n\n* **AblePlayer** – fully accessible, supports captions, audio descriptions, transcripts.\n* **Plyr** – modern, but check accessibility status.\n* **Video.js** – with accessibility plugin.\n\nNever reinvent the wheel if a mature, accessible player exists."
+        },
+        {
+            "id": "s_l5_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Test your player with a screen reader\nCan you tell what each button does? Does the player announce the current time when seeking? Subtle announcements make a huge difference."
+        }
+    ]
+}

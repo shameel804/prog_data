@@ -1,0 +1,146 @@
+{
+    "id": "l5",
+    "chapterId": "ch_11",
+    "title": "Accessible Components in Angular 🅰️",
+    "description": "Use Angular CDK, directives, and reactive forms to bake accessibility into enterprise apps.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Angular",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Angular's Built‑in Accessibility Tools 🅰️",
+            "content": "Angular provides several a11y features:\n\n- **Angular CDK** (Component Dev Kit) – includes `a11y` module with focus trap, live announcements, focus origin, and list key manager.\n- **Angular Material** – components built with accessibility in mind (but still audit!).\n- **Router** – has built‑in title strategy.\n- **Forms** – reactive forms can easily associate labels and error messages.\n\nAngular's strict template syntax often prevents malformed HTML, which helps a11y."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Angular A11y Tools 🧰",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Which Angular CDK module helps with focus trapping?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Layout",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A11y",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Overlay",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The CDK's `A11yModule` includes `cdkTrapFocus` directive.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Focus Trap & Focus Management 🎯",
+            "content": "Angular CDK provides `cdkTrapFocus` directive for modals. Usage:\n\n```html\n<div cdkTrapFocus>\n  <!-- modal content -->\n</div>\n```\n\nFor manual focus management, use `@ViewChild` and `ElementRef` with `nativeElement.focus()`. In Angular, avoid direct DOM manipulation; use `Renderer2` for safe interactions.\n\n```typescript\n@ViewChild('modalTrigger') trigger: ElementRef;\nopenModal() {\n  this.modalOpen = true;\n  setTimeout(() => this.trigger.nativeElement.focus());\n}\n```"
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "CdkTrapFocus Example",
+            "content": "",
+            "codeSnippet": "<div cdkTrapFocus cdkTrapFocusAutoCapture>\n  <button>Close</button>\n</div>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "CDK Focus Trap 🪤",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What does `cdkTrapFocusAutoCapture` do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Automatically focuses the first focusable element in the trap on activation",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Disables focus trapping",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Captures clicks",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It moves focus into the trapped container immediately upon activation.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Live Announcer & AriaLiveRegions 🗣️",
+            "content": "CDK's `LiveAnnouncer` service can announce dynamic content politely or assertively:\n\n```typescript\nimport { LiveAnnouncer } from '@angular/cdk/a11y';\nconstructor(private announcer: LiveAnnouncer) {}\nthis.announcer.announce('Registration successful', 'polite');\n```\n\nThis creates a hidden live region element and speaks the message. Use it for form submissions, errors, and navigation."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Accessible Forms with Reactive Forms 📋",
+            "content": "Angular Reactive Forms make it easy to link error messages:\n\n- Use `formControl.invalid` and `formControl.errors` to conditionally display errors.\n- Connect error messages with `aria-describedby`.\n- Angular Material's `mat‑error` automatically links to the input.\n\nExample:\n```html\n<mat-form-field>\n  <input matInput [formControl]=\"email\" aria-describedby=\"email‑error\">\n  <mat-error id=\"email‑error\">Invalid email</mat-error>\n</mat-form-field>\n```"
+        },
+        {
+            "id": "s_l5_8",
+            "type": "quiz",
+            "title": "Reactive Forms & A11y ✍️",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_3",
+                "type": "multiple_choice",
+                "question": "Why use `aria‑describedby` for error messages in Angular forms?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "For styling",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To associate the error text with the input for screen readers",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's required by Angular Material",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It provides a programmatic link between the input and its error message.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_9",
+            "type": "text",
+            "title": "Angular A11y Libraries & Patterns 📚",
+            "content": "- **Angular Material** – extensive a11y features (but verify).\n- **Clarity Design System** (VMware) – a11y‑first components.\n- **ngx‑bootstrap** – some a11y support.\n- **Custom directives** – you can build reusable a11y directives (e.g., `appSkipLink`, `appFocusOnLoad`).\n\nAngular's directive system makes it easy to create reusable a11y behaviours."
+        },
+        {
+            "id": "s_l5_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use Angular's `BreakpointObserver`\nTo conditionally apply different layouts for mobile vs desktop while keeping accessibility, use the CDK Layout module."
+        }
+    ]
+}

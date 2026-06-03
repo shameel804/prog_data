@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_11",
+    "title": "Implement Route Focus Management in Vue",
+    "description": "Add page title update and focus management to a Vue Router app.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Vue Router Accessibility\n\nYou have a Vue 3 app with Vue Router. Currently, when navigating between pages, the document title does not update, and focus stays on the navigation link. Also, there's no skip link.\n\nImplement the following:\n\n1. In each route's meta, add a `title` field (e.g., `meta: { title: 'About' }`).\n2. Use `router.afterEach` to set `document.title` based on `to.meta.title`.\n3. In the main `App.vue`, add a `<div id='main-content' tabindex='-1'>` wrapper around `<router-view>`, and after each route change, focus that element. Use `watch` on the route and `nextTick`.\n4. Add a skip link at the top of `App.vue` that links to `#main-content`.\n\nProvide the necessary code snippets for `router/index.js` and `App.vue`.",
+    "hints": [
+        "Use `watch(() => route.fullPath, async () => { await nextTick(); document.getElementById('main‑content')?.focus(); })`.",
+        "Don't forget `tabindex='-1'` on the wrapper."
+    ],
+    "expectedOutput": "Working Vue Router setup with focus and title management.",
+    "solutionCode": "// router/index.js\nimport { createRouter, createWebHistory } from 'vue-router';\nconst routes = [\n  { path: '/', component: Home, meta: { title: 'Home' } },\n  { path: '/about', component: About, meta: { title: 'About Us' } }\n];\nconst router = createRouter({ history: createWebHistory(), routes });\nrouter.afterEach((to) => {\n  document.title = to.meta.title || 'My App';\n});\n\n// App.vue\n<template>\n  <a href='#main-content' class='skip-link'>Skip to main content</a>\n  <header>...</header>\n  <div id='main-content' tabindex='-1'>\n    <router-view />\n  </div>\n</template>\n\n<script setup>\nimport { watch, nextTick } from 'vue';\nimport { useRoute } from 'vue-router';\nconst route = useRoute();\nwatch(() => route.fullPath, async () => {\n  await nextTick();\n  document.getElementById('main-content')?.focus();\n});\n</script>\n\n<style>\n.skip-link { position: absolute; top: -40px; left: 0; ... }\n.skip-link:focus { top: 0; }\n#main-content:focus { outline: none; }\n</style>"
+}

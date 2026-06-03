@@ -1,0 +1,143 @@
+{
+    "id": "l3",
+    "chapterId": "ch_5",
+    "title": "ARIA Properties & States: Making Widgets Talk 📢",
+    "description": "Master aria-label, aria-describedby, aria-expanded, and more to communicate state.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Core Concepts",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Naming Things: Accessible Name Computation 🏷️",
+            "content": "Assistive tech needs to know what to **call** an element. The accessible name is computed from (in priority order):\n\n1. `aria-labelledby` (references an element with text)\n2. `aria-label` (a direct text string)\n3. Native labelling (`<label>` for inputs, text content for buttons, `alt` for images)\n4. `title` attribute (last resort, not recommended)\n\nUse `aria-label` when no visible text label exists; use `aria-labelledby` when text exists elsewhere on the page."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Naming a Close Button",
+            "content": "",
+            "codeSnippet": "<!-- Visible label exists → use aria-labelledby -->\n<h2 id=\"dialog-title\">Subscribe</h2>\n<div role=\"dialog\" aria-labelledby=\"dialog-title\">...</div>\n\n<!-- No visible label → use aria-label -->\n<button aria-label=\"Close\">&times;</button>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "quiz",
+            "title": "Name Game 📛",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which attribute would you use to give a `<button>&times;</button>` an accessible name?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "aria-labelledby",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "aria-label",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "title",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Since there's no visible text label to reference, `aria-label='Close'` is the best choice.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Describing Things: aria-describedby 📝",
+            "content": "`aria-describedby` links an element to additional descriptive text – like error messages or hints.\n\n* Unlike `aria-labelledby`, it does not replace the accessible name.\n* Screen readers read the name first, then may offer \"press a key to hear description\".\n\nExample: `<input aria-describedby=\"email-hint\">` and `<p id=\"email-hint\">Must be a valid address</p>`."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "code",
+            "title": "Error Message Association",
+            "content": "",
+            "codeSnippet": "<label for=\"email\">Email</label>\n<input type=\"email\" id=\"email\" aria-describedby=\"email-error\">\n<span id=\"email-error\" role=\"alert\">Please enter a valid email.</span>",
+            "codeLanguage": "html",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Description Detection 🔍",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "How does `aria-describedby` differ from `aria-labelledby`?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "No difference",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "aria-describedby provides supplementary information; aria-labelledby provides the primary name",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "aria-describedby is for errors only",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The accessible name comes from `aria-labelledby` or `aria-label`; `aria-describedby` adds extra info.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "States That Change 🔄",
+            "content": "* `aria-expanded` – true/false, indicates if a collapsible section is open.\n* `aria-selected` – for selected items in a tablist or listbox.\n* `aria-checked` – for custom checkboxes/radios (use native `<input>` instead).\n* `aria-hidden` – hides an element from assistive tech (but not visually).\n\nAlways update these via JavaScript as the user interacts."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "quiz",
+            "title": "Stateful Quiz 🔘",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_3",
+                "type": "multiple_choice",
+                "question": "What state attribute would you use on a disclosure button that shows/hides a panel?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "aria-selected",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "aria-expanded",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "aria-hidden",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`aria-expanded=\"true\"` or `false` conveys the panel's visibility.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Never Use aria-hidden on a Focusable Element\nIf an element has `aria-hidden=\"true\"` but is in the tab order, users can focus something invisible to the screen reader – confusing and broken."
+        }
+    ]
+}

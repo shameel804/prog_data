@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_5",
+    "title": "Create an Accessible Modal Dialog",
+    "description": "Implement a modal dialog that traps focus, returns focus on close, and uses correct ARIA.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Accessible Modal\n\nCreate a modal dialog using the native `<dialog>` element. It should:\n\n* Open when a \"Open modal\" button is clicked.\n* Have a title and content, an accessible name via `aria-labelledby`.\n* Trap focus inside the dialog when open (native `<dialog>` with `showModal()` handles this).\n* Close on Escape key (native).\n* Close on clicking a \"Cancel\" button inside the dialog.\n* On close, return focus to the trigger button.\n* Use `aria-modal=\"true\"`.\n* Include a form with a text input to demonstrate focus trap.\n\nWrite HTML, CSS (basic overlay styling), and JavaScript.",
+    "hints": [
+        "Use `dialog.showModal()` and `dialog.close()`.",
+        "Listen to the dialog's 'close' event to return focus.",
+        "Add `aria-modal='true'` explicitly for maximum compatibility."
+    ],
+    "expectedOutput": "A functional modal dialog that meets WCAG requirements for dialogs.",
+    "solutionCode": "<!-- HTML -->\n<button id=\"open-dialog\">Open modal</button>\n<dialog id=\"my-dialog\" aria-labelledby=\"dialog-heading\" aria-modal=\"true\">\n  <h2 id=\"dialog-heading\">Subscribe</h2>\n  <p>Enter your email to receive updates.</p>\n  <input type=\"email\" placeholder=\"you@example.com\">\n  <button id=\"cancel-dialog\">Cancel</button>\n</dialog>\n\n<script>\n  const trigger = document.getElementById('open-dialog');\n  const dialog = document.getElementById('my-dialog');\n  const cancel = document.getElementById('cancel-dialog');\n\n  trigger.addEventListener('click', () => {\n    dialog.showModal();\n  });\n\n  cancel.addEventListener('click', () => {\n    dialog.close();\n  });\n\n  dialog.addEventListener('close', () => {\n    trigger.focus();\n  });\n</script>\n\n<style>\n  dialog::backdrop {\n    background: rgba(0,0,0,0.5);\n  }\n</style>"
+}

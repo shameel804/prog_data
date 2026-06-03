@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_9",
+    "title": "Write an axe‑core Playwright Test",
+    "description": "Create a script that runs axe on a page and fails if critical issues are found.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Automated Accessibility Test\n\nWrite a Node.js script using Playwright and @axe-core/playwright that:\n\n1. Launches a Chromium browser.\n2. Navigates to `https://example.com` (or a URL of your choice).\n3. Runs axe analysis.\n4. Checks if any violations have `impact: 'critical'` or `impact: 'serious'`.\n5. If violations exist, prints them as JSON to the console and exits with code 1.\n6. If none, prints 'No critical or serious accessibility violations found' and exits with code 0.\n\nAssume you are in an environment where Playwright and axe‑core are installed (`npm install playwright @axe-core/playwright`).\n\nProvide the complete script.",
+    "hints": [
+        "Use `new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()` to scope to WCAG AA.",
+        "Filter `results.violations` to only those with impact 'critical' or 'serious'."
+    ],
+    "expectedOutput": "A runnable script that can be added to a CI pipeline.",
+    "solutionCode": "const { chromium } = require('playwright');\nconst AxeBuilder = require('@axe-core/playwright');\n\n(async () => {\n  const browser = await chromium.launch();\n  const page = await browser.newPage();\n  await page.goto('https://example.com');\n  const results = await new AxeBuilder({ page })\n    .withTags(['wcag2a', 'wcag2aa'])\n    .analyze();\n\n  const seriousOrCritical = results.violations.filter(v => \n    v.impact === 'critical' || v.impact === 'serious'\n  );\n\n  if (seriousOrCritical.length > 0) {\n    console.error('Accessibility violations found:');\n    console.error(JSON.stringify(seriousOrCritical, null, 2));\n    await browser.close();\n    process.exit(1);\n  } else {\n    console.log('No critical or serious accessibility violations found.');\n    await browser.close();\n    process.exit(0);\n  }\n})();"
+}

@@ -1,0 +1,146 @@
+{
+    "id": "l2",
+    "chapterId": "ch_11",
+    "title": "Routing, Page Titles & Focus Management 🧭",
+    "description": "Manage document title, focus on navigation, and create skip links in a single‑page app.",
+    "xpReward": 30,
+    "estimatedMinutes": 9,
+    "section": "Core Patterns",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The SPA Navigation Problem 🗺️",
+            "content": "When a user clicks a link in a traditional site, the page reloads, the screen reader reads the new title, and focus goes to the top of the body. In an SPA, the content just swaps – the user may hear nothing, and focus may stay on the link.\n\nWe need to manage three things on every route change:\n1. **Document title** (so the browser tab and screen reader announce the new page).\n2. **Focus** (move it to a logical place, usually the top of the new content).\n3. **Announcement** (confirm the navigation to screen reader users)."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "SPA Navigation 🧭",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "After a route change in an SPA, what is the minimum you should update for accessibility?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The CSS",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The document title and manage focus",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only the URL",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Without title update and focus management, users are lost.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Setting the Document Title 📝",
+            "content": "In React with React Router: use a `<Helmet>` (react‑helmet) or the `useDocumentTitle` hook.\nIn Vue with Vue Router: use `afterEach` to set `document.title`.\nIn Angular: set `title` property in route data and use a service.\n\n```javascript\n// Vue Router example\nrouter.afterEach((to) => {\n  document.title = to.meta.title || 'Default Title';\n});\n```\n\nAlways include the unique page title; screen readers announce it on focus."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Angular Title Service",
+            "content": "Inject Title service:",
+            "codeSnippet": "import { Title } from '@angular/platform-browser';\nconstructor(private titleService: Title) {}\nngOnInit() {\n  this.titleService.setTitle('About Us');\n}",
+            "codeLanguage": "typescript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_5",
+            "type": "quiz",
+            "title": "Title Knowledge 📝",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Why is it important to update the document title on route change?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "For SEO only",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Screen readers announce the title when focus moves to the page, confirming navigation",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's a legal requirement",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The title is the first thing announced, helping users orient themselves.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Focus Management on Navigation 🎯",
+            "content": "After a route change, move focus to a heading or a container that wraps the main content. Common patterns:\n\n- Add `tabindex=\"-1\"` to the `<h1>` or a `<div>` container and call `.focus()` after the route renders.\n- In React, use a `ref` and `useEffect` after the component mounts.\n- In Vue, use `$refs` and `nextTick`.\n- In Angular, use `@ViewChild` and `AfterViewInit`.\n\nExample in React:\n```jsx\nconst h1Ref = useRef(null);\nuseEffect(() => { h1Ref.current?.focus(); }, []);\nreturn <h1 tabIndex={-1} ref={h1Ref}>Welcome</h1>;\n```"
+        },
+        {
+            "id": "s_l2_7",
+            "type": "quiz",
+            "title": "Focus After Route 🎯",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_3",
+                "type": "multiple_choice",
+                "question": "Why do you need `tabindex='-1'` on an element you want to programmatically focus?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To make it visible",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Non‑focusable elements like `<h1>` need it to receive focus",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's a React requirement",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "`tabindex='-1'` makes a normally non‑focusable element programmatically focusable without adding it to the tab order.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_8",
+            "type": "text",
+            "title": "Announcing Route Changes 🗣️",
+            "content": "In addition to title and focus, you can use a live region to announce navigation:\n\n```html\n<div aria-live='polite' id='route-announcer'></div>\n```\nAfter navigation, populate it with the page title or a brief description. This provides a spoken confirmation for screen reader users who may not have noticed the title change."
+        },
+        {
+            "id": "s_l2_9",
+            "type": "text",
+            "title": "Skip Links in SPAs 🔗",
+            "content": "Skip links still apply. Place a skip link at the very beginning of your root component (e.g., App.vue, App.js). Ensure it links to the `id` of the main content container, which should exist in every route view.\n\nBecause skip links rely on `href`, they work even without JavaScript if the target exists."
+        },
+        {
+            "id": "s_l2_10",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use a navigation announcer component\nMany design systems (like Reach Router, Angular CDK) have a built‑in route announcer. Use it or create a simple one."
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_5",
+    "title": "Build an Accessible Tab Component",
+    "description": "Create a set of tabs with proper ARIA, keyboard navigation, and panel display.",
+    "estimatedMinutes": 20,
+    "problemStatement": "## Accessible Tabs\n\nBuild an HTML/CSS/JS tab component with three tabs: \"Details\", \"Shipping\", \"Reviews\". Requirements:\n\n* Use semantic buttons for tabs, wrapped in a container with `role=\"tablist\"`.\n* Each tab has `role=\"tab\"`, `aria-selected`, and `aria-controls`.\n* Panels have `role=\"tabpanel\"` and `aria-labelledby`.\n* Only the active panel is visible; others are hidden using the `hidden` attribute.\n* Keyboard: Left/Right arrows switch tabs (roving tabindex), Tab moves into the active panel.\n* Clicking a tab activates it.\n* Initial active tab is the first one.\n\nWrite the complete HTML, CSS (minimal for visibility), and JavaScript.",
+    "hints": [
+        "Use `tabindex=\"0\"` on the active tab and `tabindex=\"-1\"` on others.",
+        "Add a `keydown` event listener for ArrowLeft and ArrowRight.",
+        "When hiding/showing panels, set `hidden` attribute."
+    ],
+    "expectedOutput": "A working tab component that passes axe DevTools checks and is keyboard navigable.",
+    "solutionCode": "<!-- HTML -->\n<div role=\"tablist\" aria-label=\"Product information\">\n  <button role=\"tab\" id=\"tab-1\" aria-selected=\"true\" aria-controls=\"panel-1\" tabindex=\"0\">Details</button>\n  <button role=\"tab\" id=\"tab-2\" aria-selected=\"false\" aria-controls=\"panel-2\" tabindex=\"-1\">Shipping</button>\n  <button role=\"tab\" id=\"tab-3\" aria-selected=\"false\" aria-controls=\"panel-3\" tabindex=\"-1\">Reviews</button>\n</div>\n<div role=\"tabpanel\" id=\"panel-1\" aria-labelledby=\"tab-1\">Detailed product info...</div>\n<div role=\"tabpanel\" id=\"panel-2\" aria-labelledby=\"tab-2\" hidden>Shipping info...</div>\n<div role=\"tabpanel\" id=\"panel-3\" aria-labelledby=\"tab-3\" hidden>Customer reviews...</div>\n\n<script>\n  const tabs = document.querySelectorAll('[role=\"tab\"]');\n  const panels = document.querySelectorAll('[role=\"tabpanel\"]');\n  let currentIndex = 0;\n\n  function showTab(index) {\n    tabs.forEach((t, i) => {\n      const selected = i === index;\n      t.setAttribute('aria-selected', selected);\n      t.tabIndex = selected ? 0 : -1;\n      panels[i].hidden = !selected;\n    });\n    tabs[index].focus();\n  }\n\n  tabs.forEach((tab, index) => {\n    tab.addEventListener('click', () => {\n      currentIndex = index;\n      showTab(index);\n    });\n    tab.addEventListener('keydown', (e) => {\n      if (e.key === 'ArrowRight') {\n        e.preventDefault();\n        currentIndex = (index + 1) % tabs.length;\n        showTab(currentIndex);\n      } else if (e.key === 'ArrowLeft') {\n        e.preventDefault();\n        currentIndex = (index - 1 + tabs.length) % tabs.length;\n        showTab(currentIndex);\n      }\n    });\n  });\n</script>"
+}

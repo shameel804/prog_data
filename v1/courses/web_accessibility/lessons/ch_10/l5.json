@@ -1,0 +1,140 @@
+{
+    "id": "l5",
+    "chapterId": "ch_10",
+    "title": "Gestures, Touch Events & Mobile ARIA ⚡",
+    "description": "Design touch interactions that are accessible, provide alternatives to complex gestures, and use mobile‑aware ARIA.",
+    "xpReward": 30,
+    "estimatedMinutes": 8,
+    "section": "Advanced",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Beyond Tap: Swipes, Pinches & Long‑press 🤏",
+            "content": "Touchscreens enable rich gestures: swipe, pinch‑zoom, drag, long‑press. However, these can be inaccessible to:\n\n- Users with motor disabilities who can't perform precise multi‑finger gestures.\n- Blind users who rely on screen reader gestures (which use the same swipes).\n- Switch users who have only binary input.\n\nWCAG 2.5.1 Pointer Gestures: If a multi‑point or path‑based gesture is required, provide a single‑pointer alternative (e.g., swipe to delete → also add a Delete button)."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Gesture Requirement 🤲",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "An app uses a pinch gesture to zoom. What is required to meet WCAG 2.5.1?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Nothing, pinch is a standard gesture",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Provide + and – buttons as an alternative",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Disable pinch completely",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Multi‑point gestures must have a single‑pointer or keyboard equivalent.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Pointer Cancellation & Touch Events 🖐️",
+            "content": "WCAG 2.5.2 Pointer Cancellation: Functions must not be triggered on the down‑event of a pointer unless the user can undo or abort.\n\n- Use `click` event instead of `mousedown`/`touchstart` for actions.\n- For custom touch interactions, use `pointerup` and allow the user to drag their finger away to cancel.\n\nThis prevents accidental activation on touchscreens."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Safe Touch Event Pattern",
+            "content": "",
+            "codeSnippet": "button.addEventListener('click', handleAction); // safe, allows cancellation\n// Avoid:\nbutton.addEventListener('touchstart', handleAction); // triggers on first touch, can't abort",
+            "codeLanguage": "javascript",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Touch Event Wisdom 📵",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "Why is it recommended to use 'click' instead of 'touchstart' for button actions?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It allows the user to abort by moving their finger away before releasing",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Touchstart is deprecated",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Click fires on pointer up, allowing cancellation by sliding off the target.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Mobile ARIA & Role 'Application' ⚠️",
+            "content": "On mobile, some ARIA patterns work differently:\n\n- `role=\"application\"` should be avoided on mobile – it takes over all gesture handling and can confuse screen reader users.\n- `aria‑haspopup` and `aria‑expanded` are crucial for dropdowns and menus.\n- `aria‑live` regions may not announce content if focus is elsewhere; on mobile, consider moving focus to the dynamic content to ensure announcement.\n- Use native mobile patterns where possible (e.g., native selects) – they already work well with assistive tech."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Accessible Drag‑and‑Drop 🖱️",
+            "content": "Drag‑and‑drop is inherently inaccessible without a mouse. To make it accessible:\n\n- Add keyboard controls: arrow keys to move items, Enter/Space to pick up and drop.\n- Use `aria‑grabbed` and `aria‑dropeffect` (though ARIA 1.2 may deprecate these, check).\n- Provide a non‑drag alternative (e.g., a 'Move to...' button with a dropdown).\n- Ensure focus management during the operation.\n\nLibraries like `react‑beautiful‑dnd` have accessibility add‑ons."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "quiz",
+            "title": "Drag‑and‑Drop Alternative 🖐️",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_3",
+                "type": "multiple_choice",
+                "question": "A task list reordering only works by dragging items. How do you make it accessible?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Add a touch‑only alternative",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Provide keyboard controls and a non‑drag method (e.g., up/down buttons per item)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It's not possible",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Keyboard and alternative interaction must be provided to meet WCAG 2.1.1 Keyboard.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Test with Screen Curtain\nOn iOS, triple‑tap with three fingers while VoiceOver is on. Your screen goes black. Now try to use your site. If you can't, it's not accessible."
+        }
+    ]
+}
