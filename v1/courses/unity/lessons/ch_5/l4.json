@@ -1,0 +1,123 @@
+{
+    "id": "l4",
+    "chapterId": "ch_5",
+    "title": "Your First Behavior – Moving an Object",
+    "description": "Make a GameObject move continuously using transform.Translate and Time.deltaTime.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Scripting Fundamentals",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Transform Component in Code 📐",
+            "content": "# Accessing the Transform\n\nEvery script attached to a GameObject automatically has a reference to that object's `transform` (lowercase).\n- `transform.position` – world position.\n- `transform.rotation` – world rotation.\n- `transform.localScale` – local scale.\n- `transform.Translate(x, y, z)` – moves the object by a given offset.\n\nWe'll use `Translate` to create continuous movement."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "code",
+            "title": "Move Forward Every Frame 🚀",
+            "content": "Add this code inside `Update()` to move the object along its forward direction (Z axis) each frame:",
+            "codeSnippet": "void Update()\n{\n    transform.Translate(0, 0, 0.1f);\n}",
+            "codeLanguage": "csharp",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does transform.Translate(0, 0, 1) do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Rotates the object around the Z axis",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Moves the object 1 unit along its local Z axis",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Scales the object by 1 on Z",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Deletes the object",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Translate moves the object in the given direction. By default it moves in local space.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "The Problem with Frame‑Based Movement ⚠️",
+            "content": "# Why Speed Varies\n\nIf you use `0.1f` per frame, on a 60 FPS machine the object moves 6 units per second. On a 30 FPS machine, only 3 units. That's inconsistent!\n\nWe need **time‑based** movement: move at a constant speed regardless of frame rate. Enter `Time.deltaTime`."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Time.deltaTime – The Secret Sauce ⏲️",
+            "content": "# Making Movement Frame‑Rate Independent\n\n`Time.deltaTime` is the time in seconds since the last frame. Multiply your speed by it:\n\n```csharp\nvoid Update()\n{\n    float speed = 5f;\n    transform.Translate(0, 0, speed * Time.deltaTime);\n}\n```\n\nNow the object moves **5 units per second**, smooth on any hardware. `Time.deltaTime` will be ~0.016 at 60 FPS, ~0.033 at 30 FPS."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What does Time.deltaTime represent?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Total time since the game started",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "The time elapsed between the last frame and the current frame",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The maximum frame rate",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The time it takes to load the scene",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "deltaTime gives you the time difference, making movements consistent across frame rates.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "code",
+            "title": "Complete Movement Script 🎮",
+            "content": "Here's a simple script to move an object forward continuously. Try it on a Cube!",
+            "codeSnippet": "using UnityEngine;\n\npublic class Mover : MonoBehaviour\n{\n    public float speed = 5f;\n\n    void Update()\n    {\n        transform.Translate(0, 0, speed * Time.deltaTime);\n    }\n}",
+            "codeLanguage": "csharp",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Local vs World Movement\n\n`Translate` moves in **local space** by default. To move in world space, use `transform.Translate(..., Space.World)`. For moving forward visually (blue arrow), local Z works fine if the object's rotation matches its visual front."
+        }
+    ]
+}

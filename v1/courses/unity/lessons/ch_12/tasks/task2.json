@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_12",
+    "title": "Health Bar with Slider",
+    "description": "Build a health bar using a Filled Image and a Slider to adjust health, with a button to simulate damage.",
+    "estimatedMinutes": 20,
+    "problemStatement": "**Goal:** Create a health bar that responds to a slider and a button.\n\n1. Create a Canvas (if not already).\n2. Create an Image (UI → Image) and name \"HealthBarFill\". In the Inspector, set its Image Type to Filled, Fill Method to Horizontal, and fill color to red.\n3. Set its RectTransform anchors to middle‑left and size it nicely (e.g., Width 300, Height 30).\n4. Add a Slider (UI → Slider). Remove its handle area if desired (or keep).\n5. Create a script `HealthController` and attach to an Empty GameObject.\n6. Declare `public Image healthBarFill;` and `public Slider healthSlider;` and `public Button damageButton;`\n7. In Start, set slider min = 0, max = 100, value = 100. Also set `healthBarFill.fillAmount = 1`.\n8. Add listener to slider's OnValueChanged: call a method `UpdateHealth(float value)` that sets `healthBarFill.fillAmount = value / 100f`.\n9. Add listener to button OnClick: call `TakeDamage(20)` method that reduces slider value by 20 and clamps.\n10. Wire everything in the Inspector. Play. Move slider to change health bar; click button to damage.\n\nTake a screenshot of the Scene with Canvas elements and Inspector showing the health script assignments.",
+    "hints": [
+        "Make sure the slider's whole numbers option is unchecked to get smooth filling.",
+        "To avoid negative slider values, clamp: `healthSlider.value = Mathf.Clamp(healthSlider.value - 20, 0, 100);`"
+    ],
+    "expectedOutput": "Health bar fill adjusts with slider; button reduces health.",
+    "solutionCode": "using UnityEngine;\nusing UnityEngine.UI;\n\npublic class HealthController : MonoBehaviour\n{\n    public Image healthBarFill;\n    public Slider healthSlider;\n    public Button damageButton;\n\n    void Start()\n    {\n        healthSlider.minValue = 0;\n        healthSlider.maxValue = 100;\n        healthSlider.value = 100;\n        healthBarFill.fillAmount = 1f;\n\n        healthSlider.onValueChanged.AddListener(UpdateHealth);\n        damageButton.onClick.AddListener(TakeDamage);\n    }\n\n    void UpdateHealth(float value)\n    {\n        healthBarFill.fillAmount = value / 100f;\n    }\n\n    void TakeDamage()\n    {\n        healthSlider.value = Mathf.Clamp(healthSlider.value - 20f, 0f, 100f);\n    }\n}"
+}

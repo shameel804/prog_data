@@ -1,0 +1,152 @@
+{
+    "id": "l3",
+    "chapterId": "ch_9",
+    "title": "The Update Loop",
+    "description": "Master Update, FixedUpdate, and LateUpdate. Understand deltaTime, fixedDeltaTime, and when to use each.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Lifecycle",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Update() – Every Frame 🔄",
+            "content": "# The Workhorse\n\n`Update()` is called once per rendered frame. Its frequency depends on the game's frame rate.\n\n- Use for **non-physics game logic**: input handling, timers, AI decisions.\n- `Time.deltaTime` gives the time since the last frame – use it for smooth movement.\n\n```csharp\nvoid Update()\n{\n    float step = speed * Time.deltaTime;\n    transform.Translate(Vector3.forward * step);\n}\n```\n\n**Warning**: Long-running code in Update can drop FPS."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What is the correct way to move an object 5 units per second in Update?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "transform.Translate(0, 0, 5);",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "transform.Translate(0, 0, 5 * Time.deltaTime);",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "transform.position.z += 5;",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Translate(5);",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Multiply by Time.deltaTime to make movement frame-rate independent.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "FixedUpdate() – Physics Synchronization ⚙️",
+            "content": "# Consistent Physics Steps\n\n`FixedUpdate()` is called on a **fixed timer** (default 0.02s = 50 Hz). It's independent of rendering frame rate.\n\n- Use for all **Rigidbody** manipulation: `AddForce`, `MovePosition`, etc.\n- `Time.fixedDeltaTime` gives the fixed step (use `Time.deltaTime` inside FixedUpdate automatically gives fixedDeltaTime).\n- Can be called **0, 1, or multiple times** per visual frame.\n\n```csharp\nvoid FixedUpdate()\n{\n    rb.AddForce(Vector3.up * jumpForce);\n}\n```"
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "Why should physics forces be applied in FixedUpdate instead of Update?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "FixedUpdate is faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It matches the physics engine's fixed timestep for consistent simulation",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Update doesn't work with Rigidbody",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "FixedUpdate has better performance",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Physics calculations must run at a fixed rate to remain stable; FixedUpdate guarantees that.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "LateUpdate() – After All Updates 🎥",
+            "content": "# The Final Pass\n\n`LateUpdate()` is called once per frame **after** all `Update()` methods have run.\n\n- Perfect for **camera follow** – the player has moved during Update, so the camera adjusts in LateUpdate.\n- Any logic that depends on other objects having completed their Update.\n\n```csharp\nvoid LateUpdate()\n{\n    transform.position = target.position + offset;\n}\n```"
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_3",
+                "type": "multiple_choice",
+                "question": "When is LateUpdate called relative to Update?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Before all Updates",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "After all Updates",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "At the same time",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Only in Play mode",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "LateUpdate runs after every script's Update has executed, making it ideal for follow cameras.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Delta Time Recap ⏱️",
+            "content": "# Which Delta to Use?\n\n- Inside `Update()` and `LateUpdate()`: `Time.deltaTime` = time since last frame.\n- Inside `FixedUpdate()`: `Time.deltaTime` automatically returns `Time.fixedDeltaTime`.\n- Never use `Time.fixedDeltaTime` in Update; it will be wrong unless you want that specific value.\n\nYou can get smooth time for animations via `Time.smoothDeltaTime` or unscaled time via `Time.unscaledDeltaTime` (ignores time scale)."
+        },
+        {
+            "id": "s_l3_8",
+            "type": "warning",
+            "title": "⚠️ Common Pitfall",
+            "content": "## Don't Mix Physics and Graphics\n\nMoving a Rigidbody by modifying its `transform` in Update causes it to fight the physics engine. Always use Rigidbody methods in FixedUpdate, or set `isKinematic = true` if you want script-only movement."
+        },
+        {
+            "id": "s_l3_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use Update for Input, FixedUpdate for Physics\n\nMany games capture input in Update (because it's per-frame responsive) and then apply the resulting forces/velocities in FixedUpdate. Just store input values in variables."
+        }
+    ]
+}

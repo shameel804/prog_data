@@ -1,0 +1,123 @@
+{
+    "id": "l4",
+    "chapterId": "ch_11",
+    "title": "Collision & Trigger Events",
+    "description": "Write code that reacts when objects touch – OnCollisionEnter, OnTriggerEnter, and their friends.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Physics",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Detecting Physical Hits 💥",
+            "content": "# Collision Messages\n\nWhen two non-trigger colliders make contact, Unity sends messages to all scripts on both objects. You can implement these methods to react:\n\n- `OnCollisionEnter(Collision collision)` – called when contact begins.\n- `OnCollisionStay(Collision collision)` – called every physics step while contact persists.\n- `OnCollisionExit(Collision collision)` – called when contact ends.\n\nThe `Collision` object holds info about the impact (relative velocity, contacts, impulse, gameObject)."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What parameter type does OnCollisionEnter receive?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Collider other",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Collision collision",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "GameObject other",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "ContactPoint contact",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "OnCollisionEnter receives a Collision object with detailed impact data.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "code",
+            "title": "Example: Destroy on Collision",
+            "content": "A script that destroys the other object when it hits something.",
+            "codeSnippet": "void OnCollisionEnter(Collision collision)\n{\n    Debug.Log(\"Hit \" + collision.gameObject.name);\n    Destroy(collision.gameObject);\n}",
+            "codeLanguage": "csharp",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Trigger Events 🟢",
+            "content": "# Entering Without Touching\n\nIf a collider has `Is Trigger = true`, you get different messages:\n\n- `OnTriggerEnter(Collider other)` – when another collider enters the trigger zone.\n- `OnTriggerStay(Collider other)` – every physics step while inside.\n- `OnTriggerExit(Collider other)` – when it leaves.\n\nThe `Collider` parameter gives you access to the other object and its gameObject.\n\nUse these for pickups, checkpoints, and sensor zones."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Which method is called when a Rigidbody enters a trigger collider?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "OnCollisionEnter",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "OnTriggerEnter",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "OnContact",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "OnEnterTrigger",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "OnTriggerEnter is called for trigger interactions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "code",
+            "title": "Collectible Coin Script",
+            "content": "A typical coin pickup using OnTriggerEnter.",
+            "codeSnippet": "void OnTriggerEnter(Collider other)\n{\n    if (other.CompareTag(\"Player\"))\n    {\n        Debug.Log(\"Coin collected!\");\n        Destroy(gameObject);\n    }\n}",
+            "codeLanguage": "csharp",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Required Conditions ⚠️",
+            "content": "# For Messages to Fire\n\n- At least one object must have a **Rigidbody** (or Rigidbody2D).\n- For collision messages, neither collider should be a trigger.\n- For trigger messages, at least one must be a trigger.\n- The layers of the objects must be set to interact in the **Physics Collision Matrix** (Edit → Project Settings → Physics → Layer Collision Matrix).\n\nIf events aren't firing, check these settings."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use CompareTag, Not ==\n\nAlways check tags with `other.CompareTag(\"Player\")` instead of `other.tag == \"Player\"`. CompareTag is faster and allocates less memory."
+        }
+    ]
+}

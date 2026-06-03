@@ -1,0 +1,120 @@
+{
+    "id": "l4",
+    "chapterId": "ch_13",
+    "title": "Transitions & Parameters",
+    "description": "Connect animation states with transitions and drive them using parameters like bools, triggers, and floats.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Animation",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Moving Between States 🔀",
+            "content": "# Transitions\n\nA **Transition** is an arrow from one state to another that tells the Animator when to change animations.\n\nCreate a transition by right‑clicking a state → **Make Transition** and clicking the target state.\n\nTransitions have **conditions** based on **parameters**. When all conditions are true, the transition can fire.\n\nYou can adjust:\n- **Exit Time** – minimum time before the transition can start.\n- **Transition Duration** – how long the crossfade takes.\n- **Interruption Source** – whether this transition can be interrupted.\n\nThink of transitions as if‑statements: \"If `isRunning` is true, go from Idle to Run.\""
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What are transitions in the Animator used for?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To blend colors",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To define when the Animator switches from one state to another",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To delete animations",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To import animations",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Transitions are the connections between animation states.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Parameters – The Triggers 🎛️",
+            "content": "# Four Types\n\nParameters are variables you create in the Animator window (left panel, Parameters tab) and use in transition conditions and scripts:\n\n- **Float** – continuous values (speed, health).\n- **Int** – whole numbers (weapon type).\n- **Bool** – true/false (isGrounded, isAttacking).\n- **Trigger** – a one‑shot signal that resets after use (jump, punch).\n\nAdd a parameter: click the + in the Parameters tab.\n\nIn transitions, add conditions like `Speed > 0.1` or `Jump` (trigger)."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "Which parameter type is best for a 'Jump' action that should happen once and not loop?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Float",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Bool",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Int",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Trigger",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "Triggers are set, consumed by a transition, and then reset automatically.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Setting Up a Simple Transition 🚦",
+            "content": "# Walk to Run Example\n\nSuppose you have two states: **Walk** and **Run**.\n1. Add a Float parameter called `Speed`.\n2. Create transitions: Walk → Run, Run → Walk.\n3. On Walk → Run, add condition `Speed > 3`.\n4. On Run → Walk, add condition `Speed < 1` (or `Speed <= 3`).\n5. In a script, set `animator.SetFloat(\"Speed\", movementSpeed);`.\n\nNow the character switches animations based on speed!"
+        },
+        {
+            "id": "s_l4_6",
+            "type": "code",
+            "title": "Driving Parameters via Script",
+            "content": "Access the Animator from script:",
+            "codeSnippet": "Animator anim = GetComponent<Animator>();\nanim.SetFloat(\"Speed\", rigidbody.velocity.magnitude);\nanim.SetBool(\"isGrounded\", isGrounded);\nanim.SetTrigger(\"Jump\"); // when jump pressed",
+            "codeLanguage": "csharp",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_7",
+            "type": "text",
+            "title": "Transition Settings 🔧",
+            "content": "# Fine‑Tuning\n\nEach transition has a **Settings** area:\n- **Has Exit Time** – if checked, the animation must play for a minimum time before transitioning (uses Exit Time).\n- **Fixed Duration** – if checked, transition duration is in seconds; otherwise normalized (percentage of source clip).\n- **Transition Duration** – crossfade length.\n- **Transition Offset** – where in the target animation to start.\n- **Conditions** – list of parameter comparisons.\n\nFor responsive controls, often uncheck **Has Exit Time** so the transition happens immediately when conditions are met."
+        },
+        {
+            "id": "s_l4_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Avoid Transition Loops\n\nBe careful with conditions that instantly bounce back (e.g., Speed > 3 and Speed < 3 on reverse) causing rapid flickering. Use hysteresis: e.g., > 3 to go, < 1 to return."
+        }
+    ]
+}

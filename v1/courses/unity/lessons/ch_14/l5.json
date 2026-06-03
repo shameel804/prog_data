@@ -1,0 +1,120 @@
+{
+    "id": "l5",
+    "chapterId": "ch_14",
+    "title": "Audio Mixer Basics",
+    "description": "Create and use an Audio Mixer for volume groups, snapshot transitions, and professional audio management.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Audio",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "What is the Audio Mixer? 🎛️",
+            "content": "# A Master Sound Controller\n\nThe **Audio Mixer** is an asset (Create → Audio Mixer) that acts like a mixing desk. It allows you to:\n\n- Route multiple Audio Sources into **groups** (Music, SFX, Voice).\n- Apply effects (Echo, Reverb, Pitch Shifter) to groups.\n- Control volume, pitch, and other parameters globally.\n- Use **Snapshots** to save different configurations and transition between them (e.g., normal → underwater → paused).\n\nIt gives you centralized control over all game audio."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the main purpose of the Audio Mixer?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To record audio",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To route and control multiple Audio Sources from one place",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To convert 2D audio to 3D",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To import audio files",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The Mixer centralizes audio routing and processing.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Creating Groups & Routing 🗂️",
+            "content": "# Organizing Your Audio\n\n1. Create an Audio Mixer asset (right‑click in Project → Create → Audio Mixer).\n2. Double‑click it to open the **Audio Mixer** window.\n3. In the **Groups** panel, you'll see a Master group. Right‑click to add child groups (e.g., \"Music\", \"SFX\", \"UI\").\n4. To route an Audio Source to a group, select the Audio Source and in its Output field, choose the group.\n\nNow changing the Music group volume affects all music sources simultaneously."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "How do you assign an Audio Source to a mixer group?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Write a script",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Drag the Audio Source into the Mixer window",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Set the Audio Source's Output field to the group",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Add an Audio Mixer Group component",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The Output dropdown on the Audio Source component selects the mixer group.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Snapshots & Transitions 🔄",
+            "content": "# Saving and Switching Settings\n\nA **Snapshot** stores the state of all mixer parameters at a given moment. You can create multiple snapshots (e.g., \"Default\", \"Paused\", \"Underwater\").\n\n- Create snapshots in the Snapshots panel of the Audio Mixer window.\n- Transition between them via script: `snapshot.TransitionTo(0.5f);` (0.5 seconds fade).\n\nThis allows smooth audio transitions for different game states. Example: when pausing, transition to a snapshot that lowers music volume and applies a low‑pass filter."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "code",
+            "title": "Snapshot Control Script",
+            "content": "Basic example of switching snapshots:",
+            "codeSnippet": "using UnityEngine;\nusing UnityEngine.Audio;\n\npublic class AudioSnapshotSwitcher : MonoBehaviour\n{\n    public AudioMixerSnapshot pausedSnapshot;\n    public AudioMixerSnapshot defaultSnapshot;\n\n    void Update()\n    {\n        if (Input.GetKeyDown(KeyCode.Escape))\n            pausedSnapshot.TransitionTo(0.5f);\n        if (Input.GetKeyDown(KeyCode.Space))\n            defaultSnapshot.TransitionTo(0.5f);\n    }\n}",
+            "codeLanguage": "csharp",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Exposed Parameters & Scripting 📝",
+            "content": "# Finer Control\n\nYou can **Expose** mixer parameters (like volume, pitch) by right‑clicking a parameter in the Mixer window and selecting **Expose**. This gives it a string name.\n\nThen from code, you can control it:\n```csharp\nAudioMixer mixer;\nmixer.SetFloat(\"MusicVolume\", -10f); // decibels\n```\n\nThis allows dynamic mixing: e.g., a volume slider in UI that drives the mixer parameter."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use Snapshot Tweening\n\n`.TransitionTo(time)` interpolates all parameters smoothly. No need to manually Lerp volumes; the mixer does it for you."
+        }
+    ]
+}

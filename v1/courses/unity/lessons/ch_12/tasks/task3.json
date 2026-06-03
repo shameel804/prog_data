@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_12",
+    "title": "Dynamic Inventory List",
+    "description": "Implement a scrollable inventory list that adds new items when a button is clicked, using a Layout Group and Content Size Fitter.",
+    "estimatedMinutes": 25,
+    "problemStatement": "**Goal:** Create a scrollable list where each button click adds a new item text.\n\n1. Create a Canvas (Scale With Screen Size).\n2. Create an empty GameObject \"ScrollView\" as child of Canvas, add a Scroll Rect component, and also add a Mask component (with an Image to act as mask).\n3. Inside ScrollView, create an empty \"Content\" object. Set its RectTransform anchors to top‑left and size delta to (0,0) for now. Add a Vertical Layout Group (child alignment top left, control child size width, height). Add a Content Size Fitter (Vertical Fit = Preferred Size).\n4. Create a Button (outside ScrollView) \"Add Item\".\n5. Create a script `InventoryManager` and attach to an Empty.\n6. Declare `public GameObject itemPrefab;` – create a prefab of a Text element (e.g., with Text component, font size 20, anchor to top‑left, size delta 200x30).\n7. In `AddItem()` method, instantiate the prefab as a child of Content, set its text to \"Item \" + (item count).\n8. After adding, call `LayoutRebuilder.ForceRebuildLayoutImmediate(contentRectTransform);` or `Canvas.ForceUpdateCanvases();` to refresh.\n9. Wire the button's OnClick to call AddItem.\n10. Play; each click adds a new text item, and the scrollview becomes scrollable when content exceeds the view.\n\nTake a screenshot of the scrollable list with several items.",
+    "hints": [
+        "Make sure the ScrollView has a RectTransform with a fixed size (e.g., 200x300) and masks it.",
+        "Assign the Content's RectTransform to the ScrollRect's Content field.",
+        "Use `Instantiate(itemPrefab, contentTransform)` to add as child."
+    ],
+    "expectedOutput": "A scrollable list that grows as items are added.",
+    "solutionCode": "using UnityEngine;\nusing UnityEngine.UI;\nusing System.Collections;\n\npublic class InventoryManager : MonoBehaviour\n{\n    public GameObject itemPrefab;\n    public Transform contentParent;\n    public ScrollRect scrollRect;\n    private int itemCount = 0;\n\n    public void AddItem()\n    {\n        itemCount++;\n        GameObject newItem = Instantiate(itemPrefab, contentParent);\n        Text txt = newItem.GetComponentInChildren<Text>();\n        if (txt != null) txt.text = \"Item \" + itemCount;\n\n        Canvas.ForceUpdateCanvases();\n        LayoutRebuilder.ForceRebuildLayoutImmediate(contentParent as RectTransform);\n    }\n}"
+}

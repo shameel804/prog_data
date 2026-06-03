@@ -1,0 +1,129 @@
+{
+    "id": "l4",
+    "chapterId": "ch_14",
+    "title": "Controlling Audio from Scripts",
+    "description": "Play, stop, and manage AudioSources dynamically with C#. Use PlayOneShot and PlayClipAtPoint for one‑time effects.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Audio",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Getting a Reference to AudioSource 🔌",
+            "content": "# The Scripting Entry Point\n\nTo control audio via code, you need a reference to the AudioSource component:\n\n```csharp\nAudioSource audioSource = GetComponent<AudioSource>();\n```\n\nOr if you have a public field, drag the AudioSource from the Inspector.\n\nYou can then call methods on it: `Play()`, `Stop()`, `Pause()`, `UnPause()`."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which method resumes a paused AudioSource?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Play()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Resume()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "UnPause()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Continue()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "UnPause() continues playback from where it was paused.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Basic Playback Control ▶️⏸️",
+            "content": "# Playing, Stopping, Pausing\n\n- `audioSource.Play()` – starts playing the assigned clip.\n- `audioSource.Stop()` – stops playback (resets position to beginning).\n- `audioSource.Pause()` – pauses at current position.\n- `audioSource.UnPause()` – continues from where it paused.\n\nYou can check `audioSource.isPlaying` to see if it's currently playing.\n\nExample: toggle music on/off with a key."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Toggle Audio with Space",
+            "content": "A simple script to play/stop audio on key press.",
+            "codeSnippet": "using UnityEngine;\n\npublic class AudioToggle : MonoBehaviour\n{\n    private AudioSource audioSource;\n\n    void Awake() => audioSource = GetComponent<AudioSource>();\n\n    void Update()\n    {\n        if (Input.GetKeyDown(KeyCode.Space))\n        {\n            if (audioSource.isPlaying)\n                audioSource.Stop();\n            else\n                audioSource.Play();\n        }\n    }\n}",
+            "codeLanguage": "csharp",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "PlayOneShot & PlayClipAtPoint 🎯",
+            "content": "# One‑Time Sound Effects\n\nSometimes you want to play a sound without a dedicated AudioSource component. Two handy methods:\n\n- `audioSource.PlayOneShot(AudioClip clip, float volumeScale)` – plays a clip on top of the AudioSource's existing clip, without interrupting it. Perfect for overlapping footstep sounds.\n- `AudioSource.PlayClipAtPoint(AudioClip clip, Vector3 position, float volume)` – creates a temporary GameObject at a position, plays the sound, and then destroys it. Great for impact sounds at a specific location (3D).\n\nBoth are static/instance methods that simplify one‑shot effects."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What does PlayOneShot allow you to do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Loop a sound",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Play an additional clip without stopping the current one",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Delete the AudioSource",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Change the clip permanently",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "PlayOneShot plays another clip while the main clip continues.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "code",
+            "title": "Footstep Example with PlayOneShot",
+            "content": "Assume multiple footstep AudioClips array, play random one on each step.",
+            "codeSnippet": "public AudioClip[] footstepClips;\nprivate AudioSource audioSource;\n\nvoid PlayFootstep()\n{\n    AudioClip clip = footstepClips[Random.Range(0, footstepClips.Length)];\n    audioSource.PlayOneShot(clip, 0.7f);\n}",
+            "codeLanguage": "csharp",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_8",
+            "type": "text",
+            "title": "Changing Volume & Pitch at Runtime 🎚️",
+            "content": "# Dynamic Adjustments\n\nYou can modify properties directly in script:\n- `audioSource.volume = 0.5f;`\n- `audioSource.pitch = 1.2f;`\n- `audioSource.spatialBlend = 1f;`\n\nThese changes take effect immediately. You can smoothly fade audio by interpolating volume in `Update()` using `Mathf.Lerp`.\n\nExample: fade out music."
+        },
+        {
+            "id": "s_l4_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## AudioSource Pooling\n\nInstantiating many temporary AudioSources can hit performance. For frequent sounds, create a pool of reusable AudioSources and cycle through them."
+        }
+    ]
+}

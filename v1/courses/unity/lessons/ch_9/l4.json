@@ -1,0 +1,101 @@
+{
+    "id": "l4",
+    "chapterId": "ch_9",
+    "title": "Decommissioning & Destruction",
+    "description": "Handle cleanup gracefully with OnDisable, OnDestroy, and OnApplicationQuit.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Lifecycle",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Saying Goodbye 👋",
+            "content": "# Disable and Destroy\n\nObjects don't last forever. When they are removed or deactivated, Unity calls:\n- **OnDisable()** – when the object is deactivated or the script is disabled.\n- **OnDestroy()** – when the object is destroyed (scene unload, `Destroy()`, etc.).\n\nThese are the perfect places to clean up, unsubscribe from events, and release resources."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "When is OnDisable called?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Only when the object is destroyed",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "When the object becomes inactive or its script is disabled",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Before Awake",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Every frame",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "OnDisable is called when the GameObject or the component's enabled state changes to false.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "OnDisable() – Temporary Goodbye ⏸️",
+            "content": "# Cleanup on Deactivation\n\nUse `OnDisable()` to:\n- Unsubscribe from events (so disabled objects don't receive updates).\n- Stop coroutines started in OnEnable.\n- Reset static references if this object was holding them.\n\n```csharp\nvoid OnEnable() { EventManager.OnGameOver += HandleGameOver; }\nvoid OnDisable() { EventManager.OnGameOver -= HandleGameOver; }\n```\n\nFailing to unsubscribe can lead to null reference errors or memory leaks."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "OnDisable is called only when the entire GameObject is destroyed.",
+                "options": [
+                    {
+                        "id": "true",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "false",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "It is also called when the object is simply deactivated or the script disabled.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "OnDestroy() – Permanent Goodbye 💥",
+            "content": "# When the Object Ceases to Exist\n\n`OnDestroy()` is called when:\n- The object is destroyed via `Destroy(gameObject)`.\n- The scene is unloaded and the object is not marked `DontDestroyOnLoad`.\n- The application quits (but see OnApplicationQuit).\n\nUse it to:\n- Release unmanaged resources.\n- Tell other systems that this object no longer exists.\n- Save final data.\n\n**Note**: OnDestroy may not be called on application quit; use `OnApplicationQuit()` for critical saves."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "OnApplicationQuit() 📴",
+            "content": "# Final Exit\n\n`OnApplicationQuit()` is called on all scripts when the game is closing (in builds and in Editor when Play mode stops).\n\n- Use for saving player preferences, high scores.\n- It's called before OnDestroy, but after other shutdown logic.\n- Works reliably even in WebGL builds."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Unsubscribe to Avoid Zombie Listeners\n\nAlways pair OnEnable/OnDisable for event subscriptions. If you subscribe in Start, unsubscribe in OnDestroy. A common source of bugs is an object that's destroyed but still listening to an event."
+        }
+    ]
+}

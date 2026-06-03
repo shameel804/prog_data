@@ -1,0 +1,30 @@
+{
+    "id": "project3",
+    "title": "Space Blaster",
+    "description": "Develop a 2D top-down space shooter with waves of enemies, power-ups, a UI menu, and audio mixer integration. Culminates with a WebGL build.",
+    "difficulty": "Advanced",
+    "estimatedHours": "6-8",
+    "problemStatement": "**Goal:** Create a complete 2D shoot‑'em‑up game with multiple waves, enemy types, power-ups, and a full UI menu system.\n\n### What You'll Build\nA top‑down space shooter with:\n- A player ship that moves with arrow keys/WASD and fires bullets with Space.\n- Waves of enemies that spawn from the top and move downwards.\n- Two enemy types: a basic one and a faster, tougher one.\n- Power-ups: shield, rapid fire, and extra life.\n- UI: main menu with Play and Quit buttons, in‑game HUD (score, lives, wave number), pause menu, and game over screen with restart.\n- Audio: shooting, explosions, power-up collect, and background music. Use an Audio Mixer with exposed volume parameters and a UI volume slider.\n- A WebGL build that runs in a browser.\n\n### Concepts Applied\n- **2D Physics**: Rigidbody2D, Collider2D, trigger detection.\n- **Input**: Keyboard input for movement and shooting.\n- **Prefabs & Object Pooling**: Bullets and enemies should be pooled to avoid instantiate/destroy overhead.\n- **UI**: Canvas with multiple screens (menu, HUD, pause, game over).\n- **Animation**: Use the Animator for simple sprite animations (enemy explosions, player idle/tilt).\n- **Audio Mixer**: Create groups for SFX and Music, expose master volume parameter, and connect UI slider.\n- **Scripting**: GameManager singleton, enemy spawning coroutine, player controller, power-up logic.\n- **Building**: Configure Player Settings for WebGL, optimize memory, and test in a browser.\n\n### Starter Steps\n1. Switch to 2D mode, create a new project (or use a 2D template).\n2. Import or create simple spaceship and enemy sprites (solid colors are fine).\n3. Set up the player: Sprite Renderer, Rigidbody2D (kinematic for direct velocity movement), BoxCollider2D, and a script that reads input and moves the ship within screen bounds.\n4. Create a Bullet Prefab: a small circle sprite, Rigidbody2D, trigger collider. Script to move it upwards and deactivate after leaving screen.\n5. Implement object pooling: a simple Pooler script that holds a queue of deactivated objects and `Get()`/`ReturnToPool()` methods.\n6. Build enemy types: base enemy (slow, 1 hit) and tough enemy (faster, 2 hits). They move downward and fire occasionally.\n7. Spawning: GameManager spawns enemies in waves using coroutines; wave count increments.\n8. Power-ups: random chance to drop from enemies (shield, rapid fire, extra life). Use trigger detection and apply effects via scripts.\n9. UI: Create a Main Menu scene with Play and Quit buttons. In game scene, a HUD with score, lives, wave. A pause panel toggled by Esc. Game Over panel when lives 0.\n10. Audio: assign AudioSources on relevant objects (player, enemies). Create an Audio Mixer with Music and SFX groups, expose master volume, and add a volume slider in the settings (or on main menu).\n11. Build for WebGL, set memory size to 256 MB, template minimal, and test on a local server.\n\n### Submission\n- WebGL build hosted on itch.io or GitHub Pages (provide link) or zipped build folder.\n- Screenshots of main menu, gameplay, and game over screens.\n- Brief explanation of the pooling system implemented.",
+    "requirements": [
+        "Player ship moves within the camera bounds (use `Mathf.Clamp` or colliders at screen edges).",
+        "Bullets are taken from an object pool and recycled; no Instantiate/Destroy during gameplay.",
+        "At least two enemy types with different health and movement patterns.",
+        "Enemies spawn in waves (wave size increases) with a short delay between spawns.",
+        "Three power-ups: shield (absorbs one hit), rapid fire (increased fire rate for limited time), extra life.",
+        "Main menu scene with Play and Quit (Application.Quit()). Pause menu in game (Esc) that freezes Time.timeScale.",
+        "HUD displays score, lives, and current wave number. Game Over screen shows final score and a Restart button.",
+        "Audio Mixer with master volume parameter exposed and controlled by a UI slider (in a Settings panel or main menu).",
+        "At least 4 different sound effects (shoot, explosion, power-up, background music).",
+        "Working WebGL build with no errors in the browser console."
+    ],
+    "hints": [
+        "For object pooling, create a `Pool` class with a `Queue<GameObject>` and methods `GetObject(Vector3 position, Quaternion rotation)` and `ReturnObject(GameObject obj)`. Each pooled object should have a component that returns itself when outside screen or on collision.",
+        "To keep the player in bounds, use `Vector3 pos = transform.position; pos.x = Mathf.Clamp(pos.x, minX, maxX); pos.y = Mathf.Clamp(pos.y, minY, maxY); transform.position = pos;`.",
+        "For enemy movement, use `transform.Translate(Vector2.down * speed * Time.deltaTime)` or Rigidbody2D.velocity.",
+        "The Audio Mixer: create it via Create → Audio Mixer. In the mixer, right-click Master Volume label → Expose to script. Then use `mixer.SetFloat(\"MasterVol\", Mathf.Log10(value) * 20);` from a slider.",
+        "For WebGL, make sure exceptions are set to 'None' for best performance unless debugging.",
+        "Time.timeScale = 1 for resume, 0 for pause. Store it before pausing.",
+        "Use `SceneManager.LoadScene` to switch between scenes (MainMenu, Game, etc.)."
+    ],
+    "expectedOutput": "A complete 2D space shooter with main menu, HUD, pause, game over, object pooling, power-ups, audio mixer, and a WebGL build that runs in a browser."
+}

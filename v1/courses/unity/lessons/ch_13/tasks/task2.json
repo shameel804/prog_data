@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_13",
+    "title": "State Machine Character",
+    "description": "Build an Animator Controller with Idle, Walk, and Run states, and control them with a Speed float parameter and script.",
+    "estimatedMinutes": 25,
+    "problemStatement": "**Goal:** Create a simple character that switches animations based on movement speed.\n\n1. Create three animation clips for a Cube or character model:\n   - **Idle**: no movement (static pose).\n   - **Walk**: the object moving slightly up and down (or rotating).\n   - **Run**: faster movement.\n   You can create these by animating position or rotation.\n2. Create an Animator Controller named \"PlayerAnim\". Open it in the Animator window.\n3. Add the three clips as states. Set Idle as default.\n4. Create transitions: Idle → Walk, Walk → Idle, Walk → Run, Run → Walk, and optionally Idle → Run if needed.\n5. Add a Float parameter **Speed**.\n6. Set transition conditions:\n   - Idle → Walk: Speed > 0.1\n   - Walk → Idle: Speed < 0.1\n   - Walk → Run: Speed > 5\n   - Run → Walk: Speed < 5\n7. Uncheck **Has Exit Time** on all transitions for responsiveness.\n8. Write a script `PlayerMoveAnimated` that moves the player with Rigidbody and sets `anim.SetFloat(\"Speed\", rb.velocity.magnitude);`.\n9. Attach to the character, assign the controller, and test. Use WASD to move; watch animations change.\n\nTake a screenshot of the Animator window with states and transitions, and the character in the Scene view.",
+    "hints": [
+        "For Idle, just record a single frame with no movement (or leave clip empty).",
+        "To create clips, you can use the Animation window on the same object; each clip is created via the dropdown (click the clip name and Create New Clip)."
+    ],
+    "expectedOutput": "Animations switch smoothly as player speed changes.",
+    "solutionCode": "// PlayerMoveAnimated.cs\nusing UnityEngine;\n\npublic class PlayerMoveAnimated : MonoBehaviour\n{\n    public float speed = 5f;\n    private Rigidbody rb;\n    private Animator anim;\n\n    void Awake()\n    {\n        rb = GetComponent<Rigidbody>();\n        anim = GetComponent<Animator>();\n    }\n\n    void Update()\n    {\n        float h = Input.GetAxis(\"Horizontal\");\n        float v = Input.GetAxis(\"Vertical\");\n        Vector3 move = new Vector3(h, 0, v).normalized * speed;\n        rb.velocity = new Vector3(move.x, rb.velocity.y, move.z);\n        anim.SetFloat(\"Speed\", rb.velocity.magnitude);\n    }\n}"
+}

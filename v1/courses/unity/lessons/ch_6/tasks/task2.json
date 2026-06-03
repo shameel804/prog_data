@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_6",
+    "title": "Health & Damage Calculator",
+    "description": "Build a script that uses ints and floats to calculate health after damage, and displays the result.",
+    "estimatedMinutes": 20,
+    "problemStatement": "**Goal:** Practice arithmetic and type handling.\n\n1. Create a new script named `HealthCalculator`.\n2. Declare these variables:\n   - `public int maxHealth = 100;`\n   - `public int currentHealth;`\n   - `public float damageMultiplier = 1.5f;`\n3. In `Start()`, set `currentHealth = maxHealth;`\n4. Create a method `public void TakeDamage(int baseDamage)` that:\n   - Computes `int totalDamage = (int)(baseDamage * damageMultiplier);`\n   - Subtracts totalDamage from `currentHealth`.\n   - Clamps `currentHealth` to 0 if it goes below.\n   - Logs the damage taken and remaining health.\n5. Call `TakeDamage` twice from `Start()` with different baseDamage values (e.g., 20, 30) to test.\n6. Attach the script to an Empty GameObject. Press Play and observe the Console.\n7. In the Inspector, change `damageMultiplier` while in Play mode and see the effect.\n\nTake a screenshot of the Inspector showing the public variables and the Console output.",
+    "hints": [
+        "To clamp: `if (currentHealth < 0) currentHealth = 0;` or use `Mathf.Clamp`.",
+        "Cast the damage multiplication to int after calculation to truncate, or use `Mathf.RoundToInt` if you prefer rounding."
+    ],
+    "expectedOutput": "Console shows: Took 30 damage, health: 70; Took 45 damage, health: 25 (if multiplier 1.5).",
+    "solutionCode": "using UnityEngine;\n\npublic class HealthCalculator : MonoBehaviour\n{\n    public int maxHealth = 100;\n    public int currentHealth;\n    public float damageMultiplier = 1.5f;\n\n    void Start()\n    {\n        currentHealth = maxHealth;\n        TakeDamage(20);\n        TakeDamage(30);\n    }\n\n    public void TakeDamage(int baseDamage)\n    {\n        int totalDamage = (int)(baseDamage * damageMultiplier);\n        currentHealth -= totalDamage;\n        if (currentHealth < 0) currentHealth = 0;\n        Debug.Log($\"Took {totalDamage} damage, health: {currentHealth}\");\n    }\n}"
+}

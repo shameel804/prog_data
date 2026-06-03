@@ -1,0 +1,136 @@
+{
+    "id": "l2",
+    "chapterId": "ch_9",
+    "title": "Initialization Phase",
+    "description": "Deep dive into Awake, OnEnable, and Start – their order, differences, and best use cases.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Lifecycle",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "Awake() – The Constructor Equivalent 🛌",
+            "content": "# When Does Awake Run?\n\n`Awake()` is called when a script instance is being loaded. It runs:\n- After all objects are instantiated in a scene.\n- Even if the script component is **disabled**.\n- Only **once** in its lifetime.\n\nUse `Awake()` for:\n- Setting up references within the same GameObject (`GetComponent<>()`).\n- Initializing default values that don't depend on other objects.\n\n**Do NOT** use `Awake()` for:\n- Communication between different GameObjects (use `Start()`).\n- Operations that depend on other objects having run their `Awake()`."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Does Awake() run if the script component is disabled in the Inspector?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "No, only enabled scripts run Awake",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Yes, Awake runs even if the component is disabled",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Only in Play mode",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It runs after enabling",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Awake is called regardless of the enabled state. Start and Update require the component to be enabled.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "OnEnable() – Reactivation Event 🔄",
+            "content": "# Called Every Time It Becomes Active\n\n`OnEnable()` is called:\n- Right after `Awake()` (if the object starts active).\n- Every time the GameObject is **set active** (from inactive to active).\n- Every time the **script component** is enabled (if the GameObject is active).\n\nUse `OnEnable()` for:\n- Subscribing to events.\n- Resetting state that should refresh when the object is toggled.\n- Enabling/disabling other components that should follow this object's state."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "How many times can OnEnable be called in a script's lifetime?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Once",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Twice",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "As many times as the object is toggled active/enabled",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Never",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "OnEnable is called each time the object or component becomes enabled again.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Start() – First Frame Prep 🚀",
+            "content": "# After All Awakes\n\n`Start()` is called before the first `Update()`, but only if the script is enabled.\n- It runs **after** all `Awake()` calls in the scene have completed.\n- It's called only **once** (unless the object is re-instantiated).\n\nUse `Start()` for:\n- Communication with other objects (they've already been Awake'd).\n- Starting coroutines.\n- One-time setup that requires other objects to be ready."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_3",
+                "type": "true_false",
+                "question": "Start() is guaranteed to run after all Awake() methods in the scene have completed.",
+                "options": [
+                    {
+                        "id": "true",
+                        "text": "True",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "false",
+                        "text": "False",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Unity ensures all Awake calls finish before any Start is called, though order among Starts can be configured.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "Initialization Order Summary 📋",
+            "content": "# Birth Sequence\n\n1. **Instantiate** the GameObject.\n2. **Awake()** called on all scripts (order among scripts can be set manually).\n3. **OnEnable()** called (if starting active).\n4. **Start()** called before first Update.\n\nIf you have interdependent objects, do self-setup in Awake and cross-object setup in Start."
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use [RequireComponent] to Ensure Dependencies\n\nIf your script needs a Rigidbody, add `[RequireComponent(typeof(Rigidbody))]` above the class. Unity will automatically add a Rigidbody if missing, and you can safely get it in `Awake()`."
+        }
+    ]
+}

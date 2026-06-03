@@ -1,0 +1,58 @@
+{
+    "id": "sq_unity_1",
+    "title": "Editor Escape Room",
+    "triggerChapterIndex": 2,
+    "metadata": {
+        "type": "debug"
+    },
+    "questions": [
+        {
+            "id": "sq_unity_1_q1",
+            "type": "multiple_choice",
+            "question": "Find the line that will cause a NullReferenceException at runtime.",
+            "codeSnippet": "1  using UnityEngine;\n2  public class Buggy : MonoBehaviour {\n3      Rigidbody rb;\n4      void Start() {\n5          rb = GetComponent<Rigidbody>();\n6      }\n7      void Update() {\n8          rb.AddForce(Vector3.up * 10f);\n9      }\n10 }",
+            "bugLineIndex": 7,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "Line 8 (index 7) calls AddForce on a potentially null Rigidbody if the GameObject lacks a Rigidbody component. Always check for null or use [RequireComponent].",
+            "xpReward": 20,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_unity_1_q2",
+            "type": "multiple_choice",
+            "question": "Find the line that will cause the object not to move as expected.",
+            "codeSnippet": "1  using UnityEngine;\n2  public class Mover : MonoBehaviour {\n3      public float speed = 5f;\n4      void Update() {\n5          transform.Translate(0, 0, speed);\n6      }\n7  }",
+            "bugLineIndex": 4,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "Line 5 (index 4) moves the object by a constant amount each frame, making movement frame‑rate dependent. It should multiply by Time.deltaTime.",
+            "xpReward": 20,
+            "difficulty": 1
+        },
+        {
+            "id": "sq_unity_1_q3",
+            "type": "multiple_choice",
+            "question": "Find the line that will result in a missing reference at runtime.",
+            "codeSnippet": "1  using UnityEngine;\n2  public class Finder : MonoBehaviour {\n3      void Start() {\n4          GameObject player = GameObject.Find(\"Player\");\n5          player.transform.position = Vector3.zero;\n6      }\n7  }",
+            "bugLineIndex": 4,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "Line 5 (index 4) assumes GameObject.Find returns a valid object. If there is no GameObject named exactly \"Player\" in the scene, player will be null and accessing .transform will throw a NullReferenceException.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_unity_1_q4",
+            "type": "multiple_choice",
+            "question": "Find the line that prevents the child from following the parent correctly.",
+            "codeSnippet": "1  using UnityEngine;\n2  public class ParentMover : MonoBehaviour {\n3      public Transform child;\n4      void Update() {\n5          transform.position += Vector3.forward * Time.deltaTime;\n6          child.position = transform.position;\n7      }\n8  }",
+            "bugLineIndex": 5,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "Line 6 (index 5) manually sets the child's world position, which breaks the natural parent‑child relationship. Parenting should be handled by the Hierarchy; moving the parent automatically moves the child.",
+            "xpReward": 20,
+            "difficulty": 2
+        }
+    ]
+}

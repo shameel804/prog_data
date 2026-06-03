@@ -1,0 +1,126 @@
+{
+    "id": "l5",
+    "chapterId": "ch_8",
+    "title": "Unity Event Methods Deep Dive",
+    "description": "Master Start, Update, Awake, FixedUpdate, LateUpdate, and how they interact with your game loop.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Methods",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "The MonoBehaviour Magic ✨",
+            "content": "# Built-in Methods\n\nUnity automatically calls certain methods on your scripts if you define them. You've already used `Start()` and `Update()`. There are many more, forming the **MonoBehaviour lifecycle**.\n\n- These methods are **not** overrides (no `override` keyword); Unity finds them by reflection.\n- They are called at specific moments: when the object is created, every frame, when physics updates, etc.\n\nToday we'll explore the most important ones beyond Start and Update."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "text",
+            "title": "Awake() 🌅",
+            "content": "# Before Start\n\n`Awake()` is called when the script instance is being loaded. It runs **before** `Start()`, and even if the script is disabled.\n\n- Use `Awake()` to set up references **within the same object** (e.g., `GetComponent<Renderer>()`).\n- Use `Start()` for communication between objects (since all Awakes have run).\n\n```csharp\nvoid Awake()\n{\n    // Get components, initialize internal state\n}\n```\n\nOrder: `Awake()` → `OnEnable()` → `Start()`"
+        },
+        {
+            "id": "s_l5_3",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "When should you use Awake instead of Start?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "When you need to reference other objects",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "For component initialization that doesn't depend on other objects",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "For handling input",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Awake and Start are the same",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Awake runs first; ideal for self-setup.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "FixedUpdate() ⚙️",
+            "content": "# Physics Time\n\n`FixedUpdate()` is called on a regular timer, independent of frame rate. It's the place for **physics calculations** (moving Rigidbodies, applying forces).\n\n- Default fixed timestep: 0.02 seconds (50 calls per second).\n- Always use `FixedUpdate()` for `Rigidbody.MovePosition`, `AddForce`, etc.\n- `Time.deltaTime` in FixedUpdate returns the fixed timestep automatically.\n\n```csharp\nvoid FixedUpdate()\n{\n    rb.AddForce(Vector3.forward * force);\n}\n```"
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "Which method should you use for applying forces to a Rigidbody?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Update",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "LateUpdate",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "FixedUpdate",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Start",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "FixedUpdate syncs with the physics engine.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Update() & LateUpdate() 🕒",
+            "content": "# Frame-Rate Dependent Methods\n\n- **Update()**: Called once per frame. Use for most game logic, input handling, non-physics movement.\n- **LateUpdate()**: Called **after** all Update calls. Use for camera following, or any logic that depends on objects having moved in Update.\n\nTypical order:\n1. `Update()` – move player.\n2. `LateUpdate()` – camera follows player.\n\n```csharp\nvoid LateUpdate()\n{\n    transform.position = target.position + offset;\n}\n```"
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Other Event Methods 📋",
+            "content": "# Useful Ones to Know\n\n- `OnEnable()` / `OnDisable()` – called when the object is enabled/disabled.\n- `OnCollisionEnter()`, `OnTriggerEnter()` – physics callbacks.\n- `OnDestroy()` – when the object is destroyed.\n- `OnMouseDown()` – when clicked (requires Collider).\n\nAll these are methods Unity looks for by name. No special registration needed."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "code",
+            "title": "Lifecycle in Action",
+            "content": "Script demonstrating multiple event methods.",
+            "codeSnippet": "using UnityEngine;\n\npublic class LifecycleDemo : MonoBehaviour\n{\n    void Awake() { Debug.Log(\"Awake\"); }\n    void Start() { Debug.Log(\"Start\"); }\n    void Update() { /* per frame */ }\n    void FixedUpdate() { /* physics */ }\n    void LateUpdate() { Debug.Log(\"Late\"); }\n    void OnEnable() { Debug.Log(\"Enabled\"); }\n    void OnDisable() { Debug.Log(\"Disabled\"); }\n    void OnDestroy() { Debug.Log(\"Destroyed\"); }\n}",
+            "codeLanguage": "csharp",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Execution Order Configuration\n\nYou can customize the order in which scripts' event methods run: **Edit → Project Settings → Script Execution Order**. This is useful when you need precise timing between different scripts."
+        }
+    ]
+}

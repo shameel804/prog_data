@@ -1,0 +1,14 @@
+{
+    "id": "task3",
+    "chapterId": "ch_8",
+    "title": "Lifecycle Logger",
+    "description": "Write a script that logs every MonoBehaviour event method call, then observe the order in the Console.",
+    "estimatedMinutes": 15,
+    "problemStatement": "**Goal:** Deepen understanding of execution order.\n\n1. Create a script `LifecycleLogger`.\n2. Add `Debug.Log` inside these methods (even if empty): `Awake()`, `OnEnable()`, `Start()`, `Update()`, `FixedUpdate()`, `LateUpdate()`, `OnDisable()`, `OnDestroy()`.\n   - For `Update`, `FixedUpdate`, `LateUpdate`, log only the first 3 frames to avoid flooding the console. Use a counter.\n3. Attach the script to an empty GameObject.\n4. Run the scene and observe the order of logs.\n5. Stop, then in the Inspector disable and re-enable the GameObject while playing (or via script). Observe OnDisable/OnEnable calls.\n6. Take a screenshot of the Console showing the initial sequence (Awake, OnEnable, Start, then first few Updates).\n\nBriefly note the order you observed.",
+    "hints": [
+        "Use a private int `frameCount` and increment in Update; log only if frameCount < 4.",
+        "OnDisable/OnDestroy: to test, you can create a UI button to toggle the object or simply stop Play mode."
+    ],
+    "expectedOutput": "Console shows Awake → OnEnable → Start → (Update/FixedUpdate/LateUpdate repeats) → OnDisable (if toggled) → OnDestroy (when stopping).",
+    "solutionCode": "using UnityEngine;\n\npublic class LifecycleLogger : MonoBehaviour\n{\n    private int frameCount = 0;\n    private int fixedCount = 0;\n    private int lateCount = 0;\n\n    void Awake() => Debug.Log(\"Awake\");\n    void OnEnable() => Debug.Log(\"OnEnable\");\n    void Start() => Debug.Log(\"Start\");\n\n    void Update()\n    {\n        if (frameCount < 3)\n        {\n            Debug.Log($\"Update frame {frameCount}\");\n            frameCount++;\n        }\n    }\n\n    void FixedUpdate()\n    {\n        if (fixedCount < 3)\n        {\n            Debug.Log($\"FixedUpdate step {fixedCount}\");\n            fixedCount++;\n        }\n    }\n\n    void LateUpdate()\n    {\n        if (lateCount < 3)\n        {\n            Debug.Log($\"LateUpdate step {lateCount}\");\n            lateCount++;\n        }\n    }\n\n    void OnDisable() => Debug.Log(\"OnDisable\");\n    void OnDestroy() => Debug.Log(\"OnDestroy\");\n}"
+}

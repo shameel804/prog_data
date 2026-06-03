@@ -1,0 +1,123 @@
+{
+    "id": "l4",
+    "chapterId": "ch_12",
+    "title": "Button & Slider Interaction",
+    "description": "Make clickable buttons and draggable sliders, and connect them to script logic.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "UI",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Button Component 🔘",
+            "content": "# Click and Respond\n\nA **Button** is created by GameObject → UI → Button. It comes with a child Text and an Image background.\n\nThe Button component has an **OnClick** event list at the bottom. You can drag a GameObject with a script into the slot, and choose a public method to call when clicked.\n\nYou can also set navigation, transitions (color tint, sprite swap, animation), and interactability."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "How do you assign a method to be called when a button is clicked?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Write the method name in a string field",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Use the OnClick event list in the Button inspector",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Attach a script with an OnClick() method automatically",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Set the Button's Tag to the method name",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The OnClick list in the Inspector allows you to wire up UnityEvents.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Button Scripting 📝",
+            "content": "# Via Code\n\nYou can also add listeners via script using `button.onClick.AddListener()`:\n\n```csharp\npublic Button myButton;\n\nvoid Start()\n{\n    myButton.onClick.AddListener(DoSomething);\n}\n\nvoid DoSomething()\n{\n    Debug.Log(\"Button clicked!\");\n}\n```\n\nThis is dynamic – you can add/remove listeners at runtime."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Button Click Example",
+            "content": "A script that changes button text when clicked.",
+            "codeSnippet": "using UnityEngine;\nusing UnityEngine.UI;\n\npublic class ClickCounter : MonoBehaviour\n{\n    public Button button;\n    public Text buttonText;\n    private int clicks = 0;\n\n    void Start()\n    {\n        button.onClick.AddListener(OnButtonClick);\n    }\n\n    void OnButtonClick()\n    {\n        clicks++;\n        buttonText.text = $\"Clicks: {clicks}\";\n    }\n}",
+            "codeLanguage": "csharp",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "The Slider Component 🎚️",
+            "content": "# Draggable Value Selector\n\nA **Slider** (GameObject → UI → Slider) provides a draggable handle. It has:\n- **Min Value** / **Max Value** – range.\n- **Value** – current value.\n- **Whole Numbers** – restrict to integers.\n- **On Value Changed** event – called whenever the slider moves.\n\nYou can style the background, fill area, and handle with Images.\n\nScript access: `slider.value`."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "How do you get notified when a slider's value changes?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Override OnValueChanged()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Use the On Value Changed event in the Inspector or via script",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Check slider.value in Update",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Use Slider.onClick",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The slider exposes an OnValueChanged UnityEvent that fires on change.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "code",
+            "title": "Volume Slider Example",
+            "content": "Connect a slider to an AudioSource volume.",
+            "codeSnippet": "using UnityEngine;\nusing UnityEngine.UI;\n\npublic class VolumeControl : MonoBehaviour\n{\n    public Slider volumeSlider;\n    public AudioSource audioSource;\n\n    void Start()\n    {\n        volumeSlider.onValueChanged.AddListener(SetVolume);\n        volumeSlider.value = audioSource.volume;\n    }\n\n    void SetVolume(float value)\n    {\n        audioSource.volume = value;\n    }\n}",
+            "codeLanguage": "csharp",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l4_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Toggle & Dropdown\n\nExplore **Toggle** and **Dropdown** UI elements as well. They work similarly with OnValueChanged and OnClick events."
+        }
+    ]
+}

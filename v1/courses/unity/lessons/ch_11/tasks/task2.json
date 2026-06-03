@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_11",
+    "title": "Collectible Coins",
+    "description": "Set up trigger colliders for coins that disappear when the player touches them, and increment a score.",
+    "estimatedMinutes": 20,
+    "problemStatement": "**Goal:** Use triggers to create collectibles.\n\n1. Create a simple player: a Cube with Rigidbody (freeze rotation X, Z) and a movement script (you can reuse the FPSController from Chapter 10 or just a simple WASD mover). Add a tag \"Player\".\n2. Create a Coin: a small yellow Sphere. Add a Collider (Sphere Collider). Set `Is Trigger = true`. Remove any Rigidbody (so it stays put). Add a script `Coin`.\n3. In the `Coin` script, implement `OnTriggerEnter(Collider other)`. If `other.CompareTag(\"Player\")`, then:\n   - Increase a static score variable (e.g., `ScoreManager.score += 1`).\n   - Log the new score.\n   - Destroy the coin.\n4. Create a simple `ScoreManager` script (or keep score static in Coin) to track score.\n5. Place several coins around the scene.\n6. Move the player with WASD and collect coins. Verify score increments and coins disappear.\n\nTake a screenshot of the Console showing score updates and the Scene view with player and coins.",
+    "hints": [
+        "The player must have a Rigidbody for trigger events to fire (or the coin needs a Rigidbody). One Rigidbody is enough.",
+        "Make sure the player's layer interacts with the coin's layer (default layers work).",
+        "If using static score, create a static class or just `public static int score;` in Coin."
+    ],
+    "expectedOutput": "Coins disappear on touch; Console shows incrementing score.",
+    "solutionCode": "// Coin.cs\nusing UnityEngine;\n\npublic class Coin : MonoBehaviour\n{\n    public static int score = 0;\n\n    void OnTriggerEnter(Collider other)\n    {\n        if (other.CompareTag(\"Player\"))\n        {\n            score++;\n            Debug.Log(\"Score: \" + score);\n            Destroy(gameObject);\n        }\n    }\n}\n\n// PlayerController.cs (simplified)\nusing UnityEngine;\n\npublic class SimpleMover : MonoBehaviour\n{\n    public float speed = 5f;\n    void Update()\n    {\n        float h = Input.GetAxis(\"Horizontal\");\n        float v = Input.GetAxis(\"Vertical\");\n        Vector3 move = new Vector3(h, 0, v) * speed * Time.deltaTime;\n        transform.Translate(move);\n    }\n}"
+}

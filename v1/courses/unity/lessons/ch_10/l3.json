@@ -1,0 +1,120 @@
+{
+    "id": "l3",
+    "chapterId": "ch_10",
+    "title": "Axis Input & Smoothing",
+    "description": "Master GetAxis and GetAxisRaw for continuous movement, understand input gravity and sensitivity.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Input",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Axes – Smooth Float Values 📈",
+            "content": "# GetAxis vs GetAxisRaw\n\n- `Input.GetAxis(\"Horizontal\")` returns a float between -1 and 1, with **smoothing** (input gravity/sensitivity).\n- `Input.GetAxisRaw(\"Horizontal\")` returns -1, 0, or 1 **immediately** – no smoothing.\n\nGetAxis is great for smooth character movement. GetAxisRaw is useful for menu navigation or anything that needs instant snap."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "What values can Input.GetAxisRaw return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Any float between -1 and 1",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Only -1, 0, or 1",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "0 to 1",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Positive integers",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "GetAxisRaw is not smoothed; it gives -1, 0, or 1 immediately.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Smoothing Mechanics 🧈",
+            "content": "# Gravity & Sensitivity\n\nIn the Input Manager, each axis has:\n- **Gravity**: speed at which the axis returns to 0 when no input (default 3).\n- **Sensitivity**: speed at which it moves toward the input value (default 3).\n\nWith GetAxis, if you press D, the value ramps from 0 to 1 over time, giving a gentle acceleration. When you release, it glides back to 0.\n\nThis prevents jerky movement and feels more natural."
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Smooth Movement Example",
+            "content": "Using GetAxis to move a player with acceleration and deceleration.",
+            "codeSnippet": "void Update()\n{\n    float move = Input.GetAxis(\"Horizontal\");\n    // move is smoothly interpolated\n    transform.Translate(move * speed * Time.deltaTime, 0, 0);\n}",
+            "codeLanguage": "csharp",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Multiple Axes = 2D Movement 🕹️",
+            "content": "# Combining Horizontal & Vertical\n\nFor top‑down or 3D movement, combine two axes into a Vector2 or Vector3:\n\n```csharp\nfloat h = Input.GetAxis(\"Horizontal\");\nfloat v = Input.GetAxis(\"Vertical\");\nVector3 movement = new Vector3(h, 0, v) * speed * Time.deltaTime;\ntransform.Translate(movement);\n```\n\nThis moves your object along X and Z (horizontal plane). For 2D, you may use X and Y."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "multiple_choice",
+                "question": "If you hold 'D', GetAxis(\"Horizontal\") slowly rises from 0 to 1. What causes that?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Gravity setting",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Sensitivity setting",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Snap setting",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Dead zone",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Sensitivity controls how fast the axis moves toward the target value.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "text",
+            "title": "Custom Axes & Dead Zones 🎛️",
+            "content": "# Tuning Input\n\n- **Dead zone**: In the Input Manager you can set a small threshold (e.g., 0.001) to ignore tiny joystick drift.\n- You can create your own axes (e.g., \"LookHorizontal\") for mouse or right stick.\n- For mouse look, use \"Mouse X\" and \"Mouse Y\" axes – they return **mouse delta**, not absolute position.\n\nThat's the perfect transition to mouse input!"
+        },
+        {
+            "id": "s_l3_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Getting a 3D Direction from Axes\n\n`Vector3 move = transform.right * h + transform.forward * v;` gives a direction relative to the object's orientation. Normalize it to prevent faster diagonal movement."
+        }
+    ]
+}

@@ -1,0 +1,14 @@
+{
+    "id": "task3",
+    "chapterId": "ch_6",
+    "title": "Inspector Wiring",
+    "description": "Create a script with public references to other GameObjects and use their transforms to calculate distance.",
+    "estimatedMinutes": 20,
+    "problemStatement": "**Goal:** Use public variables to link objects in the scene.\n\n1. Create a new script named `DistanceReporter`.\n2. Add two public Transform variables: `pointA` and `pointB`.\n3. In `Update()`, compute the distance between them using `Vector3.Distance(pointA.position, pointB.position)`.\n4. Log the distance to the Console, but only if it has changed by more than a tiny threshold to avoid spam (optional, can just log every frame for this task).\n5. In the scene, create two Cubes (rename Point A, Point B) at different positions.\n6. Attach the script to an Empty GameObject. Drag the Cubes into the Point A and Point B slots in the Inspector.\n7. Enter Play mode. Move one of the Cubes (using the Move tool) while in Play mode and observe the distance updating in the Console.\n8. Take a screenshot of the Inspector with the script showing the assigned transforms, and the Console with distance logs.\n\n**Bonus:** Display the distance on screen using `OnGUI()` or UI Text (if you know how). For now, just Console is fine.",
+    "hints": [
+        "If you log every frame, the Console will fill fast; you can clear it periodically.",
+        "`Vector3.Distance` returns a float."
+    ],
+    "expectedOutput": "Console shows distance between the two cubes, updating as one is moved during Play mode.",
+    "solutionCode": "using UnityEngine;\n\npublic class DistanceReporter : MonoBehaviour\n{\n    public Transform pointA;\n    public Transform pointB;\n    private float lastDistance = -1f;\n\n    void Update()\n    {\n        if (pointA != null && pointB != null)\n        {\n            float dist = Vector3.Distance(pointA.position, pointB.position);\n            // Optional: only log if changed significantly\n            if (Mathf.Abs(dist - lastDistance) > 0.01f)\n            {\n                Debug.Log(\"Distance: \" + dist);\n                lastDistance = dist;\n            }\n        }\n    }\n}"
+}

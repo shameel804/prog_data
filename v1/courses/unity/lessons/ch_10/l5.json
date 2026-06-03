@@ -1,0 +1,129 @@
+{
+    "id": "l5",
+    "chapterId": "ch_10",
+    "title": "Player Movement in 2D & 3D",
+    "description": "Build complete player controllers using Transform and Rigidbody, combining input with physics.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Input",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Moving a Player: Two Schools 🏃",
+            "content": "# Transform vs Rigidbody\n\nThere are two common ways to move a GameObject:\n1. **Transform manipulation** – directly changing `transform.position` or using `Translate`. Simple, but can cause physics glitches if colliders overlap.\n2. **Rigidbody-based movement** – using `velocity` or `AddForce`. Interacts properly with physics, good for dynamic objects.\n\nFor a player, you often use **Rigidbody with velocity** to get smooth, collision-aware motion."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "Why is Rigidbody-based movement preferred for a player that interacts with physics?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It's faster to code",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It respects collisions, forces, and joint constraints",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It automatically handles input",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It disables gravity",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Moving via Rigidbody keeps the physics engine aware of the object's motion.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "3D Movement with Rigidbody 🧊",
+            "content": "# Using Input.GetAxis and Rigidbody.velocity\n\nA basic 3D player controller:\n- Get input axes: `float h = Input.GetAxis(\"Horizontal\"); float v = Input.GetAxis(\"Vertical\");`\n- Build a movement vector: `Vector3 move = transform.right * h + transform.forward * v;`\n- Apply to Rigidbody: `rb.velocity = move * speed;` (and keep Y velocity for jumping).\n\nMake sure to set Rigidbody **Interpolate** to **Interpolate** for smooth visual updates, and **Collision Detection** to **Continuous** for fast-moving objects."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "3D Player Movement Script",
+            "content": "Complete script for a first or third-person character.",
+            "codeSnippet": "using UnityEngine;\n\n[RequireComponent(typeof(Rigidbody))]\npublic class PlayerController : MonoBehaviour\n{\n    public float speed = 5f;\n    private Rigidbody rb;\n\n    void Awake() => rb = GetComponent<Rigidbody>();\n\n    void Update()\n    {\n        float h = Input.GetAxis(\"Horizontal\");\n        float v = Input.GetAxis(\"Vertical\");\n        Vector3 move = (transform.right * h + transform.forward * v).normalized;\n        rb.velocity = new Vector3(move.x * speed, rb.velocity.y, move.z * speed);\n    }\n}",
+            "codeLanguage": "csharp",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "Why do we keep the existing Y velocity when setting Rigidbody.velocity?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To preserve gravity and jumping",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To make the player move faster",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To prevent diagonal movement",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's a mistake",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "We only want to override horizontal movement; vertical motion (gravity, jumping) must remain.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "2D Movement (Sprite Games) 🎮",
+            "content": "# Using Rigidbody2D\n\nFor 2D, you use `Rigidbody2D` and `Input.GetAxisRaw` often for instant response.\n\n```csharp\nfloat moveX = Input.GetAxisRaw(\"Horizontal\");\nfloat moveY = Input.GetAxisRaw(\"Vertical\");\nVector2 movement = new Vector2(moveX, moveY).normalized * speed;\nrb2D.velocity = movement; // for top-down\n// For platformer: movement.x * speed, keep y velocity\n```\n\nYou can also use `AddForce` for more physics-based 2D movement, but `velocity` is the simplest for player control."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "code",
+            "title": "2D Platformer Movement",
+            "content": "Basic horizontal movement with flip.",
+            "codeSnippet": "using UnityEngine;\n\npublic class Player2D : MonoBehaviour\n{\n    public float speed = 5f;\n    private Rigidbody2D rb;\n    private SpriteRenderer sr;\n\n    void Awake()\n    {\n        rb = GetComponent<Rigidbody2D>();\n        sr = GetComponent<SpriteRenderer>();\n    }\n\n    void Update()\n    {\n        float move = Input.GetAxisRaw(\"Horizontal\");\n        rb.velocity = new Vector2(move * speed, rb.velocity.y);\n        if (move != 0) sr.flipX = move < 0;\n    }\n}",
+            "codeLanguage": "csharp",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_8",
+            "type": "text",
+            "title": "Jumping 🦘",
+            "content": "# Adding Verticality\n\nFor jumping, use `GetKeyDown` with Space and apply an upward force or velocity:\n\n```csharp\nif (Input.GetKeyDown(KeyCode.Space) && isGrounded)\n{\n    rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);\n    // Or: rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);\n}\n```\n\nGround detection usually involves a small ground check Raycast or Collider."
+        },
+        {
+            "id": "s_l5_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## FixedUpdate for Physics Movement\n\nWhile we put input reading in Update (because it's per-frame), you should apply Rigidbody changes in FixedUpdate for consistent physics. Store the input in variables and apply in FixedUpdate for best results."
+        }
+    ]
+}

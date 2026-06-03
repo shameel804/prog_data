@@ -1,0 +1,15 @@
+{
+    "id": "task1",
+    "chapterId": "ch_10",
+    "title": "Keyboard Commander",
+    "description": "Create a script that moves a cube based on direct key input (WASD) and logs when Space is pressed.",
+    "estimatedMinutes": 15,
+    "problemStatement": "**Goal:** Get comfortable with GetKey and GetKeyDown.\n\n1. Create a new script `KeyboardMover`.\n2. In `Update()`, use `Input.GetKey` to check for W, A, S, D and move a Cube accordingly:\n   - W: move forward (Vector3.forward)\n   - S: backward\n   - A: left (Vector3.left)\n   - D: right\n   Use `transform.Translate` with a `speed` variable and `Time.deltaTime`.\n3. Also detect `Input.GetKeyDown(KeyCode.Space)` and log \"Jump!\" to the Console.\n4. Attach to a Cube. Set a public `speed` (e.g., 5).\n5. Test: hold W to move forward; press Space to see log.\n6. Bonus: Use `Input.GetKeyUp(KeyCode.Space)` to log \"Jump released\".\n\nTake a screenshot of the Cube in the Scene view and the Console showing \"Jump!\" message.",
+    "hints": [
+        "Use `KeyCode.W`, `KeyCode.A`, etc.",
+        "Remember to multiply by `Time.deltaTime`.",
+        "You can use `else if` to prevent multiple translations per frame if you want, but multiple ifs will work since keys can be simultaneous."
+    ],
+    "expectedOutput": "Cube moves in 4 directions with WASD. Console prints 'Jump!' when Space pressed.",
+    "solutionCode": "using UnityEngine;\n\npublic class KeyboardMover : MonoBehaviour\n{\n    public float speed = 5f;\n\n    void Update()\n    {\n        if (Input.GetKey(KeyCode.W)) transform.Translate(Vector3.forward * speed * Time.deltaTime);\n        if (Input.GetKey(KeyCode.S)) transform.Translate(Vector3.back * speed * Time.deltaTime);\n        if (Input.GetKey(KeyCode.A)) transform.Translate(Vector3.left * speed * Time.deltaTime);\n        if (Input.GetKey(KeyCode.D)) transform.Translate(Vector3.right * speed * Time.deltaTime);\n\n        if (Input.GetKeyDown(KeyCode.Space)) Debug.Log(\"Jump!\");\n        if (Input.GetKeyUp(KeyCode.Space)) Debug.Log(\"Jump released\");\n    }\n}"
+}

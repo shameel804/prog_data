@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_14",
+    "title": "Scripted Sound Effects",
+    "description": "Create a player that plays footstep sounds when moving, and a one‑shot jump sound using PlayOneShot.",
+    "estimatedMinutes": 25,
+    "problemStatement": "**Goal:** Implement dynamic sound effects in a player controller.\n\n1. Import or create simple footstep and jump audio clips (you can use Unity's built‑in assets or free sounds).\n2. Create a Player GameObject (Cube/Capsule) with Rigidbody and an AudioSource component.\n   - On the AudioSource, uncheck Play On Awake. Keep Spatial Blend = 0 for 2D, or 0.5 for subtle 3D.\n3. Write a script `PlayerAudio` that references the AudioSource and an array of footstep AudioClips.\n4. In the movement update (Update), check if the player is moving (input magnitude > 0) and call a `PlayFootstep()` method.\n   - `PlayFootstep` should play a random footstep clip using `PlayOneShot()` and ensure it doesn't play multiple at the same time (use a timer).\n5. Add jump: when Space pressed and grounded, also call `audioSource.PlayOneShot(jumpClip)`.\n6. Test: run around, hear footsteps; jump, hear jump sound.\n\nTake a screenshot of the Player Inspector showing the AudioSource and script assignments.",
+    "hints": [
+        "Use a `footstepTimer` to only trigger a step every ~0.4s while moving.",
+        "To check if moving: `if (Input.GetAxisRaw(\"Horizontal\") != 0 || Input.GetAxisRaw(\"Vertical\") != 0)`.",
+        "For grounding, you can use a simple bool `isGrounded` via a Raycast."
+    ],
+    "expectedOutput": "Player emits footstep sounds when moving, and a distinct jump sound on jump.",
+    "solutionCode": "using UnityEngine;\n\npublic class PlayerAudio : MonoBehaviour\n{\n    public AudioClip[] footstepClips;\n    public AudioClip jumpClip;\n    private AudioSource audioSource;\n    private Rigidbody rb;\n    private float stepTimer = 0f;\n    public float stepInterval = 0.4f;\n    private bool isGrounded = true; // simplify for demo\n\n    void Awake()\n    {\n        audioSource = GetComponent<AudioSource>();\n        rb = GetComponent<Rigidbody>();\n    }\n\n    void Update()\n    {\n        float h = Input.GetAxisRaw(\"Horizontal\");\n        float v = Input.GetAxisRaw(\"Vertical\");\n        bool isMoving = (h != 0 || v != 0);\n\n        if (isMoving && isGrounded)\n        {\n            stepTimer -= Time.deltaTime;\n            if (stepTimer <= 0f)\n            {\n                PlayRandomFootstep();\n                stepTimer = stepInterval;\n            }\n        }\n        else\n        {\n            stepTimer = 0f; // reset timer when idle\n        }\n\n        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)\n        {\n            audioSource.PlayOneShot(jumpClip);\n        }\n    }\n\n    void PlayRandomFootstep()\n    {\n        if (footstepClips.Length == 0) return;\n        int index = Random.Range(0, footstepClips.Length);\n        audioSource.PlayOneShot(footstepClips[index], 0.7f);\n    }\n}"
+}

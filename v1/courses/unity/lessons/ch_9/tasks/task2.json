@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_9",
+    "title": "Physics vs Update Movement",
+    "description": "Create two objects: one moved via Update with Transform, another moved via FixedUpdate with Rigidbody. Compare behavior at low frame rate.",
+    "estimatedMinutes": 20,
+    "problemStatement": "**Goal:** Demonstrate why physics movement belongs in FixedUpdate.\n\n1. Create two spheres: \"UpdateMover\" and \"FixedMover\".\n2. Add a Rigidbody to both; set Use Gravity = false, Is Kinematic = false (but we'll move them manually).\n3. Create a script `UpdateMover` that in `Update()` does: `transform.Translate(Vector3.right * Time.deltaTime * 5f);`\n4. Create a script `FixedMover` that in `FixedUpdate()` does: `rb.MovePosition(rb.position + Vector3.right * Time.fixedDeltaTime * 5f);` (or `rb.velocity = Vector3.right * 5f`).\n5. Assign scripts respectively.\n6. To simulate low frame rate, add `QualitySettings.vSyncCount = 0; Application.targetFrameRate = 10;` in a start script, or just use `Time.timeScale = 0.2f` (but that affects physics too; better use targetFrameRate). We'll set targetFrameRate = 10 in a script.\n7. Run and observe that the Update mover might stutter or move inconsistently (since Update runs 10 times/sec but physics still runs at 50), while the FixedMover moves smoothly.\n8. Log positions after a few seconds and compare.\n\n**Note:** Actually with Transform in Update and low frame rate, the movement will be choppy but still per-second distance correct. The key difference: if you ever modify Rigidbody in Update, physics jitter. But here we'll just demonstrate the principle: FixedUpdate mover uses physics correctly.\n\nTake a screenshot of Console showing positions and Scene view with spheres.",
+    "hints": [
+        "To set target frame rate: `Application.targetFrameRate = 10;` in Awake.",
+        "Rigidbody.MovePosition is for kinematic-like movement; Rigidbody.velocity is simpler for constant speed.",
+        "Make sure Rigidbody interpolation is set to Interpolate for smooth visuals."
+    ],
+    "expectedOutput": "Both spheres move the same distance per second, but the FixedMover remains smooth with physics, while the Update mover might show micro-stutters at low FPS. Console shows consistent increments.",
+    "solutionCode": "// UpdateMover.cs\nusing UnityEngine;\n\npublic class UpdateMover : MonoBehaviour\n{\n    public float speed = 5f;\n    void Update()\n    {\n        transform.Translate(Vector3.right * speed * Time.deltaTime);\n    }\n}\n\n// FixedMover.cs\nusing UnityEngine;\n\n[RequireComponent(typeof(Rigidbody))]\npublic class FixedMover : MonoBehaviour\n{\n    public float speed = 5f;\n    private Rigidbody rb;\n    void Awake() => rb = GetComponent<Rigidbody>();\n    void FixedUpdate()\n    {\n        Vector3 newPos = rb.position + Vector3.right * speed * Time.fixedDeltaTime;\n        rb.MovePosition(newPos);\n    }\n}\n\n// FrameRateSetter.cs (attach to any object)\nusing UnityEngine;\npublic class FrameRateSetter : MonoBehaviour\n{\n    void Awake()\n    {\n        Application.targetFrameRate = 10;\n        QualitySettings.vSyncCount = 0;\n    }\n}"
+}

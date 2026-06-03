@@ -1,0 +1,28 @@
+{
+    "id": "project2",
+    "title": "Maze Runner",
+    "description": "Create a first-person maze navigation game with keys, doors, enemies, and a finish line. Deepens scripting, animation, audio, and scene management.",
+    "difficulty": "Intermediate",
+    "estimatedHours": "4-6",
+    "problemStatement": "**Goal:** Build a 3D maze escape game where the player must find keys to unlock doors, avoid patrolling enemies, and reach the exit.\n\n### What You'll Build\nA first-person exploration game featuring:\n- A maze built from cubes or imported wall assets.\n- Player capsule with first-person camera and movement (WASD + mouse look).\n- Animated enemy cubes/cylinders that patrol along waypoints; touching them resets the player.\n- Collectible key objects that unlock a specific door (trigger‑based).\n- A finish area that triggers a win screen.\n- Audio feedback: footsteps, key pickup, door opening, enemy hit, background music.\n- UI: health or lives, collected keys indicator, win/lose overlay.\n\n### Concepts Applied\n- **Advanced Player Controller**: Rigidbody movement, camera look (mouse lock), jump.\n- **Animation**: Simple idle/walk animations on enemy using the Animator and a Blend Tree for speed (optional).\n- **Physics & Collision**: Colliders for walls, triggers for keys and doors, OnCollision for enemy hit.\n- **UI**: Canvas overlays for lives, key icons, and menu screens.\n- **Audio**: Audio Sources on player for footsteps (scripted), key pickup, and background music. Use Audio Mixer for volume groups.\n- **Scene Management**: Restart scene on death, load a win scene or show win UI.\n- **Scripting**: GameManager, EnemyAI (waypoint patrol), Key script, Door script, PlayerController.\n\n### Starter Steps\n1. Create a new 3D project. Build a simple maze using static cubes (no Rigidbody) or import a free maze kit.\n2. Set up the player: Capsule with Rigidbody (freeze rotation), first-person camera as child, mouse look script.\n3. Create an Enemy Prefab: a red cylinder with a simple patrol script that moves between empty waypoint GameObjects. Add a collider; on collision with player, reset position or decrement lives.\n4. Create a Key Prefab: small yellow cube with trigger collider. On collect, increment a key count and show UI.\n5. Create a Door Prefab: a block with a collider (trigger or physics) that removes itself when the player has enough keys and enters its trigger zone.\n6. Add UI: Canvas with Text for lives/keys, a panel for win/lose, buttons to restart.\n7. Add audio: footsteps (PlayOneShot when moving), key pickup sound, door open, enemy hit, and a background music AudioSource.\n8. Create a GameManager that tracks lives, keys, and win condition.\n9. Build and test.\n\n### Submission\n- A playable build (standalone or WebGL).\n- Screenshot of the maze scene with UI.\n- Brief description of the enemy AI logic.",
+    "requirements": [
+        "Player movement uses Rigidbody with velocity changes in FixedUpdate; camera look uses Mouse X/Y with pitch clamp.",
+        "Enemies patrol between at least two waypoints (using Transform positions, not NavMesh). When they touch the player, the player loses a life and respawns at start.",
+        "Keys are collectibles; each key pickup increments a counter and removes the key.",
+        "At least one locked door that only opens (disappears or rotates) when the player has collected a specific number of keys.",
+        "A finish line trigger that displays 'You Win!' when entered.",
+        "Audio: at least 3 distinct sound effects (pickup, door, hit) and background music.",
+        "UI shows lives remaining and keys collected. A 'Game Over' screen appears when lives reach 0, with a restart button.",
+        "The scene can be restarted without quitting the application."
+    ],
+    "hints": [
+        "For enemy patrol, use an array of Transform waypoints and move towards the current target with `transform.position = Vector3.MoveTowards(...)`. Flip direction at the end.",
+        "To reset player position, store a `startPosition` in Start() and reassign `transform.position = startPosition` on death.",
+        "For footsteps, check `isMoving` and use a timer to play a random footstep clip every ~0.4s using `AudioSource.PlayOneShot`.",
+        "Use `Cursor.lockState = CursorLockMode.Locked` for mouse look, and `Cursor.visible = false`.",
+        "For the door, you can use `gameObject.SetActive(false)` or an animation. Ensure the player can't pass without the key.",
+        "Organize audio with an Audio Mixer: create groups for SFX and Music, route each AudioSource appropriately, and add a UI slider for master volume (optional).",
+        "The UI key indicators can be simple Text that reads 'Keys: 0/3'."
+    ],
+    "expectedOutput": "A fully navigable maze with a first-person player, patrolling enemies, collectible keys, a locked door, and a finish line. The game resets on death and displays win/lose with UI buttons."
+}

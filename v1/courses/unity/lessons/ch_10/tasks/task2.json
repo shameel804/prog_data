@@ -1,0 +1,14 @@
+{
+    "id": "task2",
+    "chapterId": "ch_10",
+    "title": "Smooth Axis Mover",
+    "description": "Build a player controller using GetAxis that moves a sphere smoothly and prints the axis values.",
+    "estimatedMinutes": 20,
+    "problemStatement": "**Goal:** Use Input.GetAxis for smooth motion and observe smoothing.\n\n1. Create a script `SmoothMover`.\n2. In `Update()`, get `h = Input.GetAxis(\"Horizontal\")` and `v = Input.GetAxis(\"Vertical\")`.\n3. Log the values: `Debug.Log($\"H:{h:F2} V:{v:F2}\");`\n4. Create a movement vector: `Vector3 move = new Vector3(h, 0, v);`\n5. Move a Sphere using `transform.Translate(move * speed * Time.deltaTime)`.\n6. Attach to a Sphere. Set `speed` public.\n7. In the Input Manager (Edit → Project Settings → Input Manager), increase Gravity and Sensitivity for the Horizontal axis to 10 and observe how faster ramp feels.\n8. Try using GetAxisRaw instead and note the difference (instant 1/-1).\n\nTake a screenshot of Console showing axis values during movement, and Sphere in Scene.",
+    "hints": [
+        "To see smoothing, hold A then release; values go to 1, then back to 0 gradually.",
+        "Normalize the movement vector if diagonal feels too fast: `move = move.normalized;`"
+    ],
+    "expectedOutput": "Console shows smooth values going from 0 to 1 and back. Sphere moves smoothly.",
+    "solutionCode": "using UnityEngine;\n\npublic class SmoothMover : MonoBehaviour\n{\n    public float speed = 5f;\n\n    void Update()\n    {\n        float h = Input.GetAxis(\"Horizontal\");\n        float v = Input.GetAxis(\"Vertical\");\n        Debug.Log($\"H:{h:F2} V:{v:F2}\");\n        Vector3 move = new Vector3(h, 0, v).normalized;\n        transform.Translate(move * speed * Time.deltaTime);\n    }\n}"
+}

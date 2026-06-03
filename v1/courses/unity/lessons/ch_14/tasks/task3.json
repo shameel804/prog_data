@@ -1,0 +1,14 @@
+{
+    "id": "task3",
+    "chapterId": "ch_14",
+    "title": "Mixer Mastery",
+    "description": "Implement an Audio Mixer with groups for Music and SFX, and a UI slider to control master volume.",
+    "estimatedMinutes": 25,
+    "problemStatement": "**Goal:** Centralize audio control and create a UI volume slider.\n\n1. Create an Audio Mixer (Create → Audio Mixer). Name it \"MainMixer\".\n2. Open the Audio Mixer window. Create two child groups under Master: \"Music\" and \"SFX\".\n3. In your scene, create a Canvas with a Slider (UI). Set the slider min = 0.0001, max = 1, value = 1.\n4. Write a script `VolumeControl` that references the Audio Mixer. Expose the Master Volume parameter:\n   - In the Mixer window, select the Master group, right‑click the Volume slider in the Inspector → Expose. Name it \"MasterVol\".\n5. In the script, use `mixer.SetFloat(\"MasterVol\", Mathf.Log10(value) * 20);` to convert linear 0‑1 to decibels.\n6. Set up at least two Audio Sources in the scene: one for music (assign to Music group) and one for SFX (assign to SFX group).\n7. Test: move the slider; both Music and SFX volumes change proportionally.\n\nTake a screenshot of the Audio Mixer window with groups, and the UI in Game view.",
+    "hints": [
+        "dB conversion: `volume = Mathf.Clamp(value, 0.0001f, 1f); mixer.SetFloat(\"MasterVol\", Mathf.Log10(volume) * 20);`",
+        "Make sure the Audio Sources' Output field points to the correct mixer group."
+    ],
+    "expectedOutput": "Slider controls master volume; the mixer visually shows level changes.",
+    "solutionCode": "// VolumeControl.cs\nusing UnityEngine;\nusing UnityEngine.Audio;\nusing UnityEngine.UI;\n\npublic class VolumeControl : MonoBehaviour\n{\n    public AudioMixer mixer;\n    public Slider volumeSlider;\n\n    void Start()\n    {\n        volumeSlider.onValueChanged.AddListener(SetVolume);\n        SetVolume(volumeSlider.value);\n    }\n\n    void SetVolume(float value)\n    {\n        mixer.SetFloat(\"MasterVol\", Mathf.Log10(Mathf.Clamp(value, 0.0001f, 1f)) * 20);\n    }\n}"
+}

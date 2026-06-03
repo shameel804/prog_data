@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_8",
+    "title": "Overload Challenge",
+    "description": "Implement an overloaded Spawn() method that spawns an object with different levels of configuration.",
+    "estimatedMinutes": 20,
+    "problemStatement": "**Goal:** Master method overloading by creating a flexible spawn system.\n\n1. Create a script `SpawnMaster`.\n2. Add a `public GameObject prefab;` variable.\n3. Create these overloaded methods:\n   - `void Spawn()` – spawns at (0,0,0) with default rotation.\n   - `void Spawn(Vector3 position)` – spawns at given position.\n   - `void Spawn(Vector3 position, Quaternion rotation)` – full control.\n   - Bonus: `void Spawn(int count)` – spawns `count` copies in a row along X.\n4. Each method should call the most complete version internally to avoid code duplication. For example, `Spawn()` calls `Spawn(Vector3.zero, Quaternion.identity)`.\n5. In `Start()`, demonstrate all overloads: spawn one object, one at (3,0,0), one at (0,0,5) with a 45° Y rotation, and 3 in a row.\n6. Assign a Cube prefab and run.\n\nTake a screenshot of the Scene view showing all spawned objects.",
+    "hints": [
+        "The most complete overload does the actual Instantiate; others just forward.",
+        "For rotation: `Quaternion.Euler(0, 45, 0)` for Y rotation.",
+        "Count overload: use a for loop calling the position version."
+    ],
+    "expectedOutput": "Objects spawned: one at origin, one at (3,0,0), one at (0,0,5) rotated, and three cubes along X.",
+    "solutionCode": "using UnityEngine;\n\npublic class SpawnMaster : MonoBehaviour\n{\n    public GameObject prefab;\n\n    void Start()\n    {\n        Spawn();\n        Spawn(new Vector3(3, 0, 0));\n        Spawn(new Vector3(0, 0, 5), Quaternion.Euler(0, 45, 0));\n        Spawn(3);\n    }\n\n    void Spawn()\n    {\n        Spawn(Vector3.zero, Quaternion.identity);\n    }\n\n    void Spawn(Vector3 position)\n    {\n        Spawn(position, Quaternion.identity);\n    }\n\n    void Spawn(Vector3 position, Quaternion rotation)\n    {\n        Instantiate(prefab, position, rotation);\n    }\n\n    void Spawn(int count)\n    {\n        for (int i = 0; i < count; i++)\n        {\n            Spawn(new Vector3(i * 2f, 0, 0));\n        }\n    }\n}"
+}

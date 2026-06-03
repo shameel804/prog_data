@@ -1,0 +1,114 @@
+{
+    "id": "l4",
+    "chapterId": "ch_6",
+    "title": "Unity-Specific Types",
+    "description": "Explore Vector3, Color, and how to reference other GameObjects and components in scripts.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Data",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Vector3 – Positions & Directions 🧭",
+            "content": "# The Unity Workhorse\n\n`Vector3` is a struct that holds three floats: x, y, z. It's used for:\n- Positions: `transform.position`\n- Directions: `Vector3.forward` (0,0,1)\n- Velocities: `rigidbody.velocity`\n\nCreate a Vector3:\n```csharp\nVector3 startPos = new Vector3(0, 2, 5);\nVector3 up = Vector3.up; // (0,1,0)\n```\nAccess components: `float x = startPos.x;`\nYou can add, subtract, multiply by a float, etc."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does `Vector3.forward` represent?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "(1, 0, 0)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "(0, 1, 0)",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "(0, 0, 1)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "(0, 0, -1)",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Vector3.forward is the positive Z direction (0,0,1).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Color 🎨",
+            "content": "# Painting with Code\n\n`Color` is a struct with r, g, b, a (red, green, blue, alpha). Values range from 0 to 1.\n\n```csharp\nColor red = Color.red;       // predefined\nColor custom = new Color(0.2f, 0.8f, 0.3f, 1f);\n```\nYou can assign colors to materials:\n```csharp\nGetComponent<Renderer>().material.color = red;\n```\n(We'll cover GetComponent in a later chapter.)"
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Referencing Other Objects 🔗",
+            "content": "# Connecting GameObjects\n\nOften you need to access other GameObjects or their components. Two common ways:\n\n1. **Public field** (drag and drop in Inspector):\n```csharp\npublic GameObject player;\npublic Transform target;\n```\n2. **Find by name/tag** (less efficient):\n```csharp\nGameObject player = GameObject.Find(\"Player\");\nGameObject enemy = GameObject.FindWithTag(\"Enemy\");\n```\n\nPublic references are faster and more reliable."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "How can you assign a specific GameObject to a script variable?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Write its name in the script",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Make the variable public and drag the GameObject from the Hierarchy into the Inspector slot",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Use GameObject.Create()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "There is no way",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Public GameObject variables appear as slots in the Inspector; you can drag objects onto them.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "code",
+            "title": "Example: Move Towards a Target",
+            "content": "Script that moves towards a target object.",
+            "codeSnippet": "using UnityEngine;\n\npublic class ChaseTarget : MonoBehaviour\n{\n    public Transform target;\n    public float speed = 5f;\n\n    void Update()\n    {\n        if (target != null)\n        {\n            Vector3 direction = (target.position - transform.position).normalized;\n            transform.Translate(direction * speed * Time.deltaTime);\n        }\n    }\n}",
+            "codeLanguage": "csharp",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use Transform Instead of GameObject\n\nWhen you only need position/rotation, reference `Transform` instead of `GameObject`. It's more specific and slightly faster. You can drag a GameObject into a Transform slot and Unity will automatically use its Transform."
+        }
+    ]
+}

@@ -1,0 +1,105 @@
+{
+    "id": "l1",
+    "chapterId": "ch_9",
+    "title": "The Full Lifecycle Map",
+    "description": "See the big picture of every MonoBehaviour event method and how they connect from birth to death.",
+    "xpReward": 25,
+    "estimatedMinutes": 8,
+    "section": "Lifecycle",
+    "slides": [
+        {
+            "id": "s_l1_1",
+            "type": "text",
+            "title": "From Birth to Death 🐣💀",
+            "content": "# The MonoBehaviour Lifecycle\n\nEvery Unity script inherits from `MonoBehaviour`, which gives you a set of **event methods** that Unity automatically calls at specific times.\n\nThink of these as the **life stages** of a component:\n1. **Initialization** – Awake, OnEnable, Start\n2. **Physics** – FixedUpdate\n3. **Game Logic** – Update\n4. **Late Update** – LateUpdate\n5. **Decommissioning** – OnDisable, OnDestroy\n\nUnderstanding this order is crucial for avoiding bugs and writing efficient code."
+        },
+        {
+            "id": "s_l1_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_1",
+                "type": "multiple_choice",
+                "question": "Which of these is NOT a standard MonoBehaviour event method?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Awake()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Update()",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "OnRender()",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "FixedUpdate()",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "OnRender is not a standard MonoBehaviour message; rendering callbacks are different (OnRenderImage, OnPreRender, etc.).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_3",
+            "type": "text",
+            "title": "The Lifecycle Flowchart 🗺️",
+            "content": "# Execution Order (Simplified)\n\n1. **Awake()** – called when the script instance is loaded (even if disabled).\n2. **OnEnable()** – called whenever the object becomes active (or script enabled).\n3. **Start()** – called before the first frame update, after all Awakes.\n\nThen each frame:\n4. **FixedUpdate()** – physics step (0, 1, or many times per frame).\n5. **Update()** – once per frame.\n6. **LateUpdate()** – once per frame, after all Updates.\n\nOn deactivation:\n7. **OnDisable()** – when object is deactivated or script disabled.\n8. **OnDestroy()** – when object is destroyed."
+        },
+        {
+            "id": "s_l1_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l1_2",
+                "type": "multiple_choice",
+                "question": "Which method runs first when a GameObject becomes active?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Start",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Awake",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "OnEnable",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Update",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Awake is called before OnEnable and Start when the object is loaded.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l1_5",
+            "type": "text",
+            "title": "Why It Matters ⚡",
+            "content": "# Real-World Impact\n\n- If you reference another object in `Awake()`, it might not have run its `Start()` yet.\n- If you move a Rigidbody in `Update()`, physics can behave unpredictably – use `FixedUpdate()`.\n- If you change camera position in `Update()`, the player object might have moved later – use `LateUpdate()` for cameras.\n\nMastering the lifecycle prevents hard-to-find bugs."
+        },
+        {
+            "id": "s_l1_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Print the Lifecycle\n\nAttach a script with Debug.Log in each method and watch the Console to internalize the order. It's the best way to learn!"
+        }
+    ]
+}

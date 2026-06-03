@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_11",
+    "title": "Destroy on Impact",
+    "description": "Write a script that destroys any object that collides with a hazard, and logs the impact velocity.",
+    "estimatedMinutes": 20,
+    "problemStatement": "**Goal:** Use collision callbacks to create a destruction zone.\n\n1. Create a scene with a floor and walls (as before).\n2. Create a large red Cube named \"Hazard\". Add a Box Collider (not trigger) and a Rigidbody with Is Kinematic = true (so it stays fixed).\n3. Create a script `Hazard` and attach to the Hazard cube.\n4. In `OnCollisionEnter(Collision collision)`:\n   - Get the magnitude of the collision's relative velocity: `collision.relativeVelocity.magnitude`.\n   - Log the name of the other object and the impact speed.\n   - Destroy the other object (`Destroy(collision.gameObject)`).\n5. Create some small spheres with Rigidbody that fall onto the Hazard. You can spawn them or just place them above.\n6. Test: when a sphere hits the Hazard, it should be destroyed and the Console shows impact speed.\n7. Bonus: Use `OnCollisionStay` to continuously damage an object while in contact (e.g., subtract health per second).\n\nTake a screenshot of the Console showing the destruction logs.",
+    "hints": [
+        "The Hazard must have a Rigidbody (Kinematic) for collision events; static colliders don't send OnCollisionEnter on the static object itself unless the other object has a Rigidbody. Actually, OnCollisionEnter will be called on both objects if one has Rigidbody. With Kinematic Rigidbody, it works.",
+        "`collision.relativeVelocity` gives the velocity difference at the moment of impact.",
+        "If you want continuous damage in OnCollisionStay, use `Time.fixedDeltaTime` to calculate damage per second."
+    ],
+    "expectedOutput": "Console shows impact speeds and destroyed objects.",
+    "solutionCode": "using UnityEngine;\n\npublic class Hazard : MonoBehaviour\n{\n    void OnCollisionEnter(Collision collision)\n    {\n        float impactSpeed = collision.relativeVelocity.magnitude;\n        Debug.Log($\"{collision.gameObject.name} hit at speed {impactSpeed:F2}\");\n        Destroy(collision.gameObject);\n    }\n\n    // Optional: continuous damage\n    void OnCollisionStay(Collision collision)\n    {\n        // Example: damage per second\n        // health.TakeDamage(10 * Time.fixedDeltaTime);\n    }\n}"
+}

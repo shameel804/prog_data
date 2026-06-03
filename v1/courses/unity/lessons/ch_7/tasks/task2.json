@@ -1,0 +1,15 @@
+{
+    "id": "task2",
+    "chapterId": "ch_7",
+    "title": "Loop Builder",
+    "description": "Create a script that uses different loops to spawn objects in patterns.",
+    "estimatedMinutes": 20,
+    "problemStatement": "**Goal:** Apply for, while, and foreach loops.\n\n1. Create a new script `LoopBuilder`.\n2. Add a `public GameObject prefab;` variable.\n3. Add a `public int count = 10;` variable.\n4. In `Start()`, implement three separate methods (call them from Start):\n   - **ForLoopSpawn()**: Use a `for` loop to spawn `count` objects in a line along the X axis (spacing 2 units).\n   - **WhileLoopSpawn()**: Use a `while` loop to spawn objects until a random object is placed above y=5. (Create a while that positions randomly, break when condition met, log how many attempts).\n   - **ForeachColorChanger()**: Create an array of 5 colors. Use `foreach` to iterate and log each color, and also change the material color of each spawned object to the colors in sequence (optional: assign to objects as you spawn them, but simpler: just log).\n5. Attach the script to an Empty GameObject, assign a Cube prefab.\n6. Run Play mode; verify objects spawn correctly.\n\nTake a screenshot of the Scene view showing the line of objects, and the Console showing the while loop attempts and color logs.",
+    "hints": [
+        "Instantiate returns the new GameObject; you can set its position immediately.",
+        "For while, create a counter to avoid infinite loops: stop after max attempts.",
+        "Colors array: `Color[] colors = new Color[] { Color.red, Color.blue, ... };`"
+    ],
+    "expectedOutput": "A row of cubes along X. Console shows while loop attempt count, and list of colors.",
+    "solutionCode": "using UnityEngine;\n\npublic class LoopBuilder : MonoBehaviour\n{\n    public GameObject prefab;\n    public int count = 10;\n\n    void Start()\n    {\n        ForLoopSpawn();\n        WhileLoopSpawn();\n        ForeachColorChanger();\n    }\n\n    void ForLoopSpawn()\n    {\n        for (int i = 0; i < count; i++)\n        {\n            Vector3 pos = new Vector3(i * 2f, 0, 0);\n            Instantiate(prefab, pos, Quaternion.identity);\n        }\n    }\n\n    void WhileLoopSpawn()\n    {\n        int attempts = 0;\n        while (attempts < 100) // safety\n        {\n            Vector3 randPos = new Vector3(Random.Range(-5f, 5f), Random.Range(0f, 10f), 0);\n            GameObject obj = Instantiate(prefab, randPos, Quaternion.identity);\n            attempts++;\n            if (randPos.y > 5f)\n            {\n                Debug.Log($\"High spawn after {attempts} attempts at y={randPos.y}\");\n                break;\n            }\n        }\n    }\n\n    void ForeachColorChanger()\n    {\n        Color[] colors = { Color.red, Color.green, Color.blue, Color.yellow, Color.magenta };\n        foreach (Color c in colors)\n        {\n            Debug.Log(\"Color: \" + c);\n        }\n        // Optional: apply colors to spawned objects (not required)\n    }\n}"
+}

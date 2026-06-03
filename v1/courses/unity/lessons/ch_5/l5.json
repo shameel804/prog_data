@@ -1,0 +1,149 @@
+{
+    "id": "l5",
+    "chapterId": "ch_5",
+    "title": "Public Variables & the Inspector",
+    "description": "Expose script variables to the Unity Editor for easy tweaking, without touching the code.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Scripting Fundamentals",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Variables in C# – A Quick Intro 📦",
+            "content": "# Storing Data\n\nA **variable** is a named container that holds a value. In C#, you declare a variable like this:\n\n```csharp\nint health = 100;\nfloat speed = 5.5f;\nstring playerName = \"Hero\";\nbool isAlive = true;\n```\n\nWe'll dive deeper into types in the next chapter, but for now, know that `float` is for decimal numbers and `int` for whole numbers."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What data type would you use for a speed value like 5.5?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "int",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "bool",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "float",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "string",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "float is used for decimal (floating-point) numbers.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Public Fields – Editor Visibility 👁️",
+            "content": "# Making Variables Editable in the Inspector\n\nBy default, variables in C# are **private** and won't show in the Inspector. To expose them, mark them `public`:\n\n```csharp\npublic float speed = 10f;\n```\n\nNow you can change `speed` directly in the Inspector, even while in Play mode (though it resets when you stop).\n\nAlternatively, you can use `[SerializeField]` to expose a private field:\n\n```csharp\n[SerializeField] private float speed = 10f;\n```\nThis keeps the variable private to other scripts but visible in the Editor."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "How do you make a variable appear in the Inspector without making it public?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Use [InspectorShow]",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Prefix it with _",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Use the [SerializeField] attribute",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Name it inspectorVariable",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "[SerializeField] forces Unity to serialize the field and show it in the Inspector.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Live Editing in Play Mode 🎛️",
+            "content": "# Tweaking Without Stopping\n\nWhile in Play mode, you can select a GameObject with a script that has public variables, and change their values in the Inspector. The game reacts immediately! This is great for balancing and testing.\n\n**Remember:** Changes made in Play mode are **not saved** when you exit. If you find a perfect value, note it down or use the **Copy Component** feature to save it."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "code",
+            "title": "Example: Tunable Mover 🎯",
+            "content": "A script with three public variables that you can adjust in the Inspector:",
+            "codeSnippet": "using UnityEngine;\n\npublic class TunableMover : MonoBehaviour\n{\n    public float speed = 5f;\n    public float rotationSpeed = 100f;\n    public Vector3 moveDirection = Vector3.forward;\n\n    void Update()\n    {\n        transform.Translate(moveDirection * speed * Time.deltaTime);\n        transform.Rotate(0, rotationSpeed * Time.deltaTime, 0);\n    }\n}",
+            "codeLanguage": "csharp",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_7",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_3",
+                "type": "multiple_choice",
+                "question": "What happens to public variable values set in the Inspector after you stop Play mode?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "They are saved automatically",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "They revert to the values they had before Play mode",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "They are written to a file",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The script resets to default",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Play mode changes are temporary; values return to their pre‑play state when you stop.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use Public Variables for Rapid Prototyping\n\nExpose speeds, colors, health values, etc., to the Inspector. It allows non‑programmers (like designers) to tweak gameplay without touching code."
+        }
+    ]
+}

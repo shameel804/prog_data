@@ -1,0 +1,14 @@
+{
+    "id": "task3",
+    "chapterId": "ch_5",
+    "title": "Tunable Rotator",
+    "description": "Create a script that rotates an object and allows the rotation speed and axis to be set in the Inspector.",
+    "estimatedMinutes": 20,
+    "problemStatement": "**Goal:** Build a flexible rotation script with public variables for speed, axis, and a toggle for rotation direction.\n\n1. Create a new script named `TunableRotator`.\n2. Add the following public variables:\n   - `public float rotationSpeed = 50f;`\n   - `public Vector3 rotationAxis = Vector3.up;` (a Vector3 can be set in the Inspector as X, Y, Z).\n   - `public bool reverse = false;`\n3. In `Update()`, calculate the rotation amount: `float step = rotationSpeed * Time.deltaTime;`\n4. If `reverse` is true, negate the step: `step = -step;`\n5. Apply rotation using `transform.Rotate(rotationAxis * step);`\n6. Attach the script to a Cube.\n7. Test in Play mode:\n   - Defaults should rotate around Y axis.\n   - Change `rotationAxis` to (1, 0, 0) to rotate around X.\n   - Toggle `reverse` to see direction change.\n8. (Optional) Add a second Cube and attach the same script, but set different axis and speed values. Observe independent behavior.\n\nSubmit a screenshot of the Inspector for the Cube with your chosen values and a brief explanation of how `reverse` works.",
+    "hints": [
+        "`transform.Rotate` rotates the object by the given Euler angles each frame.",
+        "A `bool` variable appears as a checkbox in the Inspector. `reverse` being true means we subtract the rotation instead of add."
+    ],
+    "expectedOutput": "The object rotates continuously around the specified axis at the given speed. The `reverse` checkbox flips the rotation direction.",
+    "solutionCode": "using UnityEngine;\n\npublic class TunableRotator : MonoBehaviour\n{\n    public float rotationSpeed = 50f;\n    public Vector3 rotationAxis = Vector3.up;\n    public bool reverse = false;\n\n    void Update()\n    {\n        float step = rotationSpeed * Time.deltaTime;\n        if (reverse)\n        {\n            step = -step;\n        }\n        transform.Rotate(rotationAxis * step);\n    }\n}"
+}

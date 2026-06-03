@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_10",
+    "title": "Complete Player Controller",
+    "description": "Combine input, Rigidbody movement, mouse look, and jumping into a single playable character.",
+    "estimatedMinutes": 25,
+    "problemStatement": "**Goal:** Build a first-person style controller (or third-person) with movement, jump, and mouse look.\n\n1. Create a new scene. Add a Plane for ground. Add a Capsule (player) with Rigidbody (freeze rotation on X and Z to prevent tipping).\n2. Create a script `FPSController` (attach to Capsule).\n3. Movement: use Input.GetAxis for Horizontal/Vertical, build a move direction relative to transform, set Rigidbody velocity (preserving Y).\n4. Jump: when Space pressed and grounded (use a simple ground check with a sphere cast or just allow infinite jump for now). Apply upward velocity.\n5. Mouse look: create a child camera under Capsule. In script, rotate the Capsule (yaw) based on Mouse X, and rotate the camera (pitch) based on Mouse Y. Clamp pitch to avoid flipping.\n6. Lock cursor with Cursor.lockState = CursorLockMode.Locked.\n7. Test: move with WASD, jump with Space, look around with mouse.\n\nTake a screenshot of the scene and Inspector showing the script components.",
+    "hints": [
+        "Camera should be a child of the Capsule, positioned at eye level.",
+        "Pitch clamp: `pitch = Mathf.Clamp(pitch, -90f, 90f);`",
+        "For ground check, you can use `Physics.Raycast(transform.position, Vector3.down, out hit, 1.1f)`."
+    ],
+    "expectedOutput": "A controllable first-person character that moves, looks around, and jumps.",
+    "solutionCode": "using UnityEngine;\n\npublic class FPSController : MonoBehaviour\n{\n    public float moveSpeed = 5f;\n    public float jumpForce = 8f;\n    public float mouseSensitivity = 2f;\n    public Transform cameraTransform;\n\n    private Rigidbody rb;\n    private float pitch = 0f;\n    private bool isGrounded;\n\n    void Awake()\n    {\n        rb = GetComponent<Rigidbody>();\n        Cursor.lockState = CursorLockMode.Locked;\n        Cursor.visible = false;\n    }\n\n    void Update()\n    {\n        // Mouse look\n        float mouseX = Input.GetAxis(\"Mouse X\") * mouseSensitivity;\n        float mouseY = Input.GetAxis(\"Mouse Y\") * mouseSensitivity;\n        pitch -= mouseY;\n        pitch = Mathf.Clamp(pitch, -90f, 90f);\n        cameraTransform.localRotation = Quaternion.Euler(pitch, 0f, 0f);\n        transform.Rotate(Vector3.up * mouseX);\n\n        // Ground check (simple raycast)\n        RaycastHit hit;\n        isGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, 1.1f);\n\n        // Jump\n        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)\n        {\n            rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);\n        }\n    }\n\n    void FixedUpdate()\n    {\n        float h = Input.GetAxis(\"Horizontal\");\n        float v = Input.GetAxis(\"Vertical\");\n        Vector3 move = (transform.right * h + transform.forward * v).normalized;\n        rb.velocity = new Vector3(move.x * moveSpeed, rb.velocity.y, move.z * moveSpeed);\n    }\n}"
+}

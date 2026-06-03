@@ -1,0 +1,110 @@
+{
+    "id": "l5",
+    "chapterId": "ch_9",
+    "title": "Execution Order & Customization",
+    "description": "Configure script execution order, debug the lifecycle, and avoid common timing bugs.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Lifecycle",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Default Execution Order 🔢",
+            "content": "# Who Goes First?\n\nBy default, Unity does not guarantee the order of `Awake`, `Start`, or `Update` across different scripts. It calls them in an arbitrary order.\n\nBut within a single script, the order is:\nAwake → OnEnable → Start → (FixedUpdate → Update → LateUpdate loop) → OnDisable → OnDestroy.\n\nIf two scripts depend on each other's initialization, the default order can cause problems."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "true_false",
+                "question": "Unity guarantees that ScriptA's Awake runs before ScriptB's Awake by default.",
+                "options": [
+                    {
+                        "id": "true",
+                        "text": "True",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "false",
+                        "text": "False",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "The default execution order is not deterministic across different scripts.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Script Execution Order Settings ⚙️",
+            "content": "# Customizing the Order\n\nYou can manually define the execution order:\n1. Go to **Edit → Project Settings → Script Execution Order**.\n2. Click the **+** and select a script.\n3. Assign a number – lower numbers execute earlier.\n\nExample: make a `GameManager` run its Awake before `Player` by giving it a lower number.\n\nYou can also assign scripts to specific groups: `Default Time` (all scripts start at 0).\n\nChanges apply globally across all scenes."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "In Script Execution Order, what does a lower number mean?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Executes later",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Executes earlier",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Has no effect",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Disables the script",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Negative or lower numbers run before higher numbers.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Debugging the Lifecycle 🐞",
+            "content": "# Proven Techniques\n\n- **Log in every event** to see the sequence.\n- Use **Profiler** (Window → Analysis → Profiler) to see when methods are called.\n- In the Editor, you can pause and step through frames to inspect state.\n- `Debug.Log` with `Time.frameCount` to identify frame numbers.\n\n```csharp\nvoid Update() { Debug.Log($\"Frame {Time.frameCount}: Update\"); }\n```\n\nThis reveals exactly which frame an event fires."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "text",
+            "title": "Common Timing Bugs & Fixes 🔧",
+            "content": "# Watch Out For:\n\n1. **Null Reference in Start**: object referenced hasn't been initialized. Fix: ensure the other object is in scene, or use `GetComponent` in Awake, not Start.\n2. **Physics jitter when moving transform in Update**: use Rigidbody in FixedUpdate.\n3. **Camera jitter**: camera following in Update, but player moved later in another script's Update. Fix: use LateUpdate for camera.\n4. **OnDestroy not called**: object marked DontDestroyOnLoad; remember to handle scene changes manually."
+        },
+        {
+            "id": "s_l5_7",
+            "type": "code",
+            "title": "Example: Safe Initialization Pattern",
+            "content": "Using Awake and Start correctly:",
+            "codeSnippet": "public class Player : MonoBehaviour\n{\n    private Rigidbody rb;\n    private GameManager gm;\n\n    void Awake()\n    {\n        rb = GetComponent<Rigidbody>(); // self reference, safe\n    }\n\n    void Start()\n    {\n        gm = FindObjectOfType<GameManager>(); // other object, safe after all Awakes\n    }\n}",
+            "codeLanguage": "csharp",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use Attribute [DefaultExecutionOrder]\n\nYou can set the execution order directly in code with `[DefaultExecutionOrder(-100)]` above the class. It's cleaner than the Project Settings for per-script ordering."
+        }
+    ]
+}

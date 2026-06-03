@@ -1,0 +1,114 @@
+{
+    "id": "l4",
+    "chapterId": "ch_10",
+    "title": "Mouse & Gamepad",
+    "description": "Work with mouse position, delta, buttons, and discover gamepad support through axes and buttons.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Input",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Mouse Input 🖱️",
+            "content": "# Beyond Keyboard\n\nYou can read mouse input via the Input class:\n- `Input.mousePosition` – current screen position (Vector3 with z=0).\n- `Input.GetAxis(\"Mouse X\")` – horizontal mouse movement **since last frame**.\n- `Input.GetAxis(\"Mouse Y\")` – vertical movement (positive = up).\n- `Input.GetMouseButton(0)` – left button held; `GetMouseButtonDown(0)` – pressed; `GetMouseButtonUp(0)` – released.\n- Button indices: 0 = left, 1 = right, 2 = middle."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What does Input.GetAxis(\"Mouse X\") return?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Mouse cursor X coordinate on screen",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Mouse movement delta horizontally",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Whether the left mouse button is held",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A constant value",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Mouse X axis gives the change in mouse position since last frame (delta).",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Mouse Look Camera 🔍",
+            "content": "# Rotating View with Mouse\n\nCommon FPS camera rotation:\n```csharp\nfloat mouseX = Input.GetAxis(\"Mouse X\");\nfloat mouseY = Input.GetAxis(\"Mouse Y\");\ntransform.Rotate(Vector3.up * mouseX * sensitivity);\n// For camera pitch (vertical), rotate around local X axis\n```\n\nYou usually lock the cursor: `Cursor.lockState = CursorLockMode.Locked;` and hide it: `Cursor.visible = false;`."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "code",
+            "title": "Simple Mouse Look Script",
+            "content": "Attach this to the camera or player head.",
+            "codeSnippet": "public float sensitivity = 2f;\nvoid Update()\n{\n    float mouseX = Input.GetAxis(\"Mouse X\") * sensitivity;\n    float mouseY = Input.GetAxis(\"Mouse Y\") * sensitivity;\n    transform.Rotate(0, mouseX, 0); // yaw\n    // For pitch, you'd need a separate child object\n}",
+            "codeLanguage": "csharp",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l4_5",
+            "type": "text",
+            "title": "Gamepad & Joystick 🎮",
+            "content": "# Controllers Work Out of the Box\n\nThe default axes \"Horizontal\" and \"Vertical\" already listen to the left joystick. \"Fire1\" maps to joystick button 0 (usually A on Xbox, X on DualShock).\n\nYou can detect a gamepad: `Input.GetJoystickNames()` returns an array of connected joystick names.\n\nFor more advanced gamepad input, you can define axes with Type = Joystick Axis and select specific axes. The new Input System is even better, but classic works fine for basic support."
+        },
+        {
+            "id": "s_l4_6",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What index does 'Fire1' button use for gamepad button?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Only mouse",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Joystick button 0 (by default)",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Joystick button 1",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It's not assigned to gamepad",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The default Input Manager assigns 'Fire1' to mouse 0 and joystick button 0.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Cursor Management\n\nUse `Cursor.lockState` and `Cursor.visible` to control cursor behavior during gameplay. Remember to free the cursor when pausing or showing menus."
+        }
+    ]
+}

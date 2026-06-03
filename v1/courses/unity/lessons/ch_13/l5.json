@@ -1,0 +1,126 @@
+{
+    "id": "l5",
+    "chapterId": "ch_13",
+    "title": "Blend Trees & Animation Scripting",
+    "description": "Blend multiple animations smoothly and control the Animator from C# scripts for dynamic character motion.",
+    "xpReward": 35,
+    "estimatedMinutes": 12,
+    "section": "Animation",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Blending Animations 🌪️",
+            "content": "# What is a Blend Tree?\n\nA **Blend Tree** is a special state in the Animator that can play multiple animations blended together based on one or more parameters.\n\nFor example, blend a **Walk** and **Run** animation using a `Speed` float. At Speed=0 you get idle, at Speed=2 you get walk, at Speed=5 you get run, with smooth transitions between.\n\nCreate one: right‑click in Animator → **Create State → From New Blend Tree**. Double‑click it to enter the tree."
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is a Blend Tree used for?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "To create new animation clips",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "To smoothly mix multiple animations based on parameters",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "To delete unused animations",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "To set up transitions",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Blend Trees interpolate between animations according to a float (or other) parameter.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Blend Tree Types 🌳",
+            "content": "# 1D vs 2D Blending\n\n- **1D Blend Tree**: uses a single float parameter to blend between motions along a line. Example: idle–walk–run.\n- **2D Simple Directional**: two floats (e.g., horizontal and vertical input) to choose from a set of animations (forward, back, left, right).\n- **2D Freeform Directional**: you place animations on a 2D grid; the closest get blended.\n- **2D Freeform Cartesian**: similar but uses X and Y parameters directly.\n\nFor most characters, a 1D blend tree with speed or a 2D freeform directional for strafing is sufficient."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "text",
+            "title": "Setting Up a 1D Blend Tree 🏃",
+            "content": "# Walk‑Run Blend Example\n\n1. In the Animator, create a new Blend Tree state.\n2. In the Inspector (when the Blend Tree is selected), set **Blend Type** to 1D.\n3. Set the **Parameter** to a float named `MoveSpeed`.\n4. Click **+ → Add Motion Field** multiple times.\n5. Drag your Idle, Walk, and Run clips into the fields.\n6. Set the **Threshold** values: Idle=0, Walk=2, Run=5.\n7. Now when `MoveSpeed` = 2, it plays Walk; at 3.5 it blends walk and run.\n\nScript: `anim.SetFloat(\"MoveSpeed\", rb.velocity.magnitude);`"
+        },
+        {
+            "id": "s_l5_5",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "In a 1D Blend Tree, what controls which animation plays?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Time",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "A single float parameter",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Two bool parameters",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "A trigger",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "1D Blend Trees use one float parameter with motion thresholds.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_6",
+            "type": "code",
+            "title": "Complete Animator Control Script",
+            "content": "A script managing movement and animations:",
+            "codeSnippet": "using UnityEngine;\n\npublic class PlayerAnimation : MonoBehaviour\n{\n    private Animator anim;\n    private Rigidbody rb;\n\n    void Awake()\n    {\n        anim = GetComponent<Animator>();\n        rb = GetComponent<Rigidbody>();\n    }\n\n    void Update()\n    {\n        float speed = rb.velocity.magnitude;\n        anim.SetFloat(\"MoveSpeed\", speed);\n\n        if (Input.GetKeyDown(KeyCode.Space))\n            anim.SetTrigger(\"Jump\");\n\n        if (Input.GetMouseButtonDown(0))\n            anim.SetBool(\"isAttacking\", true);\n        if (Input.GetMouseButtonUp(0))\n            anim.SetBool(\"isAttacking\", false);\n    }\n}",
+            "codeLanguage": "csharp",
+            "canRunCode": true
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Animation Events 📌",
+            "content": "# Triggering Code from Animations\n\nYou can add **Animation Events** to call methods at specific points in a clip. In the Animation window (with a clip selected), click the marker icon at the top of the timeline to add an event.\n\nExample: a footstep sound at a certain frame.\n\nIn the event, specify a function name (must be a public method in any script on the same GameObject): `PlayFootstep()`.\n\nThis is how you sync sound effects, damage, etc., with animation."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "text",
+            "title": "Root Motion 🚶",
+            "content": "# Animation Moving the Character\n\nIf your animation includes movement (e.g., a walking animation that moves the hips), you can enable **Apply Root Motion** on the Animator. Then the animation drives the character's position and rotation.\n\n- Useful for complex movements like climbing, rolls, etc.\n- For script‑controlled movement, usually disable Root Motion and use code to move.\n\nYou can also use `OnAnimatorMove()` to override root motion in scripts."
+        },
+        {
+            "id": "s_l5_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use the Animator Parameter for Speed\n\nInstead of directly setting MoveSpeed from rigidbody velocity, sometimes you want to use the input magnitude before applying physics to get immediate animation response."
+        }
+    ]
+}

@@ -1,0 +1,114 @@
+{
+    "id": "l5",
+    "chapterId": "ch_6",
+    "title": "Public Fields & Serialization",
+    "description": "Expose variables to the Inspector with public and [SerializeField], and understand serialization.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Data",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Public vs Private 🔓🔒",
+            "content": "# Access Modifiers\n\nBy default, class members in C# are **private** (not visible outside the class). To expose a variable:\n\n- **public**: accessible from other scripts and shown in the Inspector.\n- **private**: hidden from other scripts and hidden in Inspector (unless you use `[SerializeField]`).\n\n```csharp\npublic int score;      // visible in Inspector, accessible from other scripts\nprivate int secret;    // hidden everywhere\nint alsoSecret;        // default is private\n```"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "multiple_choice",
+                "question": "What is the default access modifier for class members in C#?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "public",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "private",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "protected",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "internal",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "If you don't specify, class members are private by default.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "[SerializeField] Attribute 🏷️",
+            "content": "# Show Private Fields in Inspector\n\nSometimes you want to keep a variable private (to prevent other scripts from modifying it) but still tweak it in the Editor. Use `[SerializeField]`:\n\n```csharp\n[SerializeField] private float speed = 5f;\n```\n\nNow `speed` shows up in the Inspector, but other scripts cannot access it directly. This follows the principle of **encapsulation**.\n\nYou can also serialize other types: custom classes (with `[System.Serializable]`), lists, arrays."
+        },
+        {
+            "id": "s_l5_4",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "multiple_choice",
+                "question": "What does [SerializeField] do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Makes the variable public",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Makes a private field visible in the Inspector",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Deletes the variable",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Converts the variable to a string",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "It tells Unity to serialize (save) and display the field in the Inspector.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "What is Serialization? 💾",
+            "content": "# Saving and Loading Data\n\n**Serialization** is the process of converting an object into a format that can be saved and restored. In Unity, serialized fields are automatically saved with the scene or prefab.\n\n- Public fields are serialized by default.\n- Private fields with `[SerializeField]` are also serialized.\n- Not all types are serializable (e.g., `Dictionary` is not directly serializable).\n\nThis means when you change a value in the Inspector, it sticks with the object. When you restart Unity or share the project, those values remain."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "code",
+            "title": "Serializing a Custom Class",
+            "content": "You can even create your own serializable data structures.",
+            "codeSnippet": "[System.Serializable]\npublic class WeaponStats\n{\n    public string weaponName;\n    public int damage;\n    public float fireRate;\n}\n\npublic class Player : MonoBehaviour\n{\n    [SerializeField] private WeaponStats pistol;\n    [SerializeField] private WeaponStats rifle;\n}",
+            "codeLanguage": "csharp",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Hide Public Fields\n\nIf you want a variable to be public (for other scripts) but NOT shown in the Inspector, use `[HideInInspector]`:\n```csharp\n[HideInInspector] public float internalTimer;\n```\nThe field remains accessible from code but stays out of the cluttered Inspector."
+        }
+    ]
+}

@@ -1,0 +1,120 @@
+{
+    "id": "l2",
+    "chapterId": "ch_11",
+    "title": "Rigidbody Deep Dive",
+    "description": "Master mass, drag, gravity, kinematic objects, interpolation, and collision detection modes.",
+    "xpReward": 30,
+    "estimatedMinutes": 10,
+    "section": "Physics",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Rigidbody Component 🏋️",
+            "content": "# Your Physics Brain\n\nA **Rigidbody** enables a GameObject to be controlled by the physics engine. Key properties:\n\n- **Mass** – how heavy it is (affects collisions and forces).\n- **Drag** – air resistance (0 = no resistance, higher values slow it down).\n- **Angular Drag** – resistance to rotation.\n- **Use Gravity** – if checked, it falls under gravity.\n- **Is Kinematic** – if true, it ignores forces but can be moved by script.\n- **Interpolate** / **Extrapolate** – smooths visual updates for jerky physics.\n- **Collision Detection** – how collisions are checked (Discrete, Continuous, etc.)."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "What does the 'Is Kinematic' checkbox do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Makes the object move automatically",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Disables physics forces but still allows scripted movement",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Adds gravity",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Removes the Collider",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Kinematic Rigidbodies are not affected by forces/gravity but can be moved via transform or Rigidbody.MovePosition.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Mass & Force Interactions 💥",
+            "content": "# Heavier Objects Need More Force\n\nAccording to Newton's second law: Force = Mass × Acceleration. In Unity:\n- A heavy object (mass = 10) pushed by the same force will accelerate less than a light one (mass = 1).\n- Collisions are affected: a heavy object will push a lighter one more easily.\n- Use `AddForce(force, ForceMode)` to apply forces.\n\n**ForceModes**:\n- `Force` – continuous force (mass‑based acceleration).\n- `Impulse` – instant change (good for jumps, explosions).\n- `VelocityChange` – ignores mass, changes velocity directly."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "code",
+            "title": "Adding a Jump Force",
+            "content": "Using AddForce with Impulse mode for a jump:",
+            "codeSnippet": "public float jumpForce = 5f;\nvoid Update()\n{\n    if (Input.GetKeyDown(KeyCode.Space) && isGrounded)\n    {\n        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);\n    }\n}",
+            "codeLanguage": "csharp",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Drag & Angular Drag 🪁",
+            "content": "# Slowing Down Naturally\n\n- **Drag** gradually reduces linear velocity. A value of 1 means the object will stop quickly.\n- **Angular Drag** reduces rotation speed.\n- Use small values for a feather-like float, large values for honey-like resistance.\n- Drag is frame-rate independent; it's applied each physics step."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "Quick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "Which ForceMode ignores mass and changes velocity directly?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "ForceMode.Force",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "ForceMode.Acceleration",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "ForceMode.Impulse",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "ForceMode.VelocityChange",
+                        "isCorrect": true
+                    }
+                ],
+                "explanation": "VelocityChange sets the velocity instantly, bypassing mass calculations.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "Interpolation & Collision Detection 🔍",
+            "content": "# Smooth Visuals, No Tunneling\n\n- **Interpolate** – smooths the object's transform between physics steps (good for player).\n- **Extrapolate** – predicts future position (good for fast projectiles).\n- **Collision Detection** modes:\n  - **Discrete** – checks at each fixed step (fast, but fast objects might tunnel).\n  - **Continuous** – uses sweep for moving objects (prevents tunneling).\n  - **Continuous Dynamic** – for very fast-moving dynamic objects."
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Freezing Rotation\n\nIn Rigidbody Constraints, you can freeze rotation on X, Y, or Z to prevent your player from tipping over. Essential for character controllers."
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+{
+    "id": "task3",
+    "chapterId": "ch_9",
+    "title": "Execution Order Customization",
+    "description": "Create two scripts with dependencies and use Script Execution Order to fix initialization order bugs.",
+    "estimatedMinutes": 20,
+    "problemStatement": "**Goal:** Learn to resolve initialization order issues.\n\n1. Create a script `GameManager` that initializes a public static reference `public static GameManager Instance;` in Awake.\n2. Create a script `Player` that in its Awake tries to access `GameManager.Instance` and logs a message.\n3. Attach both to separate GameObjects. Without setting execution order, it's possible Player's Awake runs before GameManager's Awake, causing NullReferenceException (or just null log).\n4. Reproduce the null issue (maybe by luck it works; to guarantee, you can add a random delay or just test multiple times). Actually Unity's order is arbitrary; sometimes it may work. To ensure failure, we can set GameManager execution order to a high number and Player to low number, causing Player to go first -> null.\n5. Then go to Script Execution Order and set GameManager to a negative number (e.g., -100) and Player to 0. Now GameManager's Awake always runs first.\n6. Verify the fix: run again and see correct log.\n\nTake a screenshot of Script Execution Order settings and Console showing success (Instance found).",
+    "hints": [
+        "Static Instance pattern: `public static GameManager Instance; void Awake() { Instance = this; }`",
+        "In Player's Awake: `if (GameManager.Instance != null) Debug.Log(\"GM found\"); else Debug.LogError(\"GM missing!\");`",
+        "Access Script Execution Order via Edit > Project Settings > Script Execution Order."
+    ],
+    "expectedOutput": "Before fix: Console shows 'GM missing!' (or intermittent). After fix: always 'GM found'.",
+    "solutionCode": "// GameManager.cs\nusing UnityEngine;\n\npublic class GameManager : MonoBehaviour\n{\n    public static GameManager Instance;\n\n    void Awake()\n    {\n        Instance = this;\n        Debug.Log(\"GameManager Awake\");\n    }\n}\n\n// Player.cs\nusing UnityEngine;\n\npublic class Player : MonoBehaviour\n{\n    void Awake()\n    {\n        if (GameManager.Instance != null)\n            Debug.Log(\"Player: GameManager found!\");\n        else\n            Debug.LogError(\"Player: GameManager is NULL!\");\n    }\n}\n\n// In Script Execution Order: add GameManager with value -100, Player with 0."
+}
