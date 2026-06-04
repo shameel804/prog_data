@@ -1,0 +1,85 @@
+{
+    "id": "l5",
+    "chapterId": "ch_12",
+    "title": "Gameplay Programming Patterns 🎮",
+    "description": "Handle input, spawn actors, use timers, and perform line traces in C++.",
+    "xpReward": 25,
+    "estimatedMinutes": 12,
+    "section": "Patterns",
+    "slides": [
+        {
+            "id": "s_l5_1",
+            "type": "text",
+            "title": "Handling Player Input 🎮",
+            "content": "# Bind Keys in C++\n\nIn a Pawn or Character class, you can set up input in `SetupPlayerInputComponent`:\n\n```cpp\nvoid AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)\n{\n    Super::SetupPlayerInputComponent(PlayerInputComponent);\n    PlayerInputComponent->BindAction(\"Jump\", IE_Pressed, this, &AMyCharacter::Jump);\n    PlayerInputComponent->BindAxis(\"MoveForward\", this, &AMyCharacter::MoveForward);\n}\n```\nYou need to have **Input Actions** and **Axis Mappings** defined in Project Settings → Input (or using Enhanced Input system in UE5).\n\nThen define the functions:\n```cpp\nvoid AMyCharacter::MoveForward(float Value)\n{\n    if (Controller && Value != 0.0f)\n    {\n        AddMovementInput(GetActorForwardVector(), Value);\n    }\n}\n```"
+        },
+        {
+            "id": "s_l5_2",
+            "type": "quiz",
+            "title": "Input 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_1",
+                "type": "true_false",
+                "question": "Input Actions and Axis Mappings must be defined in Project Settings before binding in C++.",
+                "options": [],
+                "correctAnswer": true,
+                "explanation": "The bindings refer to action/axis names that must match those in Project Settings or Enhanced Input assets.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_3",
+            "type": "text",
+            "title": "Spawning Actors 🌱",
+            "content": "## Create at Runtime\n\nTo spawn an actor:\n```cpp\nAActor* Spawned = GetWorld()->SpawnActor<AMyActor>(AMyActor::StaticClass(), SpawnLocation, SpawnRotation);\n```\n* `GetWorld()` returns the current world (only valid after BeginPlay).\n* `SpawnActor` needs the class, location, and rotation.\n* Optionally use `SpawnParameters` to set owner, instigator, etc.\n\nYou can also spawn from a Blueprint class:\n```cpp\nUClass* BPClass = LoadClass<AMyActor>(nullptr, TEXT(\"/Game/Blueprints/BP_MyActor.BP_MyActor_C\"));\nGetWorld()->SpawnActor<AMyActor>(BPClass, ...);\n```"
+        },
+        {
+            "id": "s_l5_4",
+            "type": "code",
+            "title": "Spawn Example",
+            "content": "Spawn a projectile at the player's location.",
+            "codeSnippet": "FVector SpawnLoc = GetActorLocation();\nFRotator SpawnRot = GetActorRotation();\nAMyProjectile* Proj = GetWorld()->SpawnActor<AMyProjectile>(SpawnLoc, SpawnRot);",
+            "codeLanguage": "cpp",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l5_5",
+            "type": "text",
+            "title": "Timers in C++ ⏱️",
+            "content": "## Schedule Functions\n\nUse `SetTimer` to call a function after a delay:\n```cpp\nFTimerHandle TimerHandle;\nGetWorldTimerManager().SetTimer(TimerHandle, this, &AMyActor::MyFunction, 2.0f, false);\n```\n* `TimerHandle` – identifier to clear the timer later.\n* `this` – the object on which to call.\n* `&AMyActor::MyFunction` – pointer to member function.\n* `2.0f` – delay.\n* `false` – not looping; `true` to loop.\n\nTo clear: `GetWorldTimerManager().ClearTimer(TimerHandle);`\n\nThis is the C++ equivalent of the Blueprint Set Timer node."
+        },
+        {
+            "id": "s_l5_6",
+            "type": "quiz",
+            "title": "Timer 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l5_2",
+                "type": "fill_blank",
+                "question": "To manage timers, you need a _____ variable to reference the timer.",
+                "options": [
+                    "FTimerHandle",
+                    "FTimerManager",
+                    "UWorld",
+                    "AActor"
+                ],
+                "correctAnswer": "FTimerHandle",
+                "explanation": "FTimerHandle uniquely identifies a timer, allowing you to clear or pause it.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l5_7",
+            "type": "text",
+            "title": "Line Traces 🔍",
+            "content": "## Raycasting in C++\n\nTo detect what's in front of the player:\n```cpp\nFHitResult Hit;\nFVector Start = GetActorLocation();\nFVector End = Start + GetActorForwardVector() * 1000.0f;\nFCollisionQueryParams Params;\nParams.AddIgnoredActor(this);\nbool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params);\nif (bHit)\n{\n    AActor* HitActor = Hit.GetActor();\n    // Do something\n}\n```\n* `LineTraceSingleByChannel` returns the first blocking hit.\n* `LineTraceMulti` returns all overlapping objects.\n* Channels: `ECC_Visibility`, `ECC_WorldStatic`, etc.\n\nThis is fundamental for interaction systems, weapon hits, and AI perception."
+        },
+        {
+            "id": "s_l5_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Draw Debug Line\n\nDuring development, use `DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.0f);` to visualise your traces."
+        }
+    ]
+}

@@ -1,0 +1,76 @@
+{
+    "id": "l3",
+    "chapterId": "ch_13",
+    "title": "Polishing with UI, Audio & VFX ✨",
+    "description": "Add a heads‑up display, sound effects, particle systems, and win/loss screens.",
+    "xpReward": 50,
+    "estimatedMinutes": 20,
+    "section": "Polish",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "HUD – Heads‑Up Display 🖥️",
+            "content": "# On‑Screen Feedback\n\nCreate a Widget Blueprint `WBP_HUD` that displays:\n\n* **Interaction Prompt** – \"Press E to pick up\" (visible when looking at interactable).\n* **Inventory Slot** – shows the currently held item (icon + name).\n* **Objective Text** – \"Find the key and escape!\"\n\nBind the interaction prompt visibility to a variable in the Character (set to true when trace hits an interactable). Use **Property Binding** to automatically update.\n\nAdd the widget to viewport in the Character's BeginPlay (via Create Widget and Add to Viewport)."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "HUD Quiz 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "fill_blank",
+                "question": "To automatically update a widget property (like visibility) without manual Set nodes, use _____ Binding.",
+                "options": [
+                    "Property",
+                    "Dynamic",
+                    "Event",
+                    "Function"
+                ],
+                "correctAnswer": "Property",
+                "explanation": "Property Bindings are functions that return a value each frame, keeping widgets in sync automatically.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Sound Design 🔊",
+            "content": "## Audio Immersion\n\nImport or use Starter Content sounds for:\n\n* **Footsteps** – play randomly pitched footstep Sound Cue on movement (Animation Notify or character event).\n* **Pickup** – a chime when grabbing an item.\n* **Door Open** – creak Sound Cue played at door location.\n* **Ambient** – subtle room tone (Air conditioning hum) from an Ambient Sound actor.\n\nCreate Sound Cues with randomisation and attenuation. Place Ambient Sound actors in the room. Use **Play Sound 2D** for UI (pickup) and **Play Sound at Location** for world effects."
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "Sound Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "true_false",
+                "question": "Footstep sounds should use the same sample every time for consistency.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "Randomising samples and pitch prevents repetition and sounds more realistic.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Visual Effects (Niagara) 💥",
+            "content": "## Sparkle and Glow\n\nAdd particle effects to make interactions satisfying:\n\n* When picking up the key, spawn a burst of golden sparkles (**Niagara System** with simple sprite burst, additive material, upward velocity).\n* The door, when opened, emits a glow or dust fall from the edges.\n* Use **Spawn System at Location** attached to the key or door actor.\n\nCreate a Niagara System `NS_KeySparkle` with a short burst of 50 particles, scale down, and fade out. Use the **Particle Color** module to tint gold."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "Win Condition & Menu 🏆",
+            "content": "# Escaping the Room\n\nWhen the player interacts with the unlocked door, trigger:\n\n1. A **Fade to Black** (use a UI overlay with animation).\n2. Display a **Win Screen** widget (\"You Escaped!\") with a restart button.\n3. Optionally, show a **Score** or **Time Taken** (using a Timer).\n\nUse **Open Level** to restart the game, or just reload the same level.\n\nThe win screen is a separate Widget Blueprint added to viewport on door interaction."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use Event Dispatchers\n\nOn the door, create a dispatcher `OnDoorOpened`. The HUD listens to it and displays the win screen, plays victory music, etc. Keeps code clean."
+        }
+    ]
+}

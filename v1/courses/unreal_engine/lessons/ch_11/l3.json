@@ -1,0 +1,85 @@
+{
+    "id": "l3",
+    "chapterId": "ch_11",
+    "title": "Dynamic Delegates & Multicast 🔔",
+    "description": "Bind/unbind events at runtime, use multicast dispatchers, and pass payloads.",
+    "xpReward": 25,
+    "estimatedMinutes": 12,
+    "section": "Events",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Delegates = Function Pointers 📌",
+            "content": "# Beyond Simple Events\n\nA **delegate** is a reference to a function. You can assign different functions at runtime, and call them as if they were native events.\n\n* **Unicast Delegate** – calls a single bound function.\n* **Multicast Delegate** – calls all functions bound to it (like broadcasting).\n* **Dynamic Delegate** – can be serialised and used in Blueprints directly.\n\nThey enable callbacks, dynamic UI updates, and modular systems."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "Delegate Types 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "Which delegate type supports binding multiple functions at once?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Unicast",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Multicast",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Singlecast",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Static",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Multicast delegates hold a list of functions and call them all when broadcast.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Event Dispatchers as Multicast Delegates 📡",
+            "content": "## Broadcaster and Listeners\n\nIn Chapter 4, we used Event Dispatchers. Under the hood, they are **dynamic multicast delegates**.\n\n* **Create Event Dispatcher** – adds a delegate signature to the Blueprint.\n* **Call** (Broadcast) – fires all bound functions.\n* **Bind Event** – add a listener (can bind multiple).\n* **Unbind** – remove a specific listener.\n\nYou can also **Assign** (clear all and bind one) or **Create Event** node tied to a dispatcher.\n\nPass **payload** variables by adding inputs to the dispatcher in its Details panel."
+        },
+        {
+            "id": "s_l3_4",
+            "type": "text",
+            "title": "Dynamic Binding Example 🔗",
+            "content": "## Spawn and Connect\n\n1. In `BP_Spawner`, have a dispatcher `OnEnemySpawned` with a parameter `SpawnedActor`.\n2. In `BP_GameManager`, on BeginPlay, find all spawners and **Bind Event** to each dispatcher, connecting to a local custom event.\n3. When an enemy spawns, the manager's function fires with the spawned actor reference.\n\nThis decouples spawning from reaction. Use **Unbind All** on EndPlay to clean up references."
+        },
+        {
+            "id": "s_l3_5",
+            "type": "quiz",
+            "title": "Bind Quiz 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "true_false",
+                "question": "You must manually unbind a dispatcher when the listener actor is destroyed to avoid dangling references.",
+                "options": [],
+                "correctAnswer": true,
+                "explanation": "Unreal does not automatically unbind if the listener is destroyed; always unbind in EndPlay.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use Delegates for UI\n\nWidgets can bind to dispatchers from the Game Instance or Player Controller to update health bars without constantly polling."
+        }
+    ]
+}

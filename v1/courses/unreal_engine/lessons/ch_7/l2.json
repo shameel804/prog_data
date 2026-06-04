@@ -1,0 +1,96 @@
+{
+    "id": "l2",
+    "chapterId": "ch_7",
+    "title": "Collision System Deep Dive 🧱",
+    "description": "Master collision primitives, presets, channels, and trace responses.",
+    "xpReward": 25,
+    "estimatedMinutes": 12,
+    "section": "Collision",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "How Collision Works 🛡️",
+            "content": "# The Invisible Shield\n\nCollision defines how actors interact when they touch. Every actor has:\n\n* **Collision Preset** – a template that sets up responses.\n* **Object Type** – what this actor is (WorldStatic, Pawn, etc.).\n* **Collision Responses** – how it reacts to other object types (Ignore, Overlap, Block).\n\nYou don't need separate \"collision mesh\" always; the engine uses the **simple collision** shapes you set up per mesh."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Collision Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which response type lets two actors pass through each other but fires events?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Ignore",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Overlap",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Block",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "None",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Overlap allows actors to interpenetrate but generates overlap events for triggers.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Collision Presets 📋",
+            "content": "## Quick Setup\n\nIn the Details panel → Collision → **Collision Presets**, choose from:\n\n* **BlockAll** – stops everything\n* **OverlapAll** – overlaps everything\n* **Pawn** – blocks only pawns (players)\n* **PhysicsActor** – interacts with everything as a physics object\n* **Trigger** – overlaps all, useful for volumes\n* **Custom…** – define your own response\n\nMost props should be **BlockAll** (for walls) or **BlockAllDynamic** (for movable objects)."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "text",
+            "title": "Object Channels & Trace Channels 🎯",
+            "content": "## Behind the Scenes\n\nUnder Project Settings → Collision, you can define **Object Channels** and **Trace Channels**.\n\n* **Object Channels** – categories like WorldStatic, WorldDynamic, Pawn, Vehicle.\n* **Trace Channels** – used for line traces (visibility, camera).\n\nYou can add custom channels (e.g., \"Projectile\", \"Pickup\") to fine‑tune interactions."
+        },
+        {
+            "id": "s_l2_5",
+            "type": "quiz",
+            "title": "Presets Quiz 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "fill_blank",
+                "question": "To make a volume that triggers events but does not block movement, set its Collision Preset to _____.",
+                "options": [
+                    "BlockAll",
+                    "Trigger",
+                    "Pawn",
+                    "PhysicsActor"
+                ],
+                "correctAnswer": "Trigger",
+                "explanation": "The Trigger preset sets responses to Overlap for all channels, so actors pass through and fire events.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_6",
+            "type": "text",
+            "title": "Collision Shapes 🔵🔺",
+            "content": "## Simple vs Complex\n\nFor performance, always use **simple collision** in the mesh editor:\n\n* Open a Static Mesh asset → **Collision** menu → **Add Sphere/Capsule/Box Simplified Collision**.\n* These simple shapes are used for physics and collision detection.\n* **Complex Collision** uses the actual mesh polygons – expensive, used only for specific ray‑casts.\n\nSet **Collision Complexity** in the Details panel to **Use Simple Collision as Complex** for most cases."
+        },
+        {
+            "id": "s_l2_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Visualise Collision\n\nIn the viewport, click **Show → Collision** to see all collision shapes. This helps debug objects that don't block as expected."
+        }
+    ]
+}

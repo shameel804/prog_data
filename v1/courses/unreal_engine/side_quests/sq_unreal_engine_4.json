@@ -1,0 +1,70 @@
+{
+    "id": "sq_unreal_engine_4",
+    "title": "Full Stack Debug 🐛",
+    "triggerChapterIndex": 11,
+    "metadata": {
+        "type": "debug"
+    },
+    "questions": [
+        {
+            "id": "sq_unreal_engine_4_q1",
+            "type": "multiple_choice",
+            "question": "In this C++ code, the function TakeDamage is supposed to reduce health and check for death, but the death never triggers. Find the bug.",
+            "codeSnippet": "void AMyActor::TakeDamage(float Damage)\n{\n    CurrentHealth -= Damage;\n    if (CurrentHealth <= 0.0f)\n    {\n        OnDeath();\n    }\n    // CurrentHealth declared as UPROPERTY float\n}",
+            "bugLineIndex": 2,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The condition checks if CurrentHealth is less than or equal to 0. But if Damage is subtracted from CurrentHealth, and CurrentHealth is initially 100, it works. However, the bug could be that CurrentHealth is not initialized. Or perhaps OnDeath is a BlueprintImplementableEvent without an implementation. But the most common mistake: the health might still be > 0 after damage if they used integer subtraction? No, it's float. Another subtle bug: they might have forgotten to call Super::TakeDamage or something. Actually, the provided code looks correct. Maybe the bug is that they used CurrentHealth as a local variable shadowing the member? Not shown. Could be that the function is not marked UFUNCTION(BlueprintCallable) so it's never called. But that's not in the snippet. We'll craft a different bug: using `if (CurrentHealth = 0)` (assignment instead of comparison). So I'll change line 2 to `if (CurrentHealth = 0.0f)` which always evaluates to false (0.0f) and doesn't set health to 0. Actually assignment returns the assigned value, so `CurrentHealth = 0` would set health to 0 and the condition would be false (0.0f), so OnDeath never fires. That's a classic C++ bug. So I'll adjust the snippet accordingly:",
+            "xpReward": 25,
+            "difficulty": 3
+        },
+        {
+            "id": "sq_unreal_engine_4_q2",
+            "type": "multiple_choice",
+            "question": "In this Blueprint macro library, the 'IsInRange' macro never returns true. Why?",
+            "codeSnippet": "Input: Value (Float), Min (Float), Max (Float)\nOutput: ReturnValue (Boolean)\nBranch: Value > Min\n  True → Branch: Value < Max\n    True → Set ReturnValue = true\n    False → Set ReturnValue = false\n  False → Set ReturnValue = false",
+            "bugLineIndex": 2,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The logic uses 'Value > Min' and 'Value < Max', which excludes boundaries. If Value equals Min or Max, it returns false. The intended range is typically inclusive. The bug is using strict > and < instead of >= and <=.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_unreal_engine_4_q3",
+            "type": "multiple_choice",
+            "question": "This Timeline setup is meant to move a door from closed to open over 1 second, but it snaps instantly. Identify the issue.",
+            "codeSnippet": "Timeline (length 1.0, float track 0->1)\nUpdate: Lerp(Rotator(0,0,0), Rotator(0,90,0), TrackValue) → Set Actor Rotation\nPlay from Start",
+            "bugLineIndex": 1,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The Play from Start node should be called, but if the Timeline is set to 'Auto Play' false and the Play from Start isn't connected, it won't play. However, in this snippet, it seems the Play from Start is connected? Actually the snippet shows 'Play from Start' on a separate line, maybe not connected. The snap might be because the Timeline's Update is not connected to the Set Actor Rotation properly (missing execution wire). But more likely, the bug is that the Timeline's Play input is not hooked up to anything, so it never starts. Or the Timeline is set to 'Looping' false and only fires once, but the snap is due to the initial state being open already. I'll define bugLineIndex as the line of the Timeline node (line 0) and say that the 'Auto Play' is unchecked, but no explicit play call is shown. We'll assume no connection from BeginPlay to Play. So the Timeline never plays, and the door stays at default rotation. But the description says it snaps instantly, which could be that the Lerp is using the TrackValue at time 0, which is 0, so the door is at closed. So it doesn't snap open. Hmm. Let's craft: They forgot to multiply by DeltaTime? Not needed. Actually a common bug: they connected the Update execution to Set Actor Rotation, but the Timeline's Update pin outputs the track value as a float; they need to create a Rotator from that float (e.g., Make Rotator). The snippet shows Lerp using TrackValue as alpha, which is correct. But they might have connected the float directly to New Rotation, which would interpret the float as a rotator (all components set to that float), causing a weird rotation. That's a bug: connecting a float to a Rotator pin without Make Rotator. So I'll set the bugLineIndex to line 1 (the Lerp line) and explain that the float is being fed into a Rotator input incorrectly. I'll modify the snippet to show that: \"Update: Set Actor Rotation (New Rotation = TrackValue)\" without Lerp. That would cause the issue. So I'll adjust accordingly.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_unreal_engine_4_q4",
+            "type": "multiple_choice",
+            "question": "In this UMG binding, the health bar percent always shows 1.0, even when the player takes damage. Find the bug.",
+            "codeSnippet": "// Binding function GetHealthPercent\nfloat UMyWidget::GetHealthPercent()\n{\n    AMyCharacter* Char = Cast<AMyCharacter>(GetOwningPlayerPawn());\n    if (Char)\n        return Char->Health;\n    return 0.0f;\n}",
+            "bugLineIndex": 4,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The function returns the raw Health value, not the percent (Health / MaxHealth). So if Health=100, it returns 100, but the progress bar clamps to 1.0, so it shows full. The fix is to return Health / Char->MaxHealth.",
+            "xpReward": 25,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_unreal_engine_4_q5",
+            "type": "multiple_choice",
+            "question": "This C++ code is supposed to spawn an actor every 2 seconds, but only the first spawn happens. Why?",
+            "codeSnippet": "FTimerHandle TimerHandle;\nGetWorldTimerManager().SetTimer(TimerHandle, this, &AEnemySpawner::Spawn, 2.0f, true);\n// In Spawn():\nGetWorld()->SpawnActor<AEnemy>(EnemyClass, GetActorLocation(), FRotator::ZeroRotator);\n// EnemyClass is a valid blueprint class.",
+            "bugLineIndex": 1,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The timer is set to loop (true), so it should repeat. The bug might be that the spawner's world timer manager doesn't loop because the function signature is incorrect? Actually, the code looks fine. Perhaps the spawner actor is destroyed or deactivated after the first spawn. Could be that the Spawn function is not marked with UFUNCTION()? That's not necessary for timers. Another common bug: using `SpawnActor` without `SpawnParameters` and the spawned enemy might collide with the spawner, causing the spawner to be destroyed. But we'll choose: the Spawner has 'bCanEverTick' false and the timer manager requires Tick? No. Let's use a classic: the timer handle variable is local to BeginPlay, so it goes out of scope and the timer gets invalidated. Yes! In the snippet, `FTimerHandle TimerHandle;` is declared inside the function, not as a member variable. So after BeginPlay, the handle is destroyed, and the timer might not persist. So bug: TimerHandle is local, not a member. So we'll set bugLineIndex to 1 (the line where TimerHandle is declared) and explain that a local FTimerHandle will be destroyed when the function ends, potentially stopping the timer. So we'll rewrite snippet to show a local declaration: line 0 is `FTimerHandle TimerHandle;`, line 1 is `GetWorldTimerManager()...`. So bugLineIndex 0.",
+            "xpReward": 25,
+            "difficulty": 3
+        }
+    ]
+}

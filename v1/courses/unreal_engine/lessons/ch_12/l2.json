@@ -1,0 +1,111 @@
+{
+    "id": "l2",
+    "chapterId": "ch_12",
+    "title": "Unreal C++ Fundamentals 🧱",
+    "description": "Master the UCLASS, UPROPERTY, and UFUNCTION macros that bridge C++ to the engine.",
+    "xpReward": 25,
+    "estimatedMinutes": 12,
+    "section": "Core Syntax",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Magic Macros ✨",
+            "content": "# UCLASS, UPROPERTY, UFUNCTION\n\nUnreal Engine extends C++ with its own reflection system, powered by macros. These allow the engine to see your classes, properties, and functions.\n\n* **UCLASS()** – marks a class for Unreal's type system.\n* **UPROPERTY()** – exposes a member variable to the engine (and optionally to Blueprints).\n* **UFUNCTION()** – marks a function for reflection (can be called from Blueprints, networked, etc.).\n\nThese are essential; without them, your code is invisible to Unreal's editor and Blueprints."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Macros 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "fill_blank",
+                "question": "To make a class visible to Unreal's type system, you must add the _____() macro above the class declaration.",
+                "options": [
+                    "UCLASS",
+                    "UPROPERTY",
+                    "UFUNCTION",
+                    "USTRUCT"
+                ],
+                "correctAnswer": "UCLASS",
+                "explanation": "UCLASS() is required for any class that Unreal should manage, such as Actors, Components, etc.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "UCLASS in Depth 🏛️",
+            "content": "## Mark Your Class\n\nIn your header file:\n```cpp\nUCLASS()\nclass MYPROJECT_API AMyActor : public AActor\n{\n    GENERATED_BODY()\n    ...\n};\n```\n* `UCLASS()` can have specifiers: `Blueprintable` (can be subclassed in BP), `BlueprintType` (usable as a variable), etc.\n* `GENERATED_BODY()` is a macro that injects boilerplate code. Always include it.\n\nThe `A` prefix denotes an Actor. Unreal uses prefixes: `A` for Actors, `U` for Objects, `F` for structs, etc."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Class Prefix 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "multiple_choice",
+                "question": "What does the 'A' prefix in AMyActor indicate?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "It is an Array type",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "It is an Actor subclass",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "It is abstract",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "It is automatically spawned",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Unreal naming conventions use A for Actors, U for UObjects, F for plain structures.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "UPROPERTY 💎",
+            "content": "## Expose Variables\n\nDeclare variables with `UPROPERTY()` to make them visible to the engine:\n\n```cpp\nUPROPERTY(EditAnywhere, BlueprintReadWrite)\nfloat Health = 100.0f;\n```\n* `EditAnywhere` – editable in the Details panel.\n* `BlueprintReadWrite` – can be get/set in Blueprints.\n* `VisibleAnywhere` – visible but not editable.\n* `Category = \"Stats\"` – groups the property.\n\nWithout UPROPERTY, the variable is invisible to the editor and Blueprints, and the garbage collector won't protect it if it's a pointer."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "quiz",
+            "title": "UPROPERTY Specifiers 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_3",
+                "type": "true_false",
+                "question": "A UPROPERTY with EditAnywhere specifier can be modified in the Blueprint editor per instance.",
+                "options": [],
+                "correctAnswer": true,
+                "explanation": "EditAnywhere makes the property editable on placed instances in the level, as well as in Blueprint defaults.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_7",
+            "type": "text",
+            "title": "UFUNCTION 🔧",
+            "content": "## Callable from Blueprints\n\nMark functions with `UFUNCTION()` to use them in Blueprints:\n\n```cpp\nUFUNCTION(BlueprintCallable)\nvoid TakeDamage(float DamageAmount);\n```\n* `BlueprintCallable` – can be called from a Blueprint graph.\n* `BlueprintImplementableEvent` – function body is written in Blueprint (C++ provides declaration only).\n* `BlueprintNativeEvent` – has a default C++ implementation but can be overridden in Blueprint.\n* `Server`, `Client`, `NetMulticast` – for network replication.\n\nUse `BlueprintPure` for getter functions that don't modify state (they appear without execution pins)."
+        },
+        {
+            "id": "s_l2_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use the Right Macro\n\nFor functions that return values without side effects, use `BlueprintCallable, BlueprintPure` – the node appears with only data pins, no execution pin."
+        }
+    ]
+}

@@ -1,0 +1,85 @@
+{
+    "id": "l2",
+    "chapterId": "ch_13",
+    "title": "Building Core Gameplay 🎮",
+    "description": "Implement interaction, inventory, and puzzle logic with Blueprints and C++.",
+    "xpReward": 50,
+    "estimatedMinutes": 20,
+    "section": "Gameplay",
+    "slides": [
+        {
+            "id": "s_l2_1",
+            "type": "text",
+            "title": "The Player Character 🧑",
+            "content": "# First‑Person Perspective\n\nWe'll use a **Character Blueprint** with a **Camera Component** attached to the head. Movement and look are handled by Enhanced Input.\n\n1. Create a new **Blueprint Class** inheriting from **Character** named `BP_EscapeCharacter`.\n2. Add a **Camera Component** (Spring Arm + Camera).\n3. In **Class Settings**, enable **Replicate Movement** (no need for networking, just keep).\n4. Set up **Input Actions** (IA_Move, IA_Look, IA_Interact) and an **Input Mapping Context** (IMC_Default) that maps them to keys.\n5. In the Character's Event Graph, on **BeginPlay**, cast to **PlayerController**, get the **Enhanced Input Local Player Subsystem**, and **Add Mapping Context**.\n6. Bind the actions to movement and look functions using the **Enhanced Input Action** events.\n\nWe'll keep this Blueprint‑only for simplicity, but you could migrate to C++ for performance."
+        },
+        {
+            "id": "s_l2_2",
+            "type": "quiz",
+            "title": "Character Setup 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_1",
+                "type": "multiple_choice",
+                "question": "Which component provides first‑person camera view?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "SpringArmComponent",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "CameraComponent",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "SkeletalMeshComponent",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "InputComponent",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "The CameraComponent captures the view. Often parented to a SpringArm for smooth collisions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_3",
+            "type": "text",
+            "title": "Interaction System 🔍",
+            "content": "# Look and Pick Up\n\nWe'll use a **Line Trace** from the camera center to detect actors in front of the player.\n\n1. In `BP_EscapeCharacter`, on **Event Tick** (or on a timer), perform a **Line Trace By Channel** from camera location forward.\n2. If hit actor implements **I_Interactable** (we'll create this interface), and within range (<300 units), show a UI prompt.\n3. On pressing **Interact** key, call **OnInteract** on the hit actor via interface.\n4. Create the **I_Interactable** interface with function `OnInteract(Instigator)`.\n5. Create a `BP_Key` actor that implements the interface: on interact, it **adds itself to the player's inventory** and **destroys** the key actor.\n\nFor inventory, we'll use a **Game Instance** variable (array of actor references) to persist across levels, or a simple array on the Character."
+        },
+        {
+            "id": "s_l2_4",
+            "type": "quiz",
+            "title": "Interface Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l2_2",
+                "type": "true_false",
+                "question": "Using an interface for interaction allows multiple different actor types to be interacted with without casting.",
+                "options": [],
+                "correctAnswer": true,
+                "explanation": "Interfaces decouple the interaction system, making it easy to add new interactive objects.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l2_5",
+            "type": "text",
+            "title": "Puzzle Logic 🧩",
+            "content": "## Unlocking the Door\n\nDesign a simple numeric code puzzle. The player must find three digits hidden in the room (e.g., a note, a book, a painting).\n\n1. Create a `BP_Door` with a **Timeline** that opens when the correct code is entered.\n2. Place a `BP_Keypad` actor (a panel with buttons). Use **UMG 3D Widget** for the keypad interface.\n3. When the player interacts with the keypad, a UI widget appears, allowing digit input.\n4. If the code matches, the door opens.\n\nAlternative: Use a physical key (key item in inventory) that, when used on the door, unlocks it. Simpler but still demonstrates inventory."
+        },
+        {
+            "id": "s_l2_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Keep It Simple\n\nDon't overcomplicate the puzzle. A single key that opens a door is enough to showcase interaction and inventory. Add a clue that hints where the key is hidden."
+        }
+    ]
+}

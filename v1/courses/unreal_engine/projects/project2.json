@@ -1,0 +1,34 @@
+{
+    "id": "project2",
+    "title": "Turret Defense TD ⚔️",
+    "description": "Create a tower defense game with automatic turrets, enemy pathfinding, and a resource management UI using C++ and Blueprints.",
+    "difficulty": "Advanced",
+    "estimatedHours": "6-10",
+    "problemStatement": "**Goal:** Develop a complete tower defense game where enemies follow a predetermined path, and the player places turrets to destroy them before they reach the end. Turrets cost resources, and the player earns resources by defeating enemies. The game includes multiple waves, a shop UI, and upgradeable turrets.\n\nYou will practice:\n- **C++:** Base classes for Enemy (with health, speed, rewards), Turret (targeting, firing), Projectile (movement, damage), and Wave Manager (spawning logic).\n- **Blueprints:** Extend C++ classes for visual variety, implement the shop and placement system, UI bindings, and input handling.\n- **UMG:** In‑game HUD (resources, wave number, lives), shop panel (draggable buttons to place turrets), turret info popup.\n- **AI & Navigation:** Use NavMesh and Simple Move To for enemy pathing, with waypoints.\n- **Niagara:** Muzzle flashes, bullet trails, explosions on enemy death.\n- **Sound Design:** Turret shooting, enemy death, wave start alarms, background music.\n- **Materials:** Create a grid material for placement highlights, glowing enemy materials for health indication.\n- **Packaging:** Produce a standalone build with at least 5 waves.\n\n**Core Specifications:**\n- Enemies follow a fixed path (set of Waypoint actors) using UAI MoveTo.\n- Turrets automatically detect enemies within range, rotate toward them, and fire projectiles at intervals.\n- Player can click on predefined placement spots to open a shop, select a turret type (e.g., basic, sniper, splash), and place it if enough resources.\n- Each turret has a cost, damage, range, and fire rate; some can be upgraded (increases stats).\n- Waves increase in difficulty (more enemies, faster, tougher).\n- A life system: enemies reaching the end cost the player a life; zero lives = game over.\n- Victory screen after surviving all waves.\n- Use C++ for core gameplay logic, exposed to Blueprints via `UFUNCTION` and `UPROPERTY` for designer flexibility.",
+    "requirements": [
+        "C++ base classes must be created for Enemy, Turret, Projectile, and WaveManager, with appropriate `UCLASS`/`UPROPERTY`/`UFUNCTION` macros.",
+        "Enemy navigation must use the Unreal NavMesh and a path of Waypoint actors.",
+        "Turrets must use a timer in C++ to fire, with an `OnFire` BlueprintNativeEvent for visual effects.",
+        "The shop UI must display turret costs, current resources, and allow placement via a button click that spawns the selected turret Blueprint.",
+        "Turrets cannot be placed on invalid surfaces; use a `Decal` or `Plane` to highlight valid placement areas.",
+        "At least three different turret types and two enemy types must be implemented.",
+        "Wave manager must use data tables to define waves (enemy type, count, spawn interval).",
+        "HUD must update resource count, wave number, lives, and provide a turret info panel on click.",
+        "Niagara effects for projectile trails, muzzle flash, and explosions must be attached to relevant events.",
+        "Sound cues for firing, enemy death, and wave announcements must be implemented.",
+        "The game must be packaged and playable through all 5 waves.",
+        "Project must include a README.txt explaining how to modify wave data via data tables and add new turret types via Blueprint inheritance."
+    ],
+    "hints": [
+        "Use `AAIController` and `UPathFollowingComponent` for enemy movement; set up a `UNavigationSystemV1` to get path points.",
+        "Store turret data (cost, damage, etc.) in a `UDataTable` based on a struct; the shop reads from the table to populate UI.",
+        "For projectile movement, use `UProjectileMovementComponent` and set initial speed and gravity.",
+        "Expose a `TargetEnemy` variable in turret; use a `FTimerHandle` to call Fire() repeatedly while target is valid.",
+        "Use `BlueprintNativeEvent` for `OnEnemyKilled` so Blueprints can play death effects without overriding C++ logic.",
+        "The placement system can use a `LineTrace` from the mouse cursor to detect a placement surface; spawn a ghost turret that follows the cursor and turns green/red based on validity.",
+        "Resources can be managed in `UGameInstanceSubsystem` or `AGameState`.",
+        "For wave data tables, structure: WaveNumber, EnemyClass, Count, SpawnInterval, DifficultyMultiplier."
+    ],
+    "expectedOutput": "A fully packaged tower defense game with functional AI, multiple turret types, shop UI, 5+ waves, audio, and visual effects. The C++ base classes should be easily extendable in Blueprints.",
+    "solutionCode": "N/A"
+}

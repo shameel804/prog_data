@@ -1,0 +1,91 @@
+{
+    "id": "l4",
+    "chapterId": "ch_5",
+    "title": "Textures & UV Mapping 🖼️",
+    "description": "Import images, sample them, control tiling, and understand UV coordinates.",
+    "xpReward": 25,
+    "estimatedMinutes": 12,
+    "section": "Textures",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "What is a Texture? 🏞️",
+            "content": "# Pixels on the Surface\n\nA **texture** is a 2D image that materials use to vary colour, roughness, etc. across a surface.\n\n* **Base Color / Albedo** – the main colour image\n* **Normal Map** – purple‑ish image that simulates bumps and details\n* **Roughness / Metallic / AO** – often packed into a single texture (channels)\n\nTextures are imported into Unreal just like any other asset: drag and drop into the Content Browser. Supported formats: PNG, JPG, TGA, HDR, etc."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Texture Types 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "What colour does a typical Normal Map appear?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Red",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Green",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Purple",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Grayscale",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Normal maps use the RGB channels to store surface direction. This gives them a distinctive purple‑blue look.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "UV Mapping Fundamentals 🗺️",
+            "content": "## Wrapping a 3D Object\n\n**UVs** are 2D coordinates that tell Unreal how to wrap a flat texture onto a 3D mesh. Think of it as **gift wrapping paper** – the UV layout is the blueprint showing where each pattern lands.\n\n* Every mesh has UV coordinates stored in its geometry.\n* **TexCoord** node (shortcut: hold **U** + click) provides these coordinates.\n* Connect TexCoord to the **UVs** input of a Texture Sample.\n\nIf a model is imported without UVs, the material won't map correctly. You'll see stretched or missing textures."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Controlling Tiling & Offset 🧩",
+            "content": "## Repeat the Pattern\n\nConnect a **Constant2Vector** to the **Multiply** input of a TexCoord before linking to Texture Sample:\n\n* `TexCoord * Constant2Vector(2,2)` → tiles the texture 2×2.\n* Use a **Scalar Parameter** (named, expose to Material Instance) for dynamic tiling.\n\nTo **offset** (pan) the texture, add a Constant2Vector to TexCoord before multiplication. This shifts the pattern without moving the mesh.\n\nExample: `(TexCoord + Offset) * Tiling`"
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "UV Quiz 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "Changing the UV tiling in the material affects the mesh's geometry.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "UV tiling only changes how the texture is sampled, not the actual mesh vertices.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Texture Import Settings ⚙️",
+            "content": "## Optimise and Tweak\n\nDouble‑click any texture asset to open its settings:\n\n* **Compression** – default is DXT for RGB, or Masks for grayscale. Normal maps should use **Normalmap** compression.\n* **sRGB** – on for colour textures, off for data textures (roughness, normal).\n* **Mip Maps** – lower resolution versions generated automatically. Enable for better performance.\n* **Texture Group** – set to World, Character, UI, etc. for texture streaming.\n\nFor normal maps, make sure **Compression** is set to **Normalmap**, otherwise you'll get visual artifacts."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Channel Packing\n\nTo save memory, combine roughness, metallic, and AO into a single texture's R, G, B channels. Use **Component Mask** to extract each channel in the material. It's an industry standard."
+        }
+    ]
+}

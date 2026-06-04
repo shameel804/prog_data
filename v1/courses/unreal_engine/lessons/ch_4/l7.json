@@ -1,0 +1,97 @@
+{
+    "id": "l7",
+    "chapterId": "ch_4",
+    "title": "Blueprint Communication 📡",
+    "description": "Make Blueprints talk to each other using casting, interfaces, and event dispatchers.",
+    "xpReward": 30,
+    "estimatedMinutes": 15,
+    "section": "Interaction",
+    "slides": [
+        {
+            "id": "s_l7_1",
+            "type": "text",
+            "title": "Why Communicate? 🗣️",
+            "content": "# Nobody Works Alone\n\nIn a game, objects must interact:\n* A lever opens a door.\n* The player picks up a health pack.\n* An enemy sees the player and attacks.\n\nBlueprints can talk to each other in three main ways:\n1. **Direct Reference** – store a pointer to another actor\n2. **Casting** – convert a generic actor to a specific class\n3. **Event Dispatchers** – broadcast an event; other actors listen\n4. **Blueprints Interfaces** – define a contract of functions"
+        },
+        {
+            "id": "s_l7_2",
+            "type": "text",
+            "title": "Direct References 🔗",
+            "content": "## I Know You!\n\nIf a Blueprint knows exactly which actor it needs, it can hold an **Actor Reference** variable.\n\n1. Create a variable of type **Actor** (or a specific Blueprint class).\n2. In the Details Panel, enable **Instance Editable**.\n3. In the level, select the Blueprint instance and use the **eyedropper** or dropdown to pick the target actor.\n\nNow you can call functions, set variables, etc. directly on that referenced actor. Simple and efficient.\n\n*Drawback:* Only works if the reference is set in the editor. For dynamic spawning, we need other methods."
+        },
+        {
+            "id": "s_l7_3",
+            "type": "quiz",
+            "title": "Reference Quiz 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_1",
+                "type": "true_false",
+                "question": "Direct references can only be set up in the Blueprint editor, not at runtime.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "You can assign references at runtime using nodes like 'Get All Actors of Class', 'Line Trace By Channel', or overlap events.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l7_4",
+            "type": "text",
+            "title": "Casting – Getting Specific 🎯",
+            "content": "## Is This a Door?\n\nWhen you have a generic **Actor** reference (e.g., from an overlap), you can **cast** it to a specific Blueprint class to access its unique functions.\n\n1. Drag off the Actor pin → type **Cast To YourBlueprintName**.\n2. If the cast succeeds (the actor is indeed that class), execution flows from the **success** pin.\n3. The **As YourBlueprintName** output gives you a typed reference.\n\n**Caution:** Casting has a small performance cost. Avoid casting every frame. Cache the result in a variable after first cast."
+        },
+        {
+            "id": "s_l7_5",
+            "type": "quiz",
+            "title": "Casting Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l7_2",
+                "type": "multiple_choice",
+                "question": "What does casting do?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Creates a new actor",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Converts a generic reference to a specific class if it matches",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Deletes an actor",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Plays an animation",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Casting attempts to treat an actor as a specific type, giving access to its unique properties and functions.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l7_6",
+            "type": "text",
+            "title": "Event Dispatchers 📢",
+            "content": "## Broadcast and Listen\n\nAn **Event Dispatcher** is like a radio station: one Blueprint **broadcasts** an event, and other Blueprints **listen** for it.\n\n1. Create an Event Dispatcher in My Blueprint (e.g., `OnDoorOpened`).\n2. In the broadcaster, call **Call [OnDoorOpened]** to fire it.\n3. In the listener, right‑click → **Bind Event to [OnDoorOpened]**. Connect execution to what should happen.\n4. To bind at runtime, use the **Bind Event** node, passing the target actor and event.\n\nThis decouples the sender and receiver – great for clean architecture."
+        },
+        {
+            "id": "s_l7_7",
+            "type": "text",
+            "title": "Blueprint Interfaces 🤝",
+            "content": "## The Universal Remote\n\nAn **Interface** defines a set of functions that any Blueprint can implement. It's like a contract: \"If you implement this interface, you must have these functions.\"\n\n1. Create a Blueprint Interface asset (Content Browser → Blueprints → Blueprint Interface).\n2. Add function signatures (e.g., `Activate`, `GetHealth`).\n3. In a Blueprint, open **Class Settings** → Implemented Interfaces → add your interface.\n4. Now you can call those functions on any actor that implements the interface, without casting to a specific class.\n\nInterfaces are **faster** than casting and more flexible."
+        },
+        {
+            "id": "s_l7_8",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Interface Over Casting\n\nWhen multiple Blueprint types share behaviour (e.g., all `Interactable` objects), use an Interface. It avoids hard references and makes your game easier to extend."
+        }
+    ]
+}

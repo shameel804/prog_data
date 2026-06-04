@@ -1,0 +1,105 @@
+{
+    "id": "l6",
+    "chapterId": "ch_12",
+    "title": "Compiling, Debugging & Best Practices 🛠️",
+    "description": "Compile your code, debug with Visual Studio, and write clean, efficient C++.",
+    "xpReward": 25,
+    "estimatedMinutes": 12,
+    "section": "Professional",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "Compilation Workflow 🔨",
+            "content": "# Build, Hot Reload, Run\n\n* **In Editor**: Press **Ctrl+Alt+F11** to build and hot‑reload C++ without closing Unreal.\n* **In Visual Studio**: Right‑click project → **Build** (or press **Ctrl+Shift+B**). Then switch to Unreal; it will prompt to reload.\n* **Full Build**: If Live Coding fails, close the editor and build from Visual Studio, then reopen.\n\nAlways watch the **Output Log** for compilation errors. Fix them before running the game."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "quiz",
+            "title": "Building 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "true_false",
+                "question": "Live Coding (Ctrl+Alt+F11) can apply all changes without ever needing to close the editor.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "Some changes (like new UCLASS headers) require a full editor restart. Live Coding works for most function body changes.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_3",
+            "type": "text",
+            "title": "Debugging with Visual Studio 🐛",
+            "content": "## Attach to Process\n\n1. Run your game in Unreal Editor (Play in Editor).\n2. In Visual Studio, go to **Debug → Attach to Process**.\n3. Find `UnrealEditor.exe` and attach.\n4. Set **breakpoints** (click in the margin of your .cpp file).\n5. When the code executes, VS breaks and you can inspect variables, step through (F10, F11).\n\nUse `UE_LOG` for quick logging:\n```cpp\nUE_LOG(LogTemp, Warning, TEXT(\"Health is %f\"), CurrentHealth);\n```\nYou can also use **Visual Studio's Immediate Window** to run commands while paused."
+        },
+        {
+            "id": "s_l6_4",
+            "type": "quiz",
+            "title": "Debugging 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "multiple_choice",
+                "question": "Which macro logs a warning message to the console?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "UE_LOG(LogTemp, Warning, TEXT(\"...\"));",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "PrintString(\"...\")",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT(\"...\"));",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "std::cout << \"...\"",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "UE_LOG outputs to the Output Log. GEngine->AddOnScreenDebugMessage is also valid but for on‑screen messages.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_5",
+            "type": "text",
+            "title": "C++ Best Practices 📏",
+            "content": "## Write Clean Unreal C++\n\n* **Follow Naming Conventions**: `A` for Actors, `U` for Objects, `F` for structs, `E` for enums, `I` for interfaces. Variables use PascalCase (not camelCase).\n* **Use `const` correctly**: mark functions that don't modify state as `const`.\n* **Avoid raw `new`/`delete`**: use `NewObject<T>()` for UObjects, `SpawnActor` for Actors. Unreal has its own garbage collector.\n* **Include only what you need**: use forward declarations in headers when possible to reduce compile times.\n* **Null‑check pointers**: before using `AActor*` or components, check `IsValid(ptr)`.\n* **Keep headers lean**: put implementation in .cpp, not inline in header.\n* **Use `TArray`, `TMap`, `TSet`** instead of STL containers.\n* **Always call `Super::`** in overridden functions."
+        },
+        {
+            "id": "s_l6_6",
+            "type": "quiz",
+            "title": "Containers 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_3",
+                "type": "fill_blank",
+                "question": "In Unreal C++, you should use _____ instead of std::vector.",
+                "options": [
+                    "TArray",
+                    "TMap",
+                    "TSet",
+                    "TQueue"
+                ],
+                "correctAnswer": "TArray",
+                "explanation": "TArray is Unreal's dynamic array class, integrated with the garbage collector and reflection system.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use Unreal's Smart Pointers\n\nFor objects not managed by the garbage collector, use `TSharedPtr`, `TWeakObjectPtr`, etc. For UObjects, use `TObjectPtr<T>` (UE5.1+) for better memory tracking."
+        }
+    ]
+}

@@ -1,0 +1,33 @@
+{
+    "id": "project3",
+    "title": "Mystery of the Forgotten Lab 🔬",
+    "description": "Design a first‑person puzzle adventure featuring an inventory system, interactive NPCs, cinematics, and a fully packaged experience.",
+    "difficulty": "Advanced",
+    "estimatedHours": "8-12",
+    "problemStatement": "**Goal:** Build a narrative‑driven first‑person adventure set in an abandoned laboratory. The player must explore rooms, collect items, solve puzzles, and interact with NPCs to uncover the mystery. The game features a save system, dialogue trees, cinematic sequences, and polished audio/visual feedback.\n\nYou will practice:\n- **Level Design:** Building interconnected rooms with atmospheric lighting and post‑processing.\n- **Blueprints & Interfaces:** Interaction system using `I_Interactable` for doors, pickups, and NPCs; inventory with drag‑and‑drop (optional) or simple slot.\n- **UMG:** Main menu, pause menu, dialogue boxes (with typed text effect), inventory HUD, journal with clues.\n- **Data Tables:** Store dialogue lines, item descriptions, puzzle solutions.\n- **Sequencer & Cinematics:** Intro cutscene and in‑game event sequences (e.g., door opening dramatically).\n- **Audio:** Environmental sounds (reverb zones), voiced dialogue (or placeholder beeps), background music that changes per area.\n- **Save System:** Use `USaveGame` and `SaveGameToSlot`/`LoadGameFromSlot` to persist inventory, puzzle states, and player position.\n- **C++ (Optional Enhancement):** A base `Interactable` class in C++ to handle common functions, or a `QuestManager` for tracking objectives.\n- **Packaging:** Final build with install instructions.\n\n**Core Specifications:**\n- The player controls a first‑person character with mouse look and WASD movement.\n- The game world consists of at least three rooms: a starting lab, a storage room, and a secret vault.\n- A locked door requires a keycard found in the storage room, hidden inside a locked locker that requires a 3‑digit code. The code is pieced together from clues (notes) scattered around.\n- An NPC hologram (a simple animated mesh) gives hints when interacted with, using a simple dialogue system (one question, one answer).\n- The player's inventory is displayed as a list with item icons; clicking an item \"uses\" it (e.g., using keycard on door triggers door open if nearby).\n- A journal UI tracks discovered clues and current objective.\n- A save game slot persists progress.\n- The game ends with a short cinematic (Sequencer) revealing the lab's secret.\n- Full audio ambience with reverb zones and dynamic music.\n\n**Design Requirements:**\n- The project must demonstrate a clear narrative through environmental storytelling and clues.\n- The interaction system must be extensible: any new actor can implement `I_Interactable` and work without further code changes.\n- Data tables must be used for at least dialogue lines and item info.\n- A main menu with \"New Game\", \"Load Game\", and \"Quit\" must be fully functional.\n- The built game must be optimized for 60 FPS on a target machine with a GTX 1060 equivalent.\n- A design document (Markdown or PDF) summarizing the puzzle flow, item locations, and scripting architecture must be included in the project folder.",
+    "requirements": [
+        "A first‑person character with input handling and mouse lock.",
+        "A reusable `I_Interactable` interface with `OnInteract(Instigator)`; at least four distinct interactable types (Door, Keycard, Locker, NPC).",
+        "An inventory array (in Character or Game Instance) that holds `FInventoryItem` structs (Name, Icon, UseFunction).",
+        "A dialogue system using UMG that types out text one character at a time, with a continue button.",
+        "Data tables: `DT_Items` (item info), `DT_Dialogue` (NPC lines), `DT_PuzzleSolutions` (locker code).",
+        "A save game object that stores inventory, puzzle state (which doors are unlocked), and player transform.",
+        "A Sequencer cutscene that plays at the start and at the ending; the ending scene must be triggered by a puzzle solve event.",
+        "Reverb volumes must be placed in each room to create distinct audio environments.",
+        "Background music must transition between exploration and puzzle‑solving phases (e.g., different audio components).",
+        "The game must be packaged and installable on Windows; a README must explain how to reset save data.",
+        "A short design document (2‑3 pages) must accompany the project, detailing the narrative, puzzle logic, and technical highlights."
+    ],
+    "hints": [
+        "For the inventory, use a `UDataTable` to define items, then store an array of row names (FName) as the inventory; look up info from the table when displaying.",
+        "The interaction system can use a line trace from the center of the screen; on hitting an interactable within range, show a UI prompt.",
+        "For dialogue, use `UTextBlock` with a `Timer` to append one character at a time; store the full text in a variable and update the displayed string.",
+        "Save system: create a Blueprint extending `USaveGame`, add variables for inventory, bool map (e.g., \"LockerUnlocked\", \"DoorOpened\"), and player location. Load on BeginPlay if a save exists; save on key press or auto‑save at checkpoints.",
+        "For the code puzzle, use a simple `EditableTextBox` widget that appears when interacting with the locker; compare entered string to the code from data table.",
+        "Use `Level Streaming` if the map becomes too large; otherwise, keep all rooms in one persistent level.",
+        "The NPC hologram can be a `Skeletal Mesh` with a looping idle animation and a `Widget Component` for the dialogue prompt.",
+        "For the cinematic, use `Level Sequence` assets and trigger them via `Play Sequence` node in Blueprint; ensure the player is paused during cutscenes."
+    ],
+    "expectedOutput": "A polished first‑person adventure with a cohesive story, at least three rooms, interactive puzzles, a save system, cinematics, and full audio. The packaged executable should provide a satisfying 20‑30 minute playthrough. The design document and code structure should allow adding more puzzles easily.",
+    "solutionCode": "N/A"
+}

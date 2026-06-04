@@ -1,0 +1,120 @@
+{
+    "id": "l3",
+    "chapterId": "ch_4",
+    "title": "Events & Execution Flow ⚡",
+    "description": "Harness the power of BeginPlay, Tick, and custom events to drive your game.",
+    "xpReward": 25,
+    "estimatedMinutes": 12,
+    "section": "Fundamentals",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "What Is an Event? 🎟️",
+            "content": "# The Starting Gun\n\nAn **Event** node starts execution. Without an event, nothing happens. Think of events as **triggers**:\n\n* **Event BeginPlay** – fires once when the game starts (or actor spawns)\n* **Event Tick** – fires every frame (caution: heavy!)\n* **Event ActorBeginOverlap** – fires when another actor overlaps\n* **Custom Events** – you define when they fire\n\nEach event has a white **output execution pin** (▶). Connect it to actions to build a chain."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "quiz",
+            "title": "Event Basics 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "multiple_choice",
+                "question": "When does Event BeginPlay fire?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Every frame",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "When the actor overlaps something",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Once when the game starts or the actor spawns",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "When you press Play in the editor",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "BeginPlay fires once when gameplay begins, after the actor is initialized.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "Your First Node Graph 🔗",
+            "content": "## Hello, World!\n\nLet's build the classic \"Hello World\" in Blueprints:\n\n1. Open your `BP_FirstBlueprint`.\n2. Right‑click → type **Event BeginPlay** → select it.\n3. Drag off the white ▶ pin and release → type **Print String** → select.\n4. In the Print String node, type `\"Hello, Unreal!\"` in the In String box.\n5. **Compile** (toolbar button) to check for errors.\n6. Drag the Blueprint into your level and press Play.\n\nYou should see \"Hello, Unreal!\" printed in the top‑left of the viewport! 🎉"
+        },
+        {
+            "id": "s_l3_4",
+            "type": "code",
+            "title": "Node Setup",
+            "content": "The graph should look like this:",
+            "codeSnippet": "Event BeginPlay → Print String\n                   In String = \"Hello, Unreal!\"",
+            "codeLanguage": "blueprint",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_5",
+            "type": "quiz",
+            "title": "Print Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "fill_blank",
+                "question": "To display a message on screen during gameplay, use the _____ _____ node.",
+                "options": [
+                    "Print String",
+                    "Draw Text",
+                    "Show Message",
+                    "Debug Log"
+                ],
+                "correctAnswer": "Print String",
+                "explanation": "Print String outputs text to the screen and log. It's the simplest way to debug.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_6",
+            "type": "text",
+            "title": "Event Tick – A Double‑Edged Sword ⏱️",
+            "content": "## Every Frame, Every Time\n\n**Event Tick** fires 30, 60, or even 120+ times per second, depending on frame rate.\n\n* Use it for continuous movement, like rotating a fan.\n* **Avoid heavy logic** in Tick – it can kill performance.\n* Connect the **Delta Seconds** output pin (time since last frame) to ensure frame‑rate independent movement.\n\nExample: `Set Actor Rotation` with `Delta Seconds * Rotation Speed`.\n\n*Rule of thumb:* If it doesn’t need to happen every frame, use a **Timer** instead."
+        },
+        {
+            "id": "s_l3_7",
+            "type": "quiz",
+            "title": "Tick Check 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_3",
+                "type": "true_false",
+                "question": "Event Tick runs only once per second.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "Tick runs every frame, typically 30–120+ times per second, depending on performance.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_8",
+            "type": "text",
+            "title": "Custom Events 🛠️",
+            "content": "## Call Your Own Shots\n\nRight‑click → **Add Custom Event** → name it (e.g., `TurnOnLight`).\n\n* You get a **red event node** that you can call from anywhere.\n* Call it using the **Call Function** node (just type the event name).\n* Perfect for organising logic and triggering sequences.\n\nYou can even add **input parameters** (variables passed to the event) in its Details panel."
+        },
+        {
+            "id": "s_l3_9",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use Sequences to Chain\n\nA **Sequence** node (right‑click → Sequence) splits one execution wire into multiple. Great for doing several things from one event. Each output fires in order."
+        }
+    ]
+}

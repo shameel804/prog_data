@@ -1,0 +1,85 @@
+{
+    "id": "l6",
+    "chapterId": "ch_11",
+    "title": "Nativization & Performance ⚡",
+    "description": "Convert Blueprints to C++ and write efficient visual scripts.",
+    "xpReward": 25,
+    "estimatedMinutes": 12,
+    "section": "Optimisation",
+    "slides": [
+        {
+            "id": "s_l6_1",
+            "type": "text",
+            "title": "When Blueprints Aren't Fast Enough ⚠️",
+            "content": "# The Speed Gap\n\nBlueprint logic runs in a virtual machine, which is slower than compiled C++. For complex math, heavy loops, or tick‑intensive systems, you need **Nativization**.\n\n* **Blueprint Nativization** – converts Blueprint classes into C++ code, then compiles it. The result is a native C++ object that runs much faster.\n* Available since UE4.14, improved in UE5.\n\n*Caveat:* Not all Blueprint features are supported; some nodes are nativized as stubs."
+        },
+        {
+            "id": "s_l6_2",
+            "type": "quiz",
+            "title": "Nativization 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_1",
+                "type": "true_false",
+                "question": "Nativization converts Blueprints into C++ automatically, making them as fast as hand‑written C++ in all cases.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "It significantly improves performance but may not reach the optimisation level of expert‑written C++.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_3",
+            "type": "text",
+            "title": "Enabling Nativization ⚙️",
+            "content": "## How to Convert\n\n1. **Project Settings → Packaging → Blueprint Nativization Method** → choose **Inclusive** (converts all Blueprints) or **Exclusive** (only marked ones).\n2. For Exclusive, open a Blueprint → Class Settings → check **Nativize**.\n3. Package your game. Unreal will generate C++ files, compile, and replace the Blueprint asset with native code.\n\nThis increases build time and package size but boosts runtime performance."
+        },
+        {
+            "id": "s_l6_4",
+            "type": "text",
+            "title": "Blueprint Performance Tips 🏎️",
+            "content": "## Even Without Nativization\n\n* **Avoid Tick** – use timers or events.\n* **Avoid Casting in loops** – cache cast results.\n* **Use **for each loop** sparingly on large arrays; prefer standard **for loop** with index to avoid copy overhead.\n* **Turn off collision/overlap generation** on actors that don't need it.\n* **Limit use of Delay within loops**; it's latent but still expensive.\n* **Use **Select**, **Switch**, and **Sequence** to reduce branching depth.\n\nProfile with **stat startfile/stopfile** and Unreal Insights to find heavy Blueprint threads."
+        },
+        {
+            "id": "s_l6_5",
+            "type": "quiz",
+            "title": "Optimisation 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l6_2",
+                "type": "multiple_choice",
+                "question": "What is the most impactful change to reduce Blueprint overhead?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "Disable Tick on actors that don't need it",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Use more Print String nodes",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "Increase array sizes",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "Add more comments",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "Tick is one of the biggest CPU costs; disabling it on idle actors saves massive cycles.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l6_6",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use 'Is Valid' Checks\n\nBefore calling functions on references, use **Is Valid** node. It prevents crashes and helps the nativized code optimise."
+        }
+    ]
+}

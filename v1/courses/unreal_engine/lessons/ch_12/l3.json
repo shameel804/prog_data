@@ -1,0 +1,79 @@
+{
+    "id": "l3",
+    "chapterId": "ch_12",
+    "title": "Creating a C++ Actor 🎭",
+    "description": "Write your first gameplay class with components, BeginPlay, and Tick.",
+    "xpReward": 25,
+    "estimatedMinutes": 12,
+    "section": "Gameplay",
+    "slides": [
+        {
+            "id": "s_l3_1",
+            "type": "text",
+            "title": "Actor Anatomy in C++ 🏗️",
+            "content": "# The Header (.h) and Implementation (.cpp)\n\nOpen `MyFirstActor.h`. You'll see:\n\n```cpp\nUCLASS()\nclass MYPROJECT_API AMyFirstActor : public AActor\n{\n    GENERATED_BODY()\n\npublic:\n    AMyFirstActor();\n\nprotected:\n    virtual void BeginPlay() override;\n\npublic:\n    virtual void Tick(float DeltaTime) override;\n};\n```\nThis declares a constructor, BeginPlay, and Tick."
+        },
+        {
+            "id": "s_l3_2",
+            "type": "code",
+            "title": "Header Example",
+            "content": "Here's a typical simple Actor header.",
+            "codeSnippet": "UCLASS()\nclass MYGAME_API AMyActor : public AActor\n{\n    GENERATED_BODY()\npublic:\n    AMyActor();\nprotected:\n    virtual void BeginPlay() override;\npublic:\n    virtual void Tick(float DeltaTime) override;\n};",
+            "codeLanguage": "cpp",
+            "canRunCode": false
+        },
+        {
+            "id": "s_l3_3",
+            "type": "text",
+            "title": "The .cpp File 📝",
+            "content": "## Implementations\n\nIn `MyFirstActor.cpp`:\n\n```cpp\n#include \"MyFirstActor.h\"\n\nAMyFirstActor::AMyFirstActor()\n{\n    PrimaryActorTick.bCanEverTick = true;\n}\n\nvoid AMyFirstActor::BeginPlay()\n{\n    Super::BeginPlay();\n    // Your code here\n}\n\nvoid AMyFirstActor::Tick(float DeltaTime)\n{\n    Super::Tick(DeltaTime);\n    // Your code here\n}\n```\n* Always call `Super::BeginPlay()` to run parent logic.\n* Set `bCanEverTick = true` in the constructor if you need Tick."
+        },
+        {
+            "id": "s_l3_4",
+            "type": "quiz",
+            "title": "BeginPlay 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_1",
+                "type": "true_false",
+                "question": "You must manually enable Tick by setting bCanEverTick = true in the constructor.",
+                "options": [],
+                "correctAnswer": true,
+                "explanation": "By default, an Actor does not tick. Set PrimaryActorTick.bCanEverTick = true in the constructor to enable Tick.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_5",
+            "type": "text",
+            "title": "Adding Components 🔩",
+            "content": "## Attach Sub‑Objects\n\nYou can add components like Static Mesh, Sphere Collision, etc., in the constructor:\n\n```cpp\nAMyActor::AMyActor()\n{\n    PrimaryActorTick.bCanEverTick = true;\n\n    MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT(\"Mesh\"));\n    RootComponent = MeshComp;\n}\n```\nYou need to declare the component in the header:\n\n```cpp\nUPROPERTY(VisibleAnywhere)\nUStaticMeshComponent* MeshComp;\n```\n* `CreateDefaultSubobject` creates the component.\n* `RootComponent` assigns it as the root. Without this, the Actor has no transform origin."
+        },
+        {
+            "id": "s_l3_6",
+            "type": "quiz",
+            "title": "Components 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l3_2",
+                "type": "fill_blank",
+                "question": "To create a sub‑object like a Static Mesh Component in C++, use the _____ function.",
+                "options": [
+                    "NewObject",
+                    "CreateDefaultSubobject",
+                    "SpawnActor",
+                    "AddComponent"
+                ],
+                "correctAnswer": "CreateDefaultSubobject",
+                "explanation": "CreateDefaultSubobject is used in constructors to create and attach components.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l3_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Expose Components\n\nUse `UPROPERTY(VisibleAnywhere)` on component pointers to see them in the Blueprint editor's Components panel. You can then assign assets in child Blueprints."
+        }
+    ]
+}

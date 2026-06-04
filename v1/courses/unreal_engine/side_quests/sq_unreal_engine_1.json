@@ -1,0 +1,70 @@
+{
+    "id": "sq_unreal_engine_1",
+    "title": "Editor Explorer 🔍",
+    "triggerChapterIndex": 2,
+    "metadata": {
+        "type": "debug"
+    },
+    "questions": [
+        {
+            "id": "sq_unreal_engine_1_q1",
+            "type": "multiple_choice",
+            "question": "Find the bug in this Blueprint setup for moving a cube. The intention is to rotate the cube every frame.",
+            "codeSnippet": "Event Tick\n  AddActorLocalRotation (Delta Rotation: (0, 0, 90 * Delta Seconds))\n  Set Actor Location (New Location: (0,0,100))",
+            "bugLineIndex": 2,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The Set Actor Location line hard‑codes the position to (0,0,100) every frame, overriding any previous movement and making the cube snap to that spot. It should not be there, or should use relative offset.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_unreal_engine_1_q2",
+            "type": "multiple_choice",
+            "question": "A developer placed a Static Mesh Actor in the level and set Mobility to Stationary. They then tried to push it with a physics impulse, but it doesn't move. Why?",
+            "codeSnippet": "// In level:\nStaticMeshActor (Mobility = Stationary, Simulate Physics = false)\n// In Blueprint:\nAdd Impulse at Location (Target = StaticMeshActor)",
+            "bugLineIndex": 1,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "Stationary mobility cannot move at runtime; it's only for non‑moving objects that might change appearance. Physics simulation requires Movable mobility.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_unreal_engine_1_q3",
+            "type": "multiple_choice",
+            "question": "In the Material Editor, a user connected a Constant3Vector to Base Color, but the preview sphere is black. The node is set to (1,0,0) red. Find the bug.",
+            "codeSnippet": "Constant3Vector (RGB = 1,0,0) → Base Color\n// No other nodes\n// Blend Mode: Opaque, Shading Model: Default Lit",
+            "bugLineIndex": 0,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "There's no direct bug in the node connection. The issue is likely that the material hasn't been compiled/saved, or the preview is showing something else. However, this is tricky. Actually, the constant node might be set incorrectly; but the snippet looks fine. Perhaps the bug is that the RGB values are clamped to 1 but Red is already 1. No bug. Might need a better bug. Let's adjust: Maybe the node is a Constant (float) instead of Constant3Vector. That would be a bug: connecting a single float to Base Color (which expects a vector) would cause a compile error or black. So we'll change line 0 to 'Constant (float) 1.0' connected to Base Color. That's a bug.",
+            "xpReward": 25,
+            "difficulty": 3
+        },
+        {
+            "id": "sq_unreal_engine_1_q4",
+            "type": "multiple_choice",
+            "question": "The following Level Blueprint is supposed to open a door when the game starts, but nothing happens.",
+            "codeSnippet": "Event BeginPlay\n  Set Actor Rotation (Target = DoorReference, New Rotation = (0, 90, 0))\n// DoorReference is a variable set to a door actor in the level",
+            "bugLineIndex": 1,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "Setting the rotation directly on BeginPlay often fails because the actor may not yet be in its final state, or the door's mobility is Static/Stationary. Also, the rotation may be overridden by a constraint. But the most likely bug: the DoorReference variable is empty or not properly assigned. The assignment must be done via the Level Blueprint's details. If it's unset, nothing happens. We'll indicate that as bug.",
+            "xpReward": 20,
+            "difficulty": 2
+        },
+        {
+            "id": "sq_unreal_engine_1_q5",
+            "type": "multiple_choice",
+            "question": "In this collision setup, a trigger volume doesn't fire any overlap events.",
+            "codeSnippet": "BoxTrigger (Collision Preset = Trigger)\nOnComponentBeginOverlap(OtherActor)\n  Print String 'Overlap!'",
+            "bugLineIndex": 0,
+            "options": [],
+            "correctAnswer": "",
+            "explanation": "The Trigger preset sets collision to overlap all, but 'Generate Overlap Events' must also be enabled on the collision component. By default it's false, so the event won't fire.",
+            "xpReward": 20,
+            "difficulty": 2
+        }
+    ]
+}

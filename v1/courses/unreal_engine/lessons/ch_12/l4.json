@@ -1,0 +1,91 @@
+{
+    "id": "l4",
+    "chapterId": "ch_12",
+    "title": "Exposing C++ to Blueprints 🔗",
+    "description": "Make variables and functions editable and callable from Blueprint graphs.",
+    "xpReward": 25,
+    "estimatedMinutes": 12,
+    "section": "Integration",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "Blueprint-C++ Synergy 🤝",
+            "content": "# Two Languages, One Game\n\nThe true power of Unreal comes from mixing C++ and Blueprints. You write base classes in C++ and extend them in Blueprints. Designers can tweak values without touching code.\n\nWe'll make a C++ class that is fully configurable in the editor and callable from Blueprint graphs."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "text",
+            "title": "Expose a Variable 📊",
+            "content": "## Health Example\n\nIn header:\n```cpp\nUPROPERTY(EditAnywhere, BlueprintReadWrite, Category = \"Combat\")\nfloat MaxHealth = 100.0f;\n\nUPROPERTY(BlueprintReadOnly)\nfloat CurrentHealth;\n```\n* `EditAnywhere` → appears in Details panel (defaults and instances).\n* `BlueprintReadWrite` → get/set nodes in Blueprints.\n* `Category` → groups under \"Combat\" header.\n* `BlueprintReadOnly` → only get node, no set (for internal tracking).\n\nNow in any Blueprint child of this class, you can read/write MaxHealth, but only read CurrentHealth."
+        },
+        {
+            "id": "s_l4_3",
+            "type": "quiz",
+            "title": "Variable Exposure 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "multiple_choice",
+                "question": "Which specifier makes a variable appear in the Details panel and editable?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "BlueprintReadOnly",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "EditAnywhere",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "VisibleAnywhere",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "BlueprintCallable",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "EditAnywhere enables editing in the property editor. VisibleAnywhere only shows, not editable.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "BlueprintCallable Functions 📞",
+            "content": "## Public API\n\n```cpp\nUFUNCTION(BlueprintCallable, Category = \"Combat\")\nvoid Heal(float HealAmount);\n```\nIn .cpp:\n```cpp\nvoid AMyActor::Heal(float HealAmount)\n{\n    CurrentHealth = FMath::Min(CurrentHealth + HealAmount, MaxHealth);\n}\n```\nNow in any Blueprint, you can drag from an execution line and search \"Heal\". It appears as a node!\n\nFor functions that just return data without side effects, add `BlueprintPure` to avoid execution pins."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "BlueprintPure 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "true_false",
+                "question": "A BlueprintPure function appears with an execution pin and a return value pin.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "BlueprintPure functions have only data pins; they are evaluated on demand, like a math expression.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "BlueprintImplementableEvent vs BlueprintNativeEvent 🎭",
+            "content": "## Let Blueprints Override\n\n* **BlueprintImplementableEvent** – no C++ body; the function is **implemented entirely in Blueprints**. It's like a placeholder that Blueprint must fill.\n  ```cpp\n  UFUNCTION(BlueprintImplementableEvent)\n  void OnDeath();\n  ```\n* **BlueprintNativeEvent** – you provide a default C++ implementation (`_Implementation` suffix), but Blueprints can override it.\n  ```cpp\n  UFUNCTION(BlueprintNativeEvent)\n  void OnDamaged(float Damage);\n  // In .cpp:\n  void AMyActor::OnDamaged_Implementation(float Damage) { ... }\n  ```\nThese are perfect for events that gameplay code triggers, allowing designers to add visual feedback in Blueprints."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Use BlueprintNativeEvent for Extensibility\n\nExpose key events (e.g., OnActivated) as BlueprintNativeEvent. C++ handles logic, but Blueprint can add sound effects or particles."
+        }
+    ]
+}

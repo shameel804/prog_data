@@ -1,0 +1,91 @@
+{
+    "id": "l4",
+    "chapterId": "ch_6",
+    "title": "Light Mobility & Baking 🍞",
+    "description": "Deep dive into Static, Stationary, Movable; Lightmass and lightmap UVs.",
+    "xpReward": 25,
+    "estimatedMinutes": 12,
+    "section": "Baking",
+    "slides": [
+        {
+            "id": "s_l4_1",
+            "type": "text",
+            "title": "The Baking Process 🍞",
+            "content": "# Pre‑Computed Light\n\n**Lightmass** is Unreal's tool that pre‑calculates lighting and stores it in textures (lightmaps). This process is called **baking**.\n\n* **Advantage:** High‑quality global illumination (GI) at near‑zero runtime cost.\n* **Disadvantage:** Long build times, lighting can't change during gameplay.\n\nYou bake by clicking **Build → Build Lighting Only** (or Build All Levels). Lightmass runs separately, using all CPU cores."
+        },
+        {
+            "id": "s_l4_2",
+            "type": "quiz",
+            "title": "Baking Concept 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_1",
+                "type": "true_false",
+                "question": "Baked lighting can change at runtime.",
+                "options": [],
+                "correctAnswer": false,
+                "explanation": "Baked lighting is static. It's pre‑computed and cannot change once built. Use Stationary or Movable for dynamic light.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_3",
+            "type": "text",
+            "title": "Static Lights 🧊",
+            "content": "## Fully Baked\n\nLights set to **Static** are completely baked. They affect only static geometry. Their light is stored in lightmaps.\n\n* No runtime cost.\n* Cannot be changed after build.\n* Perfect for architecture and fixed ambient lighting.\n\nTo use, set the light's Mobility to Static, then place it. It won't illuminate Movable actors (like the player). For that, mix with Stationary."
+        },
+        {
+            "id": "s_l4_4",
+            "type": "text",
+            "title": "Stationary Lights ⚡",
+            "content": "## Best of Both Worlds\n\n**Stationary** lights bake indirect light (bounced) but keep direct lighting dynamic. This means:\n\n* Shadows from stationary objects are baked.\n* Shadows from movable objects (player, characters) are dynamic.\n* Light colour and intensity can change at runtime.\n\nThere’s a limit: a stationary light can only have a few overlapping others before quality degrades (shown by red X overlay)."
+        },
+        {
+            "id": "s_l4_5",
+            "type": "quiz",
+            "title": "Stationary Quiz 🧠",
+            "content": "",
+            "quizData": {
+                "id": "q_l4_2",
+                "type": "multiple_choice",
+                "question": "What does a red X over a light mean?",
+                "options": [
+                    {
+                        "id": "opt1",
+                        "text": "The light is broken",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt2",
+                        "text": "Too many stationary lights are overlapping",
+                        "isCorrect": true
+                    },
+                    {
+                        "id": "opt3",
+                        "text": "The light needs a new bulb",
+                        "isCorrect": false
+                    },
+                    {
+                        "id": "opt4",
+                        "text": "The lightmap resolution is too low",
+                        "isCorrect": false
+                    }
+                ],
+                "explanation": "A red X indicates overlapping stationary light limit; reduce number or increase distance.",
+                "xpReward": 10
+            }
+        },
+        {
+            "id": "s_l4_6",
+            "type": "text",
+            "title": "Lightmap UVs 🗺️",
+            "content": "## A Second UV Channel\n\nFor baked lighting to work, every static mesh needs a **lightmap UV** (UV channel 1). It's like a texture UV but for lighting information.\n\n* Without proper lightmap UVs, baking produces errors (black spots, bleeding).\n* In the mesh viewer, you can check lightmap UV layout.\n* Lightmap resolution is set per mesh (in Details panel or globally in Lightmass settings).\n\nIf you see a warning \"Lightmap UV are not unique\" or overlapping, the mesh needs a second UV channel fixed in a 3D tool."
+        },
+        {
+            "id": "s_l4_7",
+            "type": "tip",
+            "title": "Pro Tip 🚀",
+            "content": "## Auto‑Generate Lightmap UVs\n\nUnreal can generate lightmap UVs for simple meshes: open the Static Mesh asset → Build Settings → check **Generate Lightmap UVs**."
+        }
+    ]
+}
